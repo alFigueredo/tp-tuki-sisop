@@ -95,7 +95,7 @@ void paquete_texto(int conexion, char* pseudocodigo)
 		printf("¡No se pudo abrir el archivo!\n");
 		exit(1);
 	}
-	while(fgets(leido, 64, fptr)) {
+	while(NULL !=fgets(leido, 64, fptr)) {
 		parsed = strtok(leido, "\n");
 		agregar_a_paquete(paquete, leido, strlen(parsed)+1);
 	}
