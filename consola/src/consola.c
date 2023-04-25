@@ -90,7 +90,7 @@ void paquete_texto(int conexion, char* pseudocodigo)
 	char leido[64];
 	char* parsed;
 	t_paquete* paquete = crear_paquete();
-	FILE* fptr = fopen("pseudocodigo.txt", "r");
+	FILE* fptr = fopen(pseudocodigo, "r");
 	if (fptr == NULL) {
 		printf("¡No se pudo abrir el archivo!\n");
 		exit(1);
