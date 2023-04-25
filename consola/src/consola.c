@@ -13,7 +13,7 @@ int main(int argc, char** argv)
 	logger = iniciar_logger();
 	config = iniciar_config(argv[1]);
 
-	ip = config_get_string_value(config, "IP");
+	ip = config_get_string_value(config, "IP_KERNEL");
 	puerto = config_get_string_value(config, "PUERTO_KERNEL");
 
 	// Creamos una conexión hacia el servidor
