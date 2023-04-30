@@ -1,36 +1,53 @@
 #include "kernel.h"
+typedef struct{
+	 char AX[4];
+	 char BX[4];
+	 char CX[4];
+	 char DX[4];
+	 char EAX[8];
+	 char EBX[8];
+	 char ECX[8];
+	 char EDX[8];
+	 char RAX[16];
+	 char RBX[16];
+	 char RCX[16];
+	 char RDX[16];
+
+}registros_cpu;
+
+typedef struct {
+		int pid;
+		t_list* instrucciones;
+		int program_counter;
+		registros_cpu registros;
+		t_list* tabla_segmentos;
+		int estimado_proxRafaga;
+		int tiempo_llegada_ready;
+		t_list* archivos_abiertos;
+	}pcb;
 
 int main(void) {
+
+
 	logger = log_create("kernel.log", "Servidor", 1, LOG_LEVEL_DEBUG);
+
 	config = config_create("kernel.config");
+
 	char* puerto = config_get_string_value(config, "PUERTO_ESCUCHA");
+
 	int server_fd = iniciar_servidor(puerto);
 	log_info(logger, "Servidor listo para recibir al cliente");
-	int cliente_fd = esperar_cliente(server_fd);
 
-	t_list* lista;
-	while (1) {
-		int cod_op = recibir_operacion(cliente_fd);
-		switch (cod_op) {
-		case MENSAJE:
-			recibir_mensaje(cliente_fd);
-			break;
-		case PAQUETE:
-			lista = recibir_paquete(cliente_fd);
-			log_info(logger, "Me llegaron los siguientes valores:");
-			list_iterate(lista, (void*) iterator);
-			break;
-		case -1:
-			log_error(logger, "el cliente se desconecto. Terminando servidor");
-			return EXIT_FAILURE;
-		default:
-			log_warning(logger,"Operacion desconocida. No quieras meter la pata");
-			break;
-		}
-	}
+	esperar_cliente_hilos(server_fd);
+
+
 	return EXIT_SUCCESS;
 }
 
 void iterator(char* value) {
 	log_info(logger,"%s", value);
 }
+
+
+
+
