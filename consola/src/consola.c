@@ -5,45 +5,22 @@ int main(int argc, char** argv)
 	if (argc < 3) {
         return EXIT_FAILURE;
 	}
-	int conexion = -1;
-	char* ip;
-	char* puerto;
-	t_log* logger;
-	t_config* config;
-	logger = iniciar_logger();
+	int conexion_kernel = -1;
+
+	logger = iniciar_logger("consola.log");
 	config = iniciar_config(argv[1]);
 
-	ip = config_get_string_value(config, "IP");
-	puerto = config_get_string_value(config, "PUERTO_KERNEL");
+	char* ip_kernel = config_get_string_value(config, "IP");
+	char* puerto_kernel = config_get_string_value(config, "PUERTO_KERNEL");
 
 	// Creamos una conexión hacia el servidor
-	conexion = crear_conexion(ip, puerto);
+	conexion_kernel = crear_conexion(ip_kernel, puerto_kernel);
 
 	// Armamos y enviamos el paquete
-	paquete_texto(conexion, argv[2]);
-
-	terminar_programa(conexion, logger, config);
-
-}
-
-t_log* iniciar_logger(void)
-{
-	t_log* nuevo_logger;
-	if ((nuevo_logger = log_create("consola.log", "logger", true, LOG_LEVEL_INFO)) == NULL) {
-	    printf("¡No se pudo crear el logger!\n");
-	    exit(1);
-	}
-	return nuevo_logger;
-}
-
-t_config* iniciar_config(char* config_file)
-{
-	t_config* nuevo_config;
-	if ((nuevo_config = config_create(config_file)) == NULL) {
-	    printf("¡No se pudo crear el config!\n");
-	    exit(1);
-	}
-	return nuevo_config;
+	paquete_texto(conexion_kernel, argv[2]);
+	liberar_conexion(conexion_kernel);
+	terminar_programa(logger, config);
+	return EXIT_SUCCESS;
 }
 
 void leer_consola(t_log* logger)
@@ -93,7 +70,7 @@ void paquete_texto(int conexion, char* pseudocodigo)
 	FILE* fptr = fopen(pseudocodigo, "r");
 	if (fptr == NULL) {
 		printf("¡No se pudo abrir el archivo!\n");
-		exit(1);
+		abort();
 	}
 	while(NULL !=fgets(leido, 64, fptr)) {
 		parsed = strtok(leido, "\n");
@@ -105,17 +82,12 @@ void paquete_texto(int conexion, char* pseudocodigo)
 	eliminar_paquete(paquete);
 }
 
-void terminar_programa(int conexion, t_log* logger, t_config* config)
+void terminar_programa(t_log* logger, t_config* config)
 {
-	/* Y por ultimo, hay que liberar lo que utilizamos (conexion, log y config)
-	  con las funciones de las commons y del TP mencionadas en el enunciado */
 	if (logger != NULL) {
 		log_destroy(logger);
 	}
 	if (config != NULL) {
 		config_destroy(config);
-	}
-	if (conexion != -1) {
-		liberar_conexion(conexion);
 	}
 }

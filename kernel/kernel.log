@@ -1,165 +1,138 @@
-[INFO] 16:18:58:275 Servidor/(13721:13721): Servidor listo para recibir al cliente
-[INFO] 16:19:01:151 Servidor/(13721:13721): Se conecto un cliente!
-[INFO] 16:19:01:156 Servidor/(13721:13721): Me llego el mensaje 1
-[INFO] 16:19:01:156 Servidor/(13721:13721): Me llegaron los siguientes valores:
-[INFO] 16:19:01:156 Servidor/(13721:13721): SET AX HOLA
-[INFO] 16:19:01:156 Servidor/(13721:13721): MOV_OUT 120 AX
-[INFO] 16:19:01:156 Servidor/(13721:13721): WAIT DISCO
-[INFO] 16:19:01:156 Servidor/(13721:13721): I/O 10
-[INFO] 16:19:01:156 Servidor/(13721:13721): SIGNAL DISCO
-[INFO] 16:19:01:156 Servidor/(13721:13721): MOV_IN BX 120
-[INFO] 16:19:01:156 Servidor/(13721:13721): F_OPEN ARCHIVO
-[INFO] 16:19:01:156 Servidor/(13721:13721): YIELD
-[INFO] 16:19:01:157 Servidor/(13721:13721): F_TRUNCATE ARCHIVO 64
-[INFO] 16:19:01:157 Servidor/(13721:13721): F_SEEK ARCHIVO 10
-[INFO] 16:19:01:157 Servidor/(13721:13721): CREATE_SEGMENT 1 128
-[INFO] 16:19:01:157 Servidor/(13721:13721): F_WRITE ARCHIVO 4 4
-[INFO] 16:19:01:157 Servidor/(13721:13721): F_READ ARCHIVO 16 4
-[INFO] 16:19:01:157 Servidor/(13721:13721): DELETE_SEGMENT 1
-[INFO] 16:19:01:157 Servidor/(13721:13721): F_CLOSE ARCHIVO
-[INFO] 16:19:01:157 Servidor/(13721:13721): EXIT
-[ERROR] 16:19:01:157 Servidor/(13721:13721): el cliente se desconecto. Terminando servidor
-[INFO] 18:22:41:886 Servidor/(13956:13956): Servidor listo para recibir al cliente
-[INFO] 18:22:48:695 Servidor/(13956:13956): Se conecto un cliente!
-[INFO] 18:22:48:725 Servidor/(13956:13956): Me llegaron los siguientes valores:
-[INFO] 18:22:48:727 Servidor/(13956:13956): SET AX HOLA
-[INFO] 18:22:48:727 Servidor/(13956:13956): MOV_OUT 120 AX
-[INFO] 18:22:48:727 Servidor/(13956:13956): WAIT DISCO
-[INFO] 18:22:48:727 Servidor/(13956:13956): I/O 10
-[INFO] 18:22:48:727 Servidor/(13956:13956): SIGNAL DISCO
-[INFO] 18:22:48:727 Servidor/(13956:13956): MOV_IN BX 120
-[INFO] 18:22:48:727 Servidor/(13956:13956): F_OPEN ARCHIVO
-[INFO] 18:22:48:727 Servidor/(13956:13956): YIELD
-[INFO] 18:22:48:727 Servidor/(13956:13956): F_TRUNCATE ARCHIVO 64
-[INFO] 18:22:48:727 Servidor/(13956:13956): F_SEEK ARCHIVO 10
-[INFO] 18:22:48:727 Servidor/(13956:13956): CREATE_SEGMENT 1 128
-[INFO] 18:22:48:727 Servidor/(13956:13956): F_WRITE ARCHIVO 4 4
-[INFO] 18:22:48:727 Servidor/(13956:13956): F_READ ARCHIVO 16 4
-[INFO] 18:22:48:727 Servidor/(13956:13956): DELETE_SEGMENT 1
-[INFO] 18:22:48:727 Servidor/(13956:13956): F_CLOSE ARCHIVO
-[INFO] 18:22:48:728 Servidor/(13956:13956): EXIT
-[ERROR] 18:22:48:930 Servidor/(13956:13956): el cliente se desconecto. Terminando servidor
-[INFO] 18:41:45:565 Servidor/(14277:14277): Servidor listo para recibir al cliente
-[INFO] 18:41:52:909 Servidor/(14277:14277): Se conecto un cliente!
-[INFO] 18:41:52:925 Servidor/(14277:14277): Me llegaron los siguientes valores:
-[INFO] 18:41:52:926 Servidor/(14277:14277): SET AX HOLA
-[INFO] 18:41:52:926 Servidor/(14277:14277): MOV_OUT 120 AX
-[INFO] 18:41:52:926 Servidor/(14277:14277): WAIT DISCO
-[INFO] 18:41:52:926 Servidor/(14277:14277): I/O 10
-[INFO] 18:41:52:926 Servidor/(14277:14277): SIGNAL DISCO
-[INFO] 18:41:52:926 Servidor/(14277:14277): MOV_IN BX 120
-[INFO] 18:41:52:926 Servidor/(14277:14277): F_OPEN ARCHIVO
-[INFO] 18:41:52:926 Servidor/(14277:14277): YIELD
-[INFO] 18:41:52:926 Servidor/(14277:14277): F_TRUNCATE ARCHIVO 64
-[INFO] 18:41:52:926 Servidor/(14277:14277): F_SEEK ARCHIVO 10
-[INFO] 18:41:52:926 Servidor/(14277:14277): CREATE_SEGMENT 1 128
-[INFO] 18:41:52:926 Servidor/(14277:14277): F_WRITE ARCHIVO 4 4
-[INFO] 18:41:52:926 Servidor/(14277:14277): F_READ ARCHIVO 16 4
-[INFO] 18:41:52:926 Servidor/(14277:14277): DELETE_SEGMENT 1
-[INFO] 18:41:52:926 Servidor/(14277:14277): F_CLOSE ARCHIVO
-[INFO] 18:41:52:926 Servidor/(14277:14277): EXIT
-[ERROR] 18:41:52:926 Servidor/(14277:14277): el cliente se desconecto. Terminando servidor
-[INFO] 19:08:52:088 Servidor/(7897:7897): Servidor listo para recibir al cliente
-[INFO] 19:16:17:620 Servidor/(8045:8045): Servidor listo para recibir al cliente
-[INFO] 19:22:03:557 Servidor/(8045:8045): Se conecto un cliente!
-[ERROR] 19:22:03:559 Servidor/(8045:8154): el cliente se desconecto. Terminando coneccion
-[INFO] 19:29:10:950 Servidor/(8830:8830): Servidor listo para recibir al cliente
-[INFO] 19:29:29:056 Servidor/(8045:8045): Se conecto un cliente!
-[ERROR] 19:29:29:057 Servidor/(8045:8858): el cliente se desconecto. Terminando coneccion
-[INFO] 19:29:59:476 Servidor/(8045:8045): Se conecto un cliente!
-[ERROR] 19:29:59:476 Servidor/(8045:8878): el cliente se desconecto. Terminando coneccion
-[INFO] 19:30:48:660 Servidor/(8896:8896): Servidor listo para recibir al cliente
-[INFO] 19:30:58:084 Servidor/(8896:8896): Se conecto un cliente!
-[INFO] 19:30:58:085 Servidor/(8896:8924): -1
-[ERROR] 19:30:58:085 Servidor/(8896:8924): el cliente se desconecto. Terminando conexion
-[INFO] 19:41:42:911 Servidor/(9266:9266): Se conecto un cliente!
-[INFO] 19:41:42:912 Servidor/(9266:9288): -1
-[ERROR] 19:41:42:912 Servidor/(9266:9288): el cliente se desconecto. Terminando conexion
-[INFO] 19:45:45:282 Servidor/(9418:9418): Servidor listo para recibir al cliente
-[INFO] 19:45:54:574 Servidor/(9418:9418): Se conecto un cliente!
-[INFO] 20:34:14:535 Servidor/(11068:11068): Servidor listo para recibir al cliente
-[INFO] 20:34:21:096 Servidor/(11068:11068): Se conecto un cliente!
-[INFO] 20:34:21:101 Servidor/(11068:11095): 1
-[INFO] 20:34:21:102 Servidor/(11068:11095): Me llegaron los siguientes valores:
-[INFO] 20:34:21:102 Servidor/(11068:11095): SET AX HOLA
-[INFO] 20:34:21:102 Servidor/(11068:11095): MOV_OUT 120 AX
-[INFO] 20:34:21:102 Servidor/(11068:11095): WAIT DISCO
-[INFO] 20:34:21:102 Servidor/(11068:11095): I/O 10
-[INFO] 20:34:21:102 Servidor/(11068:11095): SIGNAL DISCO
-[INFO] 20:34:21:102 Servidor/(11068:11095): MOV_IN BX 120
-[INFO] 20:34:21:102 Servidor/(11068:11095): F_OPEN ARCHIVO
-[INFO] 20:34:21:102 Servidor/(11068:11095): YIELD
-[INFO] 20:34:21:102 Servidor/(11068:11095): F_TRUNCATE ARCHIVO 64
-[INFO] 20:34:21:102 Servidor/(11068:11095): F_SEEK ARCHIVO 10
-[INFO] 20:34:21:102 Servidor/(11068:11095): CREATE_SEGMENT 1 128
-[INFO] 20:34:21:102 Servidor/(11068:11095): F_WRITE ARCHIVO 4 4
-[INFO] 20:34:21:102 Servidor/(11068:11095): F_READ ARCHIVO 16 4
-[INFO] 20:34:21:102 Servidor/(11068:11095): DELETE_SEGMENT 1
-[INFO] 20:34:21:102 Servidor/(11068:11095): F_CLOSE ARCHIVO
-[INFO] 20:34:21:102 Servidor/(11068:11095): EXIT
-[INFO] 20:34:21:102 Servidor/(11068:11095): -1
-[ERROR] 20:34:21:103 Servidor/(11068:11095): el cliente se desconecto. Terminando conexion
-[INFO] 20:45:02:787 Servidor/(11396:11396): Servidor listo para recibir al cliente
-[INFO] 20:45:10:149 Servidor/(11396:11396): Se conecto un cliente!
-[INFO] 20:45:10:154 Servidor/(11396:11422): 1
-[INFO] 20:45:10:155 Servidor/(11396:11422): Me llegaron los siguientes valores:
-[INFO] 20:45:10:155 Servidor/(11396:11422): SET AX HOLA
-[INFO] 20:45:10:156 Servidor/(11396:11422): MOV_OUT 120 AX
-[INFO] 20:45:10:156 Servidor/(11396:11422): WAIT DISCO
-[INFO] 20:45:10:156 Servidor/(11396:11422): I/O 10
-[INFO] 20:45:10:156 Servidor/(11396:11422): SIGNAL DISCO
-[INFO] 20:45:10:156 Servidor/(11396:11422): MOV_IN BX 120
-[INFO] 20:45:10:156 Servidor/(11396:11422): F_OPEN ARCHIVO
-[INFO] 20:45:10:156 Servidor/(11396:11422): YIELD
-[INFO] 20:45:10:157 Servidor/(11396:11422): F_TRUNCATE ARCHIVO 64
-[INFO] 20:45:10:157 Servidor/(11396:11422): F_SEEK ARCHIVO 10
-[INFO] 20:45:10:157 Servidor/(11396:11422): CREATE_SEGMENT 1 128
-[INFO] 20:45:10:157 Servidor/(11396:11422): F_WRITE ARCHIVO 4 4
-[INFO] 20:45:10:157 Servidor/(11396:11422): F_READ ARCHIVO 16 4
-[INFO] 20:45:10:157 Servidor/(11396:11422): DELETE_SEGMENT 1
-[INFO] 20:45:10:158 Servidor/(11396:11422): F_CLOSE ARCHIVO
-[INFO] 20:45:10:158 Servidor/(11396:11422): EXIT
-[INFO] 20:45:10:158 Servidor/(11396:11422): -1
-[ERROR] 20:45:10:158 Servidor/(11396:11422): el cliente se desconecto. Terminando conexion
-[INFO] 20:45:25:787 Servidor/(11396:11396): Se conecto un cliente!
-[INFO] 20:45:25:788 Servidor/(11396:11439): 1
-[INFO] 20:45:25:788 Servidor/(11396:11439): Me llegaron los siguientes valores:
-[INFO] 20:45:25:788 Servidor/(11396:11439): SET AX HOLA
-[INFO] 20:45:25:788 Servidor/(11396:11439): MOV_OUT 120 AX
-[INFO] 20:45:25:788 Servidor/(11396:11439): WAIT DISCO
-[INFO] 20:45:25:789 Servidor/(11396:11439): I/O 10
-[INFO] 20:45:25:789 Servidor/(11396:11439): SIGNAL DISCO
-[INFO] 20:45:25:789 Servidor/(11396:11439): MOV_IN BX 120
-[INFO] 20:45:25:789 Servidor/(11396:11439): F_OPEN ARCHIVO
-[INFO] 20:45:25:789 Servidor/(11396:11439): YIELD
-[INFO] 20:45:25:789 Servidor/(11396:11439): F_TRUNCATE ARCHIVO 64
-[INFO] 20:45:25:789 Servidor/(11396:11439): F_SEEK ARCHIVO 10
-[INFO] 20:45:25:789 Servidor/(11396:11439): CREATE_SEGMENT 1 128
-[INFO] 20:45:25:789 Servidor/(11396:11439): F_WRITE ARCHIVO 4 4
-[INFO] 20:45:25:789 Servidor/(11396:11439): F_READ ARCHIVO 16 4
-[INFO] 20:45:25:789 Servidor/(11396:11439): DELETE_SEGMENT 1
-[INFO] 20:45:25:789 Servidor/(11396:11439): F_CLOSE ARCHIVO
-[INFO] 20:45:25:789 Servidor/(11396:11439): EXIT
-[INFO] 20:45:25:789 Servidor/(11396:11439): -1
-[ERROR] 20:45:25:789 Servidor/(11396:11439): el cliente se desconecto. Terminando conexion
-[INFO] 20:46:18:448 Servidor/(11396:11396): Se conecto un cliente!
-[INFO] 20:46:18:457 Servidor/(11396:11458): 1
-[INFO] 20:46:18:457 Servidor/(11396:11458): Me llegaron los siguientes valores:
-[INFO] 20:46:18:458 Servidor/(11396:11458): SET AX HOLA
-[INFO] 20:46:18:458 Servidor/(11396:11458): MOV_OUT 120 AX
-[INFO] 20:46:18:458 Servidor/(11396:11458): WAIT DISCO
-[INFO] 20:46:18:458 Servidor/(11396:11458): I/O 10
-[INFO] 20:46:18:459 Servidor/(11396:11458): SIGNAL DISCO
-[INFO] 20:46:18:459 Servidor/(11396:11458): MOV_IN BX 120
-[INFO] 20:46:18:459 Servidor/(11396:11458): F_OPEN ARCHIVO
-[INFO] 20:46:18:459 Servidor/(11396:11458): YIELD
-[INFO] 20:46:18:460 Servidor/(11396:11458): F_TRUNCATE ARCHIVO 64
-[INFO] 20:46:18:460 Servidor/(11396:11458): F_SEEK ARCHIVO 10
-[INFO] 20:46:18:460 Servidor/(11396:11458): CREATE_SEGMENT 1 128
-[INFO] 20:46:18:461 Servidor/(11396:11458): F_WRITE ARCHIVO 4 4
-[INFO] 20:46:18:461 Servidor/(11396:11458): F_READ ARCHIVO 16 4
-[INFO] 20:46:18:461 Servidor/(11396:11458): DELETE_SEGMENT 1
-[INFO] 20:46:18:461 Servidor/(11396:11458): F_CLOSE ARCHIVO
-[INFO] 20:46:18:462 Servidor/(11396:11458): EXIT
-[INFO] 20:46:18:462 Servidor/(11396:11458): -1
-[ERROR] 20:46:18:463 Servidor/(11396:11458): el cliente se desconecto. Terminando conexion
+[INFO] 05:25:25:557 Servidor/(7592:7592): Servidor listo para recibir al cliente
+[INFO] 05:25:30:636 Servidor/(7592:7615): Me llegaron los siguientes valores:
+[INFO] 05:25:30:636 Servidor/(7592:7615): SET AX HOLA
+[INFO] 05:25:30:636 Servidor/(7592:7615): MOV_OUT 120 AX
+[INFO] 05:25:30:636 Servidor/(7592:7615): WAIT DISCO
+[INFO] 05:25:30:636 Servidor/(7592:7615): I/O 10
+[INFO] 05:25:30:636 Servidor/(7592:7615): SIGNAL DISCO
+[INFO] 05:25:30:636 Servidor/(7592:7615): MOV_IN BX 120
+[INFO] 05:25:30:636 Servidor/(7592:7615): F_OPEN ARCHIVO
+[INFO] 05:25:30:636 Servidor/(7592:7615): YIELD
+[INFO] 05:25:30:637 Servidor/(7592:7615): F_TRUNCATE ARCHIVO 64
+[INFO] 05:25:30:637 Servidor/(7592:7615): F_SEEK ARCHIVO 10
+[INFO] 05:25:30:637 Servidor/(7592:7615): CREATE_SEGMENT 1 128
+[INFO] 05:25:30:637 Servidor/(7592:7615): F_WRITE ARCHIVO 4 4
+[INFO] 05:25:30:637 Servidor/(7592:7615): F_READ ARCHIVO 16 4
+[INFO] 05:25:30:637 Servidor/(7592:7615): DELETE_SEGMENT 1
+[INFO] 05:25:30:637 Servidor/(7592:7615): F_CLOSE ARCHIVO
+[INFO] 05:25:30:637 Servidor/(7592:7615): EXIT
+[WARNING] 05:25:30:844 Servidor/(7592:7615): El cliente se desconecto. Terminando conexion
+[INFO] 05:29:50:024 Servidor/(7922:7922): Servidor listo para recibir al cliente
+[INFO] 05:29:54:737 Servidor/(7922:7940): Me llegaron los siguientes valores:
+[INFO] 05:29:54:737 Servidor/(7922:7940): SET AX HOLA
+[INFO] 05:29:54:737 Servidor/(7922:7940): MOV_OUT 120 AX
+[INFO] 05:29:54:737 Servidor/(7922:7940): WAIT DISCO
+[INFO] 05:29:54:737 Servidor/(7922:7940): I/O 10
+[INFO] 05:29:54:737 Servidor/(7922:7940): SIGNAL DISCO
+[INFO] 05:29:54:737 Servidor/(7922:7940): MOV_IN BX 120
+[INFO] 05:29:54:737 Servidor/(7922:7940): F_OPEN ARCHIVO
+[INFO] 05:29:54:737 Servidor/(7922:7940): YIELD
+[INFO] 05:29:54:737 Servidor/(7922:7940): F_TRUNCATE ARCHIVO 64
+[INFO] 05:29:54:737 Servidor/(7922:7940): F_SEEK ARCHIVO 10
+[INFO] 05:29:54:737 Servidor/(7922:7940): CREATE_SEGMENT 1 128
+[INFO] 05:29:54:737 Servidor/(7922:7940): F_WRITE ARCHIVO 4 4
+[INFO] 05:29:54:737 Servidor/(7922:7940): F_READ ARCHIVO 16 4
+[INFO] 05:29:54:737 Servidor/(7922:7940): DELETE_SEGMENT 1
+[INFO] 05:29:54:737 Servidor/(7922:7940): F_CLOSE ARCHIVO
+[INFO] 05:29:54:737 Servidor/(7922:7940): EXIT
+[WARNING] 05:29:54:737 Servidor/(7922:7940): El cliente se desconecto. Terminando conexion
+[INFO] 05:49:16:423 logger/(8400:8400): Servidor listo para recibir al cliente
+[INFO] 05:49:21:674 logger/(8400:8449): Me llegaron los siguientes valores:
+[INFO] 05:49:21:676 logger/(8400:8449): SET AX HOLA
+[INFO] 05:49:21:679 logger/(8400:8449): MOV_OUT 120 AX
+[INFO] 05:49:21:679 logger/(8400:8449): WAIT DISCO
+[INFO] 05:49:21:679 logger/(8400:8449): I/O 10
+[INFO] 05:49:21:679 logger/(8400:8449): SIGNAL DISCO
+[INFO] 05:49:21:679 logger/(8400:8449): MOV_IN BX 120
+[INFO] 05:49:21:679 logger/(8400:8449): F_OPEN ARCHIVO
+[INFO] 05:49:21:679 logger/(8400:8449): YIELD
+[INFO] 05:49:21:679 logger/(8400:8449): F_TRUNCATE ARCHIVO 64
+[INFO] 05:49:21:679 logger/(8400:8449): F_SEEK ARCHIVO 10
+[INFO] 05:49:21:679 logger/(8400:8449): CREATE_SEGMENT 1 128
+[INFO] 05:49:21:679 logger/(8400:8449): F_WRITE ARCHIVO 4 4
+[INFO] 05:49:21:679 logger/(8400:8449): F_READ ARCHIVO 16 4
+[INFO] 05:49:21:679 logger/(8400:8449): DELETE_SEGMENT 1
+[INFO] 05:49:21:679 logger/(8400:8449): F_CLOSE ARCHIVO
+[INFO] 05:49:21:679 logger/(8400:8449): EXIT
+[WARNING] 05:49:21:679 logger/(8400:8449): El cliente se desconecto. Terminando conexion
+[ERROR] 06:00:52:368 logger/(8945:8945): ¡No se pudo conectar al servidor!
+[INFO] 06:02:08:482 logger/(9456:9456): ¡Conectado al servidor!
+[INFO] 06:02:08:483 logger/(9456:9456): Servidor listo para recibir al cliente
+[INFO] 06:05:25:291 logger/(9738:9738): ¡Conectado al servidor!
+[INFO] 06:05:25:334 logger/(9738:9738): Servidor listo para recibir al cliente
+[INFO] 06:20:00:772 logger/(10742:10742): ¡Conectado al servidor!
+[INFO] 06:20:00:799 logger/(10742:10742): ¡Conectado al servidor!
+[INFO] 06:20:00:799 logger/(10742:10742): ¡Conectado al servidor!
+[INFO] 06:20:00:799 logger/(10742:10742): Servidor listo para recibir al cliente
+[INFO] 06:20:26:716 logger/(10782:10782): ¡Conectado al servidor!
+[ERROR] 06:20:26:737 logger/(10782:10782): ¡No se pudo conectar al servidor!
+[INFO] 06:22:09:110 logger/(10911:10911): ¡Conectado al servidor!
+[INFO] 06:22:09:129 logger/(10911:10911): ¡Conectado al servidor!
+[INFO] 06:22:09:129 logger/(10911:10911): ¡Conectado al servidor!
+[WARNING] 06:22:09:130 logger/(10911:10911): Liberando conexion
+[WARNING] 06:22:09:131 logger/(10911:10911): Liberando conexion
+[WARNING] 06:22:09:132 logger/(10911:10911): Liberando conexion
+[INFO] 06:22:09:133 logger/(10911:10911): Servidor listo para recibir al cliente
+[INFO] 06:22:33:476 logger/(10911:10951): Me llegaron los siguientes valores:
+[INFO] 06:22:33:476 logger/(10911:10951): SET AX HOLA
+[INFO] 06:22:33:476 logger/(10911:10951): MOV_OUT 120 AX
+[INFO] 06:22:33:476 logger/(10911:10951): WAIT DISCO
+[INFO] 06:22:33:476 logger/(10911:10951): I/O 10
+[INFO] 06:22:33:476 logger/(10911:10951): SIGNAL DISCO
+[INFO] 06:22:33:476 logger/(10911:10951): MOV_IN BX 120
+[INFO] 06:22:33:476 logger/(10911:10951): F_OPEN ARCHIVO
+[INFO] 06:22:33:476 logger/(10911:10951): YIELD
+[INFO] 06:22:33:476 logger/(10911:10951): F_TRUNCATE ARCHIVO 64
+[INFO] 06:22:33:476 logger/(10911:10951): F_SEEK ARCHIVO 10
+[INFO] 06:22:33:476 logger/(10911:10951): CREATE_SEGMENT 1 128
+[INFO] 06:22:33:476 logger/(10911:10951): F_WRITE ARCHIVO 4 4
+[INFO] 06:22:33:476 logger/(10911:10951): F_READ ARCHIVO 16 4
+[INFO] 06:22:33:476 logger/(10911:10951): DELETE_SEGMENT 1
+[INFO] 06:22:33:476 logger/(10911:10951): F_CLOSE ARCHIVO
+[INFO] 06:22:33:476 logger/(10911:10951): EXIT
+[WARNING] 06:22:33:476 logger/(10911:10951): El cliente se desconecto. Terminando conexion
+[INFO] 06:24:25:999 logger/(11074:11074): ¡Conectado al servidor!
+[INFO] 06:24:25:999 logger/(11074:11074): ¡Conectado al servidor!
+[INFO] 06:24:25:999 logger/(11074:11074): ¡Conectado al servidor!
+[INFO] 06:24:26:000 logger/(11074:11074): Servidor listo para recibir al cliente
+[INFO] 06:24:32:676 logger/(11074:11094): Me llegaron los siguientes valores:
+[INFO] 06:24:32:676 logger/(11074:11094): SET AX HOLA
+[INFO] 06:24:32:676 logger/(11074:11094): MOV_OUT 120 AX
+[INFO] 06:24:32:676 logger/(11074:11094): WAIT DISCO
+[INFO] 06:24:32:676 logger/(11074:11094): I/O 10
+[INFO] 06:24:32:676 logger/(11074:11094): SIGNAL DISCO
+[INFO] 06:24:32:677 logger/(11074:11094): MOV_IN BX 120
+[INFO] 06:24:32:677 logger/(11074:11094): F_OPEN ARCHIVO
+[INFO] 06:24:32:677 logger/(11074:11094): YIELD
+[INFO] 06:24:32:677 logger/(11074:11094): F_TRUNCATE ARCHIVO 64
+[INFO] 06:24:32:677 logger/(11074:11094): F_SEEK ARCHIVO 10
+[INFO] 06:24:32:677 logger/(11074:11094): CREATE_SEGMENT 1 128
+[INFO] 06:24:32:677 logger/(11074:11094): F_WRITE ARCHIVO 4 4
+[INFO] 06:24:32:677 logger/(11074:11094): F_READ ARCHIVO 16 4
+[INFO] 06:24:32:677 logger/(11074:11094): DELETE_SEGMENT 1
+[INFO] 06:24:32:677 logger/(11074:11094): F_CLOSE ARCHIVO
+[INFO] 06:24:32:677 logger/(11074:11094): EXIT
+[WARNING] 06:24:32:677 logger/(11074:11094): El cliente se desconecto. Terminando conexion
+[ERROR] 06:26:30:991 logger/(11259:11259): ¡No se pudo conectar al servidor!
+[INFO] 06:27:20:581 logger/(11349:11349): ¡Conectado al servidor!
+[INFO] 06:27:20:588 logger/(11349:11349): ¡Conectado al servidor!
+[INFO] 06:27:20:589 logger/(11349:11349): ¡Conectado al servidor!
+[INFO] 06:27:20:589 logger/(11349:11349): Servidor listo para recibir al cliente
+[INFO] 06:27:25:190 logger/(11349:11369): Me llegaron los siguientes valores:
+[INFO] 06:27:25:191 logger/(11349:11369): SET AX HOLA
+[INFO] 06:27:25:191 logger/(11349:11369): MOV_OUT 120 AX
+[INFO] 06:27:25:191 logger/(11349:11369): WAIT DISCO
+[INFO] 06:27:25:191 logger/(11349:11369): I/O 10
+[INFO] 06:27:25:191 logger/(11349:11369): SIGNAL DISCO
+[INFO] 06:27:25:191 logger/(11349:11369): MOV_IN BX 120
+[INFO] 06:27:25:191 logger/(11349:11369): F_OPEN ARCHIVO
+[INFO] 06:27:25:191 logger/(11349:11369): YIELD
+[INFO] 06:27:25:191 logger/(11349:11369): F_TRUNCATE ARCHIVO 64
+[INFO] 06:27:25:191 logger/(11349:11369): F_SEEK ARCHIVO 10
+[INFO] 06:27:25:191 logger/(11349:11369): CREATE_SEGMENT 1 128
+[INFO] 06:27:25:191 logger/(11349:11369): F_WRITE ARCHIVO 4 4
+[INFO] 06:27:25:192 logger/(11349:11369): F_READ ARCHIVO 16 4
+[INFO] 06:27:25:192 logger/(11349:11369): DELETE_SEGMENT 1
+[INFO] 06:27:25:192 logger/(11349:11369): F_CLOSE ARCHIVO
+[INFO] 06:27:25:192 logger/(11349:11369): EXIT
+[WARNING] 06:27:25:192 logger/(11349:11369): El cliente se desconecto. Terminando conexion
