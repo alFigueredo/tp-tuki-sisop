@@ -62,7 +62,6 @@ void recv_handshake(int socket_cliente)
 
 void atender_cliente(int* socket_cliente){
 	t_list *lista;
-	pcb proceso;
 	while (1) {
 			int cod_op = recibir_operacion(*socket_cliente);
 			switch (cod_op) {
@@ -81,11 +80,6 @@ void atender_cliente(int* socket_cliente){
 				log_warning(logger,"Operacion desconocida. No quieras meter la pata");
 				break;
 			}
-			(proceso.pid)=rand();
-			proceso.instrucciones=lista;
-			proceso.program_counter=0;
-			proceso.estimado_proxRafaga= config_get_int_value(config,"ESTIMACION_INICIAL");
-			log_info(logger, "Se crea el proceso %d en NEW",proceso.pid);
 		}
 }
 

@@ -5,8 +5,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <commons/string.h>
+#include "cliente.h"
 #include "server.h"
-
 
 typedef struct{
 	 char AX[4];
@@ -34,5 +34,7 @@ typedef struct {
 		int tiempo_llegada_ready;
 		t_list* archivos_abiertos;
 	}pcb;
+
+void terminar_programa(t_log*, t_config*, int);
 
 #endif /* CPU_H_ */

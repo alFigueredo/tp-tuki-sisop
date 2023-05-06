@@ -1,0 +1,16 @@
+[INFO] 06:19:50:543 logger/(10709:10709): ¡Conectado al servidor!
+[INFO] 06:19:50:543 logger/(10709:10709): Servidor listo para recibir al cliente
+[WARNING] 06:20:39:561 logger/(10709:10749): El cliente se desconecto. Terminando conexion
+[INFO] 06:21:53:115 logger/(10876:10876): ¡Conectado al servidor!
+[WARNING] 06:21:53:116 logger/(10876:10876): Liberando conexion
+[INFO] 06:21:53:116 logger/(10876:10876): Servidor listo para recibir al cliente
+[INFO] 06:22:09:136 logger/(10876:10919): Me llego el mensaje: Intento de conexión del kernel al filesystem
+[WARNING] 06:22:09:136 logger/(10876:10919): El cliente se desconecto. Terminando conexion
+[INFO] 06:24:21:353 logger/(11041:11041): ¡Conectado al servidor!
+[INFO] 06:24:21:353 logger/(11041:11041): Servidor listo para recibir al cliente
+[INFO] 06:24:26:004 logger/(11041:11081): Me llego el mensaje: Intento de conexión del kernel al filesystem
+[ERROR] 06:26:27:155 logger/(11247:11247): ¡No se pudo conectar al servidor!
+[INFO] 06:27:14:988 logger/(11332:11332): ¡Conectado al servidor!
+[INFO] 06:27:14:991 logger/(11332:11332): Servidor listo para recibir al cliente
+[INFO] 06:27:20:590 logger/(11332:11357): Me llego el mensaje: Intento de conexión del kernel al filesystem
+[WARNING] 06:27:29:312 logger/(11332:11357): El cliente se desconecto. Terminando conexion

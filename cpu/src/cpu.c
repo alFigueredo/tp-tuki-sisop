@@ -3,23 +3,51 @@
 int main(void) {
 	pcb contexto;
 
-	char* string = string_new();
-	string_append(&string, "!!!Hello CPU!!!");
-	puts(string);
-
 	while(1)
 	{
 		char *instruccion;
 		instruccion = list_get(contexto->program_counter);
 		switch (instruccion)
 		{
-		case "set"{
+		//case "set"{
 
-		}
+		//}
 		}
 	}
 
 
+	int conexion_memoria = -1;
 
+	logger = iniciar_logger("cpu.log");
+	config = iniciar_config("cpu.config");
+
+	char* ip_memoria = config_get_string_value(config, "IP_MEMORIA");
+	char* puerto_memoria = config_get_string_value(config, "PUERTO_MEMORIA");
+	char* puerto_escucha = config_get_string_value(config, "PUERTO_ESCUCHA");
+
+	// Creamos una conexión hacia el servidor
+	conexion_memoria = crear_conexion(ip_memoria, puerto_memoria);
+
+	enviar_mensaje("Intento de conexión del cpu a la memoria", conexion_memoria);
+
+	int socket_servidor = -1;
+	socket_servidor = iniciar_servidor(puerto_escucha);
+	esperar_cliente_hilos(socket_servidor);
+
+	liberar_conexion(conexion_memoria);
+	terminar_programa(logger, config, socket_servidor);
 	return EXIT_SUCCESS;
+}
+
+void terminar_programa(t_log* logger, t_config* config, int socket_servidor)
+{
+	if (socket_servidor != -1) {
+		liberar_servidor(socket_servidor);
+	}
+	if (logger != NULL) {
+		log_destroy(logger);
+	}
+	if (config != NULL) {
+		config_destroy(config);
+	}
 }

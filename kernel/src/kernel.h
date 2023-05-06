@@ -5,8 +5,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <commons/log.h>
+#include "cliente.h"
 #include "server.h"
-
 
 typedef struct{
 	 char AX[4];
@@ -21,8 +21,7 @@ typedef struct{
 	 char RBX[16];
 	 char RCX[16];
 	 char RDX[16];
-
-}registros_cpu;
+} registros_cpu;
 
 typedef struct {
 		int pid;
@@ -33,9 +32,8 @@ typedef struct {
 		int estimado_proxRafaga;
 		int tiempo_llegada_ready;
 		t_list* archivos_abiertos;
-	}pcb;
+} pcb;
 
-
-void iterator(char* value);
+void terminar_programa(t_log*, t_config*, int);
 
 #endif /* KERNEL_H_ */

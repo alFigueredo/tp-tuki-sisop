@@ -1,0 +1,20 @@
+[INFO] 06:19:25:323 logger/(10652:10652): ¡Conectado al servidor!
+[INFO] 06:19:25:323 logger/(10652:10652): Servidor listo para recibir al cliente
+[INFO] 06:20:00:803 logger/(10652:10748): Me llego el mensaje: Intento de conexión del kernel al cpu
+[INFO] 06:20:00:848 logger/(10652:10748): Me llego el mensaje: Intento de conexión del kernel al filesystem
+[INFO] 06:21:42:573 logger/(10843:10843): ¡Conectado al servidor!
+[WARNING] 06:21:42:574 logger/(10843:10843): Liberando conexion
+[INFO] 06:21:42:574 logger/(10843:10843): Servidor listo para recibir al cliente
+[INFO] 06:22:09:135 logger/(10843:10918): Me llego el mensaje: Intento de conexión del kernel al cpu
+[WARNING] 06:22:09:136 logger/(10843:10918): El cliente se desconecto. Terminando conexion
+[INFO] 06:24:17:377 logger/(11008:11008): ¡Conectado al servidor!
+[INFO] 06:24:17:388 logger/(11008:11008): Servidor listo para recibir al cliente
+[INFO] 06:24:26:004 logger/(11008:11080): Me llego el mensaje: Intento de conexión del kernel al cpu
+[ERROR] 06:25:31:568 logger/(11139:11139): ¡No se pudo conectar al servidor!
+[ERROR] 06:25:49:312 logger/(11175:11175): ¡No se pudo conectar al servidor!
+[ERROR] 06:25:58:275 logger/(11192:11192): ¡No se pudo conectar al servidor!
+[ERROR] 06:26:17:588 logger/(11225:11225): ¡No se pudo conectar al servidor!
+[INFO] 06:27:10:019 logger/(11310:11310): ¡Conectado al servidor!
+[INFO] 06:27:10:023 logger/(11310:11310): Servidor listo para recibir al cliente
+[INFO] 06:27:20:591 logger/(11310:11356): Me llego el mensaje: Intento de conexión del kernel al cpu
+[WARNING] 06:27:29:311 logger/(11310:11356): El cliente se desconecto. Terminando conexion

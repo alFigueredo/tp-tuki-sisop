@@ -1,0 +1,13 @@
+[INFO] 05:25:30:585 logger/(7608:7608): ¡Conectado al servidor!
+[WARNING] 05:25:30:636 logger/(7608:7608): Liberando conexion
+[INFO] 05:29:54:700 Servidor/(7933:7933): ¡Conectado al servidor!
+[WARNING] 05:29:54:736 Servidor/(7933:7933): Liberando conexion
+[INFO] 05:49:21:608 logger/(8443:8443): ¡Conectado al servidor!
+[WARNING] 05:49:21:674 logger/(8443:8443): Liberando conexion
+[INFO] 06:22:33:429 logger/(10946:10946): ¡Conectado al servidor!
+[WARNING] 06:22:33:475 logger/(10946:10946): Liberando conexion
+[INFO] 06:24:32:665 logger/(11088:11088): ¡Conectado al servidor!
+[WARNING] 06:24:32:672 logger/(11088:11088): Liberando conexion
+[ERROR] 06:26:58:946 logger/(11277:11277): ¡No se pudo conectar al servidor!
+[INFO] 06:27:25:188 logger/(11363:11363): ¡Conectado al servidor!
+[WARNING] 06:27:25:189 logger/(11363:11363): Liberando conexion
