@@ -32,3 +32,6 @@
 [WARNING] 06:27:29:311 logger/(11299:11355): El cliente se desconecto. Terminando conexion
 [WARNING] 06:27:33:280 logger/(11299:11316): El cliente se desconecto. Terminando conexion
 [WARNING] 06:27:39:130 logger/(11299:11338): El cliente se desconecto. Terminando conexion
+[INFO] 07:02:06:326 logger/(12861:12861): Servidor listo para recibir al cliente
+[INFO] 07:02:14:431 logger/(12861:12921): Me llego el mensaje: Intento de conexión del filesystem a la memoria
+[WARNING] 07:02:59:762 logger/(12861:12921): El cliente se desconecto. Terminando conexion

@@ -14,3 +14,5 @@
 [INFO] 06:27:14:991 logger/(11332:11332): Servidor listo para recibir al cliente
 [INFO] 06:27:20:590 logger/(11332:11357): Me llego el mensaje: Intento de conexión del kernel al filesystem
 [WARNING] 06:27:29:312 logger/(11332:11357): El cliente se desconecto. Terminando conexion
+[INFO] 07:02:14:417 logger/(12916:12916): ¡Conectado al servidor!
+[INFO] 07:02:14:428 logger/(12916:12916): Servidor listo para recibir al cliente
