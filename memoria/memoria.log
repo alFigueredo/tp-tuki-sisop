@@ -35,3 +35,77 @@
 [INFO] 07:02:06:326 logger/(12861:12861): Servidor listo para recibir al cliente
 [INFO] 07:02:14:431 logger/(12861:12921): Me llego el mensaje: Intento de conexión del filesystem a la memoria
 [WARNING] 07:02:59:762 logger/(12861:12921): El cliente se desconecto. Terminando conexion
+[INFO] 20:22:28:595 logger/(4457:4457): Servidor listo para recibir al cliente
+[INFO] 20:22:33:670 logger/(4457:4475): Me llego el mensaje: Intento de conexión del cpu a la memoria
+[WARNING] 20:22:43:969 logger/(4457:4492): El cliente se desconecto. Terminando conexion
+[INFO] 20:22:57:600 logger/(4457:4515): Me llego el mensaje: Intento de conexión del filesystem a la memoria
+[INFO] 20:23:02:341 logger/(4457:4528): Me llego el mensaje: Intento de conexión del kernel a la memoria
+[WARNING] 20:23:08:586 logger/(4457:4475): El cliente se desconecto. Terminando conexion
+[INFO] 20:27:10:412 logger/(4457:4729): Me llego el mensaje: Intento de conexión del cpu a la memoria
+[WARNING] 20:27:31:561 logger/(4457:4528): El cliente se desconecto. Terminando conexion
+[INFO] 20:28:27:598 logger/(4457:4767): Me llego el mensaje: Intento de conexión del kernel a la memoria
+[WARNING] 20:28:51:839 logger/(4457:4767): El cliente se desconecto. Terminando conexion
+[INFO] 20:29:02:082 logger/(4457:4787): Me llego el mensaje: Intento de conexión del kernel a la memoria
+[WARNING] 20:30:03:813 logger/(4457:4729): El cliente se desconecto. Terminando conexion
+[WARNING] 20:30:08:306 logger/(4457:4787): El cliente se desconecto. Terminando conexion
+[INFO] 20:30:18:288 logger/(4457:4856): Me llego el mensaje: Intento de conexión del cpu a la memoria
+[WARNING] 20:30:27:481 logger/(4457:4867): El cliente se desconecto. Terminando conexion
+[WARNING] 20:30:47:908 logger/(4457:4885): El cliente se desconecto. Terminando conexion
+[WARNING] 20:30:52:703 logger/(4457:4856): El cliente se desconecto. Terminando conexion
+[WARNING] 20:30:55:825 logger/(4457:4515): El cliente se desconecto. Terminando conexion
+[INFO] 20:31:09:588 logger/(4902:4902): Servidor listo para recibir al cliente
+[INFO] 20:31:14:874 logger/(4902:4922): Me llego el mensaje: Intento de conexión del filesystem a la memoria
+[INFO] 20:31:17:748 logger/(4902:4940): Me llego el mensaje: Intento de conexión del cpu a la memoria
+[INFO] 20:31:20:726 logger/(4902:4951): Me llego el mensaje: Intento de conexión del kernel a la memoria
+[WARNING] 20:31:54:239 logger/(4902:4940): El cliente se desconecto. Terminando conexion
+[WARNING] 20:31:57:272 logger/(4902:4951): El cliente se desconecto. Terminando conexion
+[INFO] 20:32:03:000 logger/(4902:5006): Me llego el mensaje: Intento de conexión del cpu a la memoria
+[WARNING] 20:32:09:185 logger/(4902:5022): El cliente se desconecto. Terminando conexion
+[WARNING] 20:32:16:641 logger/(4902:5006): El cliente se desconecto. Terminando conexion
+[WARNING] 20:32:19:500 logger/(4902:4922): El cliente se desconecto. Terminando conexion
+[INFO] 20:32:34:828 logger/(5039:5039): Servidor listo para recibir al cliente
+[INFO] 20:32:39:125 logger/(5039:5054): Me llego el mensaje: Intento de conexión del filesystem a la memoria
+[INFO] 20:32:51:885 logger/(5070:5070): Servidor listo para recibir al cliente
+[INFO] 20:33:13:581 logger/(5117:5117): Servidor listo para recibir al cliente
+[INFO] 20:36:23:252 logger/(5292:5292): Servidor listo para recibir al cliente
+[INFO] 20:36:31:704 logger/(5292:5308): Me llego el mensaje: Intento de conexión del filesystem a la memoria
+[WARNING] 20:36:39:368 logger/(5292:5308): El cliente se desconecto. Terminando conexion
+[INFO] 20:36:47:648 logger/(5292:5325): Me llego el mensaje: Intento de conexión del filesystem a la memoria
+[INFO] 20:36:53:509 logger/(5292:5348): Me llego el mensaje: Intento de conexión del cpu a la memoria
+[INFO] 20:36:58:688 logger/(5292:5359): Me llego el mensaje: Intento de conexión del kernel a la memoria
+[WARNING] 20:38:39:327 logger/(5292:5348): El cliente se desconecto. Terminando conexion
+[WARNING] 20:38:43:107 logger/(5292:5359): El cliente se desconecto. Terminando conexion
+[INFO] 20:39:01:208 logger/(5292:5420): Me llego el mensaje: Intento de conexión del cpu a la memoria
+[WARNING] 20:39:09:168 logger/(5292:5431): El cliente se desconecto. Terminando conexion
+[WARNING] 20:39:47:850 logger/(5292:5448): El cliente se desconecto. Terminando conexion
+[WARNING] 20:39:57:519 logger/(5292:5420): El cliente se desconecto. Terminando conexion
+[WARNING] 20:40:00:105 logger/(5292:5325): El cliente se desconecto. Terminando conexion
+[INFO] 20:40:18:090 logger/(5465:5465): Servidor listo para recibir al cliente
+[INFO] 20:40:24:585 logger/(5465:5485): Me llego el mensaje: Intento de conexión del filesystem a la memoria
+[INFO] 20:40:28:874 logger/(5465:5503): Me llego el mensaje: Intento de conexión del cpu a la memoria
+[INFO] 20:40:33:152 logger/(5465:5514): Me llego el mensaje: Intento de conexión del kernel a la memoria
+[WARNING] 20:42:55:856 logger/(5465:5514): El cliente se desconecto. Terminando conexion
+[WARNING] 20:42:59:373 logger/(5465:5503): El cliente se desconecto. Terminando conexion
+[WARNING] 20:43:02:260 logger/(5465:5485): El cliente se desconecto. Terminando conexion
+[INFO] 20:43:17:566 logger/(5564:5564): Servidor listo para recibir al cliente
+[INFO] 20:43:21:243 logger/(5564:5584): Me llego el mensaje: Intento de conexión del filesystem a la memoria
+[INFO] 20:43:34:233 logger/(5564:5618): Me llego el mensaje: Intento de conexión del cpu a la memoria
+[INFO] 20:43:40:151 logger/(5564:5629): Me llego el mensaje: Intento de conexión del kernel a la memoria
+[INFO] 20:49:02:074 logger/(5867:5867): Servidor listo para recibir al cliente
+[INFO] 20:49:24:855 logger/(5917:5917): Servidor listo para recibir al cliente
+[INFO] 20:51:41:284 logger/(6088:6088): Servidor listo para recibir al cliente
+[INFO] 20:51:49:196 logger/(6088:6108): Me llego el mensaje: Intento de conexión del filesystem a la memoria
+[INFO] 21:02:08:793 logger/(6088:6404): Me llego el mensaje: Intento de conexión del cpu a la memoria
+[INFO] 21:02:15:327 logger/(6088:6420): Me llego el mensaje: Intento de conexión del kernel a la memoria
+[INFO] 21:03:26:637 logger/(6445:6445): Servidor listo para recibir al cliente
+[INFO] 21:03:53:614 logger/(6477:6477): Servidor listo para recibir al cliente
+[INFO] 21:05:17:221 logger/(6520:6520): Servidor listo para recibir al cliente
+[INFO] 21:05:28:448 logger/(6520:6540): Me llego el mensaje: Intento de conexión del filesystem a la memoria
+[INFO] 21:05:36:287 logger/(6520:6563): Me llego el mensaje: Intento de conexión del cpu a la memoria
+[INFO] 21:05:40:550 logger/(6520:6575): Me llego el mensaje: Intento de conexión del kernel a la memoria
+[INFO] 21:06:40:784 logger/(6618:6618): Servidor listo para recibir al cliente
+[INFO] 21:06:46:156 logger/(6520:6633): Me llego el mensaje: Intento de conexión del filesystem a la memoria
+[INFO] 21:07:02:608 logger/(6520:6668): Me llego el mensaje: Intento de conexión del cpu a la memoria
+[INFO] 21:07:09:449 logger/(6520:6685): Me llego el mensaje: Intento de conexión del kernel a la memoria
+[INFO] 21:08:20:544 logger/(6698:6698): Servidor listo para recibir al cliente
+[INFO] 21:08:56:832 logger/(6735:6735): Servidor listo para recibir al cliente

@@ -1,25 +1,13 @@
 #include "cpu.h"
 
 int main(void) {
-	pcb contexto;
-
-	while(1)
-	{
-		char *instruccion;
-		instruccion = list_get(contexto->program_counter);
-		switch (instruccion)
-		{
-		//case "set"{
-
-		//}
-		}
-	}
-
 
 	int conexion_memoria = -1;
 
 	logger = iniciar_logger("cpu.log");
 	config = iniciar_config("cpu.config");
+
+	interpretar_instruccion();
 
 	char* ip_memoria = config_get_string_value(config, "IP_MEMORIA");
 	char* puerto_memoria = config_get_string_value(config, "PUERTO_MEMORIA");

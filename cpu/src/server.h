@@ -9,10 +9,12 @@
 #include <commons/log.h>
 #include <commons/config.h>
 #include <commons/collections/list.h>
+#include <commons/collections/queue.h>
 #include <string.h>
 #include <assert.h>
 #include <pthread.h>
 #include "logconfig.h"
+#include "process.h"
 
 int iniciar_servidor(char*);
 int esperar_cliente(int);

@@ -1,5 +1,5 @@
-#ifndef SERVER_H_
-#define SERVER_H_
+#ifndef PROCESS_H_
+#define PROCESS_H_
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -42,16 +42,6 @@ typedef struct {
 		t_list* archivos_abiertos;
 } pcb;
 
-int iniciar_servidor(char*);
-int esperar_cliente(int);
-void recv_handshake(int);
-void atender_cliente(int*);
-void esperar_cliente_hilos(int);
-int recibir_operacion(int);
-void recibir_mensaje(int);
-void* recibir_buffer(int*, int);
-t_list* recibir_paquete(int);
-void liberar_servidor(int);
-void iterator(char*);
 
-#endif /* SERVER_H_ */
+
+#endif /* PROCESS_H_ */

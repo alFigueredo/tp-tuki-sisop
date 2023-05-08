@@ -136,3 +136,56 @@
 [INFO] 06:27:25:192 logger/(11349:11369): F_CLOSE ARCHIVO
 [INFO] 06:27:25:192 logger/(11349:11369): EXIT
 [WARNING] 06:27:25:192 logger/(11349:11369): El cliente se desconecto. Terminando conexion
+[INFO] 20:22:42:007 logger/(4487:4487): ¡Conectado al servidor!
+[INFO] 20:22:42:069 logger/(4487:4487): ¡Conectado al servidor!
+[ERROR] 20:22:42:069 logger/(4487:4487): ¡No se pudo conectar al servidor!
+[INFO] 20:23:02:334 logger/(4522:4522): ¡Conectado al servidor!
+[INFO] 20:23:02:336 logger/(4522:4522): ¡Conectado al servidor!
+[INFO] 20:23:02:336 logger/(4522:4522): ¡Conectado al servidor!
+[INFO] 20:23:02:337 logger/(4522:4522): Servidor listo para recibir al cliente
+[INFO] 20:28:27:492 logger/(4762:4762): ¡Conectado al servidor!
+[INFO] 20:28:27:597 logger/(4762:4762): ¡Conectado al servidor!
+[INFO] 20:28:27:597 logger/(4762:4762): ¡Conectado al servidor!
+[INFO] 20:28:27:598 logger/(4762:4762): Servidor listo para recibir al cliente
+[INFO] 20:29:02:080 logger/(4782:4782): ¡Conectado al servidor!
+[INFO] 20:29:02:081 logger/(4782:4782): ¡Conectado al servidor!
+[INFO] 20:29:02:081 logger/(4782:4782): ¡Conectado al servidor!
+[INFO] 20:29:02:082 logger/(4782:4782): Servidor listo para recibir al cliente
+[INFO] 20:30:24:576 logger/(4862:4862): ¡Conectado al servidor!
+[ERROR] 20:30:24:581 logger/(4862:4862): ¡No se pudo conectar al servidor!
+[INFO] 20:30:46:553 logger/(4880:4880): ¡Conectado al servidor!
+[ERROR] 20:30:46:577 logger/(4880:4880): ¡No se pudo conectar al servidor!
+[INFO] 20:31:20:712 logger/(4946:4946): ¡Conectado al servidor!
+[INFO] 20:31:20:717 logger/(4946:4946): ¡Conectado al servidor!
+[INFO] 20:31:20:721 logger/(4946:4946): ¡Conectado al servidor!
+[INFO] 20:31:20:721 logger/(4946:4946): Servidor listo para recibir al cliente
+[INFO] 20:32:08:945 logger/(5017:5017): ¡Conectado al servidor!
+[ERROR] 20:32:08:949 logger/(5017:5017): ¡No se pudo conectar al servidor!
+[INFO] 20:36:58:670 logger/(5354:5354): ¡Conectado al servidor!
+[INFO] 20:36:58:688 logger/(5354:5354): ¡Conectado al servidor!
+[INFO] 20:36:58:688 logger/(5354:5354): ¡Conectado al servidor!
+[INFO] 20:36:58:688 logger/(5354:5354): Servidor listo para recibir al cliente
+[INFO] 20:39:06:285 logger/(5426:5426): ¡Conectado al servidor!
+[ERROR] 20:39:06:293 logger/(5426:5426): ¡No se pudo conectar al servidor!
+[INFO] 20:39:46:768 logger/(5443:5443): ¡Conectado al servidor!
+[ERROR] 20:39:46:775 logger/(5443:5443): ¡No se pudo conectar al servidor!
+[INFO] 20:40:33:120 logger/(5509:5509): ¡Conectado al servidor!
+[INFO] 20:40:33:146 logger/(5509:5509): ¡Conectado al servidor!
+[INFO] 20:40:33:147 logger/(5509:5509): ¡Conectado al servidor!
+[INFO] 20:40:33:147 logger/(5509:5509): Servidor listo para recibir al cliente
+[INFO] 20:43:40:137 logger/(5624:5624): ¡Conectado al servidor!
+[INFO] 20:43:40:149 logger/(5624:5624): ¡Conectado al servidor!
+[INFO] 20:43:40:150 logger/(5624:5624): ¡Conectado al servidor!
+[INFO] 20:43:40:151 logger/(5624:5624): Servidor listo para recibir al cliente
+[INFO] 21:02:15:299 logger/(6415:6415): ¡Conectado al servidor!
+[INFO] 21:02:15:317 logger/(6415:6415): ¡Conectado al servidor!
+[INFO] 21:02:15:318 logger/(6415:6415): ¡Conectado al servidor!
+[INFO] 21:02:15:318 logger/(6415:6415): Servidor listo para recibir al cliente
+[INFO] 21:05:40:525 logger/(6569:6569): ¡Conectado al servidor!
+[INFO] 21:05:40:534 logger/(6569:6569): ¡Conectado al servidor!
+[INFO] 21:05:40:536 logger/(6569:6569): ¡Conectado al servidor!
+[INFO] 21:05:40:536 logger/(6569:6569): Servidor listo para recibir al cliente
+[INFO] 21:07:09:445 logger/(6680:6680): ¡Conectado al servidor!
+[INFO] 21:07:09:448 logger/(6680:6680): ¡Conectado al servidor!
+[INFO] 21:07:09:448 logger/(6680:6680): ¡Conectado al servidor!
+[INFO] 21:07:09:448 logger/(6680:6680): Servidor listo para recibir al cliente

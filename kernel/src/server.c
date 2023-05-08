@@ -63,6 +63,9 @@ void recv_handshake(int socket_cliente)
 void atender_cliente(int* socket_cliente){
 	t_list *lista;
 	pcb proceso;
+	t_queue* new = queue_create();
+	t_queue* ready = queue_create();
+	t_queue* exit = queue_create();
 	while (1) {
 			int cod_op = recibir_operacion(*socket_cliente);
 			switch (cod_op) {
@@ -81,11 +84,28 @@ void atender_cliente(int* socket_cliente){
 				log_warning(logger,"Operacion desconocida. No quieras meter la pata");
 				break;
 			}
-			(proceso.pid)=process_getpid();
+			proceso.pid=process_getpid();
 			proceso.instrucciones=lista;
 			proceso.program_counter=0;
-			//proceso.estimado_proxRafaga= config_get_int_value(config,"ESTIMACION_INICIAL");
+			//proceso.estimado_proxRafaga= config_get_in t_value(config,"ESTIMACION_INICIAL");
 			log_info(logger, "Se crea el proceso %d en NEW",proceso.pid);
+			queue_push(new, &proceso);
+			queue_push(ready, queue_pop(new));
+
+
+
+			/*
+			t_paquete* paquete = crear_paquete();
+			agregar_a_paquete(paquete, pcb, strlen(pcb)+1);
+			enviar_paquete(paquete, socket_cliente);
+			eliminar_paquete(paquete);
+			*/
+
+			queue_push(exit, queue_pop(ready));
+			queue_pop(exit);
+			queue_destroy(new);
+			queue_destroy(ready);
+			queue_destroy(exit);
 		}
 }
 

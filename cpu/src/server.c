@@ -62,25 +62,26 @@ void recv_handshake(int socket_cliente)
 
 void atender_cliente(int* socket_cliente){
 	t_list *lista;
+
 	while (1) {
-			int cod_op = recibir_operacion(*socket_cliente);
-			switch (cod_op) {
-			case MENSAJE:
-				recibir_mensaje(*socket_cliente);
-				break;
-			case PAQUETE:
-				lista = recibir_paquete(*socket_cliente);
-				log_info(logger, "Me llegaron los siguientes valores:");
-				list_iterate(lista, (void*) iterator);
-				break;
-			case -1:
-				log_warning(logger, "El cliente se desconecto. Terminando conexion");
-				return;
-			default:
-				log_warning(logger,"Operacion desconocida. No quieras meter la pata");
-				break;
-			}
+		int cod_op = recibir_operacion(*socket_cliente);
+		switch (cod_op) {
+		case MENSAJE:
+			recibir_mensaje(*socket_cliente);
+			break;
+		case PAQUETE:
+			lista = recibir_paquete(*socket_cliente);
+			log_info(logger, "Me llegaron los siguientes valores:");
+			list_iterate(lista, (void*) iterator);
+			break;
+		case -1:
+			log_warning(logger, "El cliente se desconecto. Terminando conexion");
+			return;
+		default:
+			log_warning(logger,"Operacion desconocida. No quieras meter la pata");
+			break;
 		}
+	}
 }
 
 void esperar_cliente_hilos(int socket_servidor){
