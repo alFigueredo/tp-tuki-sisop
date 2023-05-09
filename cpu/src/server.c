@@ -76,9 +76,15 @@ void atender_cliente(int* socket_cliente){
 			break;
 		case EXEC:
 			lista = recibir_paquete(*socket_cliente);
-			log_info(logger, "EXEC");
 			proceso = recibir_pcb_de_kernel(lista);
-			interpretar_instruccion(proceso);
+			switch ((int)interpretar_instrucciones(proceso)) {
+				case YIELD:
+					enviar_pcb_a_kernel(*socket_cliente, proceso, READY);
+					break;
+				case EXIT:
+					enviar_pcb_a_kernel(*socket_cliente, proceso, FINISHED);
+					break;
+			}
 			break;
 		case -1:
 			log_warning(logger, "El cliente se desconecto. Terminando conexion");
@@ -155,6 +161,49 @@ t_list* recibir_paquete(int socket_cliente)
 	}
 	free(buffer);
 	return valores;
+}
+
+void enviar_pcb_a_kernel(int conexion_kernel, pcb* proceso, op_code estado) {
+	t_paquete* paquete = crear_paquete(estado);
+	agregar_a_paquete(paquete, &(proceso->pid), sizeof(unsigned int));
+	for (int i=0; i<list_size(proceso->instrucciones); i++) {
+		char* instruccion = list_get(proceso->instrucciones, i);
+		agregar_a_paquete(paquete, instruccion, strlen(instruccion)+1);
+	}
+	agregar_a_paquete(paquete, &(proceso->program_counter), sizeof(int));
+	/*
+	t_dictionary* registros = diccionario_registros(&proceso->registros);
+	t_list* arrRegistros = dictionary_elements(registros);
+	log_debug(logger, "%s %s %s %s", (char*)list_get(arrRegistros, 0), (char*)list_get(arrRegistros, 1), (char*)list_get(arrRegistros, 2), (char*)list_get(arrRegistros, 3));
+	for (int i=0; i<12; i++) {
+		switch (i/4) {
+			case 0:
+				agregar_a_paquete(paquete, list_get(arrRegistros, i), 4);
+				break;
+			case 1:
+				agregar_a_paquete(paquete, list_get(arrRegistros, i), 8);
+				break;
+			case 2:
+				agregar_a_paquete(paquete, list_get(arrRegistros, i), 16);
+				break;
+		}
+	}
+	dictionary_destroy(registros);
+	*/
+	agregar_a_paquete(paquete, proceso->registros.AX, 4);
+	agregar_a_paquete(paquete, proceso->registros.BX, 4);
+	agregar_a_paquete(paquete, proceso->registros.CX, 4);
+	agregar_a_paquete(paquete, proceso->registros.DX, 4);
+	agregar_a_paquete(paquete, proceso->registros.EAX, 8);
+	agregar_a_paquete(paquete, proceso->registros.EBX, 8);
+	agregar_a_paquete(paquete, proceso->registros.ECX, 8);
+	agregar_a_paquete(paquete, proceso->registros.EDX, 8);
+	agregar_a_paquete(paquete, proceso->registros.RAX, 16);
+	agregar_a_paquete(paquete, proceso->registros.RBX, 16);
+	agregar_a_paquete(paquete, proceso->registros.RCX, 16);
+	agregar_a_paquete(paquete, proceso->registros.RDX, 16);
+	enviar_paquete(paquete, conexion_kernel);
+	eliminar_paquete(paquete);
 }
 
 void liberar_servidor(int socket_cliente)

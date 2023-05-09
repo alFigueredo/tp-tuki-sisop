@@ -18,6 +18,8 @@
 
 extern t_queue* qnew;
 extern t_queue* qready;
+extern t_queue* qexec;
+extern t_queue* qblock;
 extern t_queue* qexit;
 
 typedef struct{
@@ -46,6 +48,7 @@ typedef struct {
 		t_list* archivos_abiertos;
 } pcb;
 
+t_dictionary* diccionario_registros(registros_cpu*);
 pcb* generar_proceso(t_list*);
 
 #endif /* PROCESS_H_ */

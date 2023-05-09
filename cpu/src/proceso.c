@@ -2,9 +2,39 @@
 
 pcb* recibir_pcb_de_kernel(t_list* lista) {
 	pcb* proceso = malloc(sizeof(pcb));
-	memcpy(&(proceso->pid), list_get(lista, 0), sizeof(unsigned int));
-	proceso->instrucciones = list_slice(lista, 1, list_size(lista)-2);
-	memcpy(&(proceso->program_counter), list_get(lista, list_size(lista)-1), sizeof(int));
+	memcpy(&(proceso->pid), list_remove(lista, 0), sizeof(unsigned int));
+	proceso->instrucciones = list_take_and_remove(lista, list_size(lista)-13);
+	memcpy(&(proceso->program_counter), list_remove(lista, 0), sizeof(int));
+	/*
+	t_dictionary* registros = diccionario_registros(&proceso->registros);
+	t_list* arrRegistros = dictionary_elements(registros);
+	for (int i=0; i<12; i++) {
+		switch (i/4) {
+			case 0:
+				memcpy(list_get(arrRegistros,i), list_remove(lista, 0), 4);
+				break;
+			case 1:
+				memcpy(list_get(arrRegistros,i), list_remove(lista, 0), 8);
+				break;
+			case 2:
+				memcpy(list_get(arrRegistros,i), list_remove(lista, 0), 16);
+				break;
+		}
+	}
+	dictionary_destroy(registros);
+	*/
+	memcpy(proceso->registros.AX, list_remove(lista, 0), 4);
+	memcpy(proceso->registros.BX, list_remove(lista, 0), 4);
+	memcpy(proceso->registros.CX, list_remove(lista, 0), 4);
+	memcpy(proceso->registros.DX, list_remove(lista, 0), 4);
+	memcpy(proceso->registros.EAX, list_remove(lista, 0), 8);
+	memcpy(proceso->registros.EBX, list_remove(lista, 0), 8);
+	memcpy(proceso->registros.ECX, list_remove(lista, 0), 8);
+	memcpy(proceso->registros.EDX, list_remove(lista, 0), 8);
+	memcpy(proceso->registros.RAX, list_remove(lista, 0), 16);
+	memcpy(proceso->registros.RBX, list_remove(lista, 0), 16);
+	memcpy(proceso->registros.RCX, list_remove(lista, 0), 16);
+	memcpy(proceso->registros.RDX, list_remove(lista, 0), 16);
 	return proceso;
 }
 
@@ -58,14 +88,15 @@ void instruccion_exit(t_dictionary* registros, char* parsed) {
 	log_info(logger, "Instrucción EXIT.");
 }
 
-void interpretar_instruccion(pcb* proceso) {
+enum_instrucciones interpretar_instrucciones(pcb* proceso) {
 	t_dictionary* instrucciones = diccionario_instrucciones();
 	t_dictionary* registros = diccionario_registros(&proceso->registros);
 	while (proceso->program_counter<list_size(proceso->instrucciones)) {
-		char* get = list_get(proceso->instrucciones, proceso->program_counter);
 		char instruccion[64];
+		char* get = list_get(proceso->instrucciones, proceso->program_counter);
 		char* parsed;
 		memcpy(instruccion, get, strlen(get));
+		instruccion[strlen(get)] = '\0';
 		parsed = strtok(instruccion, " ");
 		switch ((int)(intptr_t)dictionary_get(instrucciones, parsed)) {
 			case SET:
@@ -74,16 +105,23 @@ void interpretar_instruccion(pcb* proceso) {
 			case YIELD:
 				// NO IMPLEMENTADA
 				instruccion_yield(registros, parsed);
-				break;
+				log_debug(logger, "%c%c%c%c", proceso->registros.AX[0], proceso->registros.AX[1], proceso->registros.AX[2], proceso->registros.AX[3]);
+				log_debug(logger, "%c%c%c%c%c%c%c%c", proceso->registros.ECX[0], proceso->registros.ECX[1], proceso->registros.ECX[2], proceso->registros.ECX[3], proceso->registros.ECX[4], proceso->registros.ECX[5], proceso->registros.ECX[6], proceso->registros.ECX[7]);
+				log_debug(logger, "%c%c%c%c", proceso->registros.BX[0], proceso->registros.BX[1], proceso->registros.BX[2], proceso->registros.BX[3]);
+				proceso->program_counter++;
+				return YIELD;
 			case EXIT:
 				// NO IMPLEMENTADA
 				instruccion_exit(registros, parsed);
-				break;
+				log_debug(logger, "E%c%c%c%c", proceso->registros.AX[0], proceso->registros.AX[1], proceso->registros.AX[2], proceso->registros.AX[3]);
+				log_debug(logger, "E%c%c%c%c%c%c%c%c", proceso->registros.ECX[0], proceso->registros.ECX[1], proceso->registros.ECX[2], proceso->registros.ECX[3], proceso->registros.ECX[4], proceso->registros.ECX[5], proceso->registros.ECX[6], proceso->registros.ECX[7]);
+				log_debug(logger, "E%c%c%c%c", proceso->registros.BX[0], proceso->registros.BX[1], proceso->registros.BX[2], proceso->registros.BX[3]);
+				proceso->program_counter++;
+				return EXIT;
 		}
 		proceso->program_counter++;
 	}
-	log_debug(logger, "%c%c%c%c", proceso->registros.AX[0], proceso->registros.AX[1], proceso->registros.AX[2], proceso->registros.AX[3]);
-	log_debug(logger, "%c%c%c%c", proceso->registros.ECX[0], proceso->registros.ECX[2], proceso->registros.ECX[4], proceso->registros.ECX[5]);
 	dictionary_destroy(instrucciones);
 	dictionary_destroy(registros);
+	return EXIT;
 }

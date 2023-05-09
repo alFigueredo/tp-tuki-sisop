@@ -57,6 +57,6 @@ t_dictionary* diccionario_instrucciones(void);
 t_dictionary* diccionario_registros(registros_cpu*);
 void instruccion_set(t_dictionary*, char*);
 
-void interpretar_instruccion(pcb*);
+enum_instrucciones interpretar_instrucciones(pcb*);
 
 #endif /* PROCESO_H_ */

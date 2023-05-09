@@ -79,8 +79,10 @@ void atender_cliente(int* socket_cliente){
 				proceso = generar_proceso(lista);
 				queue_push(qnew, proceso);
 				queue_push(qready, queue_pop(qnew));
-				enviar_pcb_a_cpu(conexion_cpu, queue_peek(qready));
-				list_iterate(lista, (void*) iterator);
+				log_info(logger, "El proceso %d pasa a READY", proceso->pid);
+				queue_push(qexec, queue_pop(qready));
+				log_info(logger, "El proceso %d pasa a EXEC", proceso->pid);
+				enviar_pcb_a_cpu(conexion_cpu, queue_peek(qexec));
 				break;
 			case -1:
 				log_warning(logger, "El cliente se desconecto. Terminando conexion");

@@ -7,8 +7,8 @@ int main(void) {
 	logger = iniciar_logger("cpu.log", "CPU");
 	config = iniciar_config("cpu.config");
 
-	char* ip_memoria = config_get_string_value(config, "IP_MEMORIA");
-	char* puerto_memoria = config_get_string_value(config, "PUERTO_MEMORIA");
+	// char* ip_memoria = config_get_string_value(config, "IP_MEMORIA");
+	// char* puerto_memoria = config_get_string_value(config, "PUERTO_MEMORIA");
 	char* puerto_escucha = config_get_string_value(config, "PUERTO_ESCUCHA");
 
 	// Creamos una conexión hacia el servidor

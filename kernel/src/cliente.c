@@ -56,6 +56,58 @@ void send_handshake(int socket_cliente)
 	}
 }
 
+void atender_servidor(int* socket_servidor){
+	t_list *lista;
+	pcb* proceso;
+	while (1) {
+		int cod_op = recibir_operacion(*socket_servidor);
+		switch (cod_op) {
+			case MENSAJE:
+				recibir_mensaje(*socket_servidor);
+				break;
+			case PAQUETE:
+				lista = recibir_paquete(*socket_servidor);
+				log_info(logger, "Me llegaron los siguientes valores:");
+				list_iterate(lista, (void*) iterator);
+				break;
+			case READY:
+				lista = recibir_paquete(*socket_servidor);
+				proceso = recibir_pcb_de_cpu(lista);
+				queue_pop(qexec);
+				queue_push(qready, proceso);
+				log_info(logger, "El proceso %d pasa a READY", proceso->pid);
+				queue_push(qexec, queue_pop(qready));
+				log_info(logger, "El proceso %d pasa a EXEC", proceso->pid);
+				enviar_pcb_a_cpu(conexion_cpu, queue_peek(qexec));
+				break;
+			case FINISHED:
+				lista = recibir_paquete(*socket_servidor);
+				proceso = recibir_pcb_de_cpu(lista);
+				queue_pop(qexec);
+				queue_push(qexit, proceso);
+				log_info(logger, "El proceso %d pasa a EXIT", proceso->pid);
+				break;
+			case -1:
+				log_warning(logger, "El servidor se desconecto. Terminando conexion");
+				return;
+			default:
+				log_warning(logger,"Operacion desconocida. No quieras meter la pata");
+				break;
+			}
+	}
+}
+
+void esperar_servidor_hilos(int conexion){
+	pthread_t thread;
+	int* socket_servidor = malloc(sizeof(int));
+	*socket_servidor = conexion;
+	pthread_create(&thread,
+	               NULL,
+	               (void*) atender_servidor,
+	               socket_servidor);
+	pthread_detach(thread);
+}
+
 void enviar_mensaje(char* mensaje, int socket_cliente)
 {
 	t_paquete* paquete = malloc(sizeof(t_paquete));
@@ -127,8 +179,78 @@ void enviar_pcb_a_cpu(int conexion_cpu, pcb* proceso) {
 		agregar_a_paquete(paquete, instruccion, strlen(instruccion)+1);
 	}
 	agregar_a_paquete(paquete, &(proceso->program_counter), sizeof(int));
+	/*
+	t_dictionary* registros = diccionario_registros(&proceso->registros);
+	t_list* arrRegistros = dictionary_elements(registros);
+	log_trace(logger, "TRACE");
+	list_iterate(arrRegistros, (void*) iterator);
+	for (int i=0; i<12; i++) {
+		switch (i/4) {
+			case 0:
+				agregar_a_paquete(paquete, list_get(arrRegistros, i), 4);
+				break;
+			case 1:
+				agregar_a_paquete(paquete, list_get(arrRegistros, i), 8);
+				break;
+			case 2:
+				agregar_a_paquete(paquete, list_get(arrRegistros, i), 16);
+				break;
+		}
+	}
+	dictionary_destroy(registros);
+	*/
+	agregar_a_paquete(paquete, proceso->registros.AX, 4);
+	agregar_a_paquete(paquete, proceso->registros.BX, 4);
+	agregar_a_paquete(paquete, proceso->registros.CX, 4);
+	agregar_a_paquete(paquete, proceso->registros.DX, 4);
+	agregar_a_paquete(paquete, proceso->registros.EAX, 8);
+	agregar_a_paquete(paquete, proceso->registros.EBX, 8);
+	agregar_a_paquete(paquete, proceso->registros.ECX, 8);
+	agregar_a_paquete(paquete, proceso->registros.EDX, 8);
+	agregar_a_paquete(paquete, proceso->registros.RAX, 16);
+	agregar_a_paquete(paquete, proceso->registros.RBX, 16);
+	agregar_a_paquete(paquete, proceso->registros.RCX, 16);
+	agregar_a_paquete(paquete, proceso->registros.RDX, 16);
 	enviar_paquete(paquete, conexion_cpu);
 	eliminar_paquete(paquete);
+}
+
+pcb* recibir_pcb_de_cpu(t_list* lista) {
+	pcb* proceso = malloc(sizeof(pcb));
+	memcpy(&(proceso->pid), list_remove(lista, 0), sizeof(unsigned int));
+	proceso->instrucciones = list_take_and_remove(lista, list_size(lista)-13);
+	memcpy(&(proceso->program_counter), list_remove(lista, 0), sizeof(int));
+	/*
+	t_dictionary* registros = diccionario_registros(&proceso->registros);
+	t_list* arrRegistros = dictionary_elements(registros);
+	for (int i=0; i<12; i++) {
+		switch (i/4) {
+			case 0:
+				memcpy(list_get(arrRegistros,i), list_remove(lista, 0), 4);
+				break;
+			case 1:
+				memcpy(list_get(arrRegistros,i), list_remove(lista, 0), 8);
+				break;
+			case 2:
+				memcpy(list_get(arrRegistros,i), list_remove(lista, 0), 16);
+				break;
+		}
+	}
+	dictionary_destroy(registros);
+	*/
+	memcpy(proceso->registros.AX, list_remove(lista, 0), 4);
+	memcpy(proceso->registros.BX, list_remove(lista, 0), 4);
+	memcpy(proceso->registros.CX, list_remove(lista, 0), 4);
+	memcpy(proceso->registros.DX, list_remove(lista, 0), 4);
+	memcpy(proceso->registros.EAX, list_remove(lista, 0), 8);
+	memcpy(proceso->registros.EBX, list_remove(lista, 0), 8);
+	memcpy(proceso->registros.ECX, list_remove(lista, 0), 8);
+	memcpy(proceso->registros.EDX, list_remove(lista, 0), 8);
+	memcpy(proceso->registros.RAX, list_remove(lista, 0), 16);
+	memcpy(proceso->registros.RBX, list_remove(lista, 0), 16);
+	memcpy(proceso->registros.RCX, list_remove(lista, 0), 16);
+	memcpy(proceso->registros.RDX, list_remove(lista, 0), 16);
+	return proceso;
 }
 
 void liberar_conexion(int socket_cliente)

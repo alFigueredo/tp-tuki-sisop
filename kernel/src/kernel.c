@@ -9,15 +9,17 @@ int main(void) {
 	config = iniciar_config("kernel.config");
 	qnew = queue_create();
 	qready = queue_create();
+	qexec = queue_create();
+	qblock = queue_create();
 	qexit = queue_create();
 
 
-	char* ip_memoria = config_get_string_value(config, "IP_MEMORIA");
-	char* puerto_memoria = config_get_string_value(config, "PUERTO_MEMORIA");
+	// char* ip_memoria = config_get_string_value(config, "IP_MEMORIA");
+	// char* puerto_memoria = config_get_string_value(config, "PUERTO_MEMORIA");
 	char* ip_cpu = config_get_string_value(config, "IP_CPU");
 	char* puerto_cpu = config_get_string_value(config, "PUERTO_CPU");
-	char* ip_filesystem = config_get_string_value(config, "IP_FILESYSTEM");
-	char* puerto_filesystem = config_get_string_value(config, "PUERTO_FILESYSTEM");
+	// char* ip_filesystem = config_get_string_value(config, "IP_FILESYSTEM");
+	// char* puerto_filesystem = config_get_string_value(config, "PUERTO_FILESYSTEM");
 	char* puerto_escucha = config_get_string_value(config, "PUERTO_ESCUCHA");
 
 	// Creamos una conexión hacia el servidor
@@ -27,6 +29,7 @@ int main(void) {
 	*/
 	conexion_cpu = crear_conexion(ip_cpu, puerto_cpu);
 	enviar_mensaje("Intento de conexión del kernel al cpu", conexion_cpu);
+	esperar_servidor_hilos(conexion_cpu);
 	/*
 	conexion_filesystem = crear_conexion(ip_filesystem, puerto_filesystem);
 	enviar_mensaje("Intento de conexión del kernel al filesystem", conexion_filesystem);

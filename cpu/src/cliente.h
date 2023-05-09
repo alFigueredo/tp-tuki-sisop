@@ -11,6 +11,7 @@
 #include <commons/log.h>
 #include <commons/config.h>
 #include "logconfig.h"
+#include "proceso.h"
 
 typedef struct
 {
@@ -29,7 +30,7 @@ int crear_conexion(char*, char*);
 void send_handshake(int);
 void enviar_mensaje(char*, int);
 void crear_buffer(t_paquete*);
-t_paquete* crear_paquete(void);
+t_paquete* crear_paquete(op_code);
 void agregar_a_paquete(t_paquete*, void*, int);
 void enviar_paquete(t_paquete*, int);
 void eliminar_paquete(t_paquete*);
