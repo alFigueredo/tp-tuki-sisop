@@ -5,12 +5,16 @@
 #include <stdlib.h>
 #include <signal.h>
 #include <unistd.h>
+#include <stdint.h>
 #include <sys/socket.h>
 #include <netdb.h>
 #include <string.h>
 #include <commons/log.h>
 #include <commons/config.h>
 #include "logconfig.h"
+#include "proceso.h"
+
+extern int conexion_cpu;
 
 typedef struct
 {
@@ -29,10 +33,11 @@ int crear_conexion(char*, char*);
 void send_handshake(int);
 void enviar_mensaje(char*, int);
 void crear_buffer(t_paquete*);
-t_paquete* crear_paquete(void);
+t_paquete* crear_paquete(op_code);
 void agregar_a_paquete(t_paquete*, void*, int);
 void enviar_paquete(t_paquete*, int);
 void eliminar_paquete(t_paquete*);
+void enviar_pcb_a_cpu(int, pcb*);
 void liberar_conexion(int);
 
 #endif /* CLIENTE_H_ */

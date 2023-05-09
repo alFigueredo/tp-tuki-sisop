@@ -9,9 +9,6 @@
 #include <readline/readline.h>
 #include "cliente.h"
 
-
-t_log* iniciar_logger(char*);
-t_config* iniciar_config(char*);
 void leer_consola(t_log*);
 void paquete(int);
 void paquete_texto(int, char*);

@@ -1,5 +1,7 @@
 #include "cliente.h"
 
+int conexion_cpu;
+
 void* serializar_paquete(t_paquete* paquete, int bytes)
 {
 	void * magic = malloc(bytes);
@@ -82,10 +84,10 @@ void crear_buffer(t_paquete* paquete)
 	paquete->buffer->stream = NULL;
 }
 
-t_paquete* crear_paquete(void)
+t_paquete* crear_paquete(op_code codigo)
 {
 	t_paquete* paquete = malloc(sizeof(t_paquete));
-	paquete->codigo_operacion = PAQUETE;
+	paquete->codigo_operacion = codigo;
 	crear_buffer(paquete);
 	return paquete;
 }
@@ -115,6 +117,18 @@ void eliminar_paquete(t_paquete* paquete)
 	free(paquete->buffer->stream);
 	free(paquete->buffer);
 	free(paquete);
+}
+
+void enviar_pcb_a_cpu(int conexion_cpu, pcb* proceso) {
+	t_paquete* paquete = crear_paquete(EXEC);
+	agregar_a_paquete(paquete, &(proceso->pid), sizeof(unsigned int));
+	for (int i=0; i<list_size(proceso->instrucciones); i++) {
+		char* instruccion = list_get(proceso->instrucciones, i);
+		agregar_a_paquete(paquete, instruccion, strlen(instruccion)+1);
+	}
+	agregar_a_paquete(paquete, &(proceso->program_counter), sizeof(int));
+	enviar_paquete(paquete, conexion_cpu);
+	eliminar_paquete(paquete);
 }
 
 void liberar_conexion(int socket_cliente)

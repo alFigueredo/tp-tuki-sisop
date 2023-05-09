@@ -1,4 +1,12 @@
-#include "process.h"
+#include "proceso.h"
+
+pcb* recibir_pcb_de_kernel(t_list* lista) {
+	pcb* proceso = malloc(sizeof(pcb));
+	memcpy(&(proceso->pid), list_get(lista, 0), sizeof(unsigned int));
+	proceso->instrucciones = list_slice(lista, 1, list_size(lista)-2);
+	memcpy(&(proceso->program_counter), list_get(lista, list_size(lista)-1), sizeof(int));
+	return proceso;
+}
 
 void delay(int milliseconds)
 {
@@ -51,21 +59,18 @@ void instruccion_exit(t_dictionary* registros, char* parsed) {
 	log_info(logger, "Instrucción EXIT.");
 }
 
-void interpretar_instruccion(void) {
-	pcb proceso;
+void interpretar_instruccion(pcb* proceso) {
 	t_dictionary* instrucciones = diccionario_instrucciones();
-	t_dictionary* registros = diccionario_registros(&proceso.registros);
-	// for(int i=0, i<list_size(proceso->instrucciones), i++)
-	//while(1)
-	//	{
-		char instruccion[64] = "SET CX HOLA";
+	t_dictionary* registros = diccionario_registros(&proceso->registros);
+	while (proceso->program_counter<list_size(proceso->instrucciones)) {
+		char* get = list_get(proceso->instrucciones, proceso->program_counter);
+		char instruccion[64];
 		char* parsed;
-		// instruccion = list_get(proceso->instrucciones, proceso->program_counter);
+		memcpy(instruccion, get, strlen(get));
 		parsed = strtok(instruccion, " ");
 		switch ((int)(intptr_t)dictionary_get(instrucciones, parsed)) {
 			case SET:
 				instruccion_set(registros, parsed);
-				// log_info(logger, "%c%c%c%c", proceso.registros.ECX[0], proceso.registros.ECX[2], proceso.registros.ECX[4], proceso.registros.ECX[5]);
 				break;
 			case YIELD:
 				// NO IMPLEMENTADA
@@ -76,8 +81,10 @@ void interpretar_instruccion(void) {
 				instruccion_exit(registros, parsed);
 				break;
 		}
-			//proceso->program_counter++;
-	//}
+		proceso->program_counter++;
+	}
+	log_debug(logger, "%c%c%c%c", proceso->registros.AX[0], proceso->registros.AX[1], proceso->registros.AX[2], proceso->registros.AX[3]);
+	log_debug(logger, "%c%c%c%c", proceso->registros.ECX[0], proceso->registros.ECX[2], proceso->registros.ECX[4], proceso->registros.ECX[5]);
 	dictionary_destroy(instrucciones);
 	dictionary_destroy(registros);
 }

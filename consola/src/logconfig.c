@@ -3,10 +3,10 @@
 t_log* logger;
 t_config* config;
 
-t_log* iniciar_logger(char* log_file)
+t_log* iniciar_logger(char* log_file, char* process_name)
 {
 	t_log* nuevo_logger;
-	if ((nuevo_logger = log_create(log_file, "logger", 1, LOG_LEVEL_DEBUG)) == NULL) {
+	if ((nuevo_logger = log_create(log_file, process_name, 1, LOG_LEVEL_TRACE)) == NULL) {
 	    error_show("¡No se pudo crear el logger!");
 	    exit(1);
 	}

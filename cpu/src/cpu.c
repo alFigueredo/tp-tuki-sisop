@@ -4,20 +4,18 @@ int main(void) {
 
 	int conexion_memoria = -1;
 
-	logger = iniciar_logger("cpu.log");
+	logger = iniciar_logger("cpu.log", "CPU");
 	config = iniciar_config("cpu.config");
-
-	interpretar_instruccion();
 
 	char* ip_memoria = config_get_string_value(config, "IP_MEMORIA");
 	char* puerto_memoria = config_get_string_value(config, "PUERTO_MEMORIA");
 	char* puerto_escucha = config_get_string_value(config, "PUERTO_ESCUCHA");
 
 	// Creamos una conexión hacia el servidor
+	/*
 	conexion_memoria = crear_conexion(ip_memoria, puerto_memoria);
-
 	enviar_mensaje("Intento de conexión del cpu a la memoria", conexion_memoria);
-
+	*/
 	int socket_servidor = -1;
 	socket_servidor = iniciar_servidor(puerto_escucha);
 	esperar_cliente_hilos(socket_servidor);

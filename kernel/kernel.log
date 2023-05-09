@@ -189,3 +189,962 @@
 [INFO] 21:07:09:448 logger/(6680:6680): ¡Conectado al servidor!
 [INFO] 21:07:09:448 logger/(6680:6680): ¡Conectado al servidor!
 [INFO] 21:07:09:448 logger/(6680:6680): Servidor listo para recibir al cliente
+[INFO] 19:34:49:557 Kernel/(6307:6307): Servidor listo para recibir al cliente
+[INFO] 19:35:06:930 Kernel/(6307:6327): Me llegaron los siguientes valores:
+[INFO] 19:35:06:932 Kernel/(6307:6327): SET AX HOLA
+[INFO] 19:35:06:933 Kernel/(6307:6327): MOV_OUT 120 AX
+[INFO] 19:35:06:934 Kernel/(6307:6327): WAIT DISCO
+[INFO] 19:35:06:934 Kernel/(6307:6327): I/O 10
+[INFO] 19:35:06:934 Kernel/(6307:6327): SIGNAL DISCO
+[INFO] 19:35:06:934 Kernel/(6307:6327): MOV_IN BX 120
+[INFO] 19:35:06:934 Kernel/(6307:6327): F_OPEN ARCHIVO
+[INFO] 19:35:06:934 Kernel/(6307:6327): YIELD
+[INFO] 19:35:06:934 Kernel/(6307:6327): F_TRUNCATE ARCHIVO 64
+[INFO] 19:35:06:934 Kernel/(6307:6327): F_SEEK ARCHIVO 10
+[INFO] 19:35:06:934 Kernel/(6307:6327): CREATE_SEGMENT 1 128
+[INFO] 19:35:06:934 Kernel/(6307:6327): F_WRITE ARCHIVO 4 4
+[INFO] 19:35:06:934 Kernel/(6307:6327): F_READ ARCHIVO 16 4
+[INFO] 19:35:06:934 Kernel/(6307:6327): DELETE_SEGMENT 1
+[INFO] 19:35:06:934 Kernel/(6307:6327): F_CLOSE ARCHIVO
+[INFO] 19:35:06:934 Kernel/(6307:6327): EXIT
+[WARNING] 19:35:06:934 Kernel/(6307:6327): El cliente se desconecto. Terminando conexion
+[INFO] 20:18:05:094 Kernel/(8464:8464): ¡Conectado al servidor!
+[INFO] 20:18:05:129 Kernel/(8464:8464): Servidor listo para recibir al cliente
+[INFO] 20:18:21:252 Kernel/(8464:8517): Me llegaron los siguientes valores:
+[INFO] 20:18:21:252 Kernel/(8464:8517): SET AX HOLA
+[INFO] 20:18:21:252 Kernel/(8464:8517): MOV_OUT 120 AX
+[INFO] 20:18:21:253 Kernel/(8464:8517): WAIT DISCO
+[INFO] 20:18:21:253 Kernel/(8464:8517): I/O 10
+[INFO] 20:18:21:253 Kernel/(8464:8517): SIGNAL DISCO
+[INFO] 20:18:21:253 Kernel/(8464:8517): MOV_IN BX 120
+[INFO] 20:18:21:253 Kernel/(8464:8517): F_OPEN ARCHIVO
+[INFO] 20:18:21:253 Kernel/(8464:8517): YIELD
+[INFO] 20:18:21:253 Kernel/(8464:8517): F_TRUNCATE ARCHIVO 64
+[INFO] 20:18:21:253 Kernel/(8464:8517): F_SEEK ARCHIVO 10
+[INFO] 20:18:21:253 Kernel/(8464:8517): CREATE_SEGMENT 1 128
+[INFO] 20:18:21:253 Kernel/(8464:8517): F_WRITE ARCHIVO 4 4
+[INFO] 20:18:21:253 Kernel/(8464:8517): F_READ ARCHIVO 16 4
+[INFO] 20:18:21:253 Kernel/(8464:8517): DELETE_SEGMENT 1
+[INFO] 20:18:21:253 Kernel/(8464:8517): F_CLOSE ARCHIVO
+[INFO] 20:18:21:253 Kernel/(8464:8517): EXIT
+[INFO] 20:18:21:253 Kernel/(8464:8517): Se crea el proceso 8464 en NEW
+[INFO] 20:46:38:495 Kernel/(9705:9705): ¡Conectado al servidor!
+[INFO] 20:46:38:502 Kernel/(9705:9705): Servidor listo para recibir al cliente
+[INFO] 20:46:46:646 Kernel/(9705:9727): Me llegaron los siguientes valores:
+[INFO] 20:46:46:647 Kernel/(9705:9727): SET AX HOLA
+[INFO] 20:46:46:647 Kernel/(9705:9727): MOV_OUT 120 AX
+[INFO] 20:46:46:647 Kernel/(9705:9727): WAIT DISCO
+[INFO] 20:46:46:647 Kernel/(9705:9727): I/O 10
+[INFO] 20:46:46:648 Kernel/(9705:9727): SIGNAL DISCO
+[INFO] 20:46:46:649 Kernel/(9705:9727): MOV_IN BX 120
+[INFO] 20:46:46:650 Kernel/(9705:9727): F_OPEN ARCHIVO
+[INFO] 20:46:46:650 Kernel/(9705:9727): YIELD
+[INFO] 20:46:46:650 Kernel/(9705:9727): F_TRUNCATE ARCHIVO 64
+[INFO] 20:46:46:650 Kernel/(9705:9727): F_SEEK ARCHIVO 10
+[INFO] 20:46:46:650 Kernel/(9705:9727): CREATE_SEGMENT 1 128
+[INFO] 20:46:46:650 Kernel/(9705:9727): F_WRITE ARCHIVO 4 4
+[INFO] 20:46:46:650 Kernel/(9705:9727): F_READ ARCHIVO 16 4
+[INFO] 20:46:46:650 Kernel/(9705:9727): DELETE_SEGMENT 1
+[INFO] 20:46:46:650 Kernel/(9705:9727): F_CLOSE ARCHIVO
+[INFO] 20:46:46:650 Kernel/(9705:9727): EXIT
+[INFO] 20:46:46:651 Kernel/(9705:9727): Se crea el proceso 9705 en NEW
+[INFO] 20:47:51:409 Kernel/(9782:9782): ¡Conectado al servidor!
+[INFO] 20:47:51:426 Kernel/(9782:9782): Servidor listo para recibir al cliente
+[INFO] 20:47:55:840 Kernel/(9782:9799): Me llegaron los siguientes valores:
+[INFO] 20:47:55:840 Kernel/(9782:9799): Se crea el proceso 9782 en NEW
+[INFO] 20:50:15:069 Kernel/(9920:9920): ¡Conectado al servidor!
+[INFO] 20:50:15:087 Kernel/(9920:9920): Servidor listo para recibir al cliente
+[DEBUG] 20:50:19:221 Kernel/(9920:9936): NEW:
+[INFO] 20:50:19:223 Kernel/(9920:9936): Se crea el proceso 9920 en NEW
+[DEBUG] 20:50:19:224 Kernel/(9920:9936): NEW2:
+[INFO] 20:51:22:938 Kernel/(10036:10036): ¡Conectado al servidor!
+[INFO] 20:51:22:939 Kernel/(10036:10036): Servidor listo para recibir al cliente
+[INFO] 20:51:41:282 Kernel/(10056:10056): ¡Conectado al servidor!
+[INFO] 20:51:41:288 Kernel/(10056:10056): Servidor listo para recibir al cliente
+[DEBUG] 20:51:56:914 Kernel/(10036:10078): NEW:
+[INFO] 20:51:56:916 Kernel/(10036:10078): Se crea el proceso 10036 en NEW
+[INFO] 20:54:34:534 Kernel/(10234:10234): ¡Conectado al servidor!
+[INFO] 20:54:34:555 Kernel/(10234:10234): Servidor listo para recibir al cliente
+[DEBUG] 20:54:38:832 Kernel/(10234:10251): NEW:
+[INFO] 20:54:38:853 Kernel/(10234:10251): Se crea el proceso 10234 en NEW
+[DEBUG] 20:54:38:853 Kernel/(10234:10251): Paquete iniciado
+[INFO] 20:56:52:711 Kernel/(10439:10439): ¡Conectado al servidor!
+[INFO] 20:56:52:732 Kernel/(10439:10439): Servidor listo para recibir al cliente
+[DEBUG] 20:56:59:086 Kernel/(10439:10456): NEW:
+[INFO] 20:56:59:086 Kernel/(10439:10456): Se crea el proceso 10439 en NEW
+[DEBUG] 20:56:59:086 Kernel/(10439:10456): Paquete iniciado
+[INFO] 20:57:37:856 Kernel/(10718:10718): ¡Conectado al servidor!
+[INFO] 20:57:37:860 Kernel/(10718:10718): Servidor listo para recibir al cliente
+[DEBUG] 20:57:42:364 Kernel/(10718:10737): NEW:
+[INFO] 20:57:42:364 Kernel/(10718:10737): Se crea el proceso 10718 en NEW
+[DEBUG] 20:57:42:364 Kernel/(10718:10737): Paquete iniciado
+[INFO] 20:58:25:356 Kernel/(10780:10780): ¡Conectado al servidor!
+[INFO] 20:58:25:368 Kernel/(10780:10780): Servidor listo para recibir al cliente
+[DEBUG] 20:58:32:857 Kernel/(10780:10798): NEW:
+[INFO] 20:58:32:858 Kernel/(10780:10798): Se crea el proceso 10780 en NEW
+[DEBUG] 20:58:32:858 Kernel/(10780:10798): Paquete iniciado
+[INFO] 21:03:05:954 Kernel/(10941:10941): ¡Conectado al servidor!
+[INFO] 21:03:05:959 Kernel/(10941:10941): Servidor listo para recibir al cliente
+[DEBUG] 21:03:10:993 Kernel/(10941:10959): NEW:
+[INFO] 21:03:10:993 Kernel/(10941:10959): Se crea el proceso 10941 en NEW
+[DEBUG] 21:03:10:993 Kernel/(10941:10959): Paquete iniciado
+[INFO] 21:03:59:468 Kernel/(11161:11161): ¡Conectado al servidor!
+[INFO] 21:03:59:471 Kernel/(11161:11161): Servidor listo para recibir al cliente
+[DEBUG] 21:04:02:379 Kernel/(11161:11177): NEW:
+[INFO] 21:04:02:379 Kernel/(11161:11177): Se crea el proceso 11161 en NEW
+[DEBUG] 21:04:02:379 Kernel/(11161:11177): 0
+[INFO] 21:04:34:385 Kernel/(11287:11287): ¡Conectado al servidor!
+[INFO] 21:04:34:482 Kernel/(11287:11287): Servidor listo para recibir al cliente
+[DEBUG] 21:04:50:862 Kernel/(11287:11304): NEW:
+[INFO] 21:04:50:901 Kernel/(11287:11304): Se crea el proceso 11287 en NEW
+[DEBUG] 21:04:50:901 Kernel/(11287:11304): 0
+[INFO] 21:07:21:049 Kernel/(11371:11371): ¡Conectado al servidor!
+[INFO] 21:07:21:100 Kernel/(11371:11371): Servidor listo para recibir al cliente
+[DEBUG] 21:07:32:490 Kernel/(11371:11396): NEW:
+[INFO] 21:07:32:490 Kernel/(11371:11396): Se crea el proceso 11371 en NEW
+[DEBUG] 21:07:32:490 Kernel/(11371:11396): 0
+[INFO] 21:11:43:308 Kernel/(11472:11472): ¡Conectado al servidor!
+[INFO] 21:11:43:317 Kernel/(11472:11472): Servidor listo para recibir al cliente
+[DEBUG] 21:12:27:699 Kernel/(11472:11497): NEW:
+[INFO] 21:12:27:700 Kernel/(11472:11497): Se crea el proceso 11472 en NEW
+[DEBUG] 21:12:27:700 Kernel/(11472:11497): 0
+[INFO] 21:14:45:189 Kernel/(11578:11578): ¡Conectado al servidor!
+[INFO] 21:14:45:203 Kernel/(11578:11578): Servidor listo para recibir al cliente
+[DEBUG] 21:14:52:695 Kernel/(11578:11602): NEW:
+[INFO] 21:14:52:695 Kernel/(11578:11602): Se crea el proceso 11578 en NEW
+[DEBUG] 21:14:52:695 Kernel/(11578:11602): 0
+[INFO] 21:16:12:040 Kernel/(11685:11685): ¡Conectado al servidor!
+[INFO] 21:16:12:179 Kernel/(11685:11685): Servidor listo para recibir al cliente
+[DEBUG] 21:16:15:587 Kernel/(11685:11705): NEW:
+[INFO] 21:16:15:587 Kernel/(11685:11705): Se crea el proceso 11685 en NEW
+[DEBUG] 21:16:15:587 Kernel/(11685:11705): agregar a paquete
+[DEBUG] 21:16:15:587 Kernel/(11685:11705): 0
+[INFO] 21:16:44:197 Kernel/(11747:11747): ¡Conectado al servidor!
+[INFO] 21:16:44:199 Kernel/(11747:11747): Servidor listo para recibir al cliente
+[DEBUG] 21:16:47:451 Kernel/(11747:11766): NEW:
+[INFO] 21:16:47:453 Kernel/(11747:11766): Se crea el proceso 11747 en NEW
+[DEBUG] 21:16:47:456 Kernel/(11747:11766): agregar a paquete
+[DEBUG] 21:16:47:456 Kernel/(11747:11766): 0
+[INFO] 21:17:20:328 Kernel/(11813:11813): ¡Conectado al servidor!
+[INFO] 21:17:20:342 Kernel/(11813:11813): Servidor listo para recibir al cliente
+[DEBUG] 21:17:23:343 Kernel/(11813:11831): NEW:
+[INFO] 21:17:23:343 Kernel/(11813:11831): Se crea el proceso 11813 en NEW
+[DEBUG] 21:17:23:343 Kernel/(11813:11831): 0
+[INFO] 21:17:56:872 Kernel/(11877:11877): ¡Conectado al servidor!
+[INFO] 21:17:56:878 Kernel/(11877:11877): Servidor listo para recibir al cliente
+[DEBUG] 21:17:58:470 Kernel/(11877:11895): NEW:
+[INFO] 21:17:58:471 Kernel/(11877:11895): Se crea el proceso 11877 en NEW
+[INFO] 21:20:54:720 Kernel/(11962:11962): ¡Conectado al servidor!
+[INFO] 21:20:54:721 Kernel/(11962:11962): Servidor listo para recibir al cliente
+[INFO] 21:21:28:149 Kernel/(12034:12034): ¡Conectado al servidor!
+[INFO] 21:21:28:153 Kernel/(12034:12034): Servidor listo para recibir al cliente
+[DEBUG] 21:21:35:678 Kernel/(12034:12061): NEW:
+[INFO] 21:21:35:680 Kernel/(12034:12061): Se crea el proceso 12034 en NEW
+[INFO] 21:26:35:018 Kernel/(12138:12138): ¡Conectado al servidor!
+[INFO] 21:26:35:019 Kernel/(12138:12138): Servidor listo para recibir al cliente
+[DEBUG] 21:26:39:655 Kernel/(12138:12156): NEW:
+[INFO] 21:26:39:656 Kernel/(12138:12156): Se crea el proceso 12138 en NEW
+[DEBUG] 21:26:39:656 Kernel/(12138:12156): Pid agregada.
+[DEBUG] 21:26:39:656 Kernel/(12138:12156): Instrucciones agregadas.
+[INFO] 21:27:30:757 Kernel/(12208:12208): ¡Conectado al servidor!
+[INFO] 21:27:30:764 Kernel/(12208:12208): Servidor listo para recibir al cliente
+[DEBUG] 21:27:34:733 Kernel/(12208:12227): NEW:
+[INFO] 21:27:34:735 Kernel/(12208:12227): Se crea el proceso 12208 en NEW
+[DEBUG] 21:27:34:735 Kernel/(12208:12227): Pid agregada.
+[DEBUG] 21:27:34:735 Kernel/(12208:12227): Instrucciones agregadas.
+[INFO] 21:28:05:530 Kernel/(12261:12261): ¡Conectado al servidor!
+[INFO] 21:28:05:638 Kernel/(12261:12261): Servidor listo para recibir al cliente
+[DEBUG] 21:28:14:011 Kernel/(12261:12279): NEW:
+[INFO] 21:28:14:012 Kernel/(12261:12279): Se crea el proceso 12261 en NEW
+[DEBUG] 21:28:14:012 Kernel/(12261:12279): Pid agregada.
+[INFO] 21:28:38:332 Kernel/(12300:12300): ¡Conectado al servidor!
+[INFO] 21:28:38:340 Kernel/(12300:12300): Servidor listo para recibir al cliente
+[DEBUG] 21:28:41:882 Kernel/(12300:12318): NEW:
+[INFO] 21:28:41:882 Kernel/(12300:12318): Se crea el proceso 12300 en NEW
+[DEBUG] 21:28:41:882 Kernel/(12300:12318): Pid agregada.
+[DEBUG] 21:28:41:882 Kernel/(12300:12318): Instrucciones agregadas.
+[DEBUG] 21:28:41:882 Kernel/(12300:12318): Program_counter agregado.
+[WARNING] 21:28:41:883 Kernel/(12300:12318): El cliente se desconecto. Terminando conexion
+[INFO] 21:30:35:606 Kernel/(12398:12398): ¡Conectado al servidor!
+[INFO] 21:30:35:612 Kernel/(12398:12398): Servidor listo para recibir al cliente
+[DEBUG] 21:30:39:629 Kernel/(12398:12422): NEW:
+[INFO] 21:30:39:629 Kernel/(12398:12422): Se crea el proceso 12398 en NEW
+[DEBUG] 21:30:39:629 Kernel/(12398:12422): Pid agregada.
+[DEBUG] 21:30:39:629 Kernel/(12398:12422): Instrucciones agregadas.
+[DEBUG] 21:30:39:629 Kernel/(12398:12422): Program_counter agregado.
+[DEBUG] 21:30:39:629 Kernel/(12398:12422): Paquete enviado.
+[WARNING] 21:30:39:629 Kernel/(12398:12422): El cliente se desconecto. Terminando conexion
+[INFO] 21:32:32:160 Kernel/(12463:12463): ¡Conectado al servidor!
+[INFO] 21:32:32:164 Kernel/(12463:12463): Servidor listo para recibir al cliente
+[DEBUG] 21:32:37:107 Kernel/(12463:12481): NEW:
+[INFO] 21:32:37:108 Kernel/(12463:12481): Se crea el proceso 12463 en NEW
+[DEBUG] 21:32:37:108 Kernel/(12463:12481): Pid agregada.
+[INFO] 21:33:13:725 Kernel/(12499:12499): ¡Conectado al servidor!
+[INFO] 21:33:13:726 Kernel/(12499:12499): Servidor listo para recibir al cliente
+[DEBUG] 21:33:17:257 Kernel/(12499:12518): NEW:
+[INFO] 21:33:17:261 Kernel/(12499:12518): Se crea el proceso 12499 en NEW
+[DEBUG] 21:33:17:261 Kernel/(12499:12518): Pid agregada.
+[DEBUG] 21:33:17:262 Kernel/(12499:12518): Instrucciones agregadas.
+[DEBUG] 21:33:17:262 Kernel/(12499:12518): Program_counter agregado.
+[DEBUG] 21:33:17:262 Kernel/(12499:12518): Paquete enviado.
+[WARNING] 21:33:17:262 Kernel/(12499:12518): El cliente se desconecto. Terminando conexion
+[INFO] 21:34:46:921 Kernel/(12591:12591): ¡Conectado al servidor!
+[INFO] 21:34:46:928 Kernel/(12591:12591): Servidor listo para recibir al cliente
+[DEBUG] 21:35:12:342 Kernel/(12591:12609): NEW:
+[INFO] 21:35:12:342 Kernel/(12591:12609): Se crea el proceso 12591 en NEW
+[DEBUG] 21:35:12:342 Kernel/(12591:12609): Pid agregada.
+[DEBUG] 21:35:12:342 Kernel/(12591:12609): Instrucciones agregadas.
+[DEBUG] 21:35:12:342 Kernel/(12591:12609): Program_counter agregado.
+[DEBUG] 21:35:12:342 Kernel/(12591:12609): Paquete enviado.
+[WARNING] 21:35:12:342 Kernel/(12591:12609): El cliente se desconecto. Terminando conexion
+[DEBUG] 21:38:33:955 Kernel/(12591:12630): NEW:
+[INFO] 21:38:33:958 Kernel/(12591:12630): Se crea el proceso 12591 en NEW
+[DEBUG] 21:38:33:958 Kernel/(12591:12630): Pid agregada.
+[DEBUG] 21:38:33:958 Kernel/(12591:12630): Instrucciones agregadas.
+[DEBUG] 21:38:33:958 Kernel/(12591:12630): Program_counter agregado.
+[DEBUG] 21:38:33:958 Kernel/(12591:12630): Paquete enviado.
+[WARNING] 21:38:33:958 Kernel/(12591:12630): El cliente se desconecto. Terminando conexion
+[ERROR] 21:46:09:646 Kernel/(12875:12875): ¡No se pudo conectar al servidor!
+[INFO] 21:46:26:631 Kernel/(12918:12918): ¡Conectado al servidor!
+[INFO] 21:46:26:633 Kernel/(12918:12918): Servidor listo para recibir al cliente
+[DEBUG] 21:46:31:363 Kernel/(12918:12936): NEW:
+[INFO] 21:46:31:364 Kernel/(12918:12936): Se crea el proceso 12918 en NEW
+[DEBUG] 21:46:31:364 Kernel/(12918:12936): Pid agregada.
+[DEBUG] 21:46:31:364 Kernel/(12918:12936): Instrucciones agregadas.
+[DEBUG] 21:46:31:364 Kernel/(12918:12936): Program_counter agregado.
+[DEBUG] 21:46:31:364 Kernel/(12918:12936): Paquete enviado.
+[WARNING] 21:46:31:367 Kernel/(12918:12936): El cliente se desconecto. Terminando conexion
+[INFO] 21:47:51:026 Kernel/(13012:13012): ¡Conectado al servidor!
+[INFO] 21:47:51:029 Kernel/(13012:13012): Servidor listo para recibir al cliente
+[DEBUG] 21:47:56:955 Kernel/(13012:13031): NEW:
+[INFO] 21:47:56:955 Kernel/(13012:13031): Se crea el proceso 13012 en NEW
+[DEBUG] 21:47:56:955 Kernel/(13012:13031): Pid agregada.
+[INFO] 21:49:30:664 Kernel/(13198:13198): ¡Conectado al servidor!
+[INFO] 21:49:30:690 Kernel/(13198:13198): Servidor listo para recibir al cliente
+[DEBUG] 21:49:34:307 Kernel/(13198:13216): NEW:
+[INFO] 21:49:34:307 Kernel/(13198:13216): Se crea el proceso 13198 en NEW
+[DEBUG] 21:49:34:307 Kernel/(13198:13216): Pid agregada.
+[INFO] 21:50:22:733 Kernel/(13253:13253): ¡Conectado al servidor!
+[INFO] 21:50:22:741 Kernel/(13253:13253): Servidor listo para recibir al cliente
+[DEBUG] 21:50:26:365 Kernel/(13253:13271): NEW:
+[INFO] 21:50:26:365 Kernel/(13253:13271): Se crea el proceso 13253 en NEW
+[DEBUG] 21:50:26:365 Kernel/(13253:13271): Pid agregada.
+[DEBUG] 21:50:26:365 Kernel/(13253:13271): Instrucciones agregadas.
+[DEBUG] 21:50:26:365 Kernel/(13253:13271): Program_counter agregado.
+[DEBUG] 21:50:26:384 Kernel/(13253:13271): Paquete enviado.
+[WARNING] 21:50:26:385 Kernel/(13253:13271): El cliente se desconecto. Terminando conexion
+[ERROR] 21:51:42:392 Kernel/(13391:13391): ¡No se pudo conectar al servidor!
+[ERROR] 21:51:53:449 Kernel/(13408:13408): ¡No se pudo conectar al servidor!
+[INFO] 21:52:59:392 Kernel/(13569:13569): ¡Conectado al servidor!
+[INFO] 21:52:59:400 Kernel/(13569:13569): Servidor listo para recibir al cliente
+[DEBUG] 21:53:03:929 Kernel/(13569:13592): NEW:
+[INFO] 21:53:03:929 Kernel/(13569:13592): Se crea el proceso 13569 en NEW
+[DEBUG] 21:53:03:930 Kernel/(13569:13592): Pid agregada.
+[DEBUG] 21:53:03:930 Kernel/(13569:13592): Instrucciones agregadas.
+[DEBUG] 21:53:03:930 Kernel/(13569:13592): Program_counter agregado.
+[DEBUG] 21:53:03:931 Kernel/(13569:13592): Paquete enviado.
+[WARNING] 21:53:04:132 Kernel/(13569:13592): El cliente se desconecto. Terminando conexion
+[INFO] 21:57:47:930 Kernel/(13779:13779): ¡Conectado al servidor!
+[INFO] 21:57:47:962 Kernel/(13779:13779): Servidor listo para recibir al cliente
+[DEBUG] 21:57:56:133 Kernel/(13779:13799): NEW:
+[INFO] 21:57:56:133 Kernel/(13779:13799): Se crea el proceso 13779 en NEW
+[DEBUG] 21:57:56:133 Kernel/(13779:13799): Pid agregada.
+[DEBUG] 21:57:56:133 Kernel/(13779:13799): Instrucciones agregadas.
+[DEBUG] 21:57:56:133 Kernel/(13779:13799): Program_counter agregado.
+[DEBUG] 21:57:56:133 Kernel/(13779:13799): Paquete enviado.
+[WARNING] 21:57:56:330 Kernel/(13779:13799): El cliente se desconecto. Terminando conexion
+[INFO] 22:00:35:037 Kernel/(13972:13972): ¡Conectado al servidor!
+[INFO] 22:00:35:066 Kernel/(13972:13972): Servidor listo para recibir al cliente
+[DEBUG] 22:00:38:034 Kernel/(13972:13992): NEW:
+[INFO] 22:00:38:034 Kernel/(13972:13992): Se crea el proceso 13972 en NEW
+[DEBUG] 22:00:38:034 Kernel/(13972:13992): Pid agregada.
+[INFO] 22:01:39:944 Kernel/(14054:14054): ¡Conectado al servidor!
+[INFO] 22:01:39:945 Kernel/(14054:14054): Servidor listo para recibir al cliente
+[DEBUG] 22:01:43:611 Kernel/(14054:14077): NEW:
+[INFO] 22:01:43:614 Kernel/(14054:14077): Se crea el proceso 14054 en NEW
+[DEBUG] 22:01:43:614 Kernel/(14054:14077): Pid agregada.
+[DEBUG] 22:01:43:614 Kernel/(14054:14077): Instrucciones agregadas.
+[DEBUG] 22:01:43:614 Kernel/(14054:14077): Program_counter agregado.
+[DEBUG] 22:01:43:615 Kernel/(14054:14077): Paquete enviado.
+[WARNING] 22:01:43:615 Kernel/(14054:14077): El cliente se desconecto. Terminando conexion
+[ERROR] 22:02:23:337 Kernel/(14130:14130): ¡No se pudo conectar al servidor!
+[ERROR] 22:02:59:278 Kernel/(14170:14170): ¡No se pudo conectar al servidor!
+[INFO] 22:03:57:358 Kernel/(14205:14205): ¡Conectado al servidor!
+[INFO] 22:03:57:364 Kernel/(14205:14205): Servidor listo para recibir al cliente
+[DEBUG] 22:04:01:362 Kernel/(14205:14228): NEW:
+[INFO] 22:04:01:369 Kernel/(14205:14228): Se crea el proceso 14205 en NEW
+[DEBUG] 22:04:01:369 Kernel/(14205:14228): Pid agregada.
+[INFO] 22:04:12:186 Kernel/(14245:14245): ¡Conectado al servidor!
+[INFO] 22:04:12:186 Kernel/(14245:14245): Servidor listo para recibir al cliente
+[DEBUG] 22:04:16:288 Kernel/(14245:14263): NEW:
+[INFO] 22:04:16:288 Kernel/(14245:14263): Se crea el proceso 14245 en NEW
+[DEBUG] 22:04:16:288 Kernel/(14245:14263): Pid agregada.
+[DEBUG] 22:04:16:288 Kernel/(14245:14263): Instrucciones agregadas.
+[DEBUG] 22:04:16:288 Kernel/(14245:14263): Program_counter agregado.
+[DEBUG] 22:04:16:289 Kernel/(14245:14263): Paquete enviado.
+[WARNING] 22:04:16:289 Kernel/(14245:14263): El cliente se desconecto. Terminando conexion
+[ERROR] 22:05:23:787 Kernel/(14334:14334): ¡No se pudo conectar al servidor!
+[INFO] 22:07:23:484 Kernel/(14375:14375): ¡Conectado al servidor!
+[INFO] 22:07:23:490 Kernel/(14375:14375): Servidor listo para recibir al cliente
+[DEBUG] 22:07:27:580 Kernel/(14375:14398): NEW:
+[INFO] 22:07:27:580 Kernel/(14375:14398): Se crea el proceso 14375 en NEW
+[DEBUG] 22:07:27:580 Kernel/(14375:14398): Pid agregada.
+[DEBUG] 22:07:27:580 Kernel/(14375:14398): Instrucciones agregadas.
+[DEBUG] 22:07:27:580 Kernel/(14375:14398): Program_counter agregado.
+[DEBUG] 22:07:27:580 Kernel/(14375:14398): Paquete enviado.
+[WARNING] 22:07:27:582 Kernel/(14375:14398): El cliente se desconecto. Terminando conexion
+[ERROR] 22:07:48:465 Kernel/(14436:14436): ¡No se pudo conectar al servidor!
+[ERROR] 22:08:05:641 Kernel/(14453:14453): ¡No se pudo conectar al servidor!
+[ERROR] 22:09:20:360 Kernel/(14472:14472): ¡No se pudo conectar al servidor!
+[ERROR] 22:09:36:300 Kernel/(14491:14491): ¡No se pudo conectar al servidor!
+[INFO] 22:09:47:815 Kernel/(14535:14535): ¡Conectado al servidor!
+[INFO] 22:09:47:816 Kernel/(14535:14535): Servidor listo para recibir al cliente
+[DEBUG] 22:09:51:071 Kernel/(14535:14554): NEW:
+[INFO] 22:09:51:071 Kernel/(14535:14554): Se crea el proceso 14535 en NEW
+[DEBUG] 22:09:51:071 Kernel/(14535:14554): Pid agregada.
+[INFO] 22:10:01:050 Kernel/(14571:14571): ¡Conectado al servidor!
+[INFO] 22:10:01:051 Kernel/(14571:14571): Servidor listo para recibir al cliente
+[DEBUG] 22:10:06:666 Kernel/(14571:14590): NEW:
+[INFO] 22:10:06:666 Kernel/(14571:14590): Se crea el proceso 14571 en NEW
+[DEBUG] 22:10:06:666 Kernel/(14571:14590): Pid agregada.
+[DEBUG] 22:10:06:666 Kernel/(14571:14590): Instrucciones agregadas.
+[DEBUG] 22:10:06:666 Kernel/(14571:14590): Program_counter agregado.
+[DEBUG] 22:10:06:668 Kernel/(14571:14590): Paquete enviado.
+[WARNING] 22:10:06:675 Kernel/(14571:14590): El cliente se desconecto. Terminando conexion
+[INFO] 22:15:09:891 Kernel/(14794:14794): ¡Conectado al servidor!
+[INFO] 22:15:09:925 Kernel/(14794:14794): Servidor listo para recibir al cliente
+[DEBUG] 22:15:20:923 Kernel/(14794:14814): NEW:
+[INFO] 22:15:20:927 Kernel/(14794:14814): Se crea el proceso 14794 en NEW
+[DEBUG] 22:15:20:927 Kernel/(14794:14814): Pid agregada.
+[DEBUG] 22:15:20:927 Kernel/(14794:14814): Instrucciones agregadas.
+[DEBUG] 22:15:20:927 Kernel/(14794:14814): Program_counter agregado.
+[DEBUG] 22:15:20:927 Kernel/(14794:14814): Paquete enviado.
+[WARNING] 22:15:20:927 Kernel/(14794:14814): El cliente se desconecto. Terminando conexion
+[INFO] 22:18:33:306 Kernel/(14982:14982): ¡Conectado al servidor!
+[INFO] 22:18:33:451 Kernel/(14982:14982): Servidor listo para recibir al cliente
+[DEBUG] 22:18:39:456 Kernel/(14982:15000): NEW:
+[INFO] 22:18:39:456 Kernel/(14982:15000): Se crea el proceso 14982 en NEW
+[INFO] 22:20:56:039 Kernel/(15131:15131): ¡Conectado al servidor!
+[INFO] 22:20:56:099 Kernel/(15131:15131): Servidor listo para recibir al cliente
+[DEBUG] 22:21:01:252 Kernel/(15131:15149): NEW:
+[INFO] 22:21:01:253 Kernel/(15131:15149): Se crea el proceso 15131 en NEW
+[DEBUG] 22:21:01:254 Kernel/(15131:15149): Paquete inicializado.
+[INFO] 22:22:12:667 Kernel/(15200:15200): ¡Conectado al servidor!
+[INFO] 22:22:12:671 Kernel/(15200:15200): Servidor listo para recibir al cliente
+[DEBUG] 22:22:22:086 Kernel/(15200:15218): NEW:
+[INFO] 22:22:22:088 Kernel/(15200:15218): Se crea el proceso 15200 en NEW
+[DEBUG] 22:22:22:088 Kernel/(15200:15218): Paquete inicializado.
+[INFO] 22:22:39:080 Kernel/(15254:15254): ¡Conectado al servidor!
+[INFO] 22:22:39:081 Kernel/(15254:15254): Servidor listo para recibir al cliente
+[DEBUG] 22:22:42:405 Kernel/(15254:15273): NEW:
+[INFO] 22:22:42:408 Kernel/(15254:15273): Se crea el proceso 15254 en NEW
+[DEBUG] 22:22:42:408 Kernel/(15254:15273): Paquete inicializado.
+[INFO] 22:25:03:751 Kernel/(15321:15321): ¡Conectado al servidor!
+[INFO] 22:25:03:752 Kernel/(15321:15321): Servidor listo para recibir al cliente
+[DEBUG] 22:25:07:683 Kernel/(15321:15345): NEW:
+[INFO] 22:25:07:684 Kernel/(15321:15345): Se crea el proceso 15321 en NEW
+[DEBUG] 22:25:07:684 Kernel/(15321:15345): Paquete inicializado.
+[DEBUG] 22:25:07:684 Kernel/(15321:15345): Pid agregada.
+[DEBUG] 22:25:07:684 Kernel/(15321:15345): Instrucciones agregadas.
+[INFO] 22:25:39:294 Kernel/(15383:15383): ¡Conectado al servidor!
+[INFO] 22:25:39:295 Kernel/(15383:15383): Servidor listo para recibir al cliente
+[DEBUG] 22:25:42:489 Kernel/(15383:15401): NEW:
+[INFO] 22:25:42:489 Kernel/(15383:15401): Se crea el proceso 15383 en NEW
+[DEBUG] 22:25:42:489 Kernel/(15383:15401): Paquete inicializado.
+[DEBUG] 22:25:42:489 Kernel/(15383:15401): Pid agregada.
+[INFO] 22:26:48:062 Kernel/(15467:15467): ¡Conectado al servidor!
+[INFO] 22:26:48:068 Kernel/(15467:15467): Servidor listo para recibir al cliente
+[DEBUG] 22:26:52:688 Kernel/(15467:15485): NEW:
+[INFO] 22:26:52:689 Kernel/(15467:15485): Se crea el proceso 15467 en NEW
+[DEBUG] 22:26:52:689 Kernel/(15467:15485): Paquete inicializado.
+[DEBUG] 22:26:52:689 Kernel/(15467:15485): Pid agregada.
+[INFO] 22:27:48:771 Kernel/(15524:15524): ¡Conectado al servidor!
+[INFO] 22:27:48:792 Kernel/(15524:15524): Servidor listo para recibir al cliente
+[DEBUG] 22:27:51:617 Kernel/(15524:15541): NEW:
+[INFO] 22:27:51:619 Kernel/(15524:15541): Se crea el proceso 15524 en NEW
+[DEBUG] 22:27:51:619 Kernel/(15524:15541): Paquete inicializado.
+[DEBUG] 22:27:51:619 Kernel/(15524:15541): Pid agregada.
+[DEBUG] 22:27:51:619 Kernel/(15524:15541): Instrucciones agregadas.
+[DEBUG] 22:27:51:619 Kernel/(15524:15541): Program_counter agregado.
+[DEBUG] 22:27:51:619 Kernel/(15524:15541): Paquete enviado.
+[WARNING] 22:27:51:619 Kernel/(15524:15541): El cliente se desconecto. Terminando conexion
+[DEBUG] 22:30:20:412 Kernel/(15524:15618): NEW:
+[INFO] 22:30:20:412 Kernel/(15524:15618): Se crea el proceso 15524 en NEW
+[DEBUG] 22:30:20:412 Kernel/(15524:15618): Paquete inicializado.
+[DEBUG] 22:30:20:412 Kernel/(15524:15618): Pid agregada.
+[DEBUG] 22:30:20:412 Kernel/(15524:15618): Instrucciones agregadas.
+[DEBUG] 22:30:20:412 Kernel/(15524:15618): Program_counter agregado.
+[DEBUG] 22:30:20:413 Kernel/(15524:15618): Paquete enviado.
+[WARNING] 22:30:20:603 Kernel/(15524:15618): El cliente se desconecto. Terminando conexion
+[ERROR] 22:31:15:785 Kernel/(15676:15676): ¡No se pudo conectar al servidor!
+[ERROR] 22:31:49:717 Kernel/(15709:15709): ¡No se pudo conectar al servidor!
+[INFO] 22:32:58:082 Kernel/(15764:15764): ¡Conectado al servidor!
+[INFO] 22:32:58:086 Kernel/(15764:15764): Servidor listo para recibir al cliente
+[DEBUG] 22:33:01:273 Kernel/(15764:15782): NEW:
+[INFO] 22:33:01:275 Kernel/(15764:15782): Se crea el proceso 15764 en NEW
+[DEBUG] 22:33:01:275 Kernel/(15764:15782): Paquete inicializado.
+[DEBUG] 22:33:01:275 Kernel/(15764:15782): Pid agregada.
+[INFO] 22:33:09:640 Kernel/(15799:15799): ¡Conectado al servidor!
+[INFO] 22:33:09:641 Kernel/(15799:15799): Servidor listo para recibir al cliente
+[DEBUG] 22:33:12:848 Kernel/(15799:15816): NEW:
+[INFO] 22:33:12:849 Kernel/(15799:15816): Se crea el proceso 15799 en NEW
+[DEBUG] 22:33:12:849 Kernel/(15799:15816): Paquete inicializado.
+[DEBUG] 22:33:12:849 Kernel/(15799:15816): Pid agregada.
+[INFO] 22:33:39:720 Kernel/(15850:15850): ¡Conectado al servidor!
+[INFO] 22:33:39:724 Kernel/(15850:15850): Servidor listo para recibir al cliente
+[DEBUG] 22:33:48:765 Kernel/(15850:15872): NEW:
+[INFO] 22:33:48:791 Kernel/(15850:15872): Se crea el proceso 15850 en NEW
+[DEBUG] 22:33:48:791 Kernel/(15850:15872): Paquete inicializado.
+[DEBUG] 22:33:48:791 Kernel/(15850:15872): Pid agregada.
+[DEBUG] 22:33:48:791 Kernel/(15850:15872): Instrucciones agregadas.
+[DEBUG] 22:33:48:791 Kernel/(15850:15872): Program_counter agregado.
+[DEBUG] 22:33:48:791 Kernel/(15850:15872): Paquete enviado.
+[WARNING] 22:33:48:963 Kernel/(15850:15872): El cliente se desconecto. Terminando conexion
+[INFO] 22:38:18:178 Kernel/(16295:16295): ¡Conectado al servidor!
+[INFO] 22:38:18:178 Kernel/(16295:16295): Servidor listo para recibir al cliente
+[DEBUG] 22:38:20:212 Kernel/(16295:16313): NEW:
+[INFO] 22:38:20:213 Kernel/(16295:16313): Se crea el proceso 16295 en NEW
+[DEBUG] 22:38:20:213 Kernel/(16295:16313): Paquete inicializado.
+[DEBUG] 22:38:20:213 Kernel/(16295:16313): Pid agregada.
+[DEBUG] 22:38:20:213 Kernel/(16295:16313): Instrucciones agregadas.
+[DEBUG] 22:38:20:213 Kernel/(16295:16313): Program_counter agregado.
+[DEBUG] 22:38:20:220 Kernel/(16295:16313): Paquete enviado.
+[WARNING] 22:38:20:416 Kernel/(16295:16313): El cliente se desconecto. Terminando conexion
+[ERROR] 22:39:38:453 Kernel/(16536:16536): ¡No se pudo conectar al servidor!
+[ERROR] 22:40:13:874 Kernel/(16574:16574): ¡No se pudo conectar al servidor!
+[INFO] 22:41:07:768 Kernel/(16617:16617): ¡Conectado al servidor!
+[INFO] 22:41:07:805 Kernel/(16617:16617): Servidor listo para recibir al cliente
+[DEBUG] 22:41:11:575 Kernel/(16617:16640): NEW:
+[INFO] 22:41:11:576 Kernel/(16617:16640): Se crea el proceso 16617 en NEW
+[DEBUG] 22:41:11:576 Kernel/(16617:16640): Paquete inicializado.
+[DEBUG] 22:41:11:576 Kernel/(16617:16640): 0
+[DEBUG] 22:41:11:576 Kernel/(16617:16640): Pid agregada.
+[INFO] 22:41:20:500 Kernel/(16657:16657): ¡Conectado al servidor!
+[INFO] 22:41:20:501 Kernel/(16657:16657): Servidor listo para recibir al cliente
+[DEBUG] 22:41:26:187 Kernel/(16657:16675): NEW:
+[INFO] 22:41:26:187 Kernel/(16657:16675): Se crea el proceso 16657 en NEW
+[DEBUG] 22:41:26:188 Kernel/(16657:16675): Paquete inicializado.
+[DEBUG] 22:41:26:188 Kernel/(16657:16675): 0
+[DEBUG] 22:41:26:188 Kernel/(16657:16675): Pid agregada.
+[DEBUG] 22:41:26:188 Kernel/(16657:16675): Instrucciones agregadas.
+[DEBUG] 22:41:26:188 Kernel/(16657:16675): Program_counter agregado.
+[DEBUG] 22:41:26:189 Kernel/(16657:16675): Paquete enviado.
+[WARNING] 22:41:26:189 Kernel/(16657:16675): El cliente se desconecto. Terminando conexion
+[DEBUG] 22:45:35:424 Kernel/(16657:16696): NEW:
+[INFO] 22:45:35:425 Kernel/(16657:16696): Se crea el proceso 16657 en NEW
+[DEBUG] 22:45:35:425 Kernel/(16657:16696): Paquete inicializado.
+[DEBUG] 22:45:35:425 Kernel/(16657:16696): -1777240512
+[DEBUG] 22:45:35:425 Kernel/(16657:16696): Pid agregada.
+[DEBUG] 22:45:35:425 Kernel/(16657:16696): Instrucciones agregadas.
+[DEBUG] 22:45:35:425 Kernel/(16657:16696): Program_counter agregado.
+[DEBUG] 22:45:35:427 Kernel/(16657:16696): Paquete enviado.
+[WARNING] 22:45:35:427 Kernel/(16657:16696): El cliente se desconecto. Terminando conexion
+[INFO] 22:46:09:163 Kernel/(16742:16742): ¡Conectado al servidor!
+[INFO] 22:46:09:182 Kernel/(16742:16742): Servidor listo para recibir al cliente
+[DEBUG] 22:46:13:707 Kernel/(16742:16766): NEW:
+[INFO] 22:46:13:708 Kernel/(16742:16766): Se crea el proceso 16742 en NEW
+[DEBUG] 22:46:13:708 Kernel/(16742:16766): Paquete inicializado.
+[DEBUG] 22:46:13:708 Kernel/(16742:16766): 0
+[DEBUG] 22:46:13:708 Kernel/(16742:16766): Pid agregada.
+[DEBUG] 22:46:13:708 Kernel/(16742:16766): Instrucciones agregadas.
+[DEBUG] 22:46:13:709 Kernel/(16742:16766): Program_counter agregado.
+[DEBUG] 22:46:13:709 Kernel/(16742:16766): Paquete enviado.
+[WARNING] 22:46:13:710 Kernel/(16742:16766): El cliente se desconecto. Terminando conexion
+[INFO] 23:01:00:006 Kernel/(17275:17275): ¡Conectado al servidor!
+[INFO] 23:01:00:087 Kernel/(17275:17275): Servidor listo para recibir al cliente
+[DEBUG] 23:01:03:400 Kernel/(17275:17294): NEW:
+[INFO] 23:01:03:400 Kernel/(17275:17294): Se crea el proceso 17275 en NEW
+[DEBUG] 23:01:03:400 Kernel/(17275:17294): Paquete inicializado.
+[DEBUG] 23:01:03:400 Kernel/(17275:17294): 0
+[DEBUG] 23:01:03:400 Kernel/(17275:17294): Pid agregada.
+[DEBUG] 23:01:03:401 Kernel/(17275:17294): Instrucciones agregadas.
+[DEBUG] 23:01:03:405 Kernel/(17275:17294): Program_counter agregado.
+[DEBUG] 23:01:03:406 Kernel/(17275:17294): Paquete enviado.
+[WARNING] 23:01:03:406 Kernel/(17275:17294): El cliente se desconecto. Terminando conexion
+[ERROR] 23:03:20:948 Kernel/(17526:17526): ¡No se pudo conectar al servidor!
+[INFO] 23:05:15:977 Kernel/(17570:17570): ¡Conectado al servidor!
+[INFO] 23:05:15:979 Kernel/(17570:17570): Servidor listo para recibir al cliente
+[DEBUG] 23:05:19:147 Kernel/(17570:17589): NEW:
+[INFO] 23:05:19:147 Kernel/(17570:17589): Se crea el proceso 17570 en NEW
+[DEBUG] 23:05:19:148 Kernel/(17570:17589): Paquete inicializado.
+[DEBUG] 23:05:19:149 Kernel/(17570:17589): 0
+[DEBUG] 23:05:19:149 Kernel/(17570:17589): Pid agregada.
+[DEBUG] 23:05:19:149 Kernel/(17570:17589): Instrucciones agregadas.
+[DEBUG] 23:05:19:149 Kernel/(17570:17589): Program_counter agregado.
+[DEBUG] 23:05:19:149 Kernel/(17570:17589): Paquete enviado.
+[WARNING] 23:05:19:151 Kernel/(17570:17589): El cliente se desconecto. Terminando conexion
+[ERROR] 23:06:15:271 Kernel/(17703:17703): ¡No se pudo conectar al servidor!
+[ERROR] 23:06:35:468 Kernel/(17737:17737): ¡No se pudo conectar al servidor!
+[INFO] 23:08:16:265 Kernel/(17790:17790): ¡Conectado al servidor!
+[INFO] 23:08:16:265 Kernel/(17790:17790): Servidor listo para recibir al cliente
+[DEBUG] 23:08:18:944 Kernel/(17790:17813): NEW:
+[INFO] 23:08:18:945 Kernel/(17790:17813): Se crea el proceso 17790 en NEW
+[DEBUG] 23:08:18:945 Kernel/(17790:17813): Paquete inicializado.
+[DEBUG] 23:08:18:945 Kernel/(17790:17813): 0
+[DEBUG] 23:08:18:945 Kernel/(17790:17813): Pid agregada.
+[INFO] 23:08:29:091 Kernel/(17830:17830): ¡Conectado al servidor!
+[INFO] 23:08:29:092 Kernel/(17830:17830): Servidor listo para recibir al cliente
+[DEBUG] 23:08:33:215 Kernel/(17830:17848): NEW:
+[INFO] 23:08:33:215 Kernel/(17830:17848): Se crea el proceso 17830 en NEW
+[DEBUG] 23:08:33:215 Kernel/(17830:17848): Paquete inicializado.
+[DEBUG] 23:08:33:215 Kernel/(17830:17848): 0
+[DEBUG] 23:08:33:215 Kernel/(17830:17848): Pid agregada.
+[INFO] 23:08:41:857 Kernel/(17865:17865): ¡Conectado al servidor!
+[INFO] 23:08:41:861 Kernel/(17865:17865): Servidor listo para recibir al cliente
+[DEBUG] 23:08:44:909 Kernel/(17865:17890): NEW:
+[INFO] 23:08:44:911 Kernel/(17865:17890): Se crea el proceso 17865 en NEW
+[DEBUG] 23:08:44:911 Kernel/(17865:17890): Paquete inicializado.
+[DEBUG] 23:08:44:911 Kernel/(17865:17890): 0
+[DEBUG] 23:08:44:911 Kernel/(17865:17890): Pid agregada.
+[INFO] 23:08:50:967 Kernel/(17907:17907): ¡Conectado al servidor!
+[INFO] 23:08:50:968 Kernel/(17907:17907): Servidor listo para recibir al cliente
+[DEBUG] 23:08:54:513 Kernel/(17907:17926): NEW:
+[INFO] 23:08:54:513 Kernel/(17907:17926): Se crea el proceso 17907 en NEW
+[DEBUG] 23:08:54:514 Kernel/(17907:17926): Paquete inicializado.
+[DEBUG] 23:08:54:514 Kernel/(17907:17926): 0
+[DEBUG] 23:08:54:514 Kernel/(17907:17926): Pid agregada.
+[DEBUG] 23:08:54:514 Kernel/(17907:17926): Instrucciones agregadas.
+[DEBUG] 23:08:54:514 Kernel/(17907:17926): Program_counter agregado.
+[DEBUG] 23:08:54:518 Kernel/(17907:17926): Paquete enviado.
+[WARNING] 23:08:54:518 Kernel/(17907:17926): El cliente se desconecto. Terminando conexion
+[ERROR] 23:10:03:156 Kernel/(17980:17980): ¡No se pudo conectar al servidor!
+[ERROR] 23:10:25:528 Kernel/(18018:18018): ¡No se pudo conectar al servidor!
+[INFO] 23:11:33:989 Kernel/(18058:18058): ¡Conectado al servidor!
+[INFO] 23:11:33:994 Kernel/(18058:18058): Servidor listo para recibir al cliente
+[DEBUG] 23:11:37:299 Kernel/(18058:18084): NEW:
+[INFO] 23:11:37:299 Kernel/(18058:18084): Se crea el proceso 18058 en NEW
+[DEBUG] 23:11:37:299 Kernel/(18058:18084): Paquete inicializado.
+[DEBUG] 23:11:37:299 Kernel/(18058:18084): 0
+[DEBUG] 23:11:37:299 Kernel/(18058:18084): Pid agregada.
+[INFO] 23:11:41:176 Kernel/(18096:18096): ¡Conectado al servidor!
+[INFO] 23:11:41:180 Kernel/(18096:18096): Servidor listo para recibir al cliente
+[DEBUG] 23:11:45:722 Kernel/(18096:18119): NEW:
+[INFO] 23:11:45:722 Kernel/(18096:18119): Se crea el proceso 18096 en NEW
+[DEBUG] 23:11:45:722 Kernel/(18096:18119): Paquete inicializado.
+[DEBUG] 23:11:45:722 Kernel/(18096:18119): 0
+[DEBUG] 23:11:45:722 Kernel/(18096:18119): Pid agregada.
+[INFO] 23:11:49:241 Kernel/(18136:18136): ¡Conectado al servidor!
+[INFO] 23:11:49:241 Kernel/(18136:18136): Servidor listo para recibir al cliente
+[DEBUG] 23:11:51:720 Kernel/(18136:18154): NEW:
+[INFO] 23:11:51:721 Kernel/(18136:18154): Se crea el proceso 18136 en NEW
+[DEBUG] 23:11:51:721 Kernel/(18136:18154): Paquete inicializado.
+[DEBUG] 23:11:51:721 Kernel/(18136:18154): 0
+[DEBUG] 23:11:51:721 Kernel/(18136:18154): Pid agregada.
+[DEBUG] 23:11:51:721 Kernel/(18136:18154): Instrucciones agregadas.
+[DEBUG] 23:11:51:722 Kernel/(18136:18154): Program_counter agregado.
+[DEBUG] 23:11:51:723 Kernel/(18136:18154): Paquete enviado.
+[WARNING] 23:11:51:723 Kernel/(18136:18154): El cliente se desconecto. Terminando conexion
+[INFO] 23:31:34:112 Kernel/(18676:18676): ¡Conectado al servidor!
+[INFO] 23:31:34:146 Kernel/(18676:18676): Servidor listo para recibir al cliente
+[DEBUG] 23:31:37:157 Kernel/(18676:18694): NEW:
+[INFO] 23:31:37:157 Kernel/(18676:18694): Se crea el proceso 18676 en NEW
+[DEBUG] 23:31:37:157 Kernel/(18676:18694): Paquete inicializado.
+[DEBUG] 23:31:37:157 Kernel/(18676:18694): 0
+[DEBUG] 23:31:37:157 Kernel/(18676:18694): Pid agregada.
+[INFO] 23:31:47:873 Kernel/(18711:18711): ¡Conectado al servidor!
+[INFO] 23:31:47:875 Kernel/(18711:18711): Servidor listo para recibir al cliente
+[DEBUG] 23:31:52:300 Kernel/(18711:18728): NEW:
+[INFO] 23:31:52:300 Kernel/(18711:18728): Se crea el proceso 18711 en NEW
+[DEBUG] 23:31:52:300 Kernel/(18711:18728): Paquete inicializado.
+[DEBUG] 23:31:52:300 Kernel/(18711:18728): 0
+[DEBUG] 23:31:52:300 Kernel/(18711:18728): Pid agregada.
+[DEBUG] 23:31:52:300 Kernel/(18711:18728): Instrucciones agregadas.
+[DEBUG] 23:31:52:300 Kernel/(18711:18728): Program_counter agregado.
+[DEBUG] 23:31:52:300 Kernel/(18711:18728): Paquete enviado.
+[WARNING] 23:31:52:507 Kernel/(18711:18728): El cliente se desconecto. Terminando conexion
+[INFO] 23:36:35:704 Kernel/(19452:19452): ¡Conectado al servidor!
+[INFO] 23:36:35:726 Kernel/(19452:19452): Servidor listo para recibir al cliente
+[INFO] 23:36:50:228 Kernel/(19480:19480): ¡Conectado al servidor!
+[INFO] 23:36:50:230 Kernel/(19480:19480): Servidor listo para recibir al cliente
+[DEBUG] 23:36:54:388 Kernel/(19480:19499): NEW:
+[INFO] 23:36:54:389 Kernel/(19480:19499): Se crea el proceso 19480 en NEW
+[DEBUG] 23:36:54:389 Kernel/(19480:19499): Paquete inicializado.
+[DEBUG] 23:36:54:391 Kernel/(19480:19499): 0
+[DEBUG] 23:36:54:393 Kernel/(19480:19499): Pid agregada.
+[INFO] 23:37:03:760 Kernel/(19516:19516): ¡Conectado al servidor!
+[INFO] 23:37:03:761 Kernel/(19516:19516): Servidor listo para recibir al cliente
+[DEBUG] 23:37:10:942 Kernel/(19516:19535): NEW:
+[INFO] 23:37:10:943 Kernel/(19516:19535): Se crea el proceso 19516 en NEW
+[DEBUG] 23:37:10:943 Kernel/(19516:19535): Paquete inicializado.
+[DEBUG] 23:37:10:943 Kernel/(19516:19535): 0
+[DEBUG] 23:37:10:943 Kernel/(19516:19535): Pid agregada.
+[INFO] 23:37:17:442 Kernel/(19552:19552): ¡Conectado al servidor!
+[INFO] 23:37:17:451 Kernel/(19552:19552): Servidor listo para recibir al cliente
+[DEBUG] 23:37:22:982 Kernel/(19552:19571): NEW:
+[INFO] 23:37:22:983 Kernel/(19552:19571): Se crea el proceso 19552 en NEW
+[DEBUG] 23:37:22:983 Kernel/(19552:19571): Paquete inicializado.
+[DEBUG] 23:37:22:983 Kernel/(19552:19571): 0
+[DEBUG] 23:37:22:983 Kernel/(19552:19571): Pid agregada.
+[INFO] 23:37:29:490 Kernel/(19583:19583): ¡Conectado al servidor!
+[INFO] 23:37:29:491 Kernel/(19583:19583): Servidor listo para recibir al cliente
+[DEBUG] 23:37:33:450 Kernel/(19583:19606): NEW:
+[INFO] 23:37:33:452 Kernel/(19583:19606): Se crea el proceso 19583 en NEW
+[DEBUG] 23:37:33:452 Kernel/(19583:19606): Paquete inicializado.
+[DEBUG] 23:37:33:452 Kernel/(19583:19606): 0
+[DEBUG] 23:37:33:452 Kernel/(19583:19606): Pid agregada.
+[DEBUG] 23:37:33:452 Kernel/(19583:19606): Instrucciones agregadas.
+[DEBUG] 23:37:33:452 Kernel/(19583:19606): Program_counter agregado.
+[DEBUG] 23:37:33:453 Kernel/(19583:19606): Paquete enviado.
+[WARNING] 23:37:33:453 Kernel/(19583:19606): El cliente se desconecto. Terminando conexion
+[ERROR] 23:39:58:458 Kernel/(19772:19772): ¡No se pudo conectar al servidor!
+[ERROR] 23:40:25:106 Kernel/(19915:19915): ¡No se pudo conectar al servidor!
+[ERROR] 23:40:45:835 Kernel/(19948:19948): ¡No se pudo conectar al servidor!
+[INFO] 23:41:04:809 Kernel/(19986:19986): ¡Conectado al servidor!
+[INFO] 23:41:04:811 Kernel/(19986:19986): Servidor listo para recibir al cliente
+[DEBUG] 23:41:19:105 Kernel/(19986:20010): NEW:
+[INFO] 23:41:19:105 Kernel/(19986:20010): Se crea el proceso 19986 en NEW
+[DEBUG] 23:41:19:105 Kernel/(19986:20010): Paquete inicializado.
+[DEBUG] 23:41:19:106 Kernel/(19986:20010): 0
+[DEBUG] 23:41:19:106 Kernel/(19986:20010): Pid agregada.
+[INFO] 23:41:26:640 Kernel/(20027:20027): ¡Conectado al servidor!
+[INFO] 23:41:26:644 Kernel/(20027:20027): Servidor listo para recibir al cliente
+[DEBUG] 23:41:51:768 Kernel/(20027:20050): NEW:
+[INFO] 23:41:51:768 Kernel/(20027:20050): Se crea el proceso 20027 en NEW
+[DEBUG] 23:41:51:768 Kernel/(20027:20050): Paquete inicializado.
+[DEBUG] 23:41:51:768 Kernel/(20027:20050): 0
+[DEBUG] 23:41:51:769 Kernel/(20027:20050): Pid agregada.
+[INFO] 23:41:57:522 Kernel/(20068:20068): ¡Conectado al servidor!
+[INFO] 23:41:57:527 Kernel/(20068:20068): Servidor listo para recibir al cliente
+[DEBUG] 23:41:59:706 Kernel/(20068:20090): NEW:
+[INFO] 23:41:59:709 Kernel/(20068:20090): Se crea el proceso 20068 en NEW
+[DEBUG] 23:41:59:709 Kernel/(20068:20090): Paquete inicializado.
+[DEBUG] 23:41:59:709 Kernel/(20068:20090): 0
+[DEBUG] 23:41:59:709 Kernel/(20068:20090): Pid agregada.
+[DEBUG] 23:41:59:709 Kernel/(20068:20090): Instrucciones agregadas.
+[DEBUG] 23:41:59:709 Kernel/(20068:20090): Program_counter agregado.
+[DEBUG] 23:41:59:717 Kernel/(20068:20090): Paquete enviado.
+[WARNING] 23:41:59:717 Kernel/(20068:20090): El cliente se desconecto. Terminando conexion
+[INFO] 23:48:34:044 Kernel/(20307:20307): ¡Conectado al servidor!
+[INFO] 23:48:34:063 Kernel/(20307:20307): Servidor listo para recibir al cliente
+[DEBUG] 23:48:37:291 Kernel/(20307:20327): NEW:
+[INFO] 23:48:37:294 Kernel/(20307:20327): Se crea el proceso 20307 en NEW
+[DEBUG] 23:48:37:294 Kernel/(20307:20327): Paquete inicializado.
+[DEBUG] 23:48:37:294 Kernel/(20307:20327): 0
+[DEBUG] 23:48:37:294 Kernel/(20307:20327): Pid agregada.
+[INFO] 23:48:42:039 Kernel/(20344:20344): ¡Conectado al servidor!
+[INFO] 23:48:42:042 Kernel/(20344:20344): Servidor listo para recibir al cliente
+[DEBUG] 23:48:44:790 Kernel/(20344:20363): NEW:
+[INFO] 23:48:44:790 Kernel/(20344:20363): Se crea el proceso 20344 en NEW
+[DEBUG] 23:48:44:790 Kernel/(20344:20363): Paquete inicializado.
+[DEBUG] 23:48:44:790 Kernel/(20344:20363): 0
+[DEBUG] 23:48:44:790 Kernel/(20344:20363): Pid agregada.
+[DEBUG] 23:48:44:790 Kernel/(20344:20363): Instrucciones agregadas.
+[DEBUG] 23:48:44:790 Kernel/(20344:20363): Program_counter agregado.
+[DEBUG] 23:48:44:802 Kernel/(20344:20363): Paquete enviado.
+[WARNING] 23:48:44:802 Kernel/(20344:20363): El cliente se desconecto. Terminando conexion
+[INFO] 23:56:32:613 Kernel/(20738:20738): ¡Conectado al servidor!
+[INFO] 23:56:32:664 Kernel/(20738:20738): Servidor listo para recibir al cliente
+[DEBUG] 23:56:39:191 Kernel/(20738:20757): NEW:
+[DEBUG] 23:56:39:193 Kernel/(20738:20757): SET AX HOLA SET AX HOLA
+[INFO] 23:56:39:195 Kernel/(20738:20757): Se crea el proceso 20738 en NEW
+[DEBUG] 23:56:39:195 Kernel/(20738:20757): Paquete inicializado.
+[DEBUG] 23:56:39:195 Kernel/(20738:20757): Pid agregada.
+[INFO] 23:57:31:767 Kernel/(20804:20804): ¡Conectado al servidor!
+[INFO] 23:57:31:846 Kernel/(20804:20804): Servidor listo para recibir al cliente
+[DEBUG] 23:57:32:092 Kernel/(20804:20819): NEW:
+[DEBUG] 23:57:32:092 Kernel/(20804:20819): MOV_OUT 120 AX MOV_OUT 120 AX
+[INFO] 23:57:32:094 Kernel/(20804:20819): Se crea el proceso 20804 en NEW
+[DEBUG] 23:57:32:094 Kernel/(20804:20819): Paquete inicializado.
+[DEBUG] 23:57:32:094 Kernel/(20804:20819): Pid agregada.
+[INFO] 23:59:24:523 Kernel/(21200:21200): ¡Conectado al servidor!
+[INFO] 23:59:24:524 Kernel/(21200:21200): Servidor listo para recibir al cliente
+[DEBUG] 23:59:25:292 Kernel/(21200:21218): NEW:
+[INFO] 23:59:25:293 Kernel/(21200:21218): Se crea el proceso 21200 en NEW
+[DEBUG] 23:59:25:293 Kernel/(21200:21218): Paquete inicializado.
+[DEBUG] 23:59:25:293 Kernel/(21200:21218): Pid agregada.
+[INFO] 23:59:48:970 Kernel/(21256:21256): ¡Conectado al servidor!
+[INFO] 23:59:48:974 Kernel/(21256:21256): Servidor listo para recibir al cliente
+[DEBUG] 23:59:53:812 Kernel/(21256:21279): NEW:
+[INFO] 23:59:53:813 Kernel/(21256:21279): Se crea el proceso 21256 en NEW
+[DEBUG] 23:59:53:813 Kernel/(21256:21279): Paquete inicializado.
+[DEBUG] 23:59:53:813 Kernel/(21256:21279): Pid agregada.
+[DEBUG] 23:59:53:813 Kernel/(21256:21279): Instrucciones agregadas.
+[DEBUG] 23:59:53:814 Kernel/(21256:21279): Program_counter agregado.
+[DEBUG] 23:59:53:815 Kernel/(21256:21279): Paquete enviado.
+[WARNING] 23:59:53:815 Kernel/(21256:21279): El cliente se desconecto. Terminando conexion
+[ERROR] 00:01:06:841 Kernel/(21557:21557): ¡No se pudo conectar al servidor!
+[ERROR] 00:01:47:876 Kernel/(21596:21596): ¡No se pudo conectar al servidor!
+[INFO] 00:03:05:704 Kernel/(21635:21635): ¡Conectado al servidor!
+[INFO] 00:03:05:705 Kernel/(21635:21635): Servidor listo para recibir al cliente
+[DEBUG] 00:03:09:009 Kernel/(21635:21661): NEW:
+[INFO] 00:03:09:009 Kernel/(21635:21661): Se crea el proceso 21635 en NEW
+[DEBUG] 00:03:09:009 Kernel/(21635:21661): Paquete inicializado.
+[DEBUG] 00:03:09:009 Kernel/(21635:21661): Pid agregada.
+[DEBUG] 00:03:09:009 Kernel/(21635:21661): -1409281760
+[DEBUG] 00:03:09:009 Kernel/(21635:21661): Instrucciones agregadas.
+[DEBUG] 00:03:09:009 Kernel/(21635:21661): Program_counter agregado.
+[DEBUG] 00:03:09:010 Kernel/(21635:21661): Paquete enviado.
+[WARNING] 00:03:09:016 Kernel/(21635:21661): El cliente se desconecto. Terminando conexion
+[ERROR] 00:03:52:231 Kernel/(21719:21719): ¡No se pudo conectar al servidor!
+[INFO] 00:06:13:424 Kernel/(21847:21847): ¡Conectado al servidor!
+[INFO] 00:06:13:425 Kernel/(21847:21847): Servidor listo para recibir al cliente
+[DEBUG] 00:06:17:180 Kernel/(21847:21867): NEW:
+[INFO] 00:06:17:181 Kernel/(21847:21867): Se crea el proceso 21847 en NEW
+[DEBUG] 00:06:17:181 Kernel/(21847:21867): Paquete inicializado.
+[DEBUG] 00:06:17:181 Kernel/(21847:21867): Pid agregada.
+[DEBUG] 00:06:17:182 Kernel/(21847:21867): 801988064
+[INFO] 00:06:24:303 Kernel/(21884:21884): ¡Conectado al servidor!
+[INFO] 00:06:24:304 Kernel/(21884:21884): Servidor listo para recibir al cliente
+[DEBUG] 00:06:34:021 Kernel/(21884:21901): NEW:
+[INFO] 00:06:34:021 Kernel/(21884:21901): Se crea el proceso 21884 en NEW
+[DEBUG] 00:06:34:021 Kernel/(21884:21901): Paquete inicializado.
+[DEBUG] 00:06:34:021 Kernel/(21884:21901): Pid agregada.
+[DEBUG] 00:06:34:021 Kernel/(21884:21901): -593621536
+[DEBUG] 00:06:34:021 Kernel/(21884:21901): Instrucciones agregadas.
+[DEBUG] 00:06:34:021 Kernel/(21884:21901): Program_counter agregado.
+[DEBUG] 00:06:34:022 Kernel/(21884:21901): Paquete enviado.
+[WARNING] 00:06:34:022 Kernel/(21884:21901): El cliente se desconecto. Terminando conexion
+[INFO] 00:07:54:229 Kernel/(21980:21980): ¡Conectado al servidor!
+[INFO] 00:07:54:232 Kernel/(21980:21980): Servidor listo para recibir al cliente
+[DEBUG] 00:07:58:241 Kernel/(21980:22008): NEW:
+[DEBUG] 00:07:58:241 Kernel/(21980:22008): 16 16
+[INFO] 00:07:58:241 Kernel/(21980:22008): Se crea el proceso 21980 en NEW
+[DEBUG] 00:07:58:241 Kernel/(21980:22008): Paquete inicializado.
+[DEBUG] 00:07:58:241 Kernel/(21980:22008): Pid agregada.
+[DEBUG] 00:07:58:241 Kernel/(21980:22008): 0
+[INFO] 00:15:55:035 Kernel/(22686:22686): ¡Conectado al servidor!
+[INFO] 00:15:55:085 Kernel/(22686:22686): Servidor listo para recibir al cliente
+[DEBUG] 00:16:01:889 Kernel/(22686:22704): NEW:
+[INFO] 00:16:01:889 Kernel/(22686:22704): Se crea el proceso 22686 en NEW
+[INFO] 00:16:51:882 Kernel/(22774:22774): ¡Conectado al servidor!
+[INFO] 00:16:51:889 Kernel/(22774:22774): Servidor listo para recibir al cliente
+[DEBUG] 00:16:54:625 Kernel/(22774:22792): NEW:
+[INFO] 00:16:54:627 Kernel/(22774:22792): Se crea el proceso 22774 en NEW
+[DEBUG] 00:16:54:627 Kernel/(22774:22792): EMM
+[INFO] 01:54:20:644 Kernel/(22913:22913): ¡Conectado al servidor!
+[INFO] 01:54:20:745 Kernel/(22913:22913): Servidor listo para recibir al cliente
+[DEBUG] 01:54:25:426 Kernel/(22913:22932): NEW:
+[INFO] 01:54:25:429 Kernel/(22913:22932): Se crea el proceso 22913 en NEW
+[DEBUG] 01:54:25:429 Kernel/(22913:22932): EMM
+[INFO] 01:55:55:055 Kernel/(23056:23056): ¡Conectado al servidor!
+[INFO] 01:55:55:057 Kernel/(23056:23056): Servidor listo para recibir al cliente
+[DEBUG] 01:55:58:348 Kernel/(23056:23074): NEW:
+[INFO] 01:55:58:348 Kernel/(23056:23074): Se crea el proceso 23056 en NEW
+[DEBUG] 01:55:58:348 Kernel/(23056:23074): size:16
+[INFO] 02:05:33:044 Kernel/(23698:23698): ¡Conectado al servidor!
+[INFO] 02:05:33:091 Kernel/(23698:23698): Servidor listo para recibir al cliente
+[DEBUG] 02:05:41:139 Kernel/(23698:23717): NEW:
+[INFO] 02:05:41:140 Kernel/(23698:23717): Se crea el proceso 23698 en NEW
+[DEBUG] 02:05:41:140 Kernel/(23698:23717): size:16
+[DEBUG] 02:05:41:140 Kernel/(23698:23717): size:16
+[DEBUG] 02:05:41:140 Kernel/(23698:23717): Paquete inicializado.
+[DEBUG] 02:05:41:140 Kernel/(23698:23717): Pid agregada.
+[DEBUG] 02:05:41:140 Kernel/(23698:23717): 0
+[DEBUG] 02:05:41:141 Kernel/(23698:23717): SET AX HOLA
+[DEBUG] 02:05:41:144 Kernel/(23698:23717): MOV_OUT 120 AX
+[DEBUG] 02:05:41:144 Kernel/(23698:23717): WAIT DISCO
+[DEBUG] 02:05:41:144 Kernel/(23698:23717): I/O 10
+[DEBUG] 02:05:41:144 Kernel/(23698:23717): SIGNAL DISCO
+[DEBUG] 02:05:41:144 Kernel/(23698:23717): MOV_IN BX 120
+[DEBUG] 02:05:41:144 Kernel/(23698:23717): F_OPEN ARCHIVO
+[DEBUG] 02:05:41:144 Kernel/(23698:23717): YIELD
+[DEBUG] 02:05:41:144 Kernel/(23698:23717): F_TRUNCATE ARCHIVO 64
+[DEBUG] 02:05:41:145 Kernel/(23698:23717): F_SEEK ARCHIVO 10
+[DEBUG] 02:05:41:145 Kernel/(23698:23717): CREATE_SEGMENT 1 128
+[DEBUG] 02:05:41:145 Kernel/(23698:23717): F_WRITE ARCHIVO 4 4
+[DEBUG] 02:05:41:145 Kernel/(23698:23717): F_READ ARCHIVO 16 4
+[DEBUG] 02:05:41:145 Kernel/(23698:23717): DELETE_SEGMENT 1
+[DEBUG] 02:05:41:145 Kernel/(23698:23717): F_CLOSE ARCHIVO
+[DEBUG] 02:05:41:145 Kernel/(23698:23717): EXIT
+[DEBUG] 02:05:41:145 Kernel/(23698:23717): Instrucciones agregadas.
+[DEBUG] 02:05:41:145 Kernel/(23698:23717): Program_counter agregado.
+[DEBUG] 02:05:41:145 Kernel/(23698:23717): Paquete enviado.
+[WARNING] 02:05:41:147 Kernel/(23698:23717): El cliente se desconecto. Terminando conexion
+[INFO] 02:12:18:492 Kernel/(24064:24064): ¡Conectado al servidor!
+[INFO] 02:12:18:517 Kernel/(24064:24064): Servidor listo para recibir al cliente
+[DEBUG] 02:12:21:891 Kernel/(24064:24082): NEW:
+[INFO] 02:12:21:891 Kernel/(24064:24082): Se crea el proceso 24064 en NEW
+[DEBUG] 02:12:21:891 Kernel/(24064:24082): Paquete inicializado.
+[DEBUG] 02:12:21:891 Kernel/(24064:24082): Pid agregada.
+[DEBUG] 02:12:21:891 Kernel/(24064:24082): Instrucciones agregadas.
+[DEBUG] 02:12:21:891 Kernel/(24064:24082): Program_counter agregado.
+[DEBUG] 02:12:21:891 Kernel/(24064:24082): Paquete enviado.
+[WARNING] 02:12:21:892 Kernel/(24064:24082): El cliente se desconecto. Terminando conexion
+[INFO] 02:13:14:662 Kernel/(24145:24145): ¡Conectado al servidor!
+[INFO] 02:13:14:663 Kernel/(24145:24145): Servidor listo para recibir al cliente
+[DEBUG] 02:13:27:879 Kernel/(24145:24164): NEW:
+[INFO] 02:13:27:880 Kernel/(24145:24164): Se crea el proceso 24145 en NEW
+[DEBUG] 02:13:27:880 Kernel/(24145:24164): Paquete inicializado.
+[DEBUG] 02:13:27:880 Kernel/(24145:24164): Pid agregada.
+[DEBUG] 02:13:27:880 Kernel/(24145:24164): Instrucciones agregadas.
+[DEBUG] 02:13:27:880 Kernel/(24145:24164): Program_counter agregado.
+[DEBUG] 02:13:27:882 Kernel/(24145:24164): Paquete enviado.
+[INFO] 02:13:27:882 Kernel/(24145:24164): SET AX HOLA
+[INFO] 02:13:27:882 Kernel/(24145:24164): MOV_OUT 120 AX
+[INFO] 02:13:27:882 Kernel/(24145:24164): WAIT DISCO
+[INFO] 02:13:27:882 Kernel/(24145:24164): I/O 10
+[INFO] 02:13:27:882 Kernel/(24145:24164): SIGNAL DISCO
+[INFO] 02:13:27:882 Kernel/(24145:24164): MOV_IN BX 120
+[INFO] 02:13:27:882 Kernel/(24145:24164): F_OPEN ARCHIVO
+[INFO] 02:13:27:882 Kernel/(24145:24164): YIELD
+[INFO] 02:13:27:882 Kernel/(24145:24164): F_TRUNCATE ARCHIVO 64
+[INFO] 02:13:27:882 Kernel/(24145:24164): F_SEEK ARCHIVO 10
+[INFO] 02:13:27:882 Kernel/(24145:24164): CREATE_SEGMENT 1 128
+[INFO] 02:13:27:882 Kernel/(24145:24164): F_WRITE ARCHIVO 4 4
+[INFO] 02:13:27:882 Kernel/(24145:24164): F_READ ARCHIVO 16 4
+[INFO] 02:13:27:882 Kernel/(24145:24164): DELETE_SEGMENT 1
+[INFO] 02:13:27:883 Kernel/(24145:24164): F_CLOSE ARCHIVO
+[INFO] 02:13:27:883 Kernel/(24145:24164): EXIT
+[WARNING] 02:13:27:883 Kernel/(24145:24164): El cliente se desconecto. Terminando conexion
+[ERROR] 02:21:39:982 Kernel/(24569:24569): ¡No se pudo conectar al servidor!
+[INFO] 02:21:52:585 Kernel/(24602:24602): ¡Conectado al servidor!
+[INFO] 02:21:52:585 Kernel/(24602:24602): Servidor listo para recibir al cliente
+[DEBUG] 02:21:57:433 Kernel/(24602:24625): NEW:
+[INFO] 02:21:57:434 Kernel/(24602:24625): Se crea el proceso 24602 en NEW
+[DEBUG] 02:21:57:434 Kernel/(24602:24625): Paquete inicializado.
+[DEBUG] 02:21:57:434 Kernel/(24602:24625): Pid agregada.
+[DEBUG] 02:21:57:434 Kernel/(24602:24625): Instrucciones agregadas.
+[DEBUG] 02:21:57:434 Kernel/(24602:24625): Program_counter agregado.
+[DEBUG] 02:21:57:435 Kernel/(24602:24625): Paquete enviado.
+[INFO] 02:21:57:435 Kernel/(24602:24625): SET AX HOLA
+[INFO] 02:21:57:435 Kernel/(24602:24625): MOV_OUT 120 AX
+[INFO] 02:21:57:435 Kernel/(24602:24625): WAIT DISCO
+[INFO] 02:21:57:435 Kernel/(24602:24625): I/O 10
+[INFO] 02:21:57:435 Kernel/(24602:24625): SIGNAL DISCO
+[INFO] 02:21:57:435 Kernel/(24602:24625): MOV_IN BX 120
+[INFO] 02:21:57:435 Kernel/(24602:24625): F_OPEN ARCHIVO
+[INFO] 02:21:57:436 Kernel/(24602:24625): YIELD
+[INFO] 02:21:57:436 Kernel/(24602:24625): F_TRUNCATE ARCHIVO 64
+[INFO] 02:21:57:436 Kernel/(24602:24625): F_SEEK ARCHIVO 10
+[INFO] 02:21:57:436 Kernel/(24602:24625): CREATE_SEGMENT 1 128
+[INFO] 02:21:57:436 Kernel/(24602:24625): F_WRITE ARCHIVO 4 4
+[INFO] 02:21:57:436 Kernel/(24602:24625): F_READ ARCHIVO 16 4
+[INFO] 02:21:57:436 Kernel/(24602:24625): DELETE_SEGMENT 1
+[INFO] 02:21:57:436 Kernel/(24602:24625): F_CLOSE ARCHIVO
+[INFO] 02:21:57:436 Kernel/(24602:24625): EXIT
+[WARNING] 02:21:57:436 Kernel/(24602:24625): El cliente se desconecto. Terminando conexion
+[INFO] 02:24:13:624 Kernel/(24684:24684): ¡Conectado al servidor!
+[INFO] 02:24:13:626 Kernel/(24684:24684): Servidor listo para recibir al cliente
+[DEBUG] 02:24:17:722 Kernel/(24684:24707): NEW:
+[INFO] 02:24:17:722 Kernel/(24684:24707): Se crea el proceso 24684 en NEW
+[DEBUG] 02:24:17:722 Kernel/(24684:24707): Paquete inicializado.
+[DEBUG] 02:24:17:722 Kernel/(24684:24707): Pid agregada.
+[DEBUG] 02:24:17:722 Kernel/(24684:24707): Instrucciones agregadas.
+[DEBUG] 02:24:17:722 Kernel/(24684:24707): Program_counter agregado.
+[DEBUG] 02:24:17:722 Kernel/(24684:24707): Paquete enviado.
+[INFO] 02:24:17:722 Kernel/(24684:24707): SET AX HOLA
+[INFO] 02:24:17:722 Kernel/(24684:24707): MOV_OUT 120 AX
+[INFO] 02:24:17:722 Kernel/(24684:24707): WAIT DISCO
+[INFO] 02:24:17:722 Kernel/(24684:24707): I/O 10
+[INFO] 02:24:17:722 Kernel/(24684:24707): SIGNAL DISCO
+[INFO] 02:24:17:722 Kernel/(24684:24707): MOV_IN BX 120
+[INFO] 02:24:17:722 Kernel/(24684:24707): F_OPEN ARCHIVO
+[INFO] 02:24:17:722 Kernel/(24684:24707): YIELD
+[INFO] 02:24:17:722 Kernel/(24684:24707): F_TRUNCATE ARCHIVO 64
+[INFO] 02:24:17:722 Kernel/(24684:24707): F_SEEK ARCHIVO 10
+[INFO] 02:24:17:722 Kernel/(24684:24707): CREATE_SEGMENT 1 128
+[INFO] 02:24:17:722 Kernel/(24684:24707): F_WRITE ARCHIVO 4 4
+[INFO] 02:24:17:722 Kernel/(24684:24707): F_READ ARCHIVO 16 4
+[INFO] 02:24:17:722 Kernel/(24684:24707): DELETE_SEGMENT 1
+[INFO] 02:24:17:722 Kernel/(24684:24707): F_CLOSE ARCHIVO
+[INFO] 02:24:17:722 Kernel/(24684:24707): EXIT
+[WARNING] 02:24:17:723 Kernel/(24684:24707): El cliente se desconecto. Terminando conexion
+[ERROR] 02:25:29:114 Kernel/(24759:24759): ¡No se pudo conectar al servidor!
+[ERROR] 02:25:37:113 Kernel/(24776:24776): ¡No se pudo conectar al servidor!
+[ERROR] 02:25:47:162 Kernel/(24814:24814): ¡No se pudo conectar al servidor!
+[INFO] 02:26:30:577 Kernel/(24853:24853): ¡Conectado al servidor!
+[INFO] 02:26:30:581 Kernel/(24853:24853): Servidor listo para recibir al cliente
+[DEBUG] 02:26:35:479 Kernel/(24853:24871): NEW:
+[INFO] 02:26:35:480 Kernel/(24853:24871): Se crea el proceso 24853 en NEW
+[DEBUG] 02:26:35:481 Kernel/(24853:24871): Paquete inicializado.
+[DEBUG] 02:26:35:488 Kernel/(24853:24871): Pid agregada.
+[DEBUG] 02:26:35:491 Kernel/(24853:24871): Instrucciones agregadas.
+[DEBUG] 02:26:35:491 Kernel/(24853:24871): Program_counter agregado.
+[DEBUG] 02:26:35:492 Kernel/(24853:24871): Paquete enviado.
+[INFO] 02:26:35:492 Kernel/(24853:24871): SET AX HOLA
+[INFO] 02:26:35:492 Kernel/(24853:24871): MOV_OUT 120 AX
+[INFO] 02:26:35:492 Kernel/(24853:24871): WAIT DISCO
+[INFO] 02:26:35:492 Kernel/(24853:24871): I/O 10
+[INFO] 02:26:35:492 Kernel/(24853:24871): SIGNAL DISCO
+[INFO] 02:26:35:492 Kernel/(24853:24871): MOV_IN BX 120
+[INFO] 02:26:35:492 Kernel/(24853:24871): F_OPEN ARCHIVO
+[INFO] 02:26:35:492 Kernel/(24853:24871): YIELD
+[INFO] 02:26:35:492 Kernel/(24853:24871): F_TRUNCATE ARCHIVO 64
+[INFO] 02:26:35:492 Kernel/(24853:24871): F_SEEK ARCHIVO 10
+[INFO] 02:26:35:492 Kernel/(24853:24871): CREATE_SEGMENT 1 128
+[INFO] 02:26:35:492 Kernel/(24853:24871): F_WRITE ARCHIVO 4 4
+[INFO] 02:26:35:492 Kernel/(24853:24871): F_READ ARCHIVO 16 4
+[INFO] 02:26:35:492 Kernel/(24853:24871): DELETE_SEGMENT 1
+[INFO] 02:26:35:492 Kernel/(24853:24871): F_CLOSE ARCHIVO
+[INFO] 02:26:35:492 Kernel/(24853:24871): EXIT
+[WARNING] 02:26:35:492 Kernel/(24853:24871): El cliente se desconecto. Terminando conexion
+[INFO] 02:28:58:486 Kernel/(25088:25088): ¡Conectado al servidor!
+[INFO] 02:28:58:500 Kernel/(25088:25088): Servidor listo para recibir al cliente
+[INFO] 02:29:22:175 Kernel/(25088:25107): Se crea el proceso 25088 en NEW
+[INFO] 02:29:22:175 Kernel/(25088:25107): SET AX HOLA
+[INFO] 02:29:22:176 Kernel/(25088:25107): MOV_OUT 120 AX
+[INFO] 02:29:22:176 Kernel/(25088:25107): WAIT DISCO
+[INFO] 02:29:22:179 Kernel/(25088:25107): I/O 10
+[INFO] 02:29:22:179 Kernel/(25088:25107): SIGNAL DISCO
+[INFO] 02:29:22:179 Kernel/(25088:25107): MOV_IN BX 120
+[INFO] 02:29:22:179 Kernel/(25088:25107): F_OPEN ARCHIVO
+[INFO] 02:29:22:179 Kernel/(25088:25107): YIELD
+[INFO] 02:29:22:180 Kernel/(25088:25107): F_TRUNCATE ARCHIVO 64
+[INFO] 02:29:22:180 Kernel/(25088:25107): F_SEEK ARCHIVO 10
+[INFO] 02:29:22:180 Kernel/(25088:25107): CREATE_SEGMENT 1 128
+[INFO] 02:29:22:180 Kernel/(25088:25107): F_WRITE ARCHIVO 4 4
+[INFO] 02:29:22:180 Kernel/(25088:25107): F_READ ARCHIVO 16 4
+[INFO] 02:29:22:180 Kernel/(25088:25107): DELETE_SEGMENT 1
+[INFO] 02:29:22:180 Kernel/(25088:25107): F_CLOSE ARCHIVO
+[INFO] 02:29:22:180 Kernel/(25088:25107): EXIT
+[WARNING] 02:29:22:180 Kernel/(25088:25107): El cliente se desconecto. Terminando conexion
+[INFO] 02:29:47:804 Kernel/(25088:25130): Se crea el proceso 25088 en NEW
+[INFO] 02:29:47:806 Kernel/(25088:25130): SET AX HOLA
+[INFO] 02:29:47:806 Kernel/(25088:25130): MOV_OUT 120 AX
+[INFO] 02:29:47:806 Kernel/(25088:25130): WAIT DISCO
+[INFO] 02:29:47:806 Kernel/(25088:25130): I/O 10
+[INFO] 02:29:47:806 Kernel/(25088:25130): SIGNAL DISCO
+[INFO] 02:29:47:806 Kernel/(25088:25130): MOV_IN BX 120
+[INFO] 02:29:47:806 Kernel/(25088:25130): F_OPEN ARCHIVO
+[INFO] 02:29:47:806 Kernel/(25088:25130): YIELD
+[INFO] 02:29:47:807 Kernel/(25088:25130): F_TRUNCATE ARCHIVO 64
+[INFO] 02:29:47:807 Kernel/(25088:25130): F_SEEK ARCHIVO 10
+[INFO] 02:29:47:807 Kernel/(25088:25130): CREATE_SEGMENT 1 128
+[INFO] 02:29:47:807 Kernel/(25088:25130): F_WRITE ARCHIVO 4 4
+[INFO] 02:29:47:807 Kernel/(25088:25130): F_READ ARCHIVO 16 4
+[INFO] 02:29:47:807 Kernel/(25088:25130): DELETE_SEGMENT 1
+[INFO] 02:29:47:807 Kernel/(25088:25130): F_CLOSE ARCHIVO
+[INFO] 02:29:47:807 Kernel/(25088:25130): EXIT
+[WARNING] 02:29:48:007 Kernel/(25088:25130): El cliente se desconecto. Terminando conexion
+[INFO] 02:29:50:384 Kernel/(25088:25147): Se crea el proceso 25088 en NEW
+[INFO] 02:29:50:385 Kernel/(25088:25147): SET AX HOLA
+[INFO] 02:29:50:386 Kernel/(25088:25147): MOV_OUT 120 AX
+[INFO] 02:29:50:386 Kernel/(25088:25147): WAIT DISCO
+[INFO] 02:29:50:387 Kernel/(25088:25147): I/O 10
+[INFO] 02:29:50:387 Kernel/(25088:25147): SIGNAL DISCO
+[INFO] 02:29:50:387 Kernel/(25088:25147): MOV_IN BX 120
+[INFO] 02:29:50:387 Kernel/(25088:25147): F_OPEN ARCHIVO
+[INFO] 02:29:50:387 Kernel/(25088:25147): YIELD
+[INFO] 02:29:50:387 Kernel/(25088:25147): F_TRUNCATE ARCHIVO 64
+[INFO] 02:29:50:387 Kernel/(25088:25147): F_SEEK ARCHIVO 10
+[INFO] 02:29:50:387 Kernel/(25088:25147): CREATE_SEGMENT 1 128
+[INFO] 02:29:50:387 Kernel/(25088:25147): F_WRITE ARCHIVO 4 4
+[INFO] 02:29:50:387 Kernel/(25088:25147): F_READ ARCHIVO 16 4
+[INFO] 02:29:50:387 Kernel/(25088:25147): DELETE_SEGMENT 1
+[INFO] 02:29:50:387 Kernel/(25088:25147): F_CLOSE ARCHIVO
+[INFO] 02:29:50:387 Kernel/(25088:25147): EXIT
+[WARNING] 02:29:50:387 Kernel/(25088:25147): El cliente se desconecto. Terminando conexion
+[INFO] 02:29:53:620 Kernel/(25088:25159): Se crea el proceso 25088 en NEW
+[INFO] 02:29:53:621 Kernel/(25088:25159): SET AX HOLA
+[INFO] 02:29:53:621 Kernel/(25088:25159): MOV_OUT 120 AX
+[INFO] 02:29:53:621 Kernel/(25088:25159): WAIT DISCO
+[INFO] 02:29:53:621 Kernel/(25088:25159): I/O 10
+[INFO] 02:29:53:621 Kernel/(25088:25159): SIGNAL DISCO
+[INFO] 02:29:53:621 Kernel/(25088:25159): MOV_IN BX 120
+[INFO] 02:29:53:621 Kernel/(25088:25159): F_OPEN ARCHIVO
+[INFO] 02:29:53:621 Kernel/(25088:25159): YIELD
+[INFO] 02:29:53:621 Kernel/(25088:25159): F_TRUNCATE ARCHIVO 64
+[INFO] 02:29:53:621 Kernel/(25088:25159): F_SEEK ARCHIVO 10
+[INFO] 02:29:53:622 Kernel/(25088:25159): CREATE_SEGMENT 1 128
+[INFO] 02:29:53:622 Kernel/(25088:25159): F_WRITE ARCHIVO 4 4
+[INFO] 02:29:53:622 Kernel/(25088:25159): F_READ ARCHIVO 16 4
+[INFO] 02:29:53:622 Kernel/(25088:25159): DELETE_SEGMENT 1
+[INFO] 02:29:53:622 Kernel/(25088:25159): F_CLOSE ARCHIVO
+[INFO] 02:29:53:622 Kernel/(25088:25159): EXIT
+[WARNING] 02:29:53:622 Kernel/(25088:25159): El cliente se desconecto. Terminando conexion
+[INFO] 02:50:23:742 Kernel/(27496:27496): ¡Conectado al servidor!
+[INFO] 02:50:23:769 Kernel/(27496:27496): Servidor listo para recibir al cliente
+[INFO] 02:50:28:619 Kernel/(27496:27514): Se crea el proceso 27496 en NEW
+[INFO] 02:50:28:622 Kernel/(27496:27514): SET AX HOLA
+[INFO] 02:50:28:623 Kernel/(27496:27514): SET ECX BOKITAAA
+[WARNING] 02:50:28:635 Kernel/(27496:27514): El cliente se desconecto. Terminando conexion

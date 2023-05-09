@@ -7,7 +7,7 @@ int main(int argc, char** argv)
 	}
 	int conexion_kernel = -1;
 
-	logger = iniciar_logger("consola.log");
+	logger = iniciar_logger("consola.log", "Consola");
 	config = iniciar_config(argv[1]);
 
 	char* ip_kernel = config_get_string_value(config, "IP");
@@ -44,7 +44,7 @@ void paquete(int conexion)
 {
 	// Ahora toca lo divertido!
 	char* leido;
-	t_paquete* paquete = crear_paquete();
+	t_paquete* paquete = crear_paquete(PAQUETE);
 
 	// Leemos y esta vez agregamos las lineas al paquete
 	while(1) {
@@ -66,7 +66,7 @@ void paquete_texto(int conexion, char* pseudocodigo)
 {
 	char leido[64];
 	char* parsed;
-	t_paquete* paquete = crear_paquete();
+	t_paquete* paquete = crear_paquete(NEW);
 	FILE* fptr = fopen(pseudocodigo, "r");
 	if (fptr == NULL) {
 		printf("¡No se pudo abrir el archivo!\n");

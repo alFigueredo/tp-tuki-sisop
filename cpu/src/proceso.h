@@ -1,5 +1,5 @@
-#ifndef PROCESS_H_
-#define PROCESS_H_
+#ifndef PROCESO_H_
+#define PROCESO_H_
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -51,11 +51,12 @@ typedef struct {
 	t_list* archivos_abiertos;
 }pcb;
 
+pcb* recibir_pcb_de_kernel(t_list*);
 void delay(int);
 t_dictionary* diccionario_instrucciones(void);
 t_dictionary* diccionario_registros(registros_cpu*);
 void instruccion_set(t_dictionary*, char*);
 
-void interpretar_instruccion(void);
+void interpretar_instruccion(pcb*);
 
-#endif /* PROCESS_H_ */
+#endif /* PROCESO_H_ */

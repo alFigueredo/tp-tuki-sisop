@@ -14,7 +14,7 @@
 #include <assert.h>
 #include <pthread.h>
 #include "logconfig.h"
-#include "process.h"
+#include "proceso.h"
 
 int iniciar_servidor(char*);
 int esperar_cliente(int);

@@ -16,6 +16,10 @@
 #include <pthread.h>
 #include "logconfig.h"
 
+extern t_queue* qnew;
+extern t_queue* qready;
+extern t_queue* qexit;
+
 typedef struct{
 	 char AX[4];
 	 char BX[4];
@@ -32,7 +36,7 @@ typedef struct{
 } registros_cpu;
 
 typedef struct {
-		int pid;
+		unsigned int pid;
 		t_list* instrucciones;
 		int program_counter;
 		registros_cpu registros;
@@ -42,6 +46,6 @@ typedef struct {
 		t_list* archivos_abiertos;
 } pcb;
 
-
+pcb* generar_proceso(t_list*);
 
 #endif /* PROCESS_H_ */

@@ -62,7 +62,7 @@ void recv_handshake(int socket_cliente)
 
 void atender_cliente(int* socket_cliente){
 	t_list *lista;
-
+	pcb* proceso;
 	while (1) {
 		int cod_op = recibir_operacion(*socket_cliente);
 		switch (cod_op) {
@@ -72,7 +72,13 @@ void atender_cliente(int* socket_cliente){
 		case PAQUETE:
 			lista = recibir_paquete(*socket_cliente);
 			log_info(logger, "Me llegaron los siguientes valores:");
-			list_iterate(lista, (void*) iterator);
+			list_iterate(proceso->instrucciones, (void*) iterator);
+			break;
+		case EXEC:
+			lista = recibir_paquete(*socket_cliente);
+			log_info(logger, "EXEC");
+			proceso = recibir_pcb_de_kernel(lista);
+			interpretar_instruccion(proceso);
 			break;
 		case -1:
 			log_warning(logger, "El cliente se desconecto. Terminando conexion");

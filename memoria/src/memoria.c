@@ -1,7 +1,7 @@
 #include "memoria.h"
 
 int main(void) {
-	logger = iniciar_logger("memoria.log");
+	logger = iniciar_logger("memoria.log", "Memoria");
 	config = iniciar_config("memoria.config");
 	char* puerto_escucha = config_get_string_value(config, "PUERTO_ESCUCHA");
 	int socket_servidor = -1;

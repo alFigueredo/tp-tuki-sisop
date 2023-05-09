@@ -13,3 +13,212 @@
 [WARNING] 06:27:25:189 logger/(11363:11363): Liberando conexion
 [ERROR] 07:02:52:197 logger/(13024:13024): ¡No se pudo conectar al servidor!
 [ERROR] 20:49:16:303 logger/(5900:5900): ¡No se pudo conectar al servidor!
+[INFO] 19:35:06:905 Consola/(6322:6322): ¡Conectado al servidor!
+[WARNING] 19:35:06:930 Consola/(6322:6322): Liberando conexion
+[INFO] 20:18:21:232 Consola/(8512:8512): ¡Conectado al servidor!
+[WARNING] 20:18:21:252 Consola/(8512:8512): Liberando conexion
+[INFO] 20:46:46:624 Consola/(9721:9721): ¡Conectado al servidor!
+[WARNING] 20:46:46:646 Consola/(9721:9721): Liberando conexion
+[INFO] 20:47:55:804 Consola/(9794:9794): ¡Conectado al servidor!
+[WARNING] 20:47:55:837 Consola/(9794:9794): Liberando conexion
+[ERROR] 20:50:08:854 Consola/(9884:9884): ¡No se pudo conectar al servidor!
+[INFO] 20:50:19:218 Consola/(9931:9931): ¡Conectado al servidor!
+[WARNING] 20:50:19:219 Consola/(9931:9931): Liberando conexion
+[INFO] 20:51:56:910 Consola/(10073:10073): ¡Conectado al servidor!
+[WARNING] 20:51:56:911 Consola/(10073:10073): Liberando conexion
+[INFO] 20:54:38:806 Consola/(10246:10246): ¡Conectado al servidor!
+[WARNING] 20:54:38:825 Consola/(10246:10246): Liberando conexion
+[INFO] 20:56:59:081 Consola/(10451:10451): ¡Conectado al servidor!
+[WARNING] 20:56:59:084 Consola/(10451:10451): Liberando conexion
+[INFO] 20:57:42:349 Consola/(10732:10732): ¡Conectado al servidor!
+[WARNING] 20:57:42:364 Consola/(10732:10732): Liberando conexion
+[INFO] 20:58:32:674 Consola/(10792:10792): ¡Conectado al servidor!
+[WARNING] 20:58:32:857 Consola/(10792:10792): Liberando conexion
+[INFO] 21:03:10:991 Consola/(10954:10954): ¡Conectado al servidor!
+[WARNING] 21:03:10:992 Consola/(10954:10954): Liberando conexion
+[INFO] 21:04:02:376 Consola/(11172:11172): ¡Conectado al servidor!
+[WARNING] 21:04:02:377 Consola/(11172:11172): Liberando conexion
+[INFO] 21:04:50:795 Consola/(11299:11299): ¡Conectado al servidor!
+[WARNING] 21:04:50:862 Consola/(11299:11299): Liberando conexion
+[INFO] 21:07:32:459 Consola/(11391:11391): ¡Conectado al servidor!
+[WARNING] 21:07:32:490 Consola/(11391:11391): Liberando conexion
+[INFO] 21:12:27:686 Consola/(11491:11491): ¡Conectado al servidor!
+[WARNING] 21:12:27:699 Consola/(11491:11491): Liberando conexion
+[INFO] 21:14:52:680 Consola/(11596:11596): ¡Conectado al servidor!
+[WARNING] 21:14:52:691 Consola/(11596:11596): Liberando conexion
+[INFO] 21:16:15:480 Consola/(11698:11698): ¡Conectado al servidor!
+[WARNING] 21:16:15:587 Consola/(11698:11698): Liberando conexion
+[INFO] 21:16:47:442 Consola/(11760:11760): ¡Conectado al servidor!
+[WARNING] 21:16:47:443 Consola/(11760:11760): Liberando conexion
+[INFO] 21:17:23:328 Consola/(11825:11825): ¡Conectado al servidor!
+[WARNING] 21:17:23:332 Consola/(11825:11825): Liberando conexion
+[INFO] 21:17:58:447 Consola/(11889:11889): ¡Conectado al servidor!
+[WARNING] 21:17:58:452 Consola/(11889:11889): Liberando conexion
+[INFO] 21:21:35:652 Consola/(12055:12055): ¡Conectado al servidor!
+[WARNING] 21:21:35:671 Consola/(12055:12055): Liberando conexion
+[INFO] 21:26:39:589 Consola/(12151:12151): ¡Conectado al servidor!
+[WARNING] 21:26:39:651 Consola/(12151:12151): Liberando conexion
+[INFO] 21:27:34:713 Consola/(12221:12221): ¡Conectado al servidor!
+[WARNING] 21:27:34:727 Consola/(12221:12221): Liberando conexion
+[INFO] 21:28:13:994 Consola/(12273:12273): ¡Conectado al servidor!
+[WARNING] 21:28:13:995 Consola/(12273:12273): Liberando conexion
+[INFO] 21:28:41:876 Consola/(12312:12312): ¡Conectado al servidor!
+[WARNING] 21:28:41:881 Consola/(12312:12312): Liberando conexion
+[INFO] 21:30:39:624 Consola/(12415:12415): ¡Conectado al servidor!
+[WARNING] 21:30:39:625 Consola/(12415:12415): Liberando conexion
+[INFO] 21:32:37:088 Consola/(12475:12475): ¡Conectado al servidor!
+[WARNING] 21:32:37:094 Consola/(12475:12475): Liberando conexion
+[INFO] 21:33:17:244 Consola/(12511:12511): ¡Conectado al servidor!
+[WARNING] 21:33:17:249 Consola/(12511:12511): Liberando conexion
+[INFO] 21:35:12:322 Consola/(12603:12603): ¡Conectado al servidor!
+[WARNING] 21:35:12:340 Consola/(12603:12603): Liberando conexion
+[INFO] 21:38:33:945 Consola/(12624:12624): ¡Conectado al servidor!
+[WARNING] 21:38:33:950 Consola/(12624:12624): Liberando conexion
+[INFO] 21:46:31:196 Consola/(12930:12930): ¡Conectado al servidor!
+[WARNING] 21:46:31:363 Consola/(12930:12930): Liberando conexion
+[INFO] 21:47:56:948 Consola/(13024:13024): ¡Conectado al servidor!
+[WARNING] 21:47:56:953 Consola/(13024:13024): Liberando conexion
+[INFO] 21:49:34:208 Consola/(13210:13210): ¡Conectado al servidor!
+[WARNING] 21:49:34:307 Consola/(13210:13210): Liberando conexion
+[INFO] 21:50:26:359 Consola/(13265:13265): ¡Conectado al servidor!
+[WARNING] 21:50:26:365 Consola/(13265:13265): Liberando conexion
+[INFO] 21:53:03:925 Consola/(13586:13586): ¡Conectado al servidor!
+[WARNING] 21:53:03:925 Consola/(13586:13586): Liberando conexion
+[INFO] 21:57:56:094 Consola/(13792:13792): ¡Conectado al servidor!
+[WARNING] 21:57:56:126 Consola/(13792:13792): Liberando conexion
+[INFO] 22:00:37:935 Consola/(13985:13985): ¡Conectado al servidor!
+[WARNING] 22:00:38:033 Consola/(13985:13985): Liberando conexion
+[INFO] 22:01:43:597 Consola/(14071:14071): ¡Conectado al servidor!
+[WARNING] 22:01:43:604 Consola/(14071:14071): Liberando conexion
+[INFO] 22:04:01:321 Consola/(14222:14222): ¡Conectado al servidor!
+[WARNING] 22:04:01:369 Consola/(14222:14222): Liberando conexion
+[INFO] 22:04:16:285 Consola/(14257:14257): ¡Conectado al servidor!
+[WARNING] 22:04:16:287 Consola/(14257:14257): Liberando conexion
+[INFO] 22:07:27:565 Consola/(14392:14392): ¡Conectado al servidor!
+[WARNING] 22:07:27:580 Consola/(14392:14392): Liberando conexion
+[INFO] 22:09:51:070 Consola/(14547:14547): ¡Conectado al servidor!
+[WARNING] 22:09:51:070 Consola/(14547:14547): Liberando conexion
+[INFO] 22:10:06:664 Consola/(14584:14584): ¡Conectado al servidor!
+[WARNING] 22:10:06:665 Consola/(14584:14584): Liberando conexion
+[INFO] 22:15:20:892 Consola/(14807:14807): ¡Conectado al servidor!
+[WARNING] 22:15:20:923 Consola/(14807:14807): Liberando conexion
+[INFO] 22:18:39:433 Consola/(14994:14994): ¡Conectado al servidor!
+[WARNING] 22:18:39:456 Consola/(14994:14994): Liberando conexion
+[INFO] 22:21:01:198 Consola/(15143:15143): ¡Conectado al servidor!
+[WARNING] 22:21:01:252 Consola/(15143:15143): Liberando conexion
+[INFO] 22:22:22:078 Consola/(15212:15212): ¡Conectado al servidor!
+[WARNING] 22:22:22:079 Consola/(15212:15212): Liberando conexion
+[INFO] 22:22:42:397 Consola/(15266:15266): ¡Conectado al servidor!
+[WARNING] 22:22:42:398 Consola/(15266:15266): Liberando conexion
+[INFO] 22:25:07:660 Consola/(15339:15339): ¡Conectado al servidor!
+[WARNING] 22:25:07:668 Consola/(15339:15339): Liberando conexion
+[INFO] 22:25:42:480 Consola/(15395:15395): ¡Conectado al servidor!
+[WARNING] 22:25:42:481 Consola/(15395:15395): Liberando conexion
+[INFO] 22:26:52:684 Consola/(15479:15479): ¡Conectado al servidor!
+[WARNING] 22:26:52:684 Consola/(15479:15479): Liberando conexion
+[INFO] 22:27:51:580 Consola/(15536:15536): ¡Conectado al servidor!
+[WARNING] 22:27:51:617 Consola/(15536:15536): Liberando conexion
+[INFO] 22:30:20:395 Consola/(15612:15612): ¡Conectado al servidor!
+[WARNING] 22:30:20:399 Consola/(15612:15612): Liberando conexion
+[INFO] 22:33:01:268 Consola/(15776:15776): ¡Conectado al servidor!
+[WARNING] 22:33:01:269 Consola/(15776:15776): Liberando conexion
+[INFO] 22:33:12:841 Consola/(15811:15811): ¡Conectado al servidor!
+[WARNING] 22:33:12:841 Consola/(15811:15811): Liberando conexion
+[INFO] 22:33:48:751 Consola/(15867:15867): ¡Conectado al servidor!
+[WARNING] 22:33:48:751 Consola/(15867:15867): Liberando conexion
+[INFO] 22:38:20:205 Consola/(16307:16307): ¡Conectado al servidor!
+[WARNING] 22:38:20:207 Consola/(16307:16307): Liberando conexion
+[INFO] 22:41:11:558 Consola/(16634:16634): ¡Conectado al servidor!
+[WARNING] 22:41:11:565 Consola/(16634:16634): Liberando conexion
+[INFO] 22:41:26:184 Consola/(16669:16669): ¡Conectado al servidor!
+[WARNING] 22:41:26:185 Consola/(16669:16669): Liberando conexion
+[INFO] 22:45:35:415 Consola/(16690:16690): ¡Conectado al servidor!
+[WARNING] 22:45:35:416 Consola/(16690:16690): Liberando conexion
+[INFO] 22:46:13:684 Consola/(16759:16759): ¡Conectado al servidor!
+[WARNING] 22:46:13:707 Consola/(16759:16759): Liberando conexion
+[INFO] 23:01:03:377 Consola/(17287:17287): ¡Conectado al servidor!
+[WARNING] 23:01:03:393 Consola/(17287:17287): Liberando conexion
+[INFO] 23:05:19:119 Consola/(17582:17582): ¡Conectado al servidor!
+[WARNING] 23:05:19:147 Consola/(17582:17582): Liberando conexion
+[INFO] 23:08:18:834 Consola/(17807:17807): ¡Conectado al servidor!
+[WARNING] 23:08:18:944 Consola/(17807:17807): Liberando conexion
+[INFO] 23:08:33:210 Consola/(17842:17842): ¡Conectado al servidor!
+[WARNING] 23:08:33:211 Consola/(17842:17842): Liberando conexion
+[INFO] 23:08:44:895 Consola/(17884:17884): ¡Conectado al servidor!
+[WARNING] 23:08:44:900 Consola/(17884:17884): Liberando conexion
+[INFO] 23:08:54:497 Consola/(17920:17920): ¡Conectado al servidor!
+[WARNING] 23:08:54:500 Consola/(17920:17920): Liberando conexion
+[INFO] 23:11:37:293 Consola/(18077:18077): ¡Conectado al servidor!
+[WARNING] 23:11:37:295 Consola/(18077:18077): Liberando conexion
+[INFO] 23:11:45:721 Consola/(18118:18118): ¡Conectado al servidor!
+[WARNING] 23:11:45:722 Consola/(18118:18118): Liberando conexion
+[INFO] 23:11:51:700 Consola/(18148:18148): ¡Conectado al servidor!
+[WARNING] 23:11:51:704 Consola/(18148:18148): Liberando conexion
+[INFO] 23:31:37:121 Consola/(18688:18688): ¡Conectado al servidor!
+[WARNING] 23:31:37:153 Consola/(18688:18688): Liberando conexion
+[INFO] 23:31:52:295 Consola/(18723:18723): ¡Conectado al servidor!
+[WARNING] 23:31:52:300 Consola/(18723:18723): Liberando conexion
+[INFO] 23:36:54:357 Consola/(19492:19492): ¡Conectado al servidor!
+[WARNING] 23:36:54:388 Consola/(19492:19492): Liberando conexion
+[INFO] 23:37:10:935 Consola/(19529:19529): ¡Conectado al servidor!
+[WARNING] 23:37:10:936 Consola/(19529:19529): Liberando conexion
+[INFO] 23:37:22:971 Consola/(19564:19564): ¡Conectado al servidor!
+[WARNING] 23:37:22:978 Consola/(19564:19564): Liberando conexion
+[INFO] 23:37:33:445 Consola/(19601:19601): ¡Conectado al servidor!
+[WARNING] 23:37:33:448 Consola/(19601:19601): Liberando conexion
+[INFO] 23:41:19:086 Consola/(20004:20004): ¡Conectado al servidor!
+[WARNING] 23:41:19:090 Consola/(20004:20004): Liberando conexion
+[INFO] 23:41:51:752 Consola/(20044:20044): ¡Conectado al servidor!
+[WARNING] 23:41:51:756 Consola/(20044:20044): Liberando conexion
+[INFO] 23:41:59:699 Consola/(20085:20085): ¡Conectado al servidor!
+[WARNING] 23:41:59:699 Consola/(20085:20085): Liberando conexion
+[INFO] 23:48:37:285 Consola/(20321:20321): ¡Conectado al servidor!
+[WARNING] 23:48:37:286 Consola/(20321:20321): Liberando conexion
+[INFO] 23:48:44:789 Consola/(20357:20357): ¡Conectado al servidor!
+[WARNING] 23:48:44:789 Consola/(20357:20357): Liberando conexion
+[INFO] 23:56:39:057 Consola/(20751:20751): ¡Conectado al servidor!
+[WARNING] 23:56:39:190 Consola/(20751:20751): Liberando conexion
+[INFO] 23:57:32:068 Consola/(20812:20812): ¡Conectado al servidor!
+[WARNING] 23:57:32:091 Consola/(20812:20812): Liberando conexion
+[INFO] 23:59:25:282 Consola/(21212:21212): ¡Conectado al servidor!
+[WARNING] 23:59:25:282 Consola/(21212:21212): Liberando conexion
+[INFO] 23:59:53:800 Consola/(21273:21273): ¡Conectado al servidor!
+[WARNING] 23:59:53:804 Consola/(21273:21273): Liberando conexion
+[INFO] 00:03:08:995 Consola/(21654:21654): ¡Conectado al servidor!
+[WARNING] 00:03:09:009 Consola/(21654:21654): Liberando conexion
+[INFO] 00:06:17:170 Consola/(21860:21860): ¡Conectado al servidor!
+[WARNING] 00:06:17:174 Consola/(21860:21860): Liberando conexion
+[INFO] 00:06:34:020 Consola/(21896:21896): ¡Conectado al servidor!
+[WARNING] 00:06:34:021 Consola/(21896:21896): Liberando conexion
+[INFO] 00:07:58:220 Consola/(22002:22002): ¡Conectado al servidor!
+[WARNING] 00:07:58:241 Consola/(22002:22002): Liberando conexion
+[INFO] 00:16:01:869 Consola/(22698:22698): ¡Conectado al servidor!
+[WARNING] 00:16:01:883 Consola/(22698:22698): Liberando conexion
+[INFO] 00:16:54:623 Consola/(22786:22786): ¡Conectado al servidor!
+[WARNING] 00:16:54:624 Consola/(22786:22786): Liberando conexion
+[INFO] 01:54:25:410 Consola/(22926:22926): ¡Conectado al servidor!
+[WARNING] 01:54:25:418 Consola/(22926:22926): Liberando conexion
+[INFO] 01:55:58:347 Consola/(23068:23068): ¡Conectado al servidor!
+[WARNING] 01:55:58:348 Consola/(23068:23068): Liberando conexion
+[INFO] 02:05:41:125 Consola/(23711:23711): ¡Conectado al servidor!
+[WARNING] 02:05:41:139 Consola/(23711:23711): Liberando conexion
+[INFO] 02:12:21:859 Consola/(24076:24076): ¡Conectado al servidor!
+[WARNING] 02:12:21:890 Consola/(24076:24076): Liberando conexion
+[INFO] 02:13:27:868 Consola/(24158:24158): ¡Conectado al servidor!
+[WARNING] 02:13:27:869 Consola/(24158:24158): Liberando conexion
+[INFO] 02:21:57:407 Consola/(24619:24619): ¡Conectado al servidor!
+[WARNING] 02:21:57:428 Consola/(24619:24619): Liberando conexion
+[INFO] 02:24:17:721 Consola/(24701:24701): ¡Conectado al servidor!
+[WARNING] 02:24:17:721 Consola/(24701:24701): Liberando conexion
+[INFO] 02:26:35:476 Consola/(24865:24865): ¡Conectado al servidor!
+[WARNING] 02:26:35:478 Consola/(24865:24865): Liberando conexion
+[INFO] 02:29:22:158 Consola/(25102:25102): ¡Conectado al servidor!
+[WARNING] 02:29:22:175 Consola/(25102:25102): Liberando conexion
+[INFO] 02:29:47:802 Consola/(25124:25124): ¡Conectado al servidor!
+[WARNING] 02:29:47:803 Consola/(25124:25124): Liberando conexion
+[INFO] 02:29:50:382 Consola/(25141:25141): ¡Conectado al servidor!
+[WARNING] 02:29:50:383 Consola/(25141:25141): Liberando conexion
+[INFO] 02:29:53:618 Consola/(25153:25153): ¡Conectado al servidor!
+[WARNING] 02:29:53:619 Consola/(25153:25153): Liberando conexion
+[INFO] 02:50:28:594 Consola/(27508:27508): ¡Conectado al servidor!
+[WARNING] 02:50:28:613 Consola/(27508:27508): Liberando conexion

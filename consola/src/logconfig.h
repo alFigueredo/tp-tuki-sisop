@@ -11,13 +11,18 @@
 typedef enum
 {
 	MENSAJE,
-	PAQUETE
+	PAQUETE,
+	NEW,
+	READY,
+	EXEC,
+	BLOCK,
+	FINISHED
 }op_code;
 
 extern t_log* logger;
 extern t_config* config;
 
-t_log* iniciar_logger(char*);
+t_log* iniciar_logger(char*, char*);
 t_config* iniciar_config(char*);
 
 #endif /* LOGCONFIG_H_ */

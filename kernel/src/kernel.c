@@ -2,11 +2,15 @@
 
 int main(void) {
 	int conexion_memoria = -1;
-	int conexion_cpu = -1;
+	conexion_cpu = -1;
 	int conexion_filesystem = -1;
 
-	logger = iniciar_logger("kernel.log");
+	logger = iniciar_logger("kernel.log", "Kernel");
 	config = iniciar_config("kernel.config");
+	qnew = queue_create();
+	qready = queue_create();
+	qexit = queue_create();
+
 
 	char* ip_memoria = config_get_string_value(config, "IP_MEMORIA");
 	char* puerto_memoria = config_get_string_value(config, "PUERTO_MEMORIA");
@@ -17,18 +21,24 @@ int main(void) {
 	char* puerto_escucha = config_get_string_value(config, "PUERTO_ESCUCHA");
 
 	// Creamos una conexión hacia el servidor
+	/*
 	conexion_memoria = crear_conexion(ip_memoria, puerto_memoria);
-	conexion_cpu = crear_conexion(ip_cpu, puerto_cpu);
-	conexion_filesystem = crear_conexion(ip_filesystem, puerto_filesystem);
-
 	enviar_mensaje("Intento de conexión del kernel a la memoria", conexion_memoria);
+	*/
+	conexion_cpu = crear_conexion(ip_cpu, puerto_cpu);
 	enviar_mensaje("Intento de conexión del kernel al cpu", conexion_cpu);
+	/*
+	conexion_filesystem = crear_conexion(ip_filesystem, puerto_filesystem);
 	enviar_mensaje("Intento de conexión del kernel al filesystem", conexion_filesystem);
+	*/
 
 	int socket_servidor = -1;
 	socket_servidor = iniciar_servidor(puerto_escucha);
 	esperar_cliente_hilos(socket_servidor);
 
+	queue_destroy(qnew);
+	queue_destroy(qready);
+	queue_destroy(qexit);
 	liberar_conexion(conexion_memoria);
 	liberar_conexion(conexion_cpu);
 	liberar_conexion(conexion_filesystem);
