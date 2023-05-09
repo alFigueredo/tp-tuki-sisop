@@ -1148,3 +1148,18 @@
 [INFO] 02:50:28:622 Kernel/(27496:27514): SET AX HOLA
 [INFO] 02:50:28:623 Kernel/(27496:27514): SET ECX BOKITAAA
 [WARNING] 02:50:28:635 Kernel/(27496:27514): El cliente se desconecto. Terminando conexion
+[INFO] 04:53:28:076 Kernel/(28155:28155): ¡Conectado al servidor!
+[INFO] 04:53:28:092 Kernel/(28155:28155): Servidor listo para recibir al cliente
+[INFO] 04:53:35:092 Kernel/(28155:28178): Se crea el proceso 28155 en NEW
+[INFO] 04:53:35:093 Kernel/(28155:28178): SET AX HOLA
+[INFO] 04:53:35:098 Kernel/(28155:28178): SET ECX BOKITAAA
+[WARNING] 04:53:35:102 Kernel/(28155:28178): El cliente se desconecto. Terminando conexion
+[ERROR] 04:54:20:238 Kernel/(28233:28233): ¡No se pudo conectar al servidor!
+[ERROR] 04:54:45:700 Kernel/(28277:28277): ¡No se pudo conectar al servidor!
+[ERROR] 04:55:06:685 Kernel/(28314:28314): ¡No se pudo conectar al servidor!
+[INFO] 04:55:25:343 Kernel/(28347:28347): ¡Conectado al servidor!
+[INFO] 04:55:25:344 Kernel/(28347:28347): Servidor listo para recibir al cliente
+[INFO] 04:55:28:919 Kernel/(28347:28370): Se crea el proceso 28347 en NEW
+[INFO] 04:55:28:936 Kernel/(28347:28370): SET AX HOLA
+[INFO] 04:55:28:936 Kernel/(28347:28370): SET ECX BOKITAAA
+[WARNING] 04:55:28:944 Kernel/(28347:28370): El cliente se desconecto. Terminando conexion

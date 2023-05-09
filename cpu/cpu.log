@@ -33143,3 +33143,20 @@
 [DEBUG] 02:50:30:617 CPU/(27459:27502): HOLA
 [DEBUG] 02:50:30:630 CPU/(27459:27502): BKTA
 [WARNING] 02:50:38:294 CPU/(27459:27502): El cliente se desconecto. Terminando conexion
+[INFO] 04:53:25:465 CPU/(28144:28144): Servidor listo para recibir al cliente
+[INFO] 04:53:28:095 CPU/(28144:28161): Me llego el mensaje: Intento de conexión del kernel al cpu
+[INFO] 04:53:35:093 CPU/(28144:28161): EXEC
+[INFO] 04:53:35:093 CPU/(28144:28161): Instrucción SET.
+[INFO] 04:53:36:092 CPU/(28144:28161): Instrucción SET.
+[DEBUG] 04:53:37:094 CPU/(28144:28161): 
+[DEBUG] 04:53:37:099 CPU/(28144:28161): 
+[INFO] 04:54:16:833 CPU/(28222:28222): Servidor listo para recibir al cliente
+[INFO] 04:54:41:107 CPU/(28263:28263): Servidor listo para recibir al cliente
+[INFO] 04:55:03:210 CPU/(28302:28302): Servidor listo para recibir al cliente
+[INFO] 04:55:23:018 CPU/(28336:28336): Servidor listo para recibir al cliente
+[INFO] 04:55:25:352 CPU/(28336:28353): Me llego el mensaje: Intento de conexión del kernel al cpu
+[INFO] 04:55:28:920 CPU/(28336:28353): EXEC
+[INFO] 04:55:28:921 CPU/(28336:28353): Instrucción SET.
+[INFO] 04:55:29:920 CPU/(28336:28353): Instrucción SET.
+[DEBUG] 04:55:30:928 CPU/(28336:28353): HOLA
+[DEBUG] 04:55:30:933 CPU/(28336:28353): BKTA

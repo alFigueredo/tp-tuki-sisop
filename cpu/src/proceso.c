@@ -46,8 +46,7 @@ void instruccion_set(t_dictionary* registros, char* parsed) {
 	char* registro = dictionary_get(registros, parsed);
 	parsed = strtok(NULL, " ");
 	char* arg = parsed;
-	for (int i=0; i<strlen(arg); i++)
-		registro[i] = arg[i];
+	memcpy(registro, arg, strlen(arg));
 	delay(config_get_int_value(config, "RETARDO_INSTRUCCION"));
 }
 
