@@ -8,21 +8,11 @@
 #include <commons/config.h>
 #include <commons/error.h>
 
-typedef enum
-{
-	MENSAJE,
-	PAQUETE,
-	NEW,
-	READY,
-	EXEC,
-	BLOCK,
-	FINISHED
-}op_code;
-
 extern t_log* logger;
 extern t_config* config;
 
 t_log* iniciar_logger(char*, char*);
 t_config* iniciar_config(char*);
+void iterator(char*);
 
 #endif /* LOGCONFIG_H_ */

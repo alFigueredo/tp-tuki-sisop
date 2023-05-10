@@ -1,5 +1,5 @@
-#ifndef PROCESS_H_
-#define PROCESS_H_
+#ifndef PROCESO_H_
+#define PROCESO_H_
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -11,10 +11,15 @@
 #include <commons/process.h>
 #include <commons/collections/list.h>
 #include <commons/collections/queue.h>
+#include <signal.h>
+#include <stdint.h>
 #include <string.h>
 #include <assert.h>
 #include <pthread.h>
 #include "logconfig.h"
+#include "operaciones.h"
+#include "cliente.h"
+#include "server.h"
 
 extern t_queue* qnew;
 extern t_queue* qready;
@@ -48,7 +53,10 @@ typedef struct {
 		t_list* archivos_abiertos;
 } pcb;
 
-t_dictionary* diccionario_registros(registros_cpu*);
+// t_dictionary* diccionario_registros(registros_cpu*);
+void iniciar_colas(void);
 pcb* generar_proceso(t_list*);
+void enviar_pcb_a_cpu(int, pcb*);
+pcb* recibir_pcb_de_cpu(t_list*);
 
-#endif /* PROCESS_H_ */
+#endif /* PROCESO_H_ */

@@ -33990,3 +33990,124 @@
 [DEBUG] 15:43:16:119 CPU/(15896:16376): EHOLA
 [DEBUG] 15:43:16:119 CPU/(15896:16376): EBOKITAAA
 [DEBUG] 15:43:16:119 CPU/(15896:16376): ECHAU
+[INFO] 17:31:29:855 CPU/(2046:2046): Servidor listo para recibir al cliente
+[INFO] 17:31:41:561 CPU/(2046:2067): Me llego el mensaje: Intento de conexión del kernel al cpu
+[INFO] 17:31:45:409 CPU/(2046:2067): Instrucción SET.
+[INFO] 17:31:46:413 CPU/(2046:2067): Instrucción SET.
+[INFO] 17:31:47:420 CPU/(2046:2067): Instrucción YIELD.
+[DEBUG] 17:31:47:433 CPU/(2046:2067): HOLA
+[DEBUG] 17:31:47:433 CPU/(2046:2067): MAIAMEEE
+[DEBUG] 17:31:47:433 CPU/(2046:2067): 
+[INFO] 17:31:47:436 CPU/(2046:2067): Instrucción SET.
+[INFO] 17:31:48:464 CPU/(2046:2067): Instrucción EXIT.
+[TRACE] 17:31:48:471 CPU/(2046:2067): EHOLA
+[TRACE] 17:31:48:471 CPU/(2046:2067): EMAIAMEEE
+[TRACE] 17:31:48:472 CPU/(2046:2067): ECHAU
+[INFO] 17:33:02:245 CPU/(2046:2067): Instrucción SET.
+[INFO] 17:33:03:245 CPU/(2046:2067): Instrucción SET.
+[INFO] 17:33:04:271 CPU/(2046:2067): Instrucción YIELD.
+[DEBUG] 17:33:04:276 CPU/(2046:2067): HOLA
+[DEBUG] 17:33:04:276 CPU/(2046:2067): MAIAMEEE
+[DEBUG] 17:33:04:276 CPU/(2046:2067): 
+[INFO] 17:33:04:278 CPU/(2046:2067): Instrucción SET.
+[INFO] 17:33:05:281 CPU/(2046:2067): Instrucción EXIT.
+[TRACE] 17:33:05:281 CPU/(2046:2067): EHOLA
+[TRACE] 17:33:05:282 CPU/(2046:2067): EMAIAMEEE
+[TRACE] 17:33:05:282 CPU/(2046:2067): ECHAU
+[INFO] 17:34:26:470 CPU/(2138:2138): Servidor listo para recibir al cliente
+[INFO] 17:34:40:874 CPU/(2174:2174): Servidor listo para recibir al cliente
+[INFO] 17:34:55:806 CPU/(2215:2215): Servidor listo para recibir al cliente
+[INFO] 17:34:59:040 CPU/(2215:2235): Me llego el mensaje: Intento de conexión del kernel al cpu
+[INFO] 17:35:02:515 CPU/(2215:2235): Instrucción SET.
+[INFO] 17:35:03:539 CPU/(2215:2235): Instrucción SET.
+[INFO] 17:35:04:539 CPU/(2215:2235): Instrucción YIELD.
+[INFO] 17:35:04:550 CPU/(2215:2235): Instrucción SET.
+[INFO] 17:35:05:550 CPU/(2215:2235): Instrucción EXIT.
+[TRACE] 17:35:05:561 CPU/(2215:2235): Registro AX: HOLA
+[TRACE] 17:35:05:561 CPU/(2215:2235): Registro ECX: MAIAMEEE
+[TRACE] 17:35:05:561 CPU/(2215:2235): Registro BX: CHAU
+[INFO] 19:38:50:655 CPU/(5210:5210): Servidor listo para recibir al cliente
+[INFO] 19:38:54:839 CPU/(5210:5235): Me llego el mensaje: Intento de conexión del kernel al cpu
+[INFO] 19:41:46:551 CPU/(5419:5419): Servidor listo para recibir al cliente
+[INFO] 20:09:39:028 CPU/(6483:6483): Servidor listo para recibir al cliente
+[INFO] 20:09:43:253 CPU/(6483:6551): Me llego el mensaje: Intento de conexión del kernel al cpu
+[WARNING] 20:13:20:455 CPU/(6483:6551): El cliente se desconecto. Terminando conexion
+[INFO] 20:15:57:489 CPU/(6856:6856): Servidor listo para recibir al cliente
+[INFO] 20:16:01:235 CPU/(6856:6876): Me llego el mensaje: Intento de conexión del kernel al cpu
+[WARNING] 20:17:33:414 CPU/(6856:6876): El cliente se desconecto. Terminando conexion
+[INFO] 20:18:34:469 CPU/(7049:7049): Servidor listo para recibir al cliente
+[INFO] 20:18:40:754 CPU/(7049:7049): ¡Se conecto un cliente!
+[INFO] 20:18:40:883 CPU/(7049:7085): Me llego el mensaje: Intento de conexión del kernel al cpu
+[INFO] 20:20:00:283 CPU/(7123:7123): Servidor listo para recibir al cliente
+[INFO] 20:20:17:937 CPU/(7194:7194): Servidor listo para recibir al cliente
+[INFO] 20:20:19:550 CPU/(7194:7194): ¡Se conecto un cliente!
+[INFO] 20:20:19:556 CPU/(7194:7214): Me llego el mensaje: Intento de conexión del kernel al cpu
+[WARNING] 20:24:14:927 CPU/(7194:7214): El cliente se desconecto. Terminando conexion
+[INFO] 20:24:28:260 CPU/(7194:7194): ¡Se conecto un cliente!
+[INFO] 20:24:28:352 CPU/(7194:7445): Me llego el mensaje: Intento de conexión del kernel al cpu
+[WARNING] 20:24:35:727 CPU/(7194:7445): El cliente se desconecto. Terminando conexion
+[INFO] 20:24:54:474 CPU/(7194:7194): ¡Se conecto un cliente!
+[INFO] 20:24:54:482 CPU/(7194:7506): Me llego el mensaje: Intento de conexión del kernel al cpu
+[WARNING] 20:25:22:226 CPU/(7194:7506): El cliente se desconecto. Terminando conexion
+[INFO] 20:25:27:151 CPU/(7194:7194): ¡Se conecto un cliente!
+[WARNING] 20:25:30:551 CPU/(7194:7559): El cliente se desconecto. Terminando conexion
+[INFO] 20:25:45:604 CPU/(7585:7585): Servidor listo para recibir al cliente
+[INFO] 20:25:47:423 CPU/(7585:7585): ¡Se conecto un cliente!
+[INFO] 20:25:47:428 CPU/(7585:7618): Me llego el mensaje: Intento de conexión del kernel al cpu
+[WARNING] 20:26:11:893 CPU/(7585:7618): El cliente se desconecto. Terminando conexion
+[INFO] 20:27:11:478 CPU/(7585:7585): ¡Se conecto un cliente!
+[INFO] 20:27:11:489 CPU/(7585:7795): Me llego el mensaje: Intento de conexión del kernel al cpu
+[INFO] 20:27:13:854 CPU/(7585:7795): Instrucción SET.
+[INFO] 20:27:14:856 CPU/(7585:7795): Instrucción SET.
+[INFO] 20:27:15:860 CPU/(7585:7795): Instrucción YIELD.
+[INFO] 20:27:15:867 CPU/(7585:7795): Instrucción SET.
+[INFO] 20:27:16:867 CPU/(7585:7795): Instrucción EXIT.
+[TRACE] 20:27:16:870 CPU/(7585:7795): Registro AX: HOLA
+[TRACE] 20:27:16:873 CPU/(7585:7795): Registro ECX: MAIAMEEE
+[TRACE] 20:27:16:873 CPU/(7585:7795): Registro BX: CHAU
+[INFO] 20:33:00:715 CPU/(8441:8441): Servidor listo para recibir al cliente
+[INFO] 20:33:10:998 CPU/(8441:8441): ¡Se conecto un cliente!
+[INFO] 20:33:11:000 CPU/(8441:8483): Me llego el mensaje: Intento de conexión del kernel al cpu
+[WARNING] 20:33:17:767 CPU/(8441:8483): El cliente se desconecto. Terminando conexion
+[INFO] 20:35:53:711 CPU/(9301:9301): Servidor listo para recibir al cliente
+[INFO] 20:35:56:148 CPU/(9301:9301): ¡Se conecto un cliente!
+[INFO] 20:35:56:159 CPU/(9301:9332): Me llego el mensaje: Intento de conexión del kernel al cpu
+[INFO] 20:35:59:718 CPU/(9301:9332): Instrucción SET.
+[INFO] 20:36:00:717 CPU/(9301:9332): Instrucción SET.
+[INFO] 20:36:01:720 CPU/(9301:9332): Instrucción YIELD.
+[INFO] 20:36:01:728 CPU/(9301:9332): Instrucción SET.
+[INFO] 20:36:02:728 CPU/(9301:9332): Instrucción EXIT.
+[TRACE] 20:36:02:731 CPU/(9301:9332): Registro AX: HOLA
+[TRACE] 20:36:02:737 CPU/(9301:9332): Registro ECX: MAIAMEEE
+[TRACE] 20:36:02:737 CPU/(9301:9332): Registro BX: CHAU
+[INFO] 20:39:02:875 CPU/(9451:9451): Servidor listo para recibir al cliente
+[INFO] 20:39:05:354 CPU/(9451:9451): ¡Se conecto un cliente!
+[INFO] 20:39:05:551 CPU/(9451:9504): Me llego el mensaje: Intento de conexión del kernel al cpu
+[INFO] 20:39:09:264 CPU/(9451:9504): Instrucción SET.
+[INFO] 20:39:10:263 CPU/(9451:9504): Instrucción SET.
+[INFO] 20:39:11:270 CPU/(9451:9504): Instrucción YIELD.
+[INFO] 20:39:11:280 CPU/(9451:9504): Instrucción SET.
+[INFO] 20:39:12:279 CPU/(9451:9504): Instrucción EXIT.
+[TRACE] 20:39:12:283 CPU/(9451:9504): Registro AX: HOLA
+[TRACE] 20:39:12:283 CPU/(9451:9504): Registro ECX: MAIAMEEE
+[TRACE] 20:39:12:283 CPU/(9451:9504): Registro BX: CHAU
+[INFO] 20:41:34:559 CPU/(9650:9650): Servidor listo para recibir al cliente
+[INFO] 20:41:39:016 CPU/(9650:9650): ¡Se conecto un cliente!
+[INFO] 20:41:39:034 CPU/(9650:9686): Me llego el mensaje: Intento de conexión del kernel al cpu
+[INFO] 20:41:41:666 CPU/(9693:9693): Servidor listo para recibir al cliente
+[INFO] 20:41:51:289 CPU/(9650:9686): Instrucción SET.
+[INFO] 20:41:52:289 CPU/(9650:9686): Instrucción SET.
+[INFO] 20:41:53:291 CPU/(9650:9686): Instrucción YIELD.
+[INFO] 20:41:53:303 CPU/(9650:9686): Instrucción SET.
+[INFO] 20:41:54:302 CPU/(9650:9686): Instrucción EXIT.
+[TRACE] 20:41:54:305 CPU/(9650:9686): Registro AX: HOLA
+[TRACE] 20:41:54:306 CPU/(9650:9686): Registro ECX: MAIAMEEE
+[TRACE] 20:41:54:306 CPU/(9650:9686): Registro BX: CHAU
+[INFO] 20:42:03:443 CPU/(9650:9686): Instrucción SET.
+[INFO] 20:42:04:494 CPU/(9650:9686): Instrucción SET.
+[INFO] 20:42:05:493 CPU/(9650:9686): Instrucción YIELD.
+[INFO] 20:42:05:502 CPU/(9650:9686): Instrucción SET.
+[INFO] 20:42:06:502 CPU/(9650:9686): Instrucción EXIT.
+[TRACE] 20:42:06:506 CPU/(9650:9686): Registro AX: HOLA
+[TRACE] 20:42:06:506 CPU/(9650:9686): Registro ECX: MAIAMEEE
+[TRACE] 20:42:06:506 CPU/(9650:9686): Registro BX: CHAU

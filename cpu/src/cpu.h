@@ -9,6 +9,6 @@
 #include "cliente.h"
 #include "server.h"
 
-void terminar_programa(t_log*, t_config*, int);
+void terminar_programa(t_log*, t_config*);
 
 #endif /* CPU_H_ */

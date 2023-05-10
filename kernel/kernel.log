@@ -1843,3 +1843,155 @@
 [INFO] 15:43:12:088 Kernel/(16371:16377): El proceso 16371 pasa a READY
 [INFO] 15:43:12:090 Kernel/(16371:16377): El proceso 16371 pasa a EXEC
 [INFO] 15:43:16:119 Kernel/(16371:16377): El proceso 16371 pasa a EXIT
+[INFO] 17:31:41:539 Kernel/(2061:2061): ¡Conectado al servidor!
+[INFO] 17:31:41:557 Kernel/(2061:2061): Servidor listo para recibir al cliente
+[INFO] 17:31:45:405 Kernel/(2061:2079): Se crea el proceso 2061 en NEW
+[INFO] 17:31:45:406 Kernel/(2061:2079): El proceso 2061 pasa a READY
+[INFO] 17:31:45:409 Kernel/(2061:2079): El proceso 2061 pasa a EXEC
+[WARNING] 17:31:45:409 Kernel/(2061:2079): El cliente se desconecto. Terminando conexion
+[INFO] 17:31:47:433 Kernel/(2061:2068): El proceso 2061 pasa a READY
+[INFO] 17:31:47:435 Kernel/(2061:2068): El proceso 2061 pasa a EXEC
+[INFO] 17:31:48:472 Kernel/(2061:2068): El proceso 2061 pasa a EXIT
+[INFO] 17:33:02:245 Kernel/(2061:2098): Se crea el proceso 2061 en NEW
+[INFO] 17:33:02:245 Kernel/(2061:2098): El proceso 2061 pasa a READY
+[INFO] 17:33:02:245 Kernel/(2061:2098): El proceso 2061 pasa a EXEC
+[WARNING] 17:33:02:269 Kernel/(2061:2098): El cliente se desconecto. Terminando conexion
+[INFO] 17:33:04:276 Kernel/(2061:2068): El proceso 2061 pasa a READY
+[INFO] 17:33:04:278 Kernel/(2061:2068): El proceso 2061 pasa a EXEC
+[INFO] 17:33:05:282 Kernel/(2061:2068): El proceso 2061 pasa a EXIT
+[WARNING] 17:33:51:600 Kernel/(2061:2068): El servidor se desconecto. Terminando conexion
+[ERROR] 17:34:31:343 Kernel/(2153:2153): ¡No se pudo conectar al servidor!
+[ERROR] 17:34:44:209 Kernel/(2189:2189): ¡No se pudo conectar al servidor!
+[INFO] 17:34:59:039 Kernel/(2230:2230): ¡Conectado al servidor!
+[INFO] 17:34:59:040 Kernel/(2230:2230): Servidor listo para recibir al cliente
+[INFO] 17:35:02:514 Kernel/(2230:2247): Se crea el proceso 2230 en NEW
+[INFO] 17:35:02:515 Kernel/(2230:2247): El proceso 2230 pasa a READY
+[INFO] 17:35:02:515 Kernel/(2230:2247): El proceso 2230 pasa a EXEC
+[WARNING] 17:35:02:531 Kernel/(2230:2247): El cliente se desconecto. Terminando conexion
+[INFO] 17:35:04:548 Kernel/(2230:2236): El proceso 2230 pasa a READY
+[INFO] 17:35:04:549 Kernel/(2230:2236): El proceso 2230 pasa a EXEC
+[INFO] 17:35:05:562 Kernel/(2230:2236): El proceso 2230 pasa a EXIT
+[WARNING] 17:35:26:232 Kernel/(2230:2236): El servidor se desconecto. Terminando conexion
+[INFO] 19:38:54:813 Kernel/(5230:5230): ¡Conectado al servidor!
+[INFO] 19:38:54:839 Kernel/(5230:5230): Servidor listo para recibir al cliente
+[INFO] 19:38:58:462 Kernel/(5230:5230): ¡Se conecto un cliente!
+[INFO] 19:38:58:509 Kernel/(5230:5252): Se crea el proceso 5230 en NEW
+[INFO] 19:38:58:509 Kernel/(5230:5252): El proceso 5230 pasa a READY
+[INFO] 19:38:58:510 Kernel/(5230:5252): El proceso 5230 pasa a EXEC
+[WARNING] 19:38:58:514 Kernel/(5230:5252): El cliente se desconecto. Terminando conexion
+[WARNING] 19:41:38:434 Kernel/(5230:5236): El servidor se desconecto. Terminando conexion
+[ERROR] 19:41:51:745 Kernel/(5434:5434): ¡No se pudo conectar al servidor!
+[INFO] 20:09:43:219 Kernel/(6546:6546): ¡Conectado al servidor!
+[INFO] 20:09:43:251 Kernel/(6546:6546): Servidor listo para recibir al cliente
+[INFO] 20:09:47:261 Kernel/(6546:6546): ¡Se conecto un cliente!
+[INFO] 20:09:47:367 Kernel/(6546:6563): Se crea el proceso 6546 en NEW
+[INFO] 20:09:47:367 Kernel/(6546:6563): El proceso 6546 pasa a READY
+[INFO] 20:09:47:369 Kernel/(6546:6563): El proceso 6546 pasa a EXEC
+[WARNING] 20:09:47:369 Kernel/(6546:6563): El cliente se desconecto. Terminando conexion
+[INFO] 20:16:01:192 Kernel/(6871:6871): ¡Conectado al servidor!
+[INFO] 20:16:01:235 Kernel/(6871:6871): Servidor listo para recibir al cliente
+[INFO] 20:16:05:452 Kernel/(6871:6871): ¡Se conecto un cliente!
+[INFO] 20:16:05:480 Kernel/(6871:6912): Se crea el proceso 6871 en NEW
+[INFO] 20:16:05:480 Kernel/(6871:6912): El proceso 6871 pasa a READY
+[INFO] 20:16:05:480 Kernel/(6871:6912): El proceso 6871 pasa a EXEC
+[WARNING] 20:16:05:681 Kernel/(6871:6912): El cliente se desconecto. Terminando conexion
+[INFO] 20:18:40:758 Kernel/(7080:7080): ¡Conectado al servidor!
+[INFO] 20:18:40:881 Kernel/(7080:7080): Servidor listo para recibir al cliente
+[INFO] 20:18:47:144 Kernel/(7080:7080): ¡Se conecto un cliente!
+[INFO] 20:18:47:259 Kernel/(7080:7097): Se crea el proceso 7080 en NEW
+[INFO] 20:18:47:259 Kernel/(7080:7097): El proceso 7080 pasa a READY
+[INFO] 20:18:47:259 Kernel/(7080:7097): El proceso 7080 pasa a EXEC
+[DEBUG] 20:18:47:259 Kernel/(7080:7097): DEBUG
+[WARNING] 20:18:47:260 Kernel/(7080:7097): El cliente se desconecto. Terminando conexion
+[WARNING] 20:19:06:145 Kernel/(7080:7086): El servidor se desconecto. Terminando conexion
+[ERROR] 20:20:03:424 Kernel/(7162:7162): ¡No se pudo conectar al servidor!
+[INFO] 20:20:19:551 Kernel/(7209:7209): ¡Conectado al servidor!
+[INFO] 20:20:19:552 Kernel/(7209:7209): Servidor listo para recibir al cliente
+[INFO] 20:20:20:842 Kernel/(7209:7209): ¡Se conecto un cliente!
+[INFO] 20:20:20:868 Kernel/(7209:7226): Se crea el proceso 7209 en NEW
+[INFO] 20:20:20:868 Kernel/(7209:7226): El proceso 7209 pasa a READY
+[INFO] 20:20:20:869 Kernel/(7209:7226): El proceso 7209 pasa a EXEC
+[DEBUG] 20:20:20:869 Kernel/(7209:7226): DEBUG
+[WARNING] 20:20:20:870 Kernel/(7209:7226): El cliente se desconecto. Terminando conexion
+[INFO] 20:24:28:308 Kernel/(7440:7440): ¡Conectado al servidor!
+[INFO] 20:24:28:352 Kernel/(7440:7440): Servidor listo para recibir al cliente
+[INFO] 20:24:54:477 Kernel/(7501:7501): ¡Conectado al servidor!
+[INFO] 20:24:54:479 Kernel/(7501:7501): Servidor listo para recibir al cliente
+[INFO] 20:24:57:299 Kernel/(7501:7501): ¡Se conecto un cliente!
+[INFO] 20:24:57:323 Kernel/(7501:7518): Se crea el proceso 7501 en NEW
+[INFO] 20:24:57:323 Kernel/(7501:7518): El proceso 7501 pasa a READY
+[INFO] 20:24:57:323 Kernel/(7501:7518): El proceso 7501 pasa a EXEC
+[DEBUG] 20:24:57:327 Kernel/(7501:7518): 0
+[DEBUG] 20:24:57:327 Kernel/(7501:7518): 0
+[WARNING] 20:24:57:327 Kernel/(7501:7518): El cliente se desconecto. Terminando conexion
+[INFO] 20:25:27:154 Kernel/(7554:7554): ¡Conectado al servidor!
+[INFO] 20:25:47:426 Kernel/(7613:7613): ¡Conectado al servidor!
+[DEBUG] 20:25:47:428 Kernel/(7613:7613): i: 4
+[INFO] 20:25:47:428 Kernel/(7613:7613): Servidor listo para recibir al cliente
+[INFO] 20:27:11:486 Kernel/(7790:7790): ¡Conectado al servidor!
+[DEBUG] 20:27:11:486 Kernel/(7790:7790): i: 4
+[INFO] 20:27:11:487 Kernel/(7790:7790): Servidor listo para recibir al cliente
+[INFO] 20:27:13:849 Kernel/(7790:7790): ¡Se conecto un cliente!
+[INFO] 20:27:13:854 Kernel/(7790:7807): Se crea el proceso 7790 en NEW
+[INFO] 20:27:13:854 Kernel/(7790:7807): El proceso 7790 pasa a READY
+[INFO] 20:27:13:854 Kernel/(7790:7807): El proceso 7790 pasa a EXEC
+[DEBUG] 20:27:13:863 Kernel/(7790:7807): 4
+[DEBUG] 20:27:13:864 Kernel/(7790:7807): 4
+[WARNING] 20:27:13:867 Kernel/(7790:7807): El cliente se desconecto. Terminando conexion
+[INFO] 20:27:15:867 Kernel/(7790:7796): El proceso 7790 pasa a READY
+[INFO] 20:27:15:867 Kernel/(7790:7796): El proceso 7790 pasa a EXEC
+[DEBUG] 20:27:15:867 Kernel/(7790:7796): 4
+[INFO] 20:27:16:873 Kernel/(7790:7796): El proceso 7790 pasa a EXIT
+[WARNING] 20:31:59:017 Kernel/(7790:7796): El servidor se desconecto. Terminando conexion
+[INFO] 20:33:11:000 Kernel/(8478:8478): ¡Conectado al servidor!
+[DEBUG] 20:33:11:000 Kernel/(8478:8478): i: 4
+[INFO] 20:33:11:000 Kernel/(8478:8478): Servidor listo para recibir al cliente
+[INFO] 20:33:16:783 Kernel/(8478:8478): ¡Se conecto un cliente!
+[INFO] 20:33:16:818 Kernel/(8478:8495): Se crea el proceso 8478 en NEW
+[INFO] 20:33:16:818 Kernel/(8478:8495): El proceso 8478 pasa a READY
+[INFO] 20:33:16:818 Kernel/(8478:8495): El proceso 8478 pasa a EXEC
+[INFO] 20:35:56:151 Kernel/(9327:9327): ¡Conectado al servidor!
+[DEBUG] 20:35:56:154 Kernel/(9327:9327): i: 4
+[INFO] 20:35:56:154 Kernel/(9327:9327): Servidor listo para recibir al cliente
+[INFO] 20:35:59:717 Kernel/(9327:9327): ¡Se conecto un cliente!
+[INFO] 20:35:59:718 Kernel/(9327:9349): Se crea el proceso 9327 en NEW
+[INFO] 20:35:59:718 Kernel/(9327:9349): El proceso 9327 pasa a READY
+[INFO] 20:35:59:718 Kernel/(9327:9349): El proceso 9327 pasa a EXEC
+[DEBUG] 20:35:59:726 Kernel/(9327:9349): 4
+[DEBUG] 20:35:59:726 Kernel/(9327:9349): 4
+[WARNING] 20:35:59:726 Kernel/(9327:9349): El cliente se desconecto. Terminando conexion
+[INFO] 20:36:01:728 Kernel/(9327:9333): El proceso 9327 pasa a READY
+[INFO] 20:36:01:728 Kernel/(9327:9333): El proceso 9327 pasa a EXEC
+[DEBUG] 20:36:01:728 Kernel/(9327:9333): 4
+[INFO] 20:36:02:737 Kernel/(9327:9333): El proceso 9327 pasa a EXIT
+[WARNING] 20:36:11:455 Kernel/(9327:9333): El servidor se desconecto. Terminando conexion
+[INFO] 20:39:05:357 Kernel/(9498:9498): ¡Conectado al servidor!
+[INFO] 20:39:05:551 Kernel/(9498:9498): Servidor listo para recibir al cliente
+[INFO] 20:39:09:204 Kernel/(9498:9498): ¡Se conecto un cliente!
+[INFO] 20:39:09:263 Kernel/(9498:9516): Se crea el proceso 9498 en NEW
+[INFO] 20:39:09:263 Kernel/(9498:9516): El proceso 9498 pasa a READY
+[INFO] 20:39:09:263 Kernel/(9498:9516): El proceso 9498 pasa a EXEC
+[WARNING] 20:39:09:473 Kernel/(9498:9516): El cliente se desconecto. Terminando conexion
+[INFO] 20:39:11:274 Kernel/(9498:9505): El proceso 9498 pasa a READY
+[INFO] 20:39:11:275 Kernel/(9498:9505): El proceso 9498 pasa a EXEC
+[INFO] 20:39:12:284 Kernel/(9498:9505): El proceso 9498 pasa a EXIT
+[WARNING] 20:39:36:080 Kernel/(9498:9505): El servidor se desconecto. Terminando conexion
+[INFO] 20:41:39:018 Kernel/(9681:9681): ¡Conectado al servidor!
+[INFO] 20:41:39:033 Kernel/(9681:9681): Servidor listo para recibir al cliente
+[INFO] 20:41:51:245 Kernel/(9681:9681): ¡Se conecto un cliente!
+[INFO] 20:41:51:289 Kernel/(9681:9713): Se crea el proceso 9681 en NEW
+[INFO] 20:41:51:289 Kernel/(9681:9713): El proceso 9681 pasa a READY
+[INFO] 20:41:51:289 Kernel/(9681:9713): El proceso 9681 pasa a EXEC
+[WARNING] 20:41:51:298 Kernel/(9681:9713): El cliente se desconecto. Terminando conexion
+[INFO] 20:41:53:302 Kernel/(9681:9687): El proceso 9681 pasa a READY
+[INFO] 20:41:53:302 Kernel/(9681:9687): El proceso 9681 pasa a EXEC
+[INFO] 20:41:54:306 Kernel/(9681:9687): El proceso 9681 pasa a EXIT
+[INFO] 20:42:03:428 Kernel/(9681:9681): ¡Se conecto un cliente!
+[INFO] 20:42:03:443 Kernel/(9681:9729): Se crea el proceso 9681 en NEW
+[INFO] 20:42:03:443 Kernel/(9681:9729): El proceso 9681 pasa a READY
+[INFO] 20:42:03:443 Kernel/(9681:9729): El proceso 9681 pasa a EXEC
+[WARNING] 20:42:03:452 Kernel/(9681:9729): El cliente se desconecto. Terminando conexion
+[INFO] 20:42:05:502 Kernel/(9681:9687): El proceso 9681 pasa a READY
+[INFO] 20:42:05:502 Kernel/(9681:9687): El proceso 9681 pasa a EXEC
+[INFO] 20:42:06:506 Kernel/(9681:9687): El proceso 9681 pasa a EXIT
+[WARNING] 20:42:38:130 Kernel/(9681:9687): El servidor se desconecto. Terminando conexion

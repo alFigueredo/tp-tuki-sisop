@@ -15,7 +15,9 @@
 #include <string.h>
 #include <assert.h>
 #include <pthread.h>
-#include "logconfig.h"
+#include "operaciones.h"
+#include "cliente.h"
+#include "server.h"
 
 typedef enum
 {
@@ -52,6 +54,7 @@ typedef struct {
 }pcb;
 
 pcb* recibir_pcb_de_kernel(t_list*);
+void enviar_pcb_a_kernel(int, pcb*, op_code);
 void delay(int);
 t_dictionary* diccionario_instrucciones(void);
 t_dictionary* diccionario_registros(registros_cpu*);

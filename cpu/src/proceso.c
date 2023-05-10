@@ -3,26 +3,10 @@
 pcb* recibir_pcb_de_kernel(t_list* lista) {
 	pcb* proceso = malloc(sizeof(pcb));
 	memcpy(&(proceso->pid), list_remove(lista, 0), sizeof(unsigned int));
-	proceso->instrucciones = list_take_and_remove(lista, list_size(lista)-13);
+	int instrucciones_size;
+	memcpy(&(instrucciones_size), list_remove(lista, 0), sizeof(int));
+	proceso->instrucciones = list_take_and_remove(lista, instrucciones_size);
 	memcpy(&(proceso->program_counter), list_remove(lista, 0), sizeof(int));
-	/*
-	t_dictionary* registros = diccionario_registros(&proceso->registros);
-	t_list* arrRegistros = dictionary_elements(registros);
-	for (int i=0; i<12; i++) {
-		switch (i/4) {
-			case 0:
-				memcpy(list_get(arrRegistros,i), list_remove(lista, 0), 4);
-				break;
-			case 1:
-				memcpy(list_get(arrRegistros,i), list_remove(lista, 0), 8);
-				break;
-			case 2:
-				memcpy(list_get(arrRegistros,i), list_remove(lista, 0), 16);
-				break;
-		}
-	}
-	dictionary_destroy(registros);
-	*/
 	memcpy(proceso->registros.AX, list_remove(lista, 0), 4);
 	memcpy(proceso->registros.BX, list_remove(lista, 0), 4);
 	memcpy(proceso->registros.CX, list_remove(lista, 0), 4);
@@ -38,6 +22,32 @@ pcb* recibir_pcb_de_kernel(t_list* lista) {
 	return proceso;
 }
 
+void enviar_pcb_a_kernel(int conexion_kernel, pcb* proceso, op_code estado) {
+	t_paquete* paquete = crear_paquete(estado);
+	agregar_a_paquete(paquete, &(proceso->pid), sizeof(unsigned int));
+	int instrucciones_size = list_size(proceso->instrucciones);
+	agregar_a_paquete(paquete, &instrucciones_size, sizeof(int));
+	for (int i=0; i<instrucciones_size; i++) {
+		char* instruccion = list_get(proceso->instrucciones, i);
+		agregar_a_paquete(paquete, instruccion, strlen(instruccion)+1);
+	}
+	agregar_a_paquete(paquete, &(proceso->program_counter), sizeof(int));
+	agregar_a_paquete(paquete, proceso->registros.AX, 4);
+	agregar_a_paquete(paquete, proceso->registros.BX, 4);
+	agregar_a_paquete(paquete, proceso->registros.CX, 4);
+	agregar_a_paquete(paquete, proceso->registros.DX, 4);
+	agregar_a_paquete(paquete, proceso->registros.EAX, 8);
+	agregar_a_paquete(paquete, proceso->registros.EBX, 8);
+	agregar_a_paquete(paquete, proceso->registros.ECX, 8);
+	agregar_a_paquete(paquete, proceso->registros.EDX, 8);
+	agregar_a_paquete(paquete, proceso->registros.RAX, 16);
+	agregar_a_paquete(paquete, proceso->registros.RBX, 16);
+	agregar_a_paquete(paquete, proceso->registros.RCX, 16);
+	agregar_a_paquete(paquete, proceso->registros.RDX, 16);
+	enviar_paquete(paquete, conexion_kernel);
+	eliminar_paquete(paquete);
+}
+
 void delay(int milliseconds)
 {
 	t_temporal* clock = temporal_create();
@@ -45,6 +55,7 @@ void delay(int milliseconds)
 		;
 	temporal_destroy(clock);
 }
+
 t_dictionary* diccionario_instrucciones(void) {
 	t_dictionary* instrucciones = dictionary_create();
 	dictionary_put(instrucciones, "SET", (void*)(intptr_t)SET);
@@ -103,19 +114,17 @@ enum_instrucciones interpretar_instrucciones(pcb* proceso) {
 				instruccion_set(registros, parsed);
 				break;
 			case YIELD:
-				// NO IMPLEMENTADA
 				instruccion_yield(registros, parsed);
-				log_debug(logger, "%c%c%c%c", proceso->registros.AX[0], proceso->registros.AX[1], proceso->registros.AX[2], proceso->registros.AX[3]);
-				log_debug(logger, "%c%c%c%c%c%c%c%c", proceso->registros.ECX[0], proceso->registros.ECX[1], proceso->registros.ECX[2], proceso->registros.ECX[3], proceso->registros.ECX[4], proceso->registros.ECX[5], proceso->registros.ECX[6], proceso->registros.ECX[7]);
-				log_debug(logger, "%c%c%c%c", proceso->registros.BX[0], proceso->registros.BX[1], proceso->registros.BX[2], proceso->registros.BX[3]);
+				// log_debug(logger, "%c%c%c%c", proceso->registros.AX[0], proceso->registros.AX[1], proceso->registros.AX[2], proceso->registros.AX[3]);
+				// log_debug(logger, "%c%c%c%c%c%c%c%c", proceso->registros.ECX[0], proceso->registros.ECX[1], proceso->registros.ECX[2], proceso->registros.ECX[3], proceso->registros.ECX[4], proceso->registros.ECX[5], proceso->registros.ECX[6], proceso->registros.ECX[7]);
+				// log_debug(logger, "%c%c%c%c", proceso->registros.BX[0], proceso->registros.BX[1], proceso->registros.BX[2], proceso->registros.BX[3]);
 				proceso->program_counter++;
 				return YIELD;
 			case EXIT:
-				// NO IMPLEMENTADA
 				instruccion_exit(registros, parsed);
-				log_debug(logger, "E%c%c%c%c", proceso->registros.AX[0], proceso->registros.AX[1], proceso->registros.AX[2], proceso->registros.AX[3]);
-				log_debug(logger, "E%c%c%c%c%c%c%c%c", proceso->registros.ECX[0], proceso->registros.ECX[1], proceso->registros.ECX[2], proceso->registros.ECX[3], proceso->registros.ECX[4], proceso->registros.ECX[5], proceso->registros.ECX[6], proceso->registros.ECX[7]);
-				log_debug(logger, "E%c%c%c%c", proceso->registros.BX[0], proceso->registros.BX[1], proceso->registros.BX[2], proceso->registros.BX[3]);
+				log_trace(logger, "Registro AX: %c%c%c%c", proceso->registros.AX[0], proceso->registros.AX[1], proceso->registros.AX[2], proceso->registros.AX[3]);
+				log_trace(logger, "Registro ECX: %c%c%c%c%c%c%c%c", proceso->registros.ECX[0], proceso->registros.ECX[1], proceso->registros.ECX[2], proceso->registros.ECX[3], proceso->registros.ECX[4], proceso->registros.ECX[5], proceso->registros.ECX[6], proceso->registros.ECX[7]);
+				log_trace(logger, "Registro BX: %c%c%c%c", proceso->registros.BX[0], proceso->registros.BX[1], proceso->registros.BX[2], proceso->registros.BX[3]);
 				proceso->program_counter++;
 				return EXIT;
 		}

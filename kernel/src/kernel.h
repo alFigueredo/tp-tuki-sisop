@@ -5,8 +5,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <commons/log.h>
+#include "cliente.h"
 #include "server.h"
 
-void terminar_programa(t_log*, t_config*, int);
+void terminar_programa(t_log*, t_config*);
 
 #endif /* KERNEL_H_ */
