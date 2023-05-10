@@ -22,3 +22,7 @@ t_config* iniciar_config(char* config_file)
 	}
 	return nuevo_config;
 }
+
+void iterator(char* value) {
+	log_info(logger,"%s", value);
+}

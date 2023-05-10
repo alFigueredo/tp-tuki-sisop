@@ -1995,3 +1995,37 @@
 [INFO] 20:42:05:502 Kernel/(9681:9687): El proceso 9681 pasa a EXEC
 [INFO] 20:42:06:506 Kernel/(9681:9687): El proceso 9681 pasa a EXIT
 [WARNING] 20:42:38:130 Kernel/(9681:9687): El servidor se desconecto. Terminando conexion
+[INFO] 20:45:57:046 Kernel/(9770:9770): ¡Conectado al servidor!
+[INFO] 20:45:57:046 Kernel/(9770:9770): Servidor listo para recibir al cliente
+[INFO] 20:46:02:003 Kernel/(9770:9770): ¡Se conecto un cliente!
+[INFO] 20:46:02:016 Kernel/(9770:9809): Se crea el proceso 9770 en NEW
+[INFO] 20:46:02:017 Kernel/(9770:9809): El proceso 9770 pasa a READY
+[INFO] 20:46:02:017 Kernel/(9770:9809): El proceso 9770 pasa a EXEC
+[WARNING] 20:46:02:026 Kernel/(9770:9809): El cliente se desconecto. Terminando conexion
+[INFO] 20:46:04:037 Kernel/(9770:9780): El proceso 9770 pasa a READY
+[INFO] 20:46:04:038 Kernel/(9770:9780): El proceso 9770 pasa a EXEC
+[INFO] 20:46:05:056 Kernel/(9770:9780): El proceso 9770 pasa a EXIT
+[INFO] 20:46:23:795 Kernel/(9845:9845): ¡Conectado al servidor!
+[INFO] 20:46:23:796 Kernel/(9845:9845): Servidor listo para recibir al cliente
+[INFO] 20:46:26:208 Kernel/(9845:9845): ¡Se conecto un cliente!
+[INFO] 20:46:26:221 Kernel/(9845:9862): Se crea el proceso 9845 en NEW
+[INFO] 20:46:26:221 Kernel/(9845:9862): El proceso 9845 pasa a READY
+[INFO] 20:46:26:222 Kernel/(9845:9862): El proceso 9845 pasa a EXEC
+[WARNING] 20:46:26:229 Kernel/(9845:9862): El cliente se desconecto. Terminando conexion
+[INFO] 20:46:28:241 Kernel/(9845:9851): El proceso 9845 pasa a READY
+[INFO] 20:46:28:243 Kernel/(9845:9851): El proceso 9845 pasa a EXEC
+[INFO] 20:46:29:250 Kernel/(9845:9851): El proceso 9845 pasa a EXIT
+[INFO] 21:06:18:660 Kernel/(10635:10635): ¡Conectado al servidor!
+[INFO] 21:06:18:690 Kernel/(10635:10635): Servidor listo para recibir al cliente
+[INFO] 21:06:23:458 Kernel/(10635:10635): ¡Se conecto un cliente!
+[INFO] 21:06:23:503 Kernel/(10635:10652): Se crea el proceso 10635 en NEW
+[INFO] 21:06:23:504 Kernel/(10635:10652): El proceso 10635 pasa a READY
+[INFO] 21:06:23:504 Kernel/(10635:10652): El proceso 10635 pasa a EXEC
+[WARNING] 21:06:23:504 Kernel/(10635:10652): El cliente se desconecto. Terminando conexion
+[INFO] 21:06:25:529 Kernel/(10635:10641): El proceso 10635 pasa a READY
+[INFO] 21:06:25:530 Kernel/(10635:10641): El proceso 10635 pasa a EXEC
+[INFO] 21:06:26:542 Kernel/(10635:10641): El proceso 10635 pasa a EXIT
+[WARNING] 21:06:31:606 Kernel/(10635:10641): El servidor se desconecto. Terminando conexion
+[ERROR] 21:06:58:366 Kernel/(10720:10720): ¡No se pudo conectar al servidor!
+[ERROR] 21:07:07:215 Kernel/(10736:10736): ¡No se pudo conectar al servidor!
+[ERROR] 21:07:16:091 Kernel/(10753:10753): ¡No se pudo conectar al servidor!

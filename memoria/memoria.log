@@ -110,3 +110,13 @@
 [INFO] 21:08:20:544 logger/(6698:6698): Servidor listo para recibir al cliente
 [INFO] 21:08:56:832 logger/(6735:6735): Servidor listo para recibir al cliente
 [INFO] 23:40:09:378 Memoria/(19821:19821): Servidor listo para recibir al cliente
+[INFO] 21:04:18:134 Memoria/(10356:10356): Servidor listo para recibir al cliente
+[INFO] 21:04:31:270 Memoria/(10356:10392): Me llego el mensaje: Intento de conexión del filesystem a la memoria
+[INFO] 21:05:21:367 Memoria/(10470:10470): Servidor listo para recibir al cliente
+[INFO] 21:05:40:453 Memoria/(10552:10552): Servidor listo para recibir al cliente
+[INFO] 21:06:02:927 Memoria/(10589:10589): Servidor listo para recibir al cliente
+[INFO] 21:06:06:153 Memoria/(10589:10604): Me llego el mensaje: Intento de conexión del filesystem a la memoria
+[WARNING] 21:06:38:024 Memoria/(10589:10604): El cliente se desconecto. Terminando conexion
+[INFO] 21:06:46:106 Memoria/(10673:10673): Servidor listo para recibir al cliente
+[INFO] 21:06:48:710 Memoria/(10673:10688): Me llego el mensaje: Intento de conexión del filesystem a la memoria
+[WARNING] 21:07:22:872 Memoria/(10673:10688): El cliente se desconecto. Terminando conexion

@@ -63,3 +63,11 @@
 [ERROR] 21:09:01:403 logger/(6745:6745): ¡No se pudo conectar al servidor!
 [ERROR] 21:25:36:219 logger/(8020:8020): ¡No se pudo conectar al servidor!
 [ERROR] 23:40:16:411 FileSystem/(19877:19877): ¡No se pudo conectar al servidor!
+[INFO] 21:04:31:218 FileSystem/(10387:10387): ¡Conectado al servidor!
+[INFO] 21:04:31:269 FileSystem/(10387:10387): Servidor listo para recibir al cliente
+[ERROR] 21:05:27:476 FileSystem/(10531:10531): ¡No se pudo conectar al servidor!
+[ERROR] 21:05:44:026 FileSystem/(10562:10562): ¡No se pudo conectar al servidor!
+[INFO] 21:06:06:142 FileSystem/(10599:10599): ¡Conectado al servidor!
+[INFO] 21:06:06:151 FileSystem/(10599:10599): Servidor listo para recibir al cliente
+[INFO] 21:06:48:699 FileSystem/(10683:10683): ¡Conectado al servidor!
+[INFO] 21:06:48:707 FileSystem/(10683:10683): Servidor listo para recibir al cliente

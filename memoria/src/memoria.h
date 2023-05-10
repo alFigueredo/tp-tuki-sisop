@@ -6,6 +6,6 @@
 #include <commons/string.h>
 #include "server.h"
 
-void terminar_programa(t_log*, t_config*, int);
+void terminar_programa(t_log*, t_config*);
 
 #endif /* MEMORIA_H_ */

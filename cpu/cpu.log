@@ -34111,3 +34111,39 @@
 [TRACE] 20:42:06:506 CPU/(9650:9686): Registro AX: HOLA
 [TRACE] 20:42:06:506 CPU/(9650:9686): Registro ECX: MAIAMEEE
 [TRACE] 20:42:06:506 CPU/(9650:9686): Registro BX: CHAU
+[INFO] 20:45:54:531 CPU/(9760:9760): Servidor listo para recibir al cliente
+[INFO] 20:45:57:009 CPU/(9760:9760): ¡Se conecto un cliente!
+[INFO] 20:45:57:047 CPU/(9760:9779): Me llego el mensaje: Intento de conexión del kernel al cpu
+[INFO] 20:46:02:017 CPU/(9760:9779): Instrucción SET.
+[INFO] 20:46:03:016 CPU/(9760:9779): Instrucción SET.
+[INFO] 20:46:04:023 CPU/(9760:9779): Instrucción YIELD.
+[INFO] 20:46:04:038 CPU/(9760:9779): Instrucción SET.
+[INFO] 20:46:05:046 CPU/(9760:9779): Instrucción EXIT.
+[TRACE] 20:46:05:056 CPU/(9760:9779): Registro AX: HOLA
+[TRACE] 20:46:05:056 CPU/(9760:9779): Registro ECX: MAIAMEEE
+[TRACE] 20:46:05:056 CPU/(9760:9779): Registro BX: CHAU
+[WARNING] 20:46:09:575 CPU/(9760:9779): El cliente se desconecto. Terminando conexion
+[INFO] 20:46:19:575 CPU/(9825:9825): Servidor listo para recibir al cliente
+[INFO] 20:46:23:793 CPU/(9825:9825): ¡Se conecto un cliente!
+[INFO] 20:46:23:812 CPU/(9825:9850): Me llego el mensaje: Intento de conexión del kernel al cpu
+[INFO] 20:46:26:222 CPU/(9825:9850): Instrucción SET.
+[INFO] 20:46:27:221 CPU/(9825:9850): Instrucción SET.
+[INFO] 20:46:28:233 CPU/(9825:9850): Instrucción YIELD.
+[INFO] 20:46:28:243 CPU/(9825:9850): Instrucción SET.
+[INFO] 20:46:29:242 CPU/(9825:9850): Instrucción EXIT.
+[TRACE] 20:46:29:249 CPU/(9825:9850): Registro AX: HOLA
+[TRACE] 20:46:29:249 CPU/(9825:9850): Registro ECX: MAIAMEEE
+[TRACE] 20:46:29:249 CPU/(9825:9850): Registro BX: CHAU
+[WARNING] 20:46:33:812 CPU/(9825:9850): El cliente se desconecto. Terminando conexion
+[INFO] 21:06:13:874 CPU/(10620:10620): Servidor listo para recibir al cliente
+[INFO] 21:06:18:655 CPU/(10620:10620): ¡Se conecto un cliente!
+[INFO] 21:06:18:692 CPU/(10620:10640): Me llego el mensaje: Intento de conexión del kernel al cpu
+[INFO] 21:06:23:504 CPU/(10620:10640): Instrucción SET.
+[INFO] 21:06:24:510 CPU/(10620:10640): Instrucción SET.
+[INFO] 21:06:25:524 CPU/(10620:10640): Instrucción YIELD.
+[INFO] 21:06:25:530 CPU/(10620:10640): Instrucción SET.
+[INFO] 21:06:26:532 CPU/(10620:10640): Instrucción EXIT.
+[TRACE] 21:06:26:541 CPU/(10620:10640): Registro AX: HOLA
+[TRACE] 21:06:26:542 CPU/(10620:10640): Registro ECX: MAIAMEEE
+[TRACE] 21:06:26:542 CPU/(10620:10640): Registro BX: CHAU
+[INFO] 21:06:53:828 CPU/(10704:10704): Servidor listo para recibir al cliente
