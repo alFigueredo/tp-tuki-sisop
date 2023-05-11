@@ -59,7 +59,9 @@ void enviar_pcb(int, pcb*, op_code);
 void delay(int);
 t_dictionary* diccionario_instrucciones(void);
 t_dictionary* diccionario_registros(registros_cpu*);
-void instruccion_set(t_dictionary*, char*);
+void instruccion_set(t_dictionary*, char**, pcb*);
+void instruccion_yield(char**, pcb*);
+void instruccion_exit(char**, pcb*);
 enum_instrucciones interpretar_instrucciones(pcb*);
 
 #endif /* PROCESO_H_ */
