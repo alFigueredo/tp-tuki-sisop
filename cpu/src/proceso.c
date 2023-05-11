@@ -1,6 +1,6 @@
 #include "proceso.h"
 
-pcb* recibir_pcb_de_kernel(t_list* lista) {
+pcb* recibir_pcb(t_list* lista) {
 	pcb* proceso = malloc(sizeof(pcb));
 	memcpy(&(proceso->pid), list_remove(lista, 0), sizeof(unsigned int));
 	int instrucciones_size;
@@ -22,7 +22,7 @@ pcb* recibir_pcb_de_kernel(t_list* lista) {
 	return proceso;
 }
 
-void enviar_pcb_a_kernel(int conexion_kernel, pcb* proceso, op_code estado) {
+void enviar_pcb(int conexion, pcb* proceso, op_code estado) {
 	t_paquete* paquete = crear_paquete(estado);
 	agregar_a_paquete(paquete, &(proceso->pid), sizeof(unsigned int));
 	int instrucciones_size = list_size(proceso->instrucciones);
@@ -44,7 +44,7 @@ void enviar_pcb_a_kernel(int conexion_kernel, pcb* proceso, op_code estado) {
 	agregar_a_paquete(paquete, proceso->registros.RBX, 16);
 	agregar_a_paquete(paquete, proceso->registros.RCX, 16);
 	agregar_a_paquete(paquete, proceso->registros.RDX, 16);
-	enviar_paquete(paquete, conexion_kernel);
+	enviar_paquete(paquete, conexion);
 	eliminar_paquete(paquete);
 }
 
@@ -82,21 +82,12 @@ t_dictionary* diccionario_registros(registros_cpu* registro) {
 }
 
 void instruccion_set(t_dictionary* registros, char* parsed) {
-	log_info(logger, "Instrucción SET.");
 	parsed = strtok(NULL, " ");
 	char* registro = dictionary_get(registros, parsed);
 	parsed = strtok(NULL, " ");
 	char* arg = parsed;
 	memcpy(registro, arg, strlen(arg));
 	delay(config_get_int_value(config, "RETARDO_INSTRUCCION"));
-}
-
-void instruccion_yield(t_dictionary* registros, char* parsed) {
-	log_info(logger, "Instrucción YIELD.");
-}
-
-void instruccion_exit(t_dictionary* registros, char* parsed) {
-	log_info(logger, "Instrucción EXIT.");
 }
 
 enum_instrucciones interpretar_instrucciones(pcb* proceso) {
@@ -111,21 +102,26 @@ enum_instrucciones interpretar_instrucciones(pcb* proceso) {
 		parsed = strtok(instruccion, " ");
 		switch ((int)(intptr_t)dictionary_get(instrucciones, parsed)) {
 			case SET:
+				log_info(logger, "PID: %d - Ejecutando: %s - %s %s", proceso->pid, parsed, string_split(get, " ")[1], string_split(get, " ")[2]);
 				instruccion_set(registros, parsed);
 				break;
 			case YIELD:
-				instruccion_yield(registros, parsed);
+				log_info(logger, "PID: %d - Ejecutando: %s", proceso->pid, parsed);;
 				// log_debug(logger, "%c%c%c%c", proceso->registros.AX[0], proceso->registros.AX[1], proceso->registros.AX[2], proceso->registros.AX[3]);
 				// log_debug(logger, "%c%c%c%c%c%c%c%c", proceso->registros.ECX[0], proceso->registros.ECX[1], proceso->registros.ECX[2], proceso->registros.ECX[3], proceso->registros.ECX[4], proceso->registros.ECX[5], proceso->registros.ECX[6], proceso->registros.ECX[7]);
 				// log_debug(logger, "%c%c%c%c", proceso->registros.BX[0], proceso->registros.BX[1], proceso->registros.BX[2], proceso->registros.BX[3]);
 				proceso->program_counter++;
+				dictionary_destroy(instrucciones);
+				dictionary_destroy(registros);
 				return YIELD;
 			case EXIT:
-				instruccion_exit(registros, parsed);
+				log_info(logger, "PID: %d - Ejecutando: %s", proceso->pid, parsed);
 				log_trace(logger, "Registro AX: %c%c%c%c", proceso->registros.AX[0], proceso->registros.AX[1], proceso->registros.AX[2], proceso->registros.AX[3]);
 				log_trace(logger, "Registro ECX: %c%c%c%c%c%c%c%c", proceso->registros.ECX[0], proceso->registros.ECX[1], proceso->registros.ECX[2], proceso->registros.ECX[3], proceso->registros.ECX[4], proceso->registros.ECX[5], proceso->registros.ECX[6], proceso->registros.ECX[7]);
 				log_trace(logger, "Registro BX: %c%c%c%c", proceso->registros.BX[0], proceso->registros.BX[1], proceso->registros.BX[2], proceso->registros.BX[3]);
 				proceso->program_counter++;
+				dictionary_destroy(instrucciones);
+				dictionary_destroy(registros);
 				return EXIT;
 		}
 		proceso->program_counter++;

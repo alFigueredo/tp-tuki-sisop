@@ -40,8 +40,6 @@ typedef struct
 	t_buffer* buffer;
 } t_paquete;
 
-void send_handshake(int);
-void recv_handshake(int);
 int recibir_operacion(int);
 void* serializar_paquete(t_paquete*, int);
 void crear_buffer(t_paquete*);

@@ -37,6 +37,19 @@ int iniciar_servidor(char* puerto)
 	return socket_servidor;
 }
 
+void recv_handshake(int socket_cliente)
+{
+	uint32_t handshake;
+	uint32_t resultOk = 0;
+	uint32_t resultError = -1;
+	recv(socket_cliente, &handshake, sizeof(uint32_t), MSG_WAITALL);
+	if(handshake == 1)
+	   send(socket_cliente, &resultOk, sizeof(uint32_t), 0);
+	else {
+	   send(socket_cliente, &resultError, sizeof(uint32_t), 0);
+	}
+}
+
 void esperar_cliente(int socket_servidor){
 	while (1) {
 	   pthread_t thread;
@@ -65,19 +78,21 @@ void atender_cliente(int* socket_cliente){
 				lista = recibir_paquete(*socket_cliente);
 				log_info(logger, "Me llegaron los siguientes valores:");
 				list_iterate(lista, (void*) iterator);
+				list_clean_and_destroy_elements(lista, free);
 				break;
 			case NEW:
 				lista = recibir_paquete(*socket_cliente);
 				proceso = generar_proceso(lista);
-				queue_push(qnew, proceso);
 				queue_push(qready, queue_pop(qnew));
-				log_info(logger, "El proceso %d pasa a READY", proceso->pid);
+				// log_info(logger, "PID: %d - Estado Anterior: NEW - Estado Actual: READY", proceso->pid);
+				log_info(logger, "Cola Ready FIFO: [%d]", proceso->pid);
 				queue_push(qexec, queue_pop(qready));
-				log_info(logger, "El proceso %d pasa a EXEC", proceso->pid);
-				enviar_pcb_a_cpu(conexion_cpu, queue_peek(qexec));
+				log_info(logger, "PID: %d - Estado Anterior: READY - Estado Actual: EXEC", proceso->pid);
+				enviar_pcb(conexion_cpu, queue_peek(qexec), EXEC);
 				break;
 			case -1:
 				log_warning(logger, "El cliente se desconecto. Terminando conexion");
+				free(socket_cliente);
 				return;
 			default:
 				log_warning(logger,"Operacion desconocida. No quieras meter la pata");

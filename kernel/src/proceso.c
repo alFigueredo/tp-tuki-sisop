@@ -14,22 +14,31 @@ void iniciar_colas(void) {
 	qexit = queue_create();
 }
 
+void destruir_colas(void) {
+	queue_destroy(qnew);
+	queue_destroy(qready);
+	queue_destroy(qexec);
+	queue_destroy(qblock);
+	queue_destroy(qexit);
+}
+
 pcb* generar_proceso(t_list* lista) {
 	pcb* proceso = malloc(sizeof(pcb));
 	proceso->pid = process_getpid();
 	proceso->instrucciones=list_duplicate(lista);
 	proceso->program_counter=0;
 	//proceso.estimado_proxRafaga= config_get_in t_value(config,"ESTIMACION_INICIAL");
+	queue_push(qnew, proceso);
 	log_info(logger, "Se crea el proceso %d en NEW", proceso->pid);
 	return proceso;
 }
 
-void enviar_pcb_a_cpu(int conexion_cpu, pcb* proceso) {
-	t_paquete* paquete = crear_paquete(EXEC);
+void enviar_pcb(int conexion, pcb* proceso, op_code codigo) {
+	t_paquete* paquete = crear_paquete(codigo);
 	agregar_a_paquete(paquete, &(proceso->pid), sizeof(unsigned int));
-	int instrucciones_size = list_size(proceso->instrucciones);
-	agregar_a_paquete(paquete, &instrucciones_size, sizeof(int));
-	for (int i=0; i<instrucciones_size; i++) {
+	int cantidad_instrucciones = list_size(proceso->instrucciones);
+	agregar_a_paquete(paquete, &cantidad_instrucciones, sizeof(int));
+	for (int i=0; i<cantidad_instrucciones; i++) {
 		char* instruccion = list_get(proceso->instrucciones, i);
 		agregar_a_paquete(paquete, instruccion, strlen(instruccion)+1);
 	}
@@ -46,16 +55,16 @@ void enviar_pcb_a_cpu(int conexion_cpu, pcb* proceso) {
 	agregar_a_paquete(paquete, proceso->registros.RBX, 16);
 	agregar_a_paquete(paquete, proceso->registros.RCX, 16);
 	agregar_a_paquete(paquete, proceso->registros.RDX, 16);
-	enviar_paquete(paquete, conexion_cpu);
+	enviar_paquete(paquete, conexion);
 	eliminar_paquete(paquete);
 }
 
-pcb* recibir_pcb_de_cpu(t_list* lista) {
+pcb* recibir_pcb(t_list* lista) {
 	pcb* proceso = malloc(sizeof(pcb));
 	memcpy(&(proceso->pid), list_remove(lista, 0), sizeof(unsigned int));
-	int instrucciones_size;
-	memcpy(&(instrucciones_size), list_remove(lista, 0), sizeof(int));
-	proceso->instrucciones = list_take_and_remove(lista, instrucciones_size);
+	int cantidad_instrucciones;
+	memcpy(&(cantidad_instrucciones), list_remove(lista, 0), sizeof(int));
+	proceso->instrucciones = list_take_and_remove(lista, cantidad_instrucciones);
 	memcpy(&(proceso->program_counter), list_remove(lista, 0), sizeof(int));
 	memcpy(proceso->registros.AX, list_remove(lista, 0), 4);
 	memcpy(proceso->registros.BX, list_remove(lista, 0), 4);

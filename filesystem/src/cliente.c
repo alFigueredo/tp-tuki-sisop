@@ -28,6 +28,17 @@ int crear_conexion(char *ip, char* puerto)
 	return socket_cliente;
 }
 
+void send_handshake(int socket_cliente)
+{
+	uint32_t handshake = 1;
+	uint32_t result;
+	send(socket_cliente, &handshake, sizeof(uint32_t), 0);
+	if (recv(socket_cliente, &result, sizeof(uint32_t), MSG_WAITALL) == -1 || result == -1) {
+		log_error(logger, "¡Protocolo incompatible con el servidor!");
+		abort();
+	}
+}
+
 void liberar_conexion(int socket_cliente)
 {
 	if (socket_cliente != -1) {

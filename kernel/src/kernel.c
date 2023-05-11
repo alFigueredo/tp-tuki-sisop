@@ -34,11 +34,7 @@ int main(void) {
 	socket_servidor = iniciar_servidor(puerto_escucha);
 	esperar_cliente(socket_servidor);
 
-	queue_destroy(qnew);
-	queue_destroy(qready);
-	queue_destroy(qexec);
-	queue_destroy(qblock);
-	queue_destroy(qexit);
+	destruir_colas();
 	liberar_conexion(conexion_cpu);
 	liberar_conexion(conexion_memoria);
 	liberar_conexion(conexion_filesystem);

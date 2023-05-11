@@ -55,8 +55,9 @@ typedef struct {
 
 // t_dictionary* diccionario_registros(registros_cpu*);
 void iniciar_colas(void);
+void destruir_colas(void);
 pcb* generar_proceso(t_list*);
-void enviar_pcb_a_cpu(int, pcb*);
-pcb* recibir_pcb_de_cpu(t_list*);
+void enviar_pcb(int, pcb*, op_code);
+pcb* recibir_pcb(t_list*);
 
 #endif /* PROCESO_H_ */

@@ -32,6 +32,17 @@ int crear_conexion(char *ip, char* puerto)
 	return socket_cliente;
 }
 
+void send_handshake(int socket_cliente)
+{
+	uint32_t handshake = 1;
+	uint32_t result;
+	send(socket_cliente, &handshake, sizeof(uint32_t), 0);
+	if (recv(socket_cliente, &result, sizeof(uint32_t), MSG_WAITALL) == -1 || result == -1) {
+		log_error(logger, "¡Protocolo incompatible con el servidor!");
+		abort();
+	}
+}
+
 void esperar_servidor(int conexion){
 	pthread_t thread;
 	int *socket_servidor = malloc(sizeof(int));
@@ -56,26 +67,29 @@ void atender_servidor(int* socket_servidor){
 				lista = recibir_paquete(*socket_servidor);
 				log_info(logger, "Me llegaron los siguientes valores:");
 				list_iterate(lista, (void*) iterator);
+				list_clean_and_destroy_elements(lista, free);
 				break;
 			case READY:
 				lista = recibir_paquete(*socket_servidor);
-				proceso = recibir_pcb_de_cpu(lista);
-				queue_pop(qexec);
+				proceso = recibir_pcb(lista);
+				free(queue_pop(qexec));
 				queue_push(qready, proceso);
-				log_info(logger, "El proceso %d pasa a READY", proceso->pid);
+				log_info(logger, "PID: %d - Estado Anterior: EXEC - Estado Actual: READY", proceso->pid);
 				queue_push(qexec, queue_pop(qready));
-				log_info(logger, "El proceso %d pasa a EXEC", proceso->pid);
-				enviar_pcb_a_cpu(conexion_cpu, queue_peek(qexec));
+				log_info(logger, "PID: %d - Estado Anterior: READY - Estado Actual: EXEC", proceso->pid);
+				enviar_pcb(conexion_cpu, queue_peek(qexec), EXEC);
 				break;
 			case FINISHED:
 				lista = recibir_paquete(*socket_servidor);
-				proceso = recibir_pcb_de_cpu(lista);
-				queue_pop(qexec);
+				proceso = recibir_pcb(lista);
+				free(queue_pop(qexec));
 				queue_push(qexit, proceso);
-				log_info(logger, "El proceso %d pasa a EXIT", proceso->pid);
+				log_info(logger, "PID: %d - Estado Anterior: EXEC - Estado Actual: EXIT", proceso->pid);
+				log_info(logger, "Finaliza el proceso %d - Motivo: SUCCESS", proceso->pid);
 				break;
 			case -1:
 				log_warning(logger, "El servidor se desconecto. Terminando conexion");
+				free(socket_servidor);
 				return;
 			default:
 				log_warning(logger,"Operacion desconocida. No quieras meter la pata");

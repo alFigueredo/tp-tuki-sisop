@@ -37,6 +37,19 @@ int iniciar_servidor(char* puerto)
 	return socket_servidor;
 }
 
+void recv_handshake(int socket_cliente)
+{
+	uint32_t handshake;
+	uint32_t resultOk = 0;
+	uint32_t resultError = -1;
+	recv(socket_cliente, &handshake, sizeof(uint32_t), MSG_WAITALL);
+	if(handshake == 1)
+	   send(socket_cliente, &resultOk, sizeof(uint32_t), 0);
+	else {
+	   send(socket_cliente, &resultError, sizeof(uint32_t), 0);
+	}
+}
+
 void esperar_cliente(int socket_servidor){
 	while (1) {
 	   pthread_t thread;
@@ -64,22 +77,24 @@ void atender_cliente(int* socket_cliente){
 		case PAQUETE:
 			lista = recibir_paquete(*socket_cliente);
 			log_info(logger, "Me llegaron los siguientes valores:");
-			list_iterate(proceso->instrucciones, (void*) iterator);
+			list_iterate(lista, (void*) iterator);
+			list_clean_and_destroy_elements(lista, free);
 			break;
 		case EXEC:
 			lista = recibir_paquete(*socket_cliente);
-			proceso = recibir_pcb_de_kernel(lista);
+			proceso = recibir_pcb(lista);
 			switch ((int)interpretar_instrucciones(proceso)) {
 				case YIELD:
-					enviar_pcb_a_kernel(*socket_cliente, proceso, READY);
+					enviar_pcb(*socket_cliente, proceso, READY);
 					break;
 				case EXIT:
-					enviar_pcb_a_kernel(*socket_cliente, proceso, FINISHED);
+					enviar_pcb(*socket_cliente, proceso, FINISHED);
 					break;
 			}
 			break;
 		case -1:
 			log_warning(logger, "El cliente se desconecto. Terminando conexion");
+			free(socket_cliente);
 			return;
 		default:
 			log_warning(logger,"Operacion desconocida. No quieras meter la pata");

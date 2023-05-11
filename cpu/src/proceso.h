@@ -9,6 +9,7 @@
 #include <commons/log.h>
 #include <commons/config.h>
 #include <commons/temporal.h>
+#include <commons/string.h>
 #include <commons/collections/list.h>
 #include <commons/collections/queue.h>
 #include <commons/collections/dictionary.h>
@@ -53,13 +54,12 @@ typedef struct {
 	t_list* archivos_abiertos;
 }pcb;
 
-pcb* recibir_pcb_de_kernel(t_list*);
-void enviar_pcb_a_kernel(int, pcb*, op_code);
+pcb* recibir_pcb(t_list*);
+void enviar_pcb(int, pcb*, op_code);
 void delay(int);
 t_dictionary* diccionario_instrucciones(void);
 t_dictionary* diccionario_registros(registros_cpu*);
 void instruccion_set(t_dictionary*, char*);
-
 enum_instrucciones interpretar_instrucciones(pcb*);
 
 #endif /* PROCESO_H_ */

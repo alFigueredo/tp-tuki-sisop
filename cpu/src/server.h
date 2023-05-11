@@ -17,6 +17,7 @@
 #include "cliente.h"
 
 int iniciar_servidor(char*);
+void recv_handshake(int);
 void esperar_cliente(int);
 void atender_cliente(int*);
 void liberar_servidor(int*);

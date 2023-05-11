@@ -13,6 +13,7 @@
 #include "operaciones.h"
 
 int crear_conexion(char*, char*);
+void send_handshake(int);
 void liberar_conexion(int);
 
 #endif /* CLIENTE_H_ */
