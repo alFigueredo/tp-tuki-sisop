@@ -35,14 +35,19 @@ pcb* generar_proceso(t_list* lista) {
 
 void enviar_pcb(int conexion, pcb* proceso, op_code codigo) {
 	t_paquete* paquete = crear_paquete(codigo);
+
 	agregar_a_paquete(paquete, &(proceso->pid), sizeof(unsigned int));
+
 	int cantidad_instrucciones = list_size(proceso->instrucciones);
 	agregar_a_paquete(paquete, &cantidad_instrucciones, sizeof(int));
+
 	for (int i=0; i<cantidad_instrucciones; i++) {
 		char* instruccion = list_get(proceso->instrucciones, i);
 		agregar_a_paquete(paquete, instruccion, strlen(instruccion)+1);
 	}
+
 	agregar_a_paquete(paquete, &(proceso->program_counter), sizeof(int));
+
 	agregar_a_paquete(paquete, proceso->registros.AX, 4);
 	agregar_a_paquete(paquete, proceso->registros.BX, 4);
 	agregar_a_paquete(paquete, proceso->registros.CX, 4);

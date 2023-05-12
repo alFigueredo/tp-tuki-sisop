@@ -83,11 +83,14 @@ void atender_cliente(int* socket_cliente){
 			case NEW:
 				lista = recibir_paquete(*socket_cliente);
 				proceso = generar_proceso(lista);
+				// POSIBLE SEMAFORO?
 				queue_push(qready, queue_pop(qnew));
 				// log_info(logger, "PID: %d - Estado Anterior: NEW - Estado Actual: READY", proceso->pid);
 				log_info(logger, "Cola Ready FIFO: [%d]", proceso->pid);
+				//POSIBLE SEMAFORO?
 				queue_push(qexec, queue_pop(qready));
 				log_info(logger, "PID: %d - Estado Anterior: READY - Estado Actual: EXEC", proceso->pid);
+				//DEBERIA CADA HILO INTENTAR ENVIAR EL PROCESO QUE QUIERE?
 				enviar_pcb(conexion_cpu, queue_peek(qexec), EXEC);
 				break;
 			case -1:

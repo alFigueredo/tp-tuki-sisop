@@ -2,9 +2,9 @@
 
 int main(void) {
 
-	conexion_cpu = -1;
-	conexion_memoria = -1;
-	conexion_filesystem = -1;
+	int conexion_cpu = -1;
+	int conexion_memoria = -1;
+	int conexion_filesystem = -1;
 
 	logger = iniciar_logger("kernel.log", "Kernel");
 	config = iniciar_config("kernel.config");
