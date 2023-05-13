@@ -29,8 +29,6 @@ pcb* generar_proceso(t_list* lista) {
 	proceso->instrucciones=list_duplicate(lista);
 	proceso->program_counter=0;
 	//proceso.estimado_proxRafaga= config_get_in t_value(config,"ESTIMACION_INICIAL");
-	queue_push(qnew, proceso);
-	log_info(logger, "Se crea el proceso %d en NEW", proceso->pid);
 	return proceso;
 }
 

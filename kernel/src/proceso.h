@@ -19,8 +19,8 @@
 #include <pthread.h>
 #include <semaphore.h>
 #include "operaciones.h"
-#include "cliente.h"
-#include "server.h"
+//#include "cliente.h"
+//#include "server.h"
 
 extern t_queue* qnew;
 extern t_queue* qready;
@@ -28,7 +28,6 @@ extern t_queue* qexec;
 extern t_queue* qblock;
 extern t_queue* qexit;
 extern sem_t* fifo_largo_plazo;
-
 
 typedef struct{
 	 char AX[4];

@@ -4,8 +4,8 @@ int main(void) {
 
 	int conexion_memoria = -1;
 
-	logger = iniciar_logger("cpu.log", "CPU");
-	config = iniciar_config("cpu.config");
+	logger = iniciar_logger("./cpu.log", "CPU");
+	config = iniciar_config("/home/utnso/tp-2023-1c-Grupo-Asado/cpu/cpu.config");
 
 	// char* ip_memoria = config_get_string_value(config, "IP_MEMORIA");
 	// char* puerto_memoria = config_get_string_value(config, "PUERTO_MEMORIA");

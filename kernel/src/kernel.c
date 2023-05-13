@@ -7,9 +7,10 @@ int main(void) {
 	conexion_filesystem = -1;
 
 	logger = iniciar_logger("kernel.log", "Kernel");
-	config = iniciar_config("kernel.config");
+	config = iniciar_config("./kernel.config");
 	iniciar_colas();
 	fifo_largo_plazo = malloc(sizeof(sem_t));
+	//sem_init(fifo_largo_plazo, 0, 1);
 	sem_init(fifo_largo_plazo, 0, config_get_int_value(config, "GRADO_MAX_MULTIPROGRAMACION"));
 
 	// char* ip_memoria = config_get_string_value(config, "IP_MEMORIA");
