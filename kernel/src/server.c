@@ -84,10 +84,12 @@ void atender_cliente(int* socket_cliente){
 				lista = recibir_paquete(*socket_cliente);
 				proceso = generar_proceso(lista);
 				// POSIBLE SEMAFORO?
+				sem_wait(fifo_largo_plazo);
 				queue_push(qready, queue_pop(qnew));
-				// log_info(logger, "PID: %d - Estado Anterior: NEW - Estado Actual: READY", proceso->pid);
-				log_info(logger, "Cola Ready FIFO: [%d]", proceso->pid);
+				log_info(logger, "PID: %d - Estado Anterior: NEW - Estado Actual: READY", proceso->pid);
+				log_info(logger, "Cola Ready FIFO: [%s]", queue_iterator(qready));
 				//POSIBLE SEMAFORO?
+				//sem_wait(fifo_largo_plazo);
 				queue_push(qexec, queue_pop(qready));
 				log_info(logger, "PID: %d - Estado Anterior: READY - Estado Actual: EXEC", proceso->pid);
 				//DEBERIA CADA HILO INTENTAR ENVIAR EL PROCESO QUE QUIERE?

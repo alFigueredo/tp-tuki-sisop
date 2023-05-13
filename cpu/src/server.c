@@ -83,14 +83,7 @@ void atender_cliente(int* socket_cliente){
 		case EXEC:
 			lista = recibir_paquete(*socket_cliente);
 			proceso = recibir_pcb(lista);
-			switch ((int)interpretar_instrucciones(proceso)) {
-				case YIELD:
-					enviar_pcb(*socket_cliente, proceso, READY);
-					break;
-				case EXIT:
-					enviar_pcb(*socket_cliente, proceso, FINISHED);
-					break;
-			}
+			enviar_pcb(*socket_cliente, proceso, (int)interpretar_instrucciones(proceso));
 			break;
 		case -1:
 			log_warning(logger, "El cliente se desconecto. Terminando conexion");

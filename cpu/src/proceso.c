@@ -60,7 +60,8 @@ t_dictionary* diccionario_instrucciones(void) {
 	t_dictionary* instrucciones = dictionary_create();
 	dictionary_put(instrucciones, "SET", (void*)(intptr_t)SET);
 	dictionary_put(instrucciones, "YIELD", (void*)(intptr_t)YIELD);
-	dictionary_put(instrucciones, "EXIT", (void*)(intptr_t)EXIT);
+	// EXIT ya existe
+	dictionary_put(instrucciones, "EXIT", (void*)(intptr_t)IEXIT);
 	return instrucciones;
 }
 
@@ -81,26 +82,43 @@ t_dictionary* diccionario_registros(registros_cpu* registro) {
 	return registros;
 }
 
-void instruccion_set(t_dictionary* registros, char** parsed, pcb* proceso) {
+void destruir_diccionarios(t_dictionary* instrucciones, t_dictionary* registros) {
+	dictionary_destroy(instrucciones);
+	dictionary_destroy(registros);
+}
+
+int instruccion_set(t_dictionary* registros, char** parsed, pcb* proceso) {
+	if (!dictionary_has_key(registros, parsed[1]))
+		return 1;
 	log_info(logger, "PID: %d - Ejecutando: %s - %s %s", proceso->pid, parsed[0], parsed[1], parsed[2]);
 	memcpy(dictionary_get(registros, parsed[1]), parsed[2], strlen(parsed[2]));
 	delay(config_get_int_value(config, "RETARDO_INSTRUCCION"));
 	proceso->program_counter++;
+	return 0;
 }
 
 void instruccion_yield(char** parsed, pcb* proceso) {
 	log_info(logger, "PID: %d - Ejecutando: %s", proceso->pid, parsed[0]);;
-	// log_debug(logger, "%c%c%c%c", proceso->registros.AX[0], proceso->registros.AX[1], proceso->registros.AX[2], proceso->registros.AX[3]);
-	// log_debug(logger, "%c%c%c%c%c%c%c%c", proceso->registros.ECX[0], proceso->registros.ECX[1], proceso->registros.ECX[2], proceso->registros.ECX[3], proceso->registros.ECX[4], proceso->registros.ECX[5], proceso->registros.ECX[6], proceso->registros.ECX[7]);
-	// log_debug(logger, "%c%c%c%c", proceso->registros.BX[0], proceso->registros.BX[1], proceso->registros.BX[2], proceso->registros.BX[3]);
+	//log_debug(logger, "Registro AX: %s", string_substring_until(proceso->registros.AX, 4));
+	//log_debug(logger, "Registro ECX: %s", string_substring_until(proceso->registros.ECX, 8));
+	//log_debug(logger, "Registro BX: %s", string_substring_until(proceso->registros.BX, 4));
 	proceso->program_counter++;
 }
 
 void instruccion_exit(char** parsed, pcb* proceso) {
 	log_info(logger, "PID: %d - Ejecutando: %s", proceso->pid, parsed[0]);
-	log_trace(logger, "Registro AX: %c%c%c%c", proceso->registros.AX[0], proceso->registros.AX[1], proceso->registros.AX[2], proceso->registros.AX[3]);
-	log_trace(logger, "Registro ECX: %c%c%c%c%c%c%c%c", proceso->registros.ECX[0], proceso->registros.ECX[1], proceso->registros.ECX[2], proceso->registros.ECX[3], proceso->registros.ECX[4], proceso->registros.ECX[5], proceso->registros.ECX[6], proceso->registros.ECX[7]);
-	log_trace(logger, "Registro BX: %c%c%c%c", proceso->registros.BX[0], proceso->registros.BX[1], proceso->registros.BX[2], proceso->registros.BX[3]);
+	log_trace(logger, "Registro AX: %s", string_substring_until(proceso->registros.AX, 4));
+	log_trace(logger, "Registro BX: %s", string_substring_until(proceso->registros.BX, 4));
+	log_trace(logger, "Registro CX: %s", string_substring_until(proceso->registros.CX, 4));
+	log_trace(logger, "Registro DX: %s", string_substring_until(proceso->registros.DX, 4));
+	log_trace(logger, "Registro EAX: %s", string_substring_until(proceso->registros.EAX, 8));
+	log_trace(logger, "Registro EBX: %s", string_substring_until(proceso->registros.EBX, 8));
+	log_trace(logger, "Registro ECX: %s", string_substring_until(proceso->registros.ECX, 8));
+	log_trace(logger, "Registro EDX: %s", string_substring_until(proceso->registros.EDX, 8));
+	log_trace(logger, "Registro RAX: %s", string_substring_until(proceso->registros.RAX, 16));
+	log_trace(logger, "Registro RBX: %s", string_substring_until(proceso->registros.RBX, 16));
+	log_trace(logger, "Registro RCX: %s", string_substring_until(proceso->registros.RCX, 16));
+	log_trace(logger, "Registro RDX: %s", string_substring_until(proceso->registros.RDX, 16));
 	proceso->program_counter++;
 }
 
@@ -110,24 +128,34 @@ enum_instrucciones interpretar_instrucciones(pcb* proceso) {
 	while (proceso->program_counter<list_size(proceso->instrucciones)) {
 		char* instruccion = list_get(proceso->instrucciones, proceso->program_counter);
 		char** parsed = string_split(instruccion, " ");
-		switch ((int)(intptr_t)dictionary_get(instrucciones, parsed[0])) {
+		int instruccion_enum = -2;
+		if (dictionary_has_key(instrucciones, parsed[0]))
+			instruccion_enum = (int)(intptr_t)dictionary_get(instrucciones, parsed[0]);
+		else
+			instruccion_enum = -1;
+		switch (instruccion_enum) {
 			case SET:
-				instruccion_set(registros, parsed, proceso);
+				if (instruccion_set(registros, parsed, proceso)) {
+					log_warning(logger, "PID: %d - Advertencia: No se pudo interpretar la instrucción - Ejecutando: EXIT", proceso->pid);
+					destruir_diccionarios(instrucciones, registros);
+					return EXIT;
+				}
 				break;
 			case YIELD:
 				instruccion_yield(parsed, proceso);
-				dictionary_destroy(instrucciones);
-				dictionary_destroy(registros);
-				return YIELD;
-			case EXIT:
+				destruir_diccionarios(instrucciones, registros);
+				return READY;
+			case IEXIT:
 				instruccion_exit(parsed, proceso);
-				dictionary_destroy(instrucciones);
-				dictionary_destroy(registros);
+				destruir_diccionarios(instrucciones, registros);
+				return EXIT;
+			case -1:
+				log_warning(logger, "PID: %d - Advertencia: No se pudo interpretar la instrucción - Ejecutando: EXIT", proceso->pid);
+				destruir_diccionarios(instrucciones, registros);
 				return EXIT;
 		}
 	}
 	log_warning(logger, "PID: %d - Advertencia: Sin instrucciones por ejecutar - Ejecutando: EXIT", proceso->pid);
-	dictionary_destroy(instrucciones);
-	dictionary_destroy(registros);
+	destruir_diccionarios(instrucciones, registros);
 	return EXIT;
 }

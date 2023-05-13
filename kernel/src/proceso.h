@@ -9,6 +9,7 @@
 #include <commons/log.h>
 #include <commons/config.h>
 #include <commons/process.h>
+#include <commons/string.h>
 #include <commons/collections/list.h>
 #include <commons/collections/queue.h>
 #include <signal.h>
@@ -16,7 +17,7 @@
 #include <string.h>
 #include <assert.h>
 #include <pthread.h>
-#include "logconfig.h"
+#include <semaphore.h>
 #include "operaciones.h"
 #include "cliente.h"
 #include "server.h"
@@ -26,6 +27,8 @@ extern t_queue* qready;
 extern t_queue* qexec;
 extern t_queue* qblock;
 extern t_queue* qexit;
+extern sem_t* fifo_largo_plazo;
+
 
 typedef struct{
 	 char AX[4];
@@ -59,5 +62,6 @@ void destruir_colas(void);
 pcb* generar_proceso(t_list*);
 void enviar_pcb(int, pcb*, op_code);
 pcb* recibir_pcb(t_list*);
+char* queue_iterator(t_queue*);
 
 #endif /* PROCESO_H_ */

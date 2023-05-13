@@ -73,16 +73,21 @@ void atender_servidor(int* socket_servidor){
 				lista = recibir_paquete(*socket_servidor);
 				proceso = recibir_pcb(lista);
 				free(queue_pop(qexec));
+				//sem_post(fifo_largo_plazo);
 				queue_push(qready, proceso);
 				log_info(logger, "PID: %d - Estado Anterior: EXEC - Estado Actual: READY", proceso->pid);
+				log_info(logger, "Cola Ready FIFO: [%s]", queue_iterator(qready));
+				//sem_wait(fifo_largo_plazo);
 				queue_push(qexec, queue_pop(qready));
 				log_info(logger, "PID: %d - Estado Anterior: READY - Estado Actual: EXEC", proceso->pid);
 				enviar_pcb(conexion_cpu, queue_peek(qexec), EXEC);
 				break;
-			case FINISHED:
+			case EXIT:
 				lista = recibir_paquete(*socket_servidor);
 				proceso = recibir_pcb(lista);
 				free(queue_pop(qexec));
+				//sem_post(fifo_largo_plazo);
+				sem_post(fifo_largo_plazo);
 				queue_push(qexit, proceso);
 				log_info(logger, "PID: %d - Estado Anterior: EXEC - Estado Actual: EXIT", proceso->pid);
 				log_info(logger, "Finaliza el proceso %d - Motivo: SUCCESS", proceso->pid);

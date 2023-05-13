@@ -5,6 +5,7 @@ t_queue* qready;
 t_queue* qexec;
 t_queue* qblock;
 t_queue* qexit;
+sem_t* fifo_largo_plazo;
 
 void iniciar_colas(void) {
 	qnew = queue_create();
@@ -24,7 +25,7 @@ void destruir_colas(void) {
 
 pcb* generar_proceso(t_list* lista) {
 	pcb* proceso = malloc(sizeof(pcb));
-	proceso->pid = process_getpid();
+	proceso->pid = process_get_thread_id();
 	proceso->instrucciones=list_duplicate(lista);
 	proceso->program_counter=0;
 	//proceso.estimado_proxRafaga= config_get_in t_value(config,"ESTIMACION_INICIAL");
@@ -84,4 +85,16 @@ pcb* recibir_pcb(t_list* lista) {
 	memcpy(proceso->registros.RCX, list_remove(lista, 0), 16);
 	memcpy(proceso->registros.RDX, list_remove(lista, 0), 16);
 	return proceso;
+}
+
+char* queue_iterator(t_queue* queue) {
+	char* list = string_new();
+	for (int i=0; i<queue_size(queue); i++) {
+		pcb* proceso = queue_pop(queue);
+		string_append(&list, string_itoa(proceso->pid));
+		if (i!=queue_size(queue))
+			string_append(&list, ",");
+		queue_push(queue, proceso);
+	}
+	return list;
 }
