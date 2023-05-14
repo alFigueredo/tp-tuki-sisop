@@ -22,8 +22,8 @@ int crear_conexion(char*, char*);
 void send_handshake(int);
 void esperar_servidor(int);
 void atender_servidor(int*);
-void proceso_ready(pcb*);
-void proceso_exec(pcb*);
+void proceso_ready(pcb*, char*);
+void proceso_exec();
 void liberar_conexion(int);
 
 #endif /* CLIENTE_H_ */

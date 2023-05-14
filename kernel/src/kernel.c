@@ -10,8 +10,9 @@ int main(void) {
 	config = iniciar_config("./kernel.config");
 	iniciar_colas();
 	fifo_largo_plazo = malloc(sizeof(sem_t));
-	//sem_init(fifo_largo_plazo, 0, 1);
+	fifo_corto_plazo = malloc(sizeof(sem_t));
 	sem_init(fifo_largo_plazo, 0, config_get_int_value(config, "GRADO_MAX_MULTIPROGRAMACION"));
+	sem_init(fifo_corto_plazo, 0, 1);
 
 	// char* ip_memoria = config_get_string_value(config, "IP_MEMORIA");
 	// char* puerto_memoria = config_get_string_value(config, "PUERTO_MEMORIA");

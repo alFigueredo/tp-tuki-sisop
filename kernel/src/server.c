@@ -85,14 +85,8 @@ void atender_cliente(int* socket_cliente){
 				proceso = generar_proceso(lista);
 				queue_push(qnew, proceso);
 				log_info(logger, "Se crea el proceso %d en NEW", proceso->pid);
-				// POSIBLE SEMAFORO?
 				sem_wait(fifo_largo_plazo);
-				/*
-				queue_push(qready, queue_pop(qnew));
-				log_info(logger, "PID: %d - Estado Anterior: NEW - Estado Actual: READY", proceso->pid);
-				log_info(logger, "Cola Ready FIFO: [%s]", queue_iterator(qready));
-				*/
-				proceso_ready(queue_pop(qnew));
+				proceso_ready(queue_pop(qnew), "NEW");
 				break;
 			case -1:
 				log_warning(logger, "El cliente se desconecto. Terminando conexion");

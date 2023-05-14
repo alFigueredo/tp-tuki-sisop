@@ -73,21 +73,17 @@ void atender_servidor(int* socket_servidor){
 				lista = recibir_paquete(*socket_servidor);
 				proceso = recibir_pcb(lista);
 				free(queue_pop(qexec));
-				/*
-				//queue_push(qready, proceso);
-				//log_info(logger, "PID: %d - Estado Anterior: EXEC - Estado Actual: READY", proceso->pid);
-				//log_info(logger, "Cola Ready FIFO: [%s]", queue_iterator(qready));
-				 */
-				proceso_ready(proceso);
+				proceso_ready(proceso, "EXEC");
 				break;
 			case EXIT:
 				lista = recibir_paquete(*socket_servidor);
 				proceso = recibir_pcb(lista);
 				free(queue_pop(qexec));
-				sem_post(fifo_largo_plazo);
 				queue_push(qexit, proceso);
 				log_info(logger, "PID: %d - Estado Anterior: EXEC - Estado Actual: EXIT", proceso->pid);
 				log_info(logger, "Finaliza el proceso %d - Motivo: SUCCESS", proceso->pid);
+				sem_post(fifo_corto_plazo);
+				sem_post(fifo_largo_plazo);
 				break;
 			case -1:
 				log_warning(logger, "El servidor se desconecto. Terminando conexion");
@@ -100,21 +96,19 @@ void atender_servidor(int* socket_servidor){
 	}
 }
 
-void proceso_ready(pcb* proceso) {
+void proceso_ready(pcb* proceso, char* estado_anterior) {
 	queue_push(qready, proceso);
-	log_info(logger, "PID: %d - Estado Anterior: EXEC - Estado Actual: READY", proceso->pid);
+	log_info(logger, "PID: %d - Estado Anterior: %s - Estado Actual: READY", proceso->pid, estado_anterior);
 	log_info(logger, "Cola Ready FIFO: [%s]", queue_iterator(qready));
-	//POSIBLE SEMAFORO?
-	//sem_wait(fifo_largo_plazo);
-	/*
-	queue_push(qexec, queue_pop(qready));
-	log_info(logger, "PID: %d - Estado Anterior: READY - Estado Actual: EXEC", proceso->pid);
-	enviar_pcb(conexion_cpu, queue_peek(qexec), EXEC);
-	*/
-	proceso_exec(queue_pop(qready));
+	if (strcmp(estado_anterior, "NEW")!=0)
+		sem_post(fifo_corto_plazo);
+	pthread_t thread;
+	pthread_create(&thread, NULL, (void*) proceso_exec, NULL);
 }
 
-void proceso_exec(pcb* proceso) {
+void proceso_exec() {
+	sem_wait(fifo_corto_plazo);
+	pcb* proceso = queue_pop(qready);
 	queue_push(qexec, proceso);
 	log_info(logger, "PID: %d - Estado Anterior: READY - Estado Actual: EXEC", proceso->pid);
 	enviar_pcb(conexion_cpu, queue_peek(qexec), EXEC);

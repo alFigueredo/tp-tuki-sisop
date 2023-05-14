@@ -17,8 +17,6 @@
 #include <assert.h>
 #include <pthread.h>
 #include "operaciones.h"
-#include "cliente.h"
-#include "server.h"
 
 typedef enum
 {

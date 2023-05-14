@@ -6,6 +6,7 @@ t_queue* qexec;
 t_queue* qblock;
 t_queue* qexit;
 sem_t* fifo_largo_plazo;
+sem_t* fifo_corto_plazo;
 
 void iniciar_colas(void) {
 	qnew = queue_create();
