@@ -120,9 +120,7 @@ void proceso_exit(pcb* proceso) {
 	queue_push(qexit, proceso);
 	log_info(logger, "PID: %d - Estado Anterior: EXEC - Estado Actual: EXIT", proceso->pid);
 	log_info(logger, "Finaliza el proceso %d - Motivo: SUCCESS", proceso->pid);
-	t_paquete* paquete = crear_paquete(EXIT);
-	enviar_paquete(paquete, *(int*)dictionary_remove(conexiones, string_itoa(proceso->pid)));
-	eliminar_paquete(paquete);
+	enviar_operacion(*(int*)dictionary_remove(conexiones, string_itoa(proceso->pid)), EXIT);
 	free(queue_pop(qexit));
 }
 

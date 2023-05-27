@@ -28,14 +28,14 @@ int main(int argc, char** argv) {
 
 	/*
 	conexion_memoria = crear_conexion(ip_memoria, puerto_memoria);
-	enviar_mensaje("Intento de conexión del kernel a la memoria", conexion_memoria);
+	enviar_mensaje("Intento de conexión del kernel a la memoria", conexion_memoria, MENSAJE);
 	*/
 	conexion_cpu = crear_conexion(ip_cpu, puerto_cpu);
-	enviar_mensaje("Intento de conexión del kernel al cpu", conexion_cpu);
+	enviar_mensaje("Intento de conexión del kernel al cpu", conexion_cpu, MENSAJE);
 	esperar_servidor(conexion_cpu);
 	/*
 	conexion_filesystem = crear_conexion(ip_filesystem, puerto_filesystem);
-	enviar_mensaje("Intento de conexión del kernel al filesystem", conexion_filesystem);
+	enviar_mensaje("Intento de conexión del kernel al filesystem", conexion_filesystem, MENSAJE);
 	*/
 
 	int socket_servidor = -1;

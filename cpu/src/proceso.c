@@ -129,7 +129,7 @@ void instruccion_set(t_dictionary* registros, char** parsed, pcb* proceso) {
 }
 
 void instruccion_yield(char** parsed, pcb* proceso) {
-	log_info(logger, "PID: %d - Ejecutando: %s", proceso->pid, parsed[0]);;
+	log_info(logger, "PID: %d - Ejecutando: %s", proceso->pid, parsed[0]);
 	//log_debug(logger, "Registro AX: %s", string_substring_until(proceso->registros.AX, 4));
 	//log_debug(logger, "Registro ECX: %s", string_substring_until(proceso->registros.ECX, 8));
 	//log_debug(logger, "Registro BX: %s", string_substring_until(proceso->registros.BX, 4));
