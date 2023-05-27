@@ -93,11 +93,7 @@ enum_instrucciones interpretar_instrucciones(pcb* proceso) {
 	while (proceso->program_counter<list_size(proceso->instrucciones)) {
 		char* instruccion = list_get(proceso->instrucciones, proceso->program_counter);
 		char** parsed = string_split(instruccion, " ");
-		int instruccion_enum = -2;
-		if (dictionary_has_key(instrucciones, parsed[0]))
-			instruccion_enum = (int)(intptr_t)dictionary_get(instrucciones, parsed[0]);
-		else
-			instruccion_enum = -1;
+		int instruccion_enum = (int)(intptr_t)dictionary_get(instrucciones, parsed[0]);
 		switch (instruccion_enum) {
 			case SET:
 				instruccion_set(registros, parsed, proceso);
@@ -130,9 +126,6 @@ void instruccion_set(t_dictionary* registros, char** parsed, pcb* proceso) {
 
 void instruccion_yield(char** parsed, pcb* proceso) {
 	log_info(logger, "PID: %d - Ejecutando: %s", proceso->pid, parsed[0]);
-	//log_debug(logger, "Registro AX: %s", string_substring_until(proceso->registros.AX, 4));
-	//log_debug(logger, "Registro ECX: %s", string_substring_until(proceso->registros.ECX, 8));
-	//log_debug(logger, "Registro BX: %s", string_substring_until(proceso->registros.BX, 4));
 	proceso->program_counter++;
 }
 
