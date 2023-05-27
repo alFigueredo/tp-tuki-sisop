@@ -24,6 +24,7 @@ void esperar_servidor(int);
 void atender_servidor(int*);
 void proceso_ready(pcb*, char*);
 void proceso_exec();
+void proceso_exit(pcb*);
 void liberar_conexion(int);
 
 #endif /* CLIENTE_H_ */

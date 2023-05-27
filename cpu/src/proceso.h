@@ -58,9 +58,9 @@ void delay(int);
 t_dictionary* diccionario_instrucciones(void);
 t_dictionary* diccionario_registros(registros_cpu*);
 void destruir_diccionarios(t_dictionary*, t_dictionary*);
-int instruccion_set(t_dictionary*, char**, pcb*);
+enum_instrucciones interpretar_instrucciones(pcb*);
+void instruccion_set(t_dictionary*, char**, pcb*);
 void instruccion_yield(char**, pcb*);
 void instruccion_exit(char**, pcb*);
-enum_instrucciones interpretar_instrucciones(pcb*);
 
 #endif /* PROCESO_H_ */

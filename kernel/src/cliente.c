@@ -79,13 +79,7 @@ void atender_servidor(int* socket_servidor){
 				lista = recibir_paquete(*socket_servidor);
 				proceso = recibir_pcb(lista);
 				free(queue_pop(qexec));
-				queue_push(qexit, proceso);
-				log_info(logger, "PID: %d - Estado Anterior: EXEC - Estado Actual: EXIT", proceso->pid);
-				log_info(logger, "Finaliza el proceso %d - Motivo: SUCCESS", proceso->pid);
-				t_paquete* paquete = crear_paquete(EXIT);
-				enviar_paquete(paquete, *(int*)dictionary_remove(conexiones, string_itoa(proceso->pid)));
-				eliminar_paquete(paquete);
-				free(queue_pop(qexit));
+				proceso_exit(proceso);
 				sem_post(sem_exec);
 				sem_post(sem_largo_plazo);
 				break;
@@ -114,12 +108,22 @@ void proceso_ready(pcb* proceso, char* estado_anterior) {
 	}
 }
 
-void proceso_exec() {
+void proceso_exec(void) {
 	sem_wait(sem_exec);
 	pcb* proceso = queue_pop(qready);
 	queue_push(qexec, proceso);
 	log_info(logger, "PID: %d - Estado Anterior: READY - Estado Actual: EXEC", proceso->pid);
 	enviar_pcb(conexion_cpu, queue_peek(qexec), EXEC);
+}
+
+void proceso_exit(pcb* proceso) {
+	queue_push(qexit, proceso);
+	log_info(logger, "PID: %d - Estado Anterior: EXEC - Estado Actual: EXIT", proceso->pid);
+	log_info(logger, "Finaliza el proceso %d - Motivo: SUCCESS", proceso->pid);
+	t_paquete* paquete = crear_paquete(EXIT);
+	enviar_paquete(paquete, *(int*)dictionary_remove(conexiones, string_itoa(proceso->pid)));
+	eliminar_paquete(paquete);
+	free(queue_pop(qexit));
 }
 
 void liberar_conexion(int socket_cliente)
