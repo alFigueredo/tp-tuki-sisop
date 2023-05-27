@@ -39,10 +39,37 @@ void send_handshake(int socket_cliente)
 	}
 }
 
-void liberar_conexion(int socket_cliente)
+void atender_kernel(int conexion_kernel){
+	t_list *lista;
+	while (1) {
+		int cod_op = recibir_operacion(conexion_kernel);
+		switch (cod_op) {
+			case MENSAJE:
+				recibir_mensaje(conexion_kernel);
+				break;
+			case PAQUETE:
+				lista = recibir_paquete(conexion_kernel);
+				log_info(logger, "Me llegaron los siguientes valores:");
+				list_iterate(lista, (void*) iterator);
+				list_clean_and_destroy_elements(lista, free);
+				break;
+			case EXIT:
+				log_info(logger, "Proceso finalizado. Terminando conexion");
+				return;
+			case -1:
+				log_warning(logger, "El servidor se desconecto. Terminando conexion");
+				return;
+			default:
+				log_warning(logger,"Operacion desconocida. No quieras meter la pata");
+				break;
+		}
+	}
+}
+
+void liberar_conexion(int conexion_kernel)
 {
-	if (socket_cliente != -1) {
+	if (conexion_kernel != -1) {
 	log_warning(logger, "Liberando conexion");
-	close(socket_cliente);
+	close(conexion_kernel);
 	}
 }

@@ -82,8 +82,12 @@ void atender_servidor(int* socket_servidor){
 				queue_push(qexit, proceso);
 				log_info(logger, "PID: %d - Estado Anterior: EXEC - Estado Actual: EXIT", proceso->pid);
 				log_info(logger, "Finaliza el proceso %d - Motivo: SUCCESS", proceso->pid);
-				sem_post(fifo_corto_plazo);
-				sem_post(fifo_largo_plazo);
+				t_paquete* paquete = crear_paquete(EXIT);
+				enviar_paquete(paquete, *(int*)dictionary_remove(conexiones, string_itoa(proceso->pid)));
+				eliminar_paquete(paquete);
+				free(queue_pop(qexit));
+				sem_post(sem_exec);
+				sem_post(sem_largo_plazo);
 				break;
 			case -1:
 				log_warning(logger, "El servidor se desconecto. Terminando conexion");
@@ -100,14 +104,18 @@ void proceso_ready(pcb* proceso, char* estado_anterior) {
 	queue_push(qready, proceso);
 	log_info(logger, "PID: %d - Estado Anterior: %s - Estado Actual: READY", proceso->pid, estado_anterior);
 	log_info(logger, "Cola Ready FIFO: [%s]", queue_iterator(qready));
-	if (strcmp(estado_anterior, "NEW")!=0)
-		sem_post(fifo_corto_plazo);
-	pthread_t thread;
-	pthread_create(&thread, NULL, (void*) proceso_exec, NULL);
+	if (strcmp(estado_anterior, "NEW")!=0) {
+		sem_post(sem_exec);
+		pthread_t thread;
+		pthread_create(&thread, NULL, (void*) proceso_exec, NULL);
+		pthread_detach(thread);
+	} else {
+		proceso_exec();
+	}
 }
 
 void proceso_exec() {
-	sem_wait(fifo_corto_plazo);
+	sem_wait(sem_exec);
 	pcb* proceso = queue_pop(qready);
 	queue_push(qexec, proceso);
 	log_info(logger, "PID: %d - Estado Anterior: READY - Estado Actual: EXEC", proceso->pid);

@@ -20,6 +20,11 @@ int iniciar_servidor(char* puerto)
 	                         servinfo->ai_socktype,
 	                         servinfo->ai_protocol);
 
+	int reuse = 1;
+	if (setsockopt(socket_servidor, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse)) < 0) {
+	    log_error(logger, "Error al configurar SO_REUSEADDR");
+	}
+
 	// Asociamos el socket a un puerto
 
 	bind(socket_servidor, servinfo->ai_addr, servinfo->ai_addrlen);

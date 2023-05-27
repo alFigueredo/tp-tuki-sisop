@@ -1,11 +1,14 @@
 #include "cpu.h"
 
-int main(void) {
+int main(int argc, char** argv) {
 
+	if (argc < 2) {
+		return EXIT_FAILURE;
+	}
 	int conexion_memoria = -1;
 
 	logger = iniciar_logger("./cpu.log", "CPU");
-	config = iniciar_config("/home/utnso/tp-2023-1c-Grupo-Asado/cpu/cpu.config");
+	config = iniciar_config(argv[1]);
 
 	// char* ip_memoria = config_get_string_value(config, "IP_MEMORIA");
 	// char* puerto_memoria = config_get_string_value(config, "PUERTO_MEMORIA");

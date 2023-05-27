@@ -5,8 +5,9 @@ t_queue* qready;
 t_queue* qexec;
 t_queue* qblock;
 t_queue* qexit;
-sem_t* fifo_largo_plazo;
-sem_t* fifo_corto_plazo;
+sem_t* sem_largo_plazo;
+sem_t* sem_exec;
+t_dictionary* conexiones;
 
 void iniciar_colas(void) {
 	qnew = queue_create();
@@ -24,12 +25,13 @@ void destruir_colas(void) {
 	queue_destroy(qexit);
 }
 
-pcb* generar_proceso(t_list* lista) {
+pcb* generar_proceso(t_list* lista, int* socket_cliente) {
 	pcb* proceso = malloc(sizeof(pcb));
-	proceso->pid = process_get_thread_id();
+	memcpy(&(proceso->pid), list_remove(lista, 0), sizeof(unsigned int));
 	proceso->instrucciones=list_duplicate(lista);
 	proceso->program_counter=0;
 	//proceso.estimado_proxRafaga= config_get_in t_value(config,"ESTIMACION_INICIAL");
+	dictionary_put(conexiones, string_itoa(proceso->pid), socket_cliente);
 	return proceso;
 }
 

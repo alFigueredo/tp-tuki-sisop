@@ -12,6 +12,7 @@
 #include <commons/string.h>
 #include <commons/collections/list.h>
 #include <commons/collections/queue.h>
+#include <commons/collections/dictionary.h>
 #include <signal.h>
 #include <stdint.h>
 #include <string.h>
@@ -25,8 +26,9 @@ extern t_queue* qready;
 extern t_queue* qexec;
 extern t_queue* qblock;
 extern t_queue* qexit;
-extern sem_t* fifo_largo_plazo;
-extern sem_t* fifo_corto_plazo;
+extern sem_t* sem_largo_plazo;
+extern sem_t* sem_exec;
+extern t_dictionary* conexiones;
 
 typedef struct{
 	 char AX[4];
@@ -57,7 +59,7 @@ typedef struct {
 // t_dictionary* diccionario_registros(registros_cpu*);
 void iniciar_colas(void);
 void destruir_colas(void);
-pcb* generar_proceso(t_list*);
+pcb* generar_proceso(t_list*, int*);
 void enviar_pcb(int, pcb*, op_code);
 pcb* recibir_pcb(t_list*);
 char* queue_iterator(t_queue*);

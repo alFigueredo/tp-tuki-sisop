@@ -1,18 +1,22 @@
 #include "kernel.h"
 
-int main(void) {
+int main(int argc, char** argv) {
 
+	if (argc < 2) {
+	    return EXIT_FAILURE;
+	}
 	conexion_cpu = -1;
 	conexion_memoria = -1;
 	conexion_filesystem = -1;
 
-	logger = iniciar_logger("kernel.log", "Kernel");
-	config = iniciar_config("./kernel.config");
+	logger = iniciar_logger("./kernel.log", "Kernel");
+	config = iniciar_config(argv[1]);
 	iniciar_colas();
-	fifo_largo_plazo = malloc(sizeof(sem_t));
-	fifo_corto_plazo = malloc(sizeof(sem_t));
-	sem_init(fifo_largo_plazo, 0, config_get_int_value(config, "GRADO_MAX_MULTIPROGRAMACION"));
-	sem_init(fifo_corto_plazo, 0, 1);
+	sem_largo_plazo = malloc(sizeof(sem_t));
+	sem_exec = malloc(sizeof(sem_t));
+	sem_init(sem_largo_plazo, 0, config_get_int_value(config, "GRADO_MAX_MULTIPROGRAMACION"));
+	sem_init(sem_exec, 0, 1);
+	conexiones = dictionary_create();
 
 	// char* ip_memoria = config_get_string_value(config, "IP_MEMORIA");
 	// char* puerto_memoria = config_get_string_value(config, "PUERTO_MEMORIA");
@@ -39,6 +43,11 @@ int main(void) {
 	esperar_cliente(socket_servidor);
 
 	destruir_colas();
+	sem_destroy(sem_largo_plazo);
+	sem_destroy(sem_exec);
+	free(sem_largo_plazo);
+	free(sem_exec);
+	dictionary_destroy(conexiones);
 	liberar_conexion(conexion_cpu);
 	liberar_conexion(conexion_memoria);
 	liberar_conexion(conexion_filesystem);

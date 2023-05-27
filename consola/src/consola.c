@@ -7,10 +7,10 @@ int main(int argc, char** argv)
 	}
 	int conexion_kernel = -1;
 
-	logger = iniciar_logger("consola.log", "Consola");
+	logger = iniciar_logger("./consola.log", "Consola");
 	config = iniciar_config(argv[1]);
 
-	char* ip_kernel = config_get_string_value(config, "IP");
+	char* ip_kernel = config_get_string_value(config, "IP_KERNEL");
 	char* puerto_kernel = config_get_string_value(config, "PUERTO_KERNEL");
 
 	// Creamos una conexión hacia el servidor
@@ -18,11 +18,17 @@ int main(int argc, char** argv)
 
 	// Armamos y enviamos el paquete
 	paquete_texto(conexion_kernel, argv[2]);
+
+	// Esperando respuesta
+	atender_kernel(conexion_kernel);
+
+	// liberar conexion y variables
 	liberar_conexion(conexion_kernel);
 	terminar_programa(logger, config);
 	return EXIT_SUCCESS;
 }
 
+/*
 void leer_consola(t_log* logger)
 {
 	char* leido;
@@ -61,6 +67,7 @@ void paquete(int conexion)
 	eliminar_paquete(paquete);
 
 }
+*/
 
 void paquete_texto(int conexion, char* pseudocodigo)
 {
@@ -72,6 +79,8 @@ void paquete_texto(int conexion, char* pseudocodigo)
 		printf("¡No se pudo abrir el archivo!\n");
 		abort();
 	}
+	unsigned int pid = process_getpid();
+	agregar_a_paquete(paquete, &pid, sizeof(unsigned int));
 	while(NULL !=fgets(leido, 64, fptr)) {
 		parsed = strtok(leido, "\n");
 		agregar_a_paquete(paquete, leido, strlen(parsed)+1);

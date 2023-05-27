@@ -1,8 +1,12 @@
 #include "memoria.h"
 
-int main(void) {
-	logger = iniciar_logger("memoria.log", "Memoria");
-	config = iniciar_config("memoria.config");
+int main(int argc, char** argv) {
+
+	if (argc < 2) {
+		return EXIT_FAILURE;
+	}
+	logger = iniciar_logger("./memoria.log", "Memoria");
+	config = iniciar_config(argv[1]);
 	char* puerto_escucha = config_get_string_value(config, "PUERTO_ESCUCHA");
 	int socket_servidor = -1;
 	socket_servidor = iniciar_servidor(puerto_escucha);

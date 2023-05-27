@@ -20,6 +20,11 @@ int iniciar_servidor(char* puerto)
 	                         servinfo->ai_socktype,
 	                         servinfo->ai_protocol);
 
+	int reuse = 1;
+	if (setsockopt(socket_servidor, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse)) < 0) {
+		log_error(logger, "Error al configurar SO_REUSEADDR");
+	 }
+
 	// Asociamos el socket a un puerto
 
 	bind(socket_servidor, servinfo->ai_addr, servinfo->ai_addrlen);
@@ -82,10 +87,10 @@ void atender_cliente(int* socket_cliente){
 				break;
 			case NEW:
 				lista = recibir_paquete(*socket_cliente);
-				proceso = generar_proceso(lista);
+				proceso = generar_proceso(lista, socket_cliente);
 				queue_push(qnew, proceso);
 				log_info(logger, "Se crea el proceso %d en NEW", proceso->pid);
-				sem_wait(fifo_largo_plazo);
+				sem_wait(sem_largo_plazo);
 				proceso_ready(queue_pop(qnew), "NEW");
 				break;
 			case -1:
