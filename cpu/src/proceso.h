@@ -21,6 +21,19 @@
 typedef enum
 {
 	SET,
+	MOV_IN,
+	MOV_OUT,
+	I_O,
+	F_OPEN,
+	F_CLOSE,
+	F_SEEK,
+	F_READ,
+	F_WRITE,
+	F_TRUNCATE,
+	WAIT,
+	SIGNAL,
+	CREATE_SEGMENT,
+	DELETE_SEGMENT,
 	YIELD,
 	IEXIT
 }enum_instrucciones;
@@ -60,7 +73,21 @@ t_dictionary* diccionario_registros(registros_cpu*);
 void destruir_diccionarios(t_dictionary*, t_dictionary*);
 enum_instrucciones interpretar_instrucciones(pcb*);
 void instruccion_set(t_dictionary*, char**, pcb*);
+void intruccion_mov_in(t_dictionary*, char**, pcb*);
+void intruccion_mov_out(t_dictionary*, char**, pcb*);
+void intruccion_i_o(char**, pcb*);
+void intruccion_f_open(char**, pcb*);
+void intruccion_f_close(char**, pcb*);
+void intruccion_f_seek(char**, pcb*);
+void intruccion_f_read(char**, pcb*);
+void intruccion_f_write(char**, pcb*);
+void intruccion_f_truncate(char**, pcb*);
+void intruccion_wait(char**, pcb*);
+void intruccion_signal(char**, pcb*);
+void intruccion_create_segment(char**, pcb*);
+void intruccion_delete_segment(char**, pcb*);
 void instruccion_yield(char**, pcb*);
 void instruccion_exit(char**, pcb*);
+
 
 #endif /* PROCESO_H_ */
