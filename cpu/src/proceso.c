@@ -67,7 +67,7 @@ t_dictionary* diccionario_instrucciones(void) {
 	dictionary_put(instrucciones, "F_SEEK", (void*)(intptr_t)F_SEEK);
 	dictionary_put(instrucciones, "F_READ", (void*)(intptr_t)F_READ);
 	dictionary_put(instrucciones, "F_WRITE", (void*)(intptr_t)F_WRITE);
-	dictionary_put(instrucciones, "F_READ", (void*)(intptr_t)F_TRUNCATE);
+	dictionary_put(instrucciones, "F_TRUNCATE", (void*)(intptr_t)F_TRUNCATE);
 	dictionary_put(instrucciones, "WAIT", (void*)(intptr_t)WAIT);
 	dictionary_put(instrucciones, "SIGNAL", (void*)(intptr_t)SIGNAL);
 	dictionary_put(instrucciones, "CREATE_SEGMENT", (void*)(intptr_t)CREATE_SEGMENT);
@@ -105,6 +105,7 @@ enum_instrucciones interpretar_instrucciones(pcb* proceso) {
 	t_dictionary* registros = diccionario_registros(&proceso->registros);
 	while (proceso->program_counter<list_size(proceso->instrucciones)) {
 		char* instruccion = list_get(proceso->instrucciones, proceso->program_counter);
+		log_debug(logger, "%s", instruccion);
 		char** parsed = string_split(instruccion, " ");
 		int instruccion_enum = -2;
 		if (dictionary_has_key(instrucciones, parsed[0]))
@@ -116,14 +117,15 @@ enum_instrucciones interpretar_instrucciones(pcb* proceso) {
 				instruccion_set(registros, parsed, proceso);
 				break;
 			case MOV_IN:
-				intruccion_mov_in(registros, parsed, proceso);
+				instruccion_mov_in(registros, parsed, proceso);
 				break;
 			case MOV_OUT:
-				intruccion_mov_out(registros, parsed, proceso);
+				instruccion_mov_out(registros, parsed, proceso);
 				break;
 			case I_O:
 				instruccion_i_o(parsed, proceso);
-				return BLOCK;
+				//return BLOCK;
+				break;
 			case F_OPEN:
 				instruccion_f_open(parsed, proceso);
 				break;
@@ -134,7 +136,7 @@ enum_instrucciones interpretar_instrucciones(pcb* proceso) {
 				instruccion_f_seek(parsed, proceso);
 				break;
 			case F_READ:
-				intruccion_f_read(parsed, proceso);
+				instruccion_f_read(parsed, proceso);
 				break;
 			case F_WRITE:
 				instruccion_f_write(parsed, proceso);
@@ -143,7 +145,7 @@ enum_instrucciones interpretar_instrucciones(pcb* proceso) {
 				instruccion_f_truncate(parsed, proceso);
 				break;
 			case WAIT:
-				intruccion_wait(parsed, proceso);
+				instruccion_wait(parsed, proceso);
 				break;
 			case SIGNAL:
 				instruccion_signal(parsed, proceso);
@@ -180,93 +182,93 @@ void instruccion_set(t_dictionary* registros, char** parsed, pcb* proceso) {
 	proceso->program_counter++;
 }
 
-void intruccion_mov_in(t_dictionary* registros, char** parsed, pcb* proceso)
+void instruccion_mov_in(t_dictionary* registros, char** parsed, pcb* proceso)
+{
+	log_info(logger, "PID: %d - Ejecutando: %s - %s %s", proceso->pid, parsed[0], parsed[1], parsed[2]);
+	log_warning(logger, "PID: %d - Advertencia: Instruccion sin realizar", proceso->pid);
+	proceso->program_counter++;
+}
+
+void instruccion_mov_out(t_dictionary* registros, char** parsed, pcb* proceso)
+{
+	log_info(logger, "PID: %d - Ejecutando: %s - %s %s", proceso->pid, parsed[0], parsed[1], parsed[2]);
+	log_warning(logger, "PID: %d - Advertencia: Instruccion sin realizar", proceso->pid);
+	proceso->program_counter++;
+}
+
+void instruccion_i_o(char** parsed, pcb* proceso)
 {
 	log_info(logger, "PID: %d - Ejecutando: %s", proceso->pid, parsed[0]);
 	log_warning(logger, "PID: %d - Advertencia: Instruccion sin realizar", proceso->pid);
 	proceso->program_counter++;
 }
 
-void intruccion_mov_out(t_dictionary* registros, char** parsed, pcb* proceso)
+void instruccion_f_open(char** parsed, pcb* proceso)
 {
-	log_info(logger, "PID: %d - Ejecutando: %s", proceso->pid, parsed[0]);
+	log_info(logger, "PID: %d - Ejecutando: %s - %s", proceso->pid, parsed[0], parsed[1]);
 	log_warning(logger, "PID: %d - Advertencia: Instruccion sin realizar", proceso->pid);
 	proceso->program_counter++;
 }
 
-void intruccion_i_o(char** parsed, pcb* proceso)
+void instruccion_f_close(char** parsed, pcb* proceso)
 {
-	log_info(logger, "PID: %d - Ejecutando: %s", proceso->pid, parsed[0]);
+	log_info(logger, "PID: %d - Ejecutando: %s - %s", proceso->pid, parsed[0], parsed[1]);
 	log_warning(logger, "PID: %d - Advertencia: Instruccion sin realizar", proceso->pid);
 	proceso->program_counter++;
 }
 
-void intruccion_f_open(char** parsed, pcb* proceso)
+void instruccion_f_seek(char** parsed, pcb* proceso)
 {
-	log_info(logger, "PID: %d - Ejecutando: %s", proceso->pid, parsed[0]);
+	log_info(logger, "PID: %d - Ejecutando: %s - %s %s", proceso->pid, parsed[0], parsed[1], parsed[2]);
 	log_warning(logger, "PID: %d - Advertencia: Instruccion sin realizar", proceso->pid);
 	proceso->program_counter++;
 }
 
-void intruccion_f_close(char** parsed, pcb* proceso)
+void instruccion_f_read(char** parsed, pcb* proceso)
 {
-	log_info(logger, "PID: %d - Ejecutando: %s", proceso->pid, parsed[0]);
+	log_info(logger, "PID: %d - Ejecutando: %s - %s %s", proceso->pid, parsed[0], parsed[1], parsed[2]);
 	log_warning(logger, "PID: %d - Advertencia: Instruccion sin realizar", proceso->pid);
 	proceso->program_counter++;
 }
 
-void intruccion_f_seek(char** parsed, pcb* proceso)
+void instruccion_f_write(char** parsed, pcb* proceso)
 {
-	log_info(logger, "PID: %d - Ejecutando: %s", proceso->pid, parsed[0]);
+	log_info(logger, "PID: %d - Ejecutando: %s - %s %s %s", proceso->pid, parsed[0], parsed[1], parsed[2], parsed[3]);
 	log_warning(logger, "PID: %d - Advertencia: Instruccion sin realizar", proceso->pid);
 	proceso->program_counter++;
 }
 
-void intruccion_f_read(char** parsed, pcb* proceso)
+void instruccion_f_truncate(char** parsed, pcb* proceso)
 {
-	log_info(logger, "PID: %d - Ejecutando: %s", proceso->pid, parsed[0]);
+	log_info(logger, "PID: %d - Ejecutando: %s - %s %s", proceso->pid, parsed[0], parsed[1], parsed[2]);
 	log_warning(logger, "PID: %d - Advertencia: Instruccion sin realizar", proceso->pid);
 	proceso->program_counter++;
 }
 
-void intruccion_f_write(char** parsed, pcb* proceso)
+void instruccion_wait(char** parsed, pcb* proceso)
 {
-	log_info(logger, "PID: %d - Ejecutando: %s", proceso->pid, parsed[0]);
+	log_info(logger, "PID: %d - Ejecutando: %s - %s", proceso->pid, parsed[0], parsed[1]);
 	log_warning(logger, "PID: %d - Advertencia: Instruccion sin realizar", proceso->pid);
 	proceso->program_counter++;
 }
 
-void intruccion_f_truncate(char** parsed, pcb* proceso)
+void instruccion_signal(char** parsed, pcb* proceso)
 {
-	log_info(logger, "PID: %d - Ejecutando: %s", proceso->pid, parsed[0]);
+	log_info(logger, "PID: %d - Ejecutando: %s - %s", proceso->pid, parsed[0], parsed[1]);
 	log_warning(logger, "PID: %d - Advertencia: Instruccion sin realizar", proceso->pid);
 	proceso->program_counter++;
 }
 
-void intruccion_wait(char** parsed, pcb* proceso)
+void instruccion_create_segment(char** parsed, pcb* proceso)
 {
-	log_info(logger, "PID: %d - Ejecutando: %s", proceso->pid, parsed[0]);
+	log_info(logger, "PID: %d - Ejecutando: %s - %s %s", proceso->pid, parsed[0], parsed[1], parsed[2]);
 	log_warning(logger, "PID: %d - Advertencia: Instruccion sin realizar", proceso->pid);
 	proceso->program_counter++;
 }
 
-void intruccion_signal(char** parsed, pcb* proceso)
+void instruccion_delete_segment(char** parsed, pcb* proceso)
 {
-	log_info(logger, "PID: %d - Ejecutando: %s", proceso->pid, parsed[0]);
-	log_warning(logger, "PID: %d - Advertencia: Instruccion sin realizar", proceso->pid);
-	proceso->program_counter++;
-}
-
-void intruccion_create_segment(char** parsed, pcb* proceso)
-{
-	log_info(logger, "PID: %d - Ejecutando: %s", proceso->pid, parsed[0]);
-	log_warning(logger, "PID: %d - Advertencia: Instruccion sin realizar", proceso->pid);
-	proceso->program_counter++;
-}
-
-void intruccion_delete_segment(char** parsed, pcb* proceso)
-{
-	log_info(logger, "PID: %d - Ejecutando: %s", proceso->pid, parsed[0]);
+	log_info(logger, "PID: %d - Ejecutando: %s - %s", proceso->pid, parsed[0], parsed[1]);
 	log_warning(logger, "PID: %d - Advertencia: Instruccion sin realizar", proceso->pid);
 	proceso->program_counter++;
 }
