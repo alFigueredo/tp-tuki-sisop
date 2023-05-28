@@ -10,6 +10,7 @@
 #include <commons/config.h>
 #include <commons/process.h>
 #include <commons/string.h>
+#include <commons/temporal.h>
 #include <commons/collections/list.h>
 #include <commons/collections/queue.h>
 #include <commons/collections/dictionary.h>
@@ -35,6 +36,7 @@ extern sem_t* sem_block;
 extern sem_t* sem_exit;
 extern sem_t* sem_new_ready;
 extern sem_t* sem_exec_exit;
+extern t_temporal* tiempo_en_cpu;
 extern t_dictionary* conexiones;
 
 typedef struct{
@@ -59,17 +61,17 @@ typedef struct {
 		registros_cpu registros;
 		t_list* tabla_segmentos;
 		int estimado_proxRafaga;
-		int tiempo_llegada_ready;
+		char* tiempo_llegada_ready;
 		t_list* archivos_abiertos;
 } pcb;
 
-// t_dictionary* diccionario_registros(registros_cpu*);
 void iniciar_colas(void);
 void destruir_colas(void);
 void iniciar_semaforos(void);
 void destruir_semaforos(void);
 sem_t* iniciar_semaforo(int, unsigned int);
 void destruir_semaforo(sem_t*);
+void calcular_estimacion(pcb*, int64_t);
 void generar_proceso(t_list*, int*);
 void enviar_pcb(int, pcb*, op_code);
 void recibir_pcb(t_list*);
@@ -77,6 +79,10 @@ void new_a_ready(int*);
 void exec_a_ready(int*);
 void ready_a_exec(int*);
 void exec_a_exit(void);
+void planificador(t_queue*);
+bool HRRN_comparator(void*, void*);
+double HRRN_R(pcb*);
+int seconds_from_string_time(char*);
 char* queue_iterator(t_queue*);
 
 #endif /* PROCESO_H_ */

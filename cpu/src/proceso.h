@@ -48,7 +48,7 @@ typedef struct {
 	registros_cpu registros;
 	t_list* tabla_segmentos;
 	int estimado_proxRafaga;
-	int tiempo_llegada_ready;
+	char* tiempo_llegada_ready;
 	t_list* archivos_abiertos;
 }pcb;
 

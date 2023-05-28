@@ -14,6 +14,7 @@ sem_t* sem_block;
 sem_t* sem_exit;
 sem_t* sem_new_ready;
 sem_t* sem_exec_exit;
+t_temporal* tiempo_en_cpu;
 t_dictionary* conexiones;
 
 void iniciar_colas(void) {
@@ -107,12 +108,17 @@ void destruir_semaforo(sem_t* semaforo) {
 	free(semaforo);
 }
 
+void calcular_estimacion(pcb* proceso, int64_t tiempo_transcurrido) {
+	double alfa = config_get_double_value(config,"HRRN_ALFA");
+	proceso->estimado_proxRafaga=alfa*tiempo_transcurrido+proceso->estimado_proxRafaga*(1-alfa);
+}
+
 void generar_proceso(t_list* lista, int* socket_cliente) {
 	pcb* proceso = malloc(sizeof(pcb));
 	memcpy(&(proceso->pid), list_remove(lista, 0), sizeof(unsigned int));
 	proceso->instrucciones=list_duplicate(lista);
 	proceso->program_counter=0;
-	//proceso.estimado_proxRafaga= config_get_int_value(config,"ESTIMACION_INICIAL");
+	proceso->estimado_proxRafaga=config_get_int_value(config,"ESTIMACION_INICIAL");
 	sem_wait(sem_new);
 	queue_push(qnew, proceso);
 	sem_post(sem_new);
@@ -134,8 +140,9 @@ void new_a_ready(int* conexion_cpu) {
 	queue_push(qready, proceso);
 	sem_post(sem_ready);
 	log_info(logger, "PID: %d - Estado Anterior: %s - Estado Actual: READY", proceso->pid, "NEW");
+	proceso->tiempo_llegada_ready = temporal_get_string_time("%y:%m:%d:%H:%M:%S:%MS");
 	sem_wait(sem_ready);
-	log_info(logger, "Cola Ready FIFO: [%s]", queue_iterator(qready));
+	log_info(logger, "Cola Ready %s: [%s]", config_get_string_value(config,"ALGORITMO_PLANIFICACION"), queue_iterator(qready));
 	sem_post(sem_ready);
 	if (sem_new_ready_value==1)
 		sem_post(sem_exec_exit);
@@ -148,8 +155,11 @@ void exec_a_ready(int* conexion_cpu) {
 	queue_push(qready, proceso);
 	sem_post(sem_ready);
 	log_info(logger, "PID: %d - Estado Anterior: %s - Estado Actual: READY", proceso->pid, "EXEC");
+	calcular_estimacion(proceso, temporal_gettime(tiempo_en_cpu));
+	temporal_destroy(tiempo_en_cpu);
+	proceso->tiempo_llegada_ready = temporal_get_string_time("%y:%m:%d:%H:%M:%S:%MS");
 	sem_wait(sem_ready);
-	log_info(logger, "Cola Ready FIFO: [%s]", queue_iterator(qready));
+	log_info(logger, "Cola Ready %s: [%s]", config_get_string_value(config,"ALGORITMO_PLANIFICACION"), queue_iterator(qready));
 	sem_post(sem_ready);
 	sem_post(sem_cpu);
 	pthread_t thread;
@@ -160,10 +170,15 @@ void exec_a_ready(int* conexion_cpu) {
 void ready_a_exec(int* conexion_cpu) {
 	sem_wait(sem_cpu);
 	sem_wait(sem_ready);
+	if (strcmp(config_get_string_value(config,"ALGORITMO_PLANIFICACION"), "HRRN")==0) {
+		planificador(qready);
+		log_info(logger, "Cola Ready %s: [%s]", config_get_string_value(config,"ALGORITMO_PLANIFICACION"), queue_iterator(qready));
+	}
 	pcb* proceso = queue_pop(qready);
 	sem_post(sem_ready);
 	queue_push(qexec, proceso);
 	log_info(logger, "PID: %d - Estado Anterior: READY - Estado Actual: EXEC", proceso->pid);
+	tiempo_en_cpu = temporal_create();
 	enviar_pcb(*conexion_cpu, queue_peek(qexec), EXEC);
 }
 
@@ -171,6 +186,8 @@ void exec_a_exit() {
 	pcb* proceso = queue_pop(qexec);
 	queue_push(qexit, proceso);
 	log_info(logger, "PID: %d - Estado Anterior: EXEC - Estado Actual: EXIT", proceso->pid);
+	calcular_estimacion(proceso, temporal_gettime(tiempo_en_cpu));
+	temporal_destroy(tiempo_en_cpu);
 	log_trace(logger, "Registro AX: %s", string_substring_until(proceso->registros.AX, 4));
 	log_trace(logger, "Registro BX: %s", string_substring_until(proceso->registros.BX, 4));
 	log_trace(logger, "Registro CX: %s", string_substring_until(proceso->registros.CX, 4));
@@ -226,6 +243,10 @@ void enviar_pcb(int conexion, pcb* proceso, op_code codigo) {
 	agregar_a_paquete(paquete, proceso->registros.RBX, 16);
 	agregar_a_paquete(paquete, proceso->registros.RCX, 16);
 	agregar_a_paquete(paquete, proceso->registros.RDX, 16);
+
+	agregar_a_paquete(paquete, &(proceso->estimado_proxRafaga), sizeof(int));
+	agregar_a_paquete(paquete, &(proceso->tiempo_llegada_ready), strlen(proceso->tiempo_llegada_ready)+1);
+
 	enviar_paquete(paquete, conexion);
 	eliminar_paquete(paquete);
 }
@@ -251,7 +272,37 @@ void recibir_pcb(t_list* lista) {
 	memcpy(proceso->registros.RBX, list_remove(lista, 0), 16);
 	memcpy(proceso->registros.RCX, list_remove(lista, 0), 16);
 	memcpy(proceso->registros.RDX, list_remove(lista, 0), 16);
+	memcpy(&proceso->estimado_proxRafaga, list_remove(lista, 0), sizeof(int));
+	proceso->tiempo_llegada_ready = (char*)list_remove(lista, 0);
 //	queue_push(qexec, proceso);
+}
+
+void planificador(t_queue* queue) {
+	t_list* list = list_create();
+	while (queue_size(queue)!=0) {
+		list_add(list, queue_pop(queue));
+	}
+	list_sort(list, HRRN_comparator);
+	while (list_size(list)!=0) {
+		queue_push(queue, list_remove(list, 0));
+	}
+}
+
+bool HRRN_comparator(void* proceso1, void* proceso2) {
+	double r1 = HRRN_R((pcb*)proceso1);
+	double r2 = HRRN_R((pcb*)proceso2);
+	return r1>=r2;
+}
+
+double HRRN_R(pcb* proceso) {
+	int arrival_time = seconds_from_string_time(proceso->tiempo_llegada_ready);
+	int current_time = seconds_from_string_time(temporal_get_string_time("%y:%m:%d:%H:%M:%S:%MS"));
+	return (double)(current_time-arrival_time+proceso->estimado_proxRafaga)/proceso->estimado_proxRafaga;
+}
+
+int seconds_from_string_time(char* timestamp) {
+	char** ts_sorted = string_split(timestamp, ":");
+	return ((atoi(ts_sorted[3])*60+atoi(ts_sorted[4]))*60+atoi(ts_sorted[5]))*1000+atoi(ts_sorted[6]);
 }
 
 char* queue_iterator(t_queue* queue) {
