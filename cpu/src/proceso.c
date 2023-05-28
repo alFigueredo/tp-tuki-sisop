@@ -131,17 +131,5 @@ void instruccion_yield(char** parsed, pcb* proceso) {
 
 void instruccion_exit(char** parsed, pcb* proceso) {
 	log_info(logger, "PID: %d - Ejecutando: %s", proceso->pid, parsed[0]);
-	log_trace(logger, "Registro AX: %s", string_substring_until(proceso->registros.AX, 4));
-	log_trace(logger, "Registro BX: %s", string_substring_until(proceso->registros.BX, 4));
-	log_trace(logger, "Registro CX: %s", string_substring_until(proceso->registros.CX, 4));
-	log_trace(logger, "Registro DX: %s", string_substring_until(proceso->registros.DX, 4));
-	log_trace(logger, "Registro EAX: %s", string_substring_until(proceso->registros.EAX, 8));
-	log_trace(logger, "Registro EBX: %s", string_substring_until(proceso->registros.EBX, 8));
-	log_trace(logger, "Registro ECX: %s", string_substring_until(proceso->registros.ECX, 8));
-	log_trace(logger, "Registro EDX: %s", string_substring_until(proceso->registros.EDX, 8));
-	log_trace(logger, "Registro RAX: %s", string_substring_until(proceso->registros.RAX, 16));
-	log_trace(logger, "Registro RBX: %s", string_substring_until(proceso->registros.RBX, 16));
-	log_trace(logger, "Registro RCX: %s", string_substring_until(proceso->registros.RCX, 16));
-	log_trace(logger, "Registro RDX: %s", string_substring_until(proceso->registros.RDX, 16));
 	proceso->program_counter++;
 }

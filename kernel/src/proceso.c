@@ -6,7 +6,14 @@ t_queue* qexec;
 t_queue* qblock;
 t_queue* qexit;
 sem_t* sem_largo_plazo;
+sem_t* sem_cpu;
+sem_t* sem_new;
+sem_t* sem_ready;
 sem_t* sem_exec;
+sem_t* sem_block;
+sem_t* sem_exit;
+sem_t* sem_new_ready;
+sem_t* sem_exec_exit;
 t_dictionary* conexiones;
 
 void iniciar_colas(void) {
@@ -25,14 +32,171 @@ void destruir_colas(void) {
 	queue_destroy(qexit);
 }
 
-pcb* generar_proceso(t_list* lista, int* socket_cliente) {
+void iniciar_semaforos(void) {
+	/*
+	sem_largo_plazo = malloc(sizeof(sem_t));
+	sem_cpu = malloc(sizeof(sem_t));
+	sem_new = malloc(sizeof(sem_t));
+	sem_ready = malloc(sizeof(sem_t));
+	sem_exec = malloc(sizeof(sem_t));
+	sem_block = malloc(sizeof(sem_t));
+	sem_exit = malloc(sizeof(sem_t));
+	sem_new_ready = malloc(sizeof(sem_t));
+	sem_exec_exit = malloc(sizeof(sem_t));
+	sem_init(sem_largo_plazo, 0, config_get_int_value(config, "GRADO_MAX_MULTIPROGRAMACION"));
+	sem_init(sem_cpu, 0, 1);
+	sem_init(sem_new, 0, 1);
+	sem_init(sem_ready, 0, 1);
+	sem_init(sem_exec, 0, 1);
+	sem_init(sem_block, 0, 1);
+	sem_init(sem_exit, 0, 1);
+	sem_init(sem_new_ready, 0, 1);
+	sem_init(sem_exec_exit, 0, 0);
+	*/
+	sem_largo_plazo = iniciar_semaforo(0, config_get_int_value(config, "GRADO_MAX_MULTIPROGRAMACION"));
+	sem_cpu = iniciar_semaforo(0, 1);
+	sem_new = iniciar_semaforo(0, 1);
+	sem_ready = iniciar_semaforo(0, 1);
+	sem_exec = iniciar_semaforo(0, 1);
+	sem_block = iniciar_semaforo(0, 1);
+	sem_exit = iniciar_semaforo(0, 1);
+	sem_new_ready = iniciar_semaforo(0, 0);
+	sem_exec_exit = iniciar_semaforo(0, 0);
+}
+
+void destruir_semaforos(void) {
+	/*
+	sem_destroy(sem_largo_plazo);
+	sem_destroy(sem_cpu);
+	sem_destroy(sem_new);
+	sem_destroy(sem_ready);
+	sem_destroy(sem_exec);
+	sem_destroy(sem_block);
+	sem_destroy(sem_exit);
+	sem_destroy(sem_new_ready);
+	sem_destroy(sem_exec_exit);
+	free(sem_largo_plazo);
+	free(sem_cpu);
+	free(sem_new);
+	free(sem_ready);
+	free(sem_exec);
+	free(sem_block);
+	free(sem_exit);
+	free(sem_new_ready);
+	free(sem_exec_exit);
+	*/
+	destruir_semaforo(sem_largo_plazo);
+	destruir_semaforo(sem_cpu);
+	destruir_semaforo(sem_new);
+	destruir_semaforo(sem_ready);
+	destruir_semaforo(sem_exec);
+	destruir_semaforo(sem_block);
+	destruir_semaforo(sem_exit);
+	destruir_semaforo(sem_new_ready);
+	destruir_semaforo(sem_exec_exit);
+}
+
+sem_t* iniciar_semaforo(int pshared, unsigned int value) {
+	sem_t* semaforo = malloc(sizeof(sem_t));
+	sem_init(semaforo, pshared, value);
+	return semaforo;
+}
+
+void destruir_semaforo(sem_t* semaforo) {
+	sem_destroy(semaforo);
+	free(semaforo);
+}
+
+void generar_proceso(t_list* lista, int* socket_cliente) {
 	pcb* proceso = malloc(sizeof(pcb));
 	memcpy(&(proceso->pid), list_remove(lista, 0), sizeof(unsigned int));
 	proceso->instrucciones=list_duplicate(lista);
 	proceso->program_counter=0;
-	//proceso.estimado_proxRafaga= config_get_in t_value(config,"ESTIMACION_INICIAL");
+	//proceso.estimado_proxRafaga= config_get_int_value(config,"ESTIMACION_INICIAL");
+	sem_wait(sem_new);
+	queue_push(qnew, proceso);
+	sem_post(sem_new);
 	dictionary_put(conexiones, string_itoa(proceso->pid), socket_cliente);
-	return proceso;
+	log_info(logger, "Se crea el proceso %d en NEW", proceso->pid);
+}
+
+void new_a_ready(int* conexion_cpu) {
+	sem_wait(sem_largo_plazo);
+	// Si el ingreso del proceso coincide con la salida de otro
+	int sem_new_ready_value;
+	sem_getvalue(sem_new_ready, &sem_new_ready_value);
+	if (sem_new_ready_value==1)
+		sem_wait(sem_new_ready);
+	sem_wait(sem_new);
+	pcb* proceso = queue_pop(qnew);
+	sem_post(sem_new);
+	sem_wait(sem_ready);
+	queue_push(qready, proceso);
+	sem_post(sem_ready);
+	log_info(logger, "PID: %d - Estado Anterior: %s - Estado Actual: READY", proceso->pid, "NEW");
+	sem_wait(sem_ready);
+	log_info(logger, "Cola Ready FIFO: [%s]", queue_iterator(qready));
+	sem_post(sem_ready);
+	if (sem_new_ready_value==1)
+		sem_post(sem_exec_exit);
+	ready_a_exec(conexion_cpu);
+}
+
+void exec_a_ready(int* conexion_cpu) {
+	pcb* proceso = queue_pop(qexec);
+	sem_wait(sem_ready);
+	queue_push(qready, proceso);
+	sem_post(sem_ready);
+	log_info(logger, "PID: %d - Estado Anterior: %s - Estado Actual: READY", proceso->pid, "EXEC");
+	sem_wait(sem_ready);
+	log_info(logger, "Cola Ready FIFO: [%s]", queue_iterator(qready));
+	sem_post(sem_ready);
+	sem_post(sem_cpu);
+	pthread_t thread;
+	pthread_create(&thread, NULL, (void*) ready_a_exec, conexion_cpu);
+	pthread_detach(thread);
+}
+
+void ready_a_exec(int* conexion_cpu) {
+	sem_wait(sem_cpu);
+	sem_wait(sem_ready);
+	pcb* proceso = queue_pop(qready);
+	sem_post(sem_ready);
+	queue_push(qexec, proceso);
+	log_info(logger, "PID: %d - Estado Anterior: READY - Estado Actual: EXEC", proceso->pid);
+	enviar_pcb(*conexion_cpu, queue_peek(qexec), EXEC);
+}
+
+void exec_a_exit() {
+	pcb* proceso = queue_pop(qexec);
+	queue_push(qexit, proceso);
+	log_info(logger, "PID: %d - Estado Anterior: EXEC - Estado Actual: EXIT", proceso->pid);
+	log_trace(logger, "Registro AX: %s", string_substring_until(proceso->registros.AX, 4));
+	log_trace(logger, "Registro BX: %s", string_substring_until(proceso->registros.BX, 4));
+	log_trace(logger, "Registro CX: %s", string_substring_until(proceso->registros.CX, 4));
+	log_trace(logger, "Registro DX: %s", string_substring_until(proceso->registros.DX, 4));
+	log_trace(logger, "Registro EAX: %s", string_substring_until(proceso->registros.EAX, 8));
+	log_trace(logger, "Registro EBX: %s", string_substring_until(proceso->registros.EBX, 8));
+	log_trace(logger, "Registro ECX: %s", string_substring_until(proceso->registros.ECX, 8));
+	log_trace(logger, "Registro EDX: %s", string_substring_until(proceso->registros.EDX, 8));
+	log_trace(logger, "Registro RAX: %s", string_substring_until(proceso->registros.RAX, 16));
+	log_trace(logger, "Registro RBX: %s", string_substring_until(proceso->registros.RBX, 16));
+	log_trace(logger, "Registro RCX: %s", string_substring_until(proceso->registros.RCX, 16));
+	log_trace(logger, "Registro RDX: %s", string_substring_until(proceso->registros.RDX, 16));
+	enviar_operacion(*(int*)dictionary_remove(conexiones, string_itoa(proceso->pid)), EXIT);
+	log_info(logger, "Finaliza el proceso %d - Motivo: SUCCESS", proceso->pid);
+	// Si hay procesos en NEW esperando
+	int sem_largo_plazo_value;
+	sem_getvalue(sem_largo_plazo, &sem_largo_plazo_value);
+	if (sem_largo_plazo_value==0 && queue_size(qnew)!=0) {
+		sem_post(sem_largo_plazo);
+		sem_post(sem_new_ready);
+		sem_wait(sem_exec_exit);
+	} else {
+		sem_post(sem_largo_plazo);
+	}
+	sem_post(sem_cpu);
+	free(queue_pop(qexit));
 }
 
 void enviar_pcb(int conexion, pcb* proceso, op_code codigo) {
@@ -66,8 +230,10 @@ void enviar_pcb(int conexion, pcb* proceso, op_code codigo) {
 	eliminar_paquete(paquete);
 }
 
-pcb* recibir_pcb(t_list* lista) {
-	pcb* proceso = malloc(sizeof(pcb));
+void recibir_pcb(t_list* lista) {
+//	free(queue_pop(qexec));
+//	pcb* proceso = malloc(sizeof(pcb));
+	pcb* proceso = queue_peek(qexec);
 	memcpy(&(proceso->pid), list_remove(lista, 0), sizeof(unsigned int));
 	int cantidad_instrucciones;
 	memcpy(&(cantidad_instrucciones), list_remove(lista, 0), sizeof(int));
@@ -85,7 +251,7 @@ pcb* recibir_pcb(t_list* lista) {
 	memcpy(proceso->registros.RBX, list_remove(lista, 0), 16);
 	memcpy(proceso->registros.RCX, list_remove(lista, 0), 16);
 	memcpy(proceso->registros.RDX, list_remove(lista, 0), 16);
-	return proceso;
+//	queue_push(qexec, proceso);
 }
 
 char* queue_iterator(t_queue* queue) {

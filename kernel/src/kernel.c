@@ -12,10 +12,7 @@ int main(int argc, char** argv) {
 	logger = iniciar_logger("./kernel.log", "Kernel");
 	config = iniciar_config(argv[1]);
 	iniciar_colas();
-	sem_largo_plazo = malloc(sizeof(sem_t));
-	sem_exec = malloc(sizeof(sem_t));
-	sem_init(sem_largo_plazo, 0, config_get_int_value(config, "GRADO_MAX_MULTIPROGRAMACION"));
-	sem_init(sem_exec, 0, 1);
+	iniciar_semaforos();
 	conexiones = dictionary_create();
 
 	// char* ip_memoria = config_get_string_value(config, "IP_MEMORIA");
@@ -43,10 +40,6 @@ int main(int argc, char** argv) {
 	esperar_cliente(socket_servidor);
 
 	destruir_colas();
-	sem_destroy(sem_largo_plazo);
-	sem_destroy(sem_exec);
-	free(sem_largo_plazo);
-	free(sem_exec);
 	dictionary_destroy(conexiones);
 	liberar_conexion(conexion_cpu);
 	liberar_conexion(conexion_memoria);

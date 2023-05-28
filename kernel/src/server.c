@@ -72,7 +72,6 @@ void esperar_cliente(int socket_servidor){
 
 void atender_cliente(int* socket_cliente){
 	t_list *lista;
-	pcb* proceso;
 	while (1) {
 		int cod_op = recibir_operacion(*socket_cliente);
 		switch (cod_op) {
@@ -87,11 +86,8 @@ void atender_cliente(int* socket_cliente){
 				break;
 			case NEW:
 				lista = recibir_paquete(*socket_cliente);
-				proceso = generar_proceso(lista, socket_cliente);
-				queue_push(qnew, proceso);
-				log_info(logger, "Se crea el proceso %d en NEW", proceso->pid);
-				sem_wait(sem_largo_plazo);
-				proceso_ready(queue_pop(qnew), "NEW");
+				generar_proceso(lista, socket_cliente);
+				new_a_ready(&conexion_cpu);
 				break;
 			case -1:
 				log_warning(logger, "El cliente se desconecto. Terminando conexion");

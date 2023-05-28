@@ -27,7 +27,14 @@ extern t_queue* qexec;
 extern t_queue* qblock;
 extern t_queue* qexit;
 extern sem_t* sem_largo_plazo;
+extern sem_t* sem_cpu;
+extern sem_t* sem_new;
+extern sem_t* sem_ready;
 extern sem_t* sem_exec;
+extern sem_t* sem_block;
+extern sem_t* sem_exit;
+extern sem_t* sem_new_ready;
+extern sem_t* sem_exec_exit;
 extern t_dictionary* conexiones;
 
 typedef struct{
@@ -59,9 +66,17 @@ typedef struct {
 // t_dictionary* diccionario_registros(registros_cpu*);
 void iniciar_colas(void);
 void destruir_colas(void);
-pcb* generar_proceso(t_list*, int*);
+void iniciar_semaforos(void);
+void destruir_semaforos(void);
+sem_t* iniciar_semaforo(int, unsigned int);
+void destruir_semaforo(sem_t*);
+void generar_proceso(t_list*, int*);
 void enviar_pcb(int, pcb*, op_code);
-pcb* recibir_pcb(t_list*);
+void recibir_pcb(t_list*);
+void new_a_ready(int*);
+void exec_a_ready(int*);
+void ready_a_exec(int*);
+void exec_a_exit(void);
 char* queue_iterator(t_queue*);
 
 #endif /* PROCESO_H_ */

@@ -56,7 +56,6 @@ void esperar_servidor(int conexion){
 
 void atender_servidor(int* socket_servidor){
 	t_list *lista;
-	pcb* proceso;
 	while (1) {
 		int cod_op = recibir_operacion(*socket_servidor);
 		switch (cod_op) {
@@ -71,17 +70,13 @@ void atender_servidor(int* socket_servidor){
 				break;
 			case READY:
 				lista = recibir_paquete(*socket_servidor);
-				proceso = recibir_pcb(lista);
-				free(queue_pop(qexec));
-				proceso_ready(proceso, "EXEC");
+				recibir_pcb(lista);
+				exec_a_ready(&conexion_cpu);
 				break;
 			case EXIT:
 				lista = recibir_paquete(*socket_servidor);
-				proceso = recibir_pcb(lista);
-				free(queue_pop(qexec));
-				proceso_exit(proceso);
-				sem_post(sem_exec);
-				sem_post(sem_largo_plazo);
+				recibir_pcb(lista);
+				exec_a_exit();
 				break;
 			case -1:
 				log_warning(logger, "El servidor se desconecto. Terminando conexion");
@@ -92,36 +87,6 @@ void atender_servidor(int* socket_servidor){
 				break;
 		}
 	}
-}
-
-void proceso_ready(pcb* proceso, char* estado_anterior) {
-	queue_push(qready, proceso);
-	log_info(logger, "PID: %d - Estado Anterior: %s - Estado Actual: READY", proceso->pid, estado_anterior);
-	log_info(logger, "Cola Ready FIFO: [%s]", queue_iterator(qready));
-	if (strcmp(estado_anterior, "NEW")!=0) {
-		sem_post(sem_exec);
-		pthread_t thread;
-		pthread_create(&thread, NULL, (void*) proceso_exec, NULL);
-		pthread_detach(thread);
-	} else {
-		proceso_exec();
-	}
-}
-
-void proceso_exec(void) {
-	sem_wait(sem_exec);
-	pcb* proceso = queue_pop(qready);
-	queue_push(qexec, proceso);
-	log_info(logger, "PID: %d - Estado Anterior: READY - Estado Actual: EXEC", proceso->pid);
-	enviar_pcb(conexion_cpu, queue_peek(qexec), EXEC);
-}
-
-void proceso_exit(pcb* proceso) {
-	queue_push(qexit, proceso);
-	log_info(logger, "PID: %d - Estado Anterior: EXEC - Estado Actual: EXIT", proceso->pid);
-	log_info(logger, "Finaliza el proceso %d - Motivo: SUCCESS", proceso->pid);
-	enviar_operacion(*(int*)dictionary_remove(conexiones, string_itoa(proceso->pid)), EXIT);
-	free(queue_pop(qexit));
 }
 
 void liberar_conexion(int socket_cliente)
