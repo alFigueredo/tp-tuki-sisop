@@ -71,6 +71,7 @@ void iniciar_semaforos(void);
 void destruir_semaforos(void);
 sem_t* iniciar_semaforo(int, unsigned int);
 void destruir_semaforo(sem_t*);
+void delay(int);
 void calcular_estimacion(pcb*, int64_t);
 void generar_proceso(t_list*, int*);
 void enviar_pcb(int, pcb*, op_code);

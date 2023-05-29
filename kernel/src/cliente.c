@@ -56,6 +56,7 @@ void esperar_servidor(int conexion){
 
 void atender_servidor(int* socket_servidor){
 	t_list *lista;
+	char* instruccion;
 	while (1) {
 		int cod_op = recibir_operacion(*socket_servidor);
 		switch (cod_op) {
@@ -72,6 +73,31 @@ void atender_servidor(int* socket_servidor){
 				lista = recibir_paquete(*socket_servidor);
 				recibir_pcb(lista);
 				exec_a_ready(&conexion_cpu);
+				break;
+			case BLOCK:
+				lista = recibir_paquete(*socket_servidor);
+				recibir_pcb(lista);
+				instruccion = list_get(((pcb*)queue_peek(qexec))->instrucciones, ((pcb*)queue_peek(qexec))->program_counter-1);
+				log_trace(logger, "PID: %d - Bloqueado por: IO", ((pcb*)queue_peek(qexec))->pid);
+				log_trace(logger, "PID. %d - Instruccion: %s", ((pcb*)queue_peek(qexec))->pid, instruccion);
+				delay(1000);
+				enviar_pcb(conexion_cpu, queue_peek(qexec), EXEC);
+				break;
+			case WAIT:
+				lista = recibir_paquete(*socket_servidor);
+				recibir_pcb(lista);
+				instruccion = list_get(((pcb*)queue_peek(qexec))->instrucciones, ((pcb*)queue_peek(qexec))->program_counter-1);
+				log_trace(logger, "PID: %d - Wait", ((pcb*)queue_peek(qexec))->pid);
+				log_trace(logger, "PID. %d - Instruccion: %s", ((pcb*)queue_peek(qexec))->pid, instruccion);
+				enviar_pcb(conexion_cpu, queue_peek(qexec), EXEC);
+				break;
+			case SIGNAL:
+				lista = recibir_paquete(*socket_servidor);
+				recibir_pcb(lista);
+				instruccion = list_get(((pcb*)queue_peek(qexec))->instrucciones, ((pcb*)queue_peek(qexec))->program_counter-1);
+				log_trace(logger, "PID: %d - Signal", ((pcb*)queue_peek(qexec))->pid);
+				log_trace(logger, "PID. %d - Instruccion: %s", ((pcb*)queue_peek(qexec))->pid, instruccion);
+				enviar_pcb(conexion_cpu, queue_peek(qexec), EXEC);
 				break;
 			case EXIT:
 				lista = recibir_paquete(*socket_servidor);

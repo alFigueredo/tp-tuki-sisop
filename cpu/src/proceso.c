@@ -26,6 +26,22 @@ pcb* recibir_pcb(t_list* lista) {
 
 void enviar_pcb(int conexion, pcb* proceso, op_code estado) {
 	t_paquete* paquete = crear_paquete(estado);
+	/*
+	char instruccion[] = list_get(proceso->instrucciones, proceso->program_counter-1);
+	char* parsed = strtok(instruccion, " ");
+	parsed = strtok(NULL, " ");
+	t_list* lista_argumentos = list_create();
+	while(parsed) {
+		list_add(lista_argumentos, parsed);
+		parsed = strtok(NULL, " ");
+	}
+	int cant_argumentos = list_size(lista_argumentos);
+	agregar_a_paquete(paquete, &cant_argumentos, sizeof(int));
+	while(list_size(lista_argumentos)) {
+		char* argumento = list_remove(lista_argumentos, 0);
+		agregar_a_paquete(paquete, argumento, strlen(argumento)+1);
+	}
+	*/
 	agregar_a_paquete(paquete, &(proceso->pid), sizeof(unsigned int));
 	int instrucciones_size = list_size(proceso->instrucciones);
 	agregar_a_paquete(paquete, &instrucciones_size, sizeof(int));
@@ -74,8 +90,8 @@ t_dictionary* diccionario_instrucciones(void) {
 	dictionary_put(instrucciones, "F_READ", (void*)(intptr_t)F_READ);
 	dictionary_put(instrucciones, "F_WRITE", (void*)(intptr_t)F_WRITE);
 	dictionary_put(instrucciones, "F_TRUNCATE", (void*)(intptr_t)F_TRUNCATE);
-	dictionary_put(instrucciones, "WAIT", (void*)(intptr_t)WAIT);
-	dictionary_put(instrucciones, "SIGNAL", (void*)(intptr_t)SIGNAL);
+	dictionary_put(instrucciones, "WAIT", (void*)(intptr_t)IWAIT);
+	dictionary_put(instrucciones, "SIGNAL", (void*)(intptr_t)ISIGNAL);
 	dictionary_put(instrucciones, "CREATE_SEGMENT", (void*)(intptr_t)CREATE_SEGMENT);
 	dictionary_put(instrucciones, "DELETE_SEGMENT", (void*)(intptr_t)DELETE_SEGMENT);
 	dictionary_put(instrucciones, "YIELD", (void*)(intptr_t)YIELD);
@@ -111,7 +127,7 @@ enum_instrucciones interpretar_instrucciones(pcb* proceso) {
 	t_dictionary* registros = diccionario_registros(&proceso->registros);
 	while (proceso->program_counter<list_size(proceso->instrucciones)) {
 		char* instruccion = list_get(proceso->instrucciones, proceso->program_counter);
-		log_debug(logger, "%s", instruccion);
+//		log_debug(logger, "%s", instruccion);
 		char** parsed = string_split(instruccion, " ");
 		int instruccion_enum = (int)(intptr_t)dictionary_get(instrucciones, parsed[0]);
 		switch (instruccion_enum) {
@@ -126,8 +142,8 @@ enum_instrucciones interpretar_instrucciones(pcb* proceso) {
 				break;
 			case I_O:
 				instruccion_i_o(parsed, proceso);
-				//return BLOCK;
-				break;
+				return BLOCK;
+				// break;
 			case F_OPEN:
 				instruccion_f_open(parsed, proceso);
 				break;
@@ -146,12 +162,14 @@ enum_instrucciones interpretar_instrucciones(pcb* proceso) {
 			case F_TRUNCATE:
 				instruccion_f_truncate(parsed, proceso);
 				break;
-			case WAIT:
+			case IWAIT:
 				instruccion_wait(parsed, proceso);
-				break;
-			case SIGNAL:
+				return WAIT;
+//				break;
+			case ISIGNAL:
 				instruccion_signal(parsed, proceso);
-				break;
+				return SIGNAL;
+//				break;
 			case CREATE_SEGMENT:
 				instruccion_create_segment(parsed, proceso);
 				break;
@@ -200,8 +218,7 @@ void instruccion_mov_out(t_dictionary* registros, char** parsed, pcb* proceso)
 
 void instruccion_i_o(char** parsed, pcb* proceso)
 {
-	log_info(logger, "PID: %d - Ejecutando: %s", proceso->pid, parsed[0]);
-	log_warning(logger, "PID: %d - Advertencia: Instruccion sin realizar", proceso->pid);
+	log_info(logger, "PID: %d - Ejecutando: %s - %s", proceso->pid, parsed[0], parsed[1]);
 	proceso->program_counter++;
 }
 
@@ -250,14 +267,12 @@ void instruccion_f_truncate(char** parsed, pcb* proceso)
 void instruccion_wait(char** parsed, pcb* proceso)
 {
 	log_info(logger, "PID: %d - Ejecutando: %s - %s", proceso->pid, parsed[0], parsed[1]);
-	log_warning(logger, "PID: %d - Advertencia: Instruccion sin realizar", proceso->pid);
 	proceso->program_counter++;
 }
 
 void instruccion_signal(char** parsed, pcb* proceso)
 {
 	log_info(logger, "PID: %d - Ejecutando: %s - %s", proceso->pid, parsed[0], parsed[1]);
-	log_warning(logger, "PID: %d - Advertencia: Instruccion sin realizar", proceso->pid);
 	proceso->program_counter++;
 }
 

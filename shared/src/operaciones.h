@@ -25,7 +25,9 @@ typedef enum
 	READY,
 	EXEC,
 	BLOCK,
-	EXIT
+	EXIT,
+	WAIT,
+	SIGNAL
 }op_code;
 
 typedef struct

@@ -108,6 +108,14 @@ void destruir_semaforo(sem_t* semaforo) {
 	free(semaforo);
 }
 
+void delay(int milliseconds)
+{
+	t_temporal* clock = temporal_create();
+	while(temporal_gettime(clock)<milliseconds)
+		;
+	temporal_destroy(clock);
+}
+
 void calcular_estimacion(pcb* proceso, int64_t tiempo_transcurrido) {
 	double alfa = config_get_double_value(config,"HRRN_ALFA");
 	proceso->estimado_proxRafaga=alfa*tiempo_transcurrido+proceso->estimado_proxRafaga*(1-alfa);
@@ -302,7 +310,9 @@ double HRRN_R(pcb* proceso) {
 
 int seconds_from_string_time(char* timestamp) {
 	char** ts_sorted = string_split(timestamp, ":");
-	return ((atoi(ts_sorted[3])*60+atoi(ts_sorted[4]))*60+atoi(ts_sorted[5]))*1000+atoi(ts_sorted[6]);
+	// Estimado, no tiene en cuenta los años y todos los meses tienen 31 días
+	int datetime = (atoi(ts_sorted[1]))*31+atoi(ts_sorted[2]);
+	return ((datetime*24+atoi(ts_sorted[3])*60+atoi(ts_sorted[4]))*60+atoi(ts_sorted[5]))*1000+atoi(ts_sorted[6]);
 }
 
 char* queue_iterator(t_queue* queue) {
