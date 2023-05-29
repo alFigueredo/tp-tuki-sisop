@@ -20,7 +20,7 @@
 #include <assert.h>
 #include <pthread.h>
 #include <semaphore.h>
-#include "operaciones.h"
+#include <operaciones.h>
 
 extern t_queue* qnew;
 extern t_queue* qready;

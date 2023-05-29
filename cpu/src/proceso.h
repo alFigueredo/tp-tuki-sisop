@@ -16,7 +16,7 @@
 #include <string.h>
 #include <assert.h>
 #include <pthread.h>
-#include "operaciones.h"
+#include <operaciones.h>
 
 typedef enum
 {
