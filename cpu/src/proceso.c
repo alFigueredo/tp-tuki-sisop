@@ -267,12 +267,14 @@ void instruccion_f_truncate(char** parsed, pcb* proceso)
 void instruccion_wait(char** parsed, pcb* proceso)
 {
 	log_info(logger, "PID: %d - Ejecutando: %s - %s", proceso->pid, parsed[0], parsed[1]);
+	log_warning(logger, "PID: %d - Advertencia: Instruccion en proceso de implementación", proceso->pid);
 	proceso->program_counter++;
 }
 
 void instruccion_signal(char** parsed, pcb* proceso)
 {
 	log_info(logger, "PID: %d - Ejecutando: %s - %s", proceso->pid, parsed[0], parsed[1]);
+	log_warning(logger, "PID: %d - Advertencia: Instruccion en proceso de implementación", proceso->pid);
 	proceso->program_counter++;
 }
 

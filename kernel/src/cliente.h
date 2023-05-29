@@ -14,10 +14,6 @@
 #include "proceso.h"
 #include "server.h"
 
-extern int conexion_cpu;
-extern int conexion_memoria;
-extern int conexion_filesystem;
-
 int crear_conexion(char*, char*);
 void send_handshake(int);
 void esperar_servidor(int);

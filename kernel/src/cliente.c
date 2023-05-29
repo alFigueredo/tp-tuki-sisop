@@ -1,9 +1,5 @@
 #include "cliente.h"
 
-int conexion_cpu;
-int conexion_memoria;
-int conexion_filesystem;
-
 int crear_conexion(char *ip, char* puerto)
 {
 	struct addrinfo hints;
@@ -56,6 +52,7 @@ void esperar_servidor(int conexion){
 
 void atender_servidor(int* socket_servidor){
 	t_list *lista;
+	pthread_t thread;
 	char* instruccion;
 	while (1) {
 		int cod_op = recibir_operacion(*socket_servidor);
@@ -72,16 +69,13 @@ void atender_servidor(int* socket_servidor){
 			case READY:
 				lista = recibir_paquete(*socket_servidor);
 				recibir_pcb(lista);
-				exec_a_ready(&conexion_cpu);
+				exec_a_ready();
 				break;
 			case BLOCK:
 				lista = recibir_paquete(*socket_servidor);
 				recibir_pcb(lista);
-				instruccion = list_get(((pcb*)queue_peek(qexec))->instrucciones, ((pcb*)queue_peek(qexec))->program_counter-1);
-				log_trace(logger, "PID: %d - Bloqueado por: IO", ((pcb*)queue_peek(qexec))->pid);
-				log_trace(logger, "PID. %d - Instruccion: %s", ((pcb*)queue_peek(qexec))->pid, instruccion);
-				delay(1000);
-				enviar_pcb(conexion_cpu, queue_peek(qexec), EXEC);
+				pthread_create(&thread, NULL, (void*) io_block, NULL);
+				pthread_detach(thread);
 				break;
 			case WAIT:
 				lista = recibir_paquete(*socket_servidor);

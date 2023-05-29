@@ -22,6 +22,9 @@
 #include <semaphore.h>
 #include <operaciones.h>
 
+extern int conexion_cpu;
+extern int conexion_memoria;
+extern int conexion_filesystem;
 extern t_queue* qnew;
 extern t_queue* qready;
 extern t_queue* qexec;
@@ -72,18 +75,22 @@ void destruir_semaforos(void);
 sem_t* iniciar_semaforo(int, unsigned int);
 void destruir_semaforo(sem_t*);
 void delay(int);
-void calcular_estimacion(pcb*, int64_t);
+void queue_extract(t_queue*, pcb*);
 void generar_proceso(t_list*, int*);
 void enviar_pcb(int, pcb*, op_code);
 void recibir_pcb(t_list*);
-void new_a_ready(int*);
-void exec_a_ready(int*);
-void ready_a_exec(int*);
+void new_a_ready(void);
+void ready_a_exec(void);
+void exec_a_ready(void);
+pcb* exec_a_block(void);
+void block_a_ready(pcb*);
 void exec_a_exit(void);
 void planificador(t_queue*);
+void calcular_estimacion(pcb*, int64_t);
 bool HRRN_comparator(void*, void*);
 double HRRN_R(pcb*);
 int seconds_from_string_time(char*);
+void io_block(void);
 char* queue_iterator(t_queue*);
 
 #endif /* PROCESO_H_ */
