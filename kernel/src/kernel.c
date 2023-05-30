@@ -46,7 +46,8 @@ int main(int argc, char** argv) {
 
 	destruir_colas();
 	dictionary_destroy(conexiones);
-	list_destroy_and_destroy_elements(listaRecursos, free);
+	queue_destroy(recursos->procesosBloqueados);
+	list_destroy_and_destroy_elements(recursos, free);
 	liberar_conexion(conexion_cpu);
 	liberar_conexion(conexion_memoria);
 	liberar_conexion(conexion_filesystem);
