@@ -15,7 +15,7 @@ int main(int argc, char** argv) {
 	iniciar_semaforos();
 	conexiones = dictionary_create();
 
-    t_list *listaRecursos = leerRecursos(config);
+    recursos = leerRecursos(config);
 
     // Recorrer la lista de recursos y realizar las operaciones necesarias
 

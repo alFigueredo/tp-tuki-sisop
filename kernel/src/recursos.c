@@ -31,16 +31,12 @@ t_list leerRecursos(t_config *config) {
 }
 
 
-void despertarProceso(contexto_ejecucion->proceso);
-
 void procesar_contexto_ejecucion(t_list* contexto) {
     // Obtener el contexto actual de ejecución
-    t_contexto_ejecucion* contexto_ejecucion = (t_contexto_ejecucion*)list_get(contexto, 0);
+    pcb* contexto_ejecucion = (t_contexto_ejecucion*)list_get(contexto, 0);
 
     char* nombreRecurso = contexto_ejecucion->recurso;
     char* operacion = contexto_ejecucion->operacion;
-
-
 
     Recurso* recurso = NULL;
     for (int i = 0; i < list_size(recursos); i++) {
@@ -58,15 +54,15 @@ void procesar_contexto_ejecucion(t_list* contexto) {
             // Procesar operación WAIT
             recurso->instancias--;
             if (recurso->instancias < 0) {
-            	exec_a_block();
             	list.add(recursos->procesosBloqueados, proceso);
+            	exec_a_block();
             }
         } else if (strcmp(operacion, "SIGNAL") == 0) {
             // Procesar operación SIGNAL
             recurso->instancias++;
             if (recurso->instancias < 0) {
-            	exec_a_ready()
                 list.remove(recursos->procesosBloqueados,proceso);
+                exec_a_ready();
             }
             // Desbloquear primer proceso en la cola de bloqueados del recurso (si corresponde)
         }
