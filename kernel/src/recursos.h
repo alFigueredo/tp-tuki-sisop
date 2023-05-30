@@ -16,6 +16,6 @@ typedef struct Recurso {
 
 extern tlist* recursos;
 
-t_list leerRecursos(t_config *config);
+t_list* leerRecursos(t_config *config);
 
-void procesar_contexto_ejecucion(lista);
+void procesar_contexto_ejecucion(contexto);

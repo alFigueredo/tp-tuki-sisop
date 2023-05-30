@@ -90,8 +90,8 @@ void atender_cliente(int* socket_cliente){
 				new_a_ready();
 				break;
             case EXEC:
-                pcb = recibir_pcb(*socket_cliente);
-                procesar_contexto_ejecucion(pcb);
+                recibir_pcb(lista);
+                procesar_contexto_ejecucion(lista);
                 // Continuar con la ejecución del proceso
                 break;
 			case -1:
