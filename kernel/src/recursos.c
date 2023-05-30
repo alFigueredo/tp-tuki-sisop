@@ -3,7 +3,7 @@
 
 t_list leerRecursos(t_config *config) {
     t_list *listaRecursos = list_create();
-    listaRecursos-> procesosBloqueados = list_create();
+    listaRecursos-> procesosBloqueados = queue_create();
 
     char *recursosString = config_get_string_value(config, "RECURSOS");
     char **recursos = string_get_string_as_array(recursosString);
@@ -54,14 +54,14 @@ void procesar_contexto_ejecucion(pcb* contexto) {
             // Procesar operación WAIT
             recurso->instancias--;
             if (recurso->instancias < 0) {
-            	list.add(recursos->procesosBloqueados, proceso);
+            	queue.push(recursos->procesosBloqueados, proceso);
             	exec_a_block();
             }
         } else if (strcmp(operacion, "SIGNAL") == 0) {
             // Procesar operación SIGNAL
             recurso->instancias++;
             if (recurso->instancias < 0) {
-                list.remove(recursos->procesosBloqueados,proceso);
+                queue.pop(recursos->procesosBloqueados,proceso);
                 exec_a_ready();
             }
             // Desbloquear primer proceso en la cola de bloqueados del recurso (si corresponde)
