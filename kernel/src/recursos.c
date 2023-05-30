@@ -31,7 +31,7 @@ t_list leerRecursos(t_config *config) {
 }
 
 
-void procesar_contexto_ejecucion(t_list* contexto) {
+void procesar_contexto_ejecucion(pcb* contexto) {
     // Obtener el contexto actual de ejecución
     pcb* contexto_ejecucion = (t_contexto_ejecucion*)list_get(contexto, 0);
 
