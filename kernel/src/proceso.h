@@ -28,45 +28,19 @@ extern int conexion_filesystem;
 extern t_queue* qnew;
 extern t_queue* qready;
 extern t_queue* qexec;
-extern t_queue* qblock;
+extern t_queue* q_ioblock;
 extern t_queue* qexit;
 extern sem_t* sem_largo_plazo;
 extern sem_t* sem_cpu;
 extern sem_t* sem_new;
 extern sem_t* sem_ready;
 extern sem_t* sem_exec;
-extern sem_t* sem_block;
+extern sem_t* sem_ioblock;
 extern sem_t* sem_exit;
 extern sem_t* sem_new_ready;
 extern sem_t* sem_exec_exit;
 extern t_temporal* tiempo_en_cpu;
 extern t_dictionary* conexiones;
-
-typedef struct{
-	 char AX[4];
-	 char BX[4];
-	 char CX[4];
-	 char DX[4];
-	 char EAX[8];
-	 char EBX[8];
-	 char ECX[8];
-	 char EDX[8];
-	 char RAX[16];
-	 char RBX[16];
-	 char RCX[16];
-	 char RDX[16];
-} registros_cpu;
-
-typedef struct {
-		unsigned int pid;
-		t_list* instrucciones;
-		int program_counter;
-		registros_cpu registros;
-		t_list* tabla_segmentos;
-		int estimado_proxRafaga;
-		char* tiempo_llegada_ready;
-		t_list* archivos_abiertos;
-} pcb;
 
 void iniciar_colas(void);
 void destruir_colas(void);
@@ -82,8 +56,8 @@ void recibir_pcb(t_list*);
 void new_a_ready(void);
 void ready_a_exec(void);
 void exec_a_ready(void);
-pcb* exec_a_block(void);
-void block_a_ready(pcb*);
+pcb* exec_a_ioblock(void);
+void ioblock_a_ready(pcb*);
 void exec_a_exit(void);
 void planificador(t_queue*);
 void calcular_estimacion(pcb*, int64_t);

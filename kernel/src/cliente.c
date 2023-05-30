@@ -71,7 +71,7 @@ void atender_servidor(int* socket_servidor){
 				recibir_pcb(lista);
 				exec_a_ready();
 				break;
-			case BLOCK:
+			case IO_BLOCK:
 				lista = recibir_paquete(*socket_servidor);
 				recibir_pcb(lista);
 				pthread_create(&thread, NULL, (void*) io_block, NULL);
@@ -99,8 +99,9 @@ void atender_servidor(int* socket_servidor){
 				exec_a_exit();
 				break;
 			case -1:
-				log_warning(logger, "El servidor se desconecto. Terminando conexion");
+				log_warning(logger, "El servidor se desconecto. Terminando conexion. Abortando sistema.");
 				free(socket_servidor);
+				abort();
 				return;
 			default:
 				log_warning(logger,"Operacion desconocida. No quieras meter la pata");

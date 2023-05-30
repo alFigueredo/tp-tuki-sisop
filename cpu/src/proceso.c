@@ -90,13 +90,12 @@ t_dictionary* diccionario_instrucciones(void) {
 	dictionary_put(instrucciones, "F_READ", (void*)(intptr_t)F_READ);
 	dictionary_put(instrucciones, "F_WRITE", (void*)(intptr_t)F_WRITE);
 	dictionary_put(instrucciones, "F_TRUNCATE", (void*)(intptr_t)F_TRUNCATE);
-	dictionary_put(instrucciones, "WAIT", (void*)(intptr_t)IWAIT);
-	dictionary_put(instrucciones, "SIGNAL", (void*)(intptr_t)ISIGNAL);
+	dictionary_put(instrucciones, "WAIT", (void*)(intptr_t)I_WAIT);
+	dictionary_put(instrucciones, "SIGNAL", (void*)(intptr_t)I_SIGNAL);
 	dictionary_put(instrucciones, "CREATE_SEGMENT", (void*)(intptr_t)CREATE_SEGMENT);
 	dictionary_put(instrucciones, "DELETE_SEGMENT", (void*)(intptr_t)DELETE_SEGMENT);
 	dictionary_put(instrucciones, "YIELD", (void*)(intptr_t)YIELD);
-	// EXIT ya existe
-	dictionary_put(instrucciones, "EXIT", (void*)(intptr_t)IEXIT);
+	dictionary_put(instrucciones, "EXIT", (void*)(intptr_t)I_EXIT);
 	return instrucciones;
 }
 
@@ -142,7 +141,7 @@ enum_instrucciones interpretar_instrucciones(pcb* proceso) {
 				break;
 			case I_O:
 				instruccion_i_o(parsed, proceso);
-				return BLOCK;
+				return IO_BLOCK;
 				// break;
 			case F_OPEN:
 				instruccion_f_open(parsed, proceso);
@@ -162,11 +161,11 @@ enum_instrucciones interpretar_instrucciones(pcb* proceso) {
 			case F_TRUNCATE:
 				instruccion_f_truncate(parsed, proceso);
 				break;
-			case IWAIT:
+			case I_WAIT:
 				instruccion_wait(parsed, proceso);
 				return WAIT;
 //				break;
-			case ISIGNAL:
+			case I_SIGNAL:
 				instruccion_signal(parsed, proceso);
 				return SIGNAL;
 //				break;
@@ -180,7 +179,7 @@ enum_instrucciones interpretar_instrucciones(pcb* proceso) {
 				instruccion_yield(parsed, proceso);
 				destruir_diccionarios(instrucciones, registros);
 				return READY;
-			case IEXIT:
+			case I_EXIT:
 				instruccion_exit(parsed, proceso);
 				destruir_diccionarios(instrucciones, registros);
 				return EXIT;
