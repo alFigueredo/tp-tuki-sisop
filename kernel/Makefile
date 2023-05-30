@@ -10,7 +10,10 @@ LINK = -lpthread -lcommons -lm
 
 ### Reglas ###
 
-all: makefolder $(MODULE_NAME)
+build: makefolder makeshared $(MODULE_NAME)
+
+debug: CFLAGS := $(CFLAGS) -g
+debug: makeshared_debug build
 
 $(MODULE_NAME): $(OBJECT_FILES)
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) -I$(INCLUDE_PATH) $(LINK)
@@ -24,11 +27,14 @@ makefolder:
 makeshared:
 	make -C ../shared
 
+makeshared_debug:
+	make debug -C ../shared
+
 # Clean
 
 clean:
 	rm -rf debug
 	rm -rf *.out
 	rm -rf *.log
-#make clean -C ../shared
-	rm -f $(MODULE_NAME) $(OBJECT_FILES)
+	make clean -C ../shared
+#	rm -f $(MODULE_NAME) $(OBJECT_FILES)

@@ -9,7 +9,10 @@ LINK = -lpthread -lcommons -lm
 
 ### Reglas ###
 
-all: makefolder $(LIBRARY_NAME)
+build: makefolder $(LIBRARY_NAME)
+
+debug: CFLAGS := $(CFLAGS) -g
+debug: build
 
 $(LIBRARY_NAME): $(OBJECT_FILES)
 	$(CC) $(LDFLAGS) -o $@ $^ $(LINK)
@@ -24,4 +27,4 @@ clean:
 	rm -rf debug
 	rm -rf *.out
 	rm -rf *.log
-	rm -f $(LIBRARY_NAME) $(OBJECT_FILES)
+#	rm -f $(LIBRARY_NAME) $(OBJECT_FILES)
