@@ -89,6 +89,11 @@ void atender_cliente(int* socket_cliente){
 				generar_proceso(lista, socket_cliente);
 				new_a_ready();
 				break;
+            case EXEC:
+                lista = recibir_paquete(*socket_cliente);
+                procesar_contexto_ejecucion(lista);
+                // Continuar con la ejecución del proceso
+                break;
 			case -1:
 				log_warning(logger, "El cliente se desconecto. Terminando conexion");
 				free(socket_cliente);
