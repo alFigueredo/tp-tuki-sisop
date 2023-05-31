@@ -18,4 +18,5 @@ extern t_list* recursos;
 
 t_list* leerRecursos(t_config *config);
 
-void procesar_contexto_ejecucion(contexto);
+void manejo_recursos(pcb* proceso, char* instruccion);
+

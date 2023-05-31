@@ -23,11 +23,9 @@ t_list* leerRecursos(t_config *config) {
 
 
 
-void procesar_contexto_ejecucion(t_list* contexto) {
-    // Obtener el contexto actual de ejecución
-    pcb* proceso = list_get(contexto, 0);
+void manejo_recursos(pcb* proceso, char* instruccion) {
 
-    char** parsed = string_split(list_get(proceso->instrucciones, proceso->program_counter-1), " "); //Partes de la instruccion actual
+    char** parsed = string_split(instruccion, " "); //Partes de la instruccion actual
 
     char* operacion = parsed[0];
 
@@ -53,15 +51,18 @@ void procesar_contexto_ejecucion(t_list* contexto) {
             	queue_push(recursoActual->procesosBloqueados, proceso);
             	exec_a_block();
             }
+            else{
+                enviar_pcb(conexion_cpu, proceso, EXEC);
+            }
         } else if (strcmp(operacion, "SIGNAL") == 0) {
             // Procesar operación SIGNAL
             recursoActual->instancias++;
-            if (recursoActual->instancias < 0) {
+            if (recursoActual->instancias <= 0) {
                 block_a_ready(queue_peek(recursoActual->procesosBloqueados));
                 queue_pop(recursoActual->procesosBloqueados);
                 // Desbloquear primer proceso en la cola de bloqueados del recurso (si corresponde)
             }
-            
+            enviar_pcb(conexion_cpu, proceso, EXEC);
         }
     }
 }
