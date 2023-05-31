@@ -6,7 +6,7 @@ int conexion_filesystem;
 t_queue* qnew;
 t_queue* qready;
 t_queue* qexec;
-t_queue* q_block;
+t_queue* qblock;
 t_queue* qexit;
 sem_t* sem_largo_plazo;
 sem_t* sem_cpu;
@@ -24,7 +24,7 @@ void iniciar_colas(void) {
 	qnew = queue_create();
 	qready = queue_create();
 	qexec = queue_create();
-	q_block = queue_create();
+	qblock = queue_create();
 	qexit = queue_create();
 }
 
@@ -32,7 +32,7 @@ void destruir_colas(void) {
 	queue_destroy(qnew);
 	queue_destroy(qready);
 	queue_destroy(qexec);
-	queue_destroy(q_block);
+	queue_destroy(qblock);
 	queue_destroy(qexit);
 }
 
@@ -71,12 +71,16 @@ void destruir_semaforo(sem_t* semaforo) {
 	free(semaforo);
 }
 
-void delay(int milliseconds)
-{
-	t_temporal* clock = temporal_create();
-	while(temporal_gettime(clock)<milliseconds)
-		;
-	temporal_destroy(clock);
+char* queue_iterator(t_queue* queue) {
+	char* list = string_new();
+	for (int i=0; i<queue_size(queue); i++) {
+		pcb* proceso = queue_pop(queue);
+		string_append(&list, string_itoa(proceso->pid));
+		if (i!=queue_size(queue))
+			string_append(&list, ",");
+		queue_push(queue, proceso);
+	}
+	return list;
 }
 
 void queue_extract(t_queue* queue, pcb* proceso) {
@@ -162,7 +166,7 @@ void exec_a_ready(void) {
 pcb* exec_a_block() {
 	pcb* proceso = queue_pop(qexec);
 	sem_wait(sem_block);
-	queue_push(q_block, proceso);
+	queue_push(qblock, proceso);
 	sem_post(sem_block);
 	log_info(logger, "PID: %d - Estado Anterior: EXEC - Estado Actual: BLOCK", proceso->pid);
 	calcular_estimacion(proceso, temporal_gettime(tiempo_en_cpu));
@@ -173,7 +177,7 @@ pcb* exec_a_block() {
 
 void block_a_ready(pcb* proceso) {
 	sem_wait(sem_block);
-	queue_extract(q_block, proceso);
+	queue_extract(qblock, proceso);
 	sem_post(sem_block);
 	sem_wait(sem_ready);
 	queue_push(qready, proceso);
@@ -194,17 +198,6 @@ void exec_a_exit() {
 	temporal_destroy(tiempo_en_cpu);
 
 //	log_trace(logger, "Registro AX: %s", string_substring_until(proceso->registros.AX, 4));
-//	log_trace(logger, "Registro BX: %s", string_substring_until(proceso->registros.BX, 4));
-//	log_trace(logger, "Registro CX: %s", string_substring_until(proceso->registros.CX, 4));
-//	log_trace(logger, "Registro DX: %s", string_substring_until(proceso->registros.DX, 4));
-//	log_trace(logger, "Registro EAX: %s", string_substring_until(proceso->registros.EAX, 8));
-//	log_trace(logger, "Registro EBX: %s", string_substring_until(proceso->registros.EBX, 8));
-//	log_trace(logger, "Registro ECX: %s", string_substring_until(proceso->registros.ECX, 8));
-//	log_trace(logger, "Registro EDX: %s", string_substring_until(proceso->registros.EDX, 8));
-//	log_trace(logger, "Registro RAX: %s", string_substring_until(proceso->registros.RAX, 16));
-//	log_trace(logger, "Registro RBX: %s", string_substring_until(proceso->registros.RBX, 16));
-//	log_trace(logger, "Registro RCX: %s", string_substring_until(proceso->registros.RCX, 16));
-//	log_trace(logger, "Registro RDX: %s", string_substring_until(proceso->registros.RDX, 16));
 
 	enviar_operacion(*(int*)dictionary_remove(conexiones, string_itoa(proceso->pid)), EXIT);
 	log_info(logger, "Finaliza el proceso %d - Motivo: SUCCESS", proceso->pid);
@@ -221,74 +214,6 @@ void exec_a_exit() {
 	sem_post(sem_cpu);
 	free(queue_pop(qexit));
 }
-
-void enviar_pcb(int conexion, pcb* proceso, op_code codigo) {
-	t_paquete* paquete = crear_paquete(codigo);
-
-	agregar_a_paquete(paquete, &(proceso->pid), sizeof(unsigned int));
-
-	int cantidad_instrucciones = list_size(proceso->instrucciones);
-	agregar_a_paquete(paquete, &cantidad_instrucciones, sizeof(int));
-
-	for (int i=0; i<cantidad_instrucciones; i++) {
-		char* instruccion = list_get(proceso->instrucciones, i);
-		agregar_a_paquete(paquete, instruccion, strlen(instruccion)+1);
-	}
-
-	agregar_a_paquete(paquete, &(proceso->program_counter), sizeof(int));
-
-	agregar_a_paquete(paquete, proceso->registros.AX, 4);
-	agregar_a_paquete(paquete, proceso->registros.BX, 4);
-	agregar_a_paquete(paquete, proceso->registros.CX, 4);
-	agregar_a_paquete(paquete, proceso->registros.DX, 4);
-	agregar_a_paquete(paquete, proceso->registros.EAX, 8);
-	agregar_a_paquete(paquete, proceso->registros.EBX, 8);
-	agregar_a_paquete(paquete, proceso->registros.ECX, 8);
-	agregar_a_paquete(paquete, proceso->registros.EDX, 8);
-	agregar_a_paquete(paquete, proceso->registros.RAX, 16);
-	agregar_a_paquete(paquete, proceso->registros.RBX, 16);
-	agregar_a_paquete(paquete, proceso->registros.RCX, 16);
-	agregar_a_paquete(paquete, proceso->registros.RDX, 16);
-
-	agregar_a_paquete(paquete, &(proceso->estimado_proxRafaga), sizeof(int));
-	agregar_a_paquete(paquete, &(proceso->tiempo_llegada_ready), strlen(proceso->tiempo_llegada_ready)+1);
-
-	enviar_paquete(paquete, conexion);
-	eliminar_paquete(paquete);
-}
-
-void recibir_pcb(t_list* lista, pcb* proceso) {
-	memcpy(&(proceso->pid), list_remove(lista, 0), sizeof(unsigned int));
-	int cantidad_instrucciones;
-	memcpy(&(cantidad_instrucciones), list_remove(lista, 0), sizeof(int));
-	proceso->instrucciones = list_take_and_remove(lista, cantidad_instrucciones);
-	memcpy(&(proceso->program_counter), list_remove(lista, 0), sizeof(int));
-	memcpy(proceso->registros.AX, list_remove(lista, 0), 4);
-	memcpy(proceso->registros.BX, list_remove(lista, 0), 4);
-	memcpy(proceso->registros.CX, list_remove(lista, 0), 4);
-	memcpy(proceso->registros.DX, list_remove(lista, 0), 4);
-	memcpy(proceso->registros.EAX, list_remove(lista, 0), 8);
-	memcpy(proceso->registros.EBX, list_remove(lista, 0), 8);
-	memcpy(proceso->registros.ECX, list_remove(lista, 0), 8);
-	memcpy(proceso->registros.EDX, list_remove(lista, 0), 8);
-	memcpy(proceso->registros.RAX, list_remove(lista, 0), 16);
-	memcpy(proceso->registros.RBX, list_remove(lista, 0), 16);
-	memcpy(proceso->registros.RCX, list_remove(lista, 0), 16);
-	memcpy(proceso->registros.RDX, list_remove(lista, 0), 16);
-	memcpy(&proceso->estimado_proxRafaga, list_remove(lista, 0), sizeof(int));
-	proceso->tiempo_llegada_ready = (char*)list_remove(lista, 0);
-}
-
-//void planificador(t_queue* queue) {
-//	t_list* list = list_create();
-//	while (queue_size(queue)!=0) {
-//		list_add(list, queue_pop(queue));
-//	}
-//	list_sort(list, HRRN_comparator);
-//	while (list_size(list)!=0) {
-//		queue_push(queue, list_remove(list, 0));
-//	}
-//}
 
 void planificador(t_queue* queue) {
 	t_list* list = list_create();
@@ -320,8 +245,16 @@ double HRRN_R(pcb* proceso) {
 int seconds_from_string_time(char* timestamp) {
 	char** ts_sorted = string_split(timestamp, ":");
 	// Estimado, no tiene en cuenta los años y todos los meses tienen 31 días
-	int datetime = (atoi(ts_sorted[1]))*31+atoi(ts_sorted[2]);
+	int datetime = atoi(ts_sorted[0])/4+(atoi(ts_sorted[0])-2021)*365+month_days(atoi(ts_sorted[1])-1)+atoi(ts_sorted[2]-1);
 	return ((datetime*24+atoi(ts_sorted[3])*60+atoi(ts_sorted[4]))*60+atoi(ts_sorted[5]))*1000+atoi(ts_sorted[6]);
+}
+
+int month_days(int month) {
+	int days_amount[12] = {31,28,31,30,31,30,31,31,30,31,30,31};
+	int sum = 0;
+	for (int i=0; i<month; i++)
+		sum += days_amount[i];
+	return sum;
 }
 
 void io_block(void) {
@@ -334,16 +267,4 @@ void io_block(void) {
 	log_info(logger, "PID: %d - Ejecuta IO: %d", proceso->pid, delay_in_seconds);
 	delay(delay_in_seconds*1000);
 	block_a_ready(proceso);
-}
-
-char* queue_iterator(t_queue* queue) {
-	char* list = string_new();
-	for (int i=0; i<queue_size(queue); i++) {
-		pcb* proceso = queue_pop(queue);
-		string_append(&list, string_itoa(proceso->pid));
-		if (i!=queue_size(queue))
-			string_append(&list, ",");
-		queue_push(queue, proceso);
-	}
-	return list;
 }
