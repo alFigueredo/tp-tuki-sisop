@@ -1,7 +1,6 @@
 #include "proceso.h"
 
-pcb* recibir_pcb(t_list* lista) {
-	pcb* proceso = malloc(sizeof(pcb));
+void recibir_pcb(t_list* lista, pcb* proceso) {
 	memcpy(&(proceso->pid), list_remove(lista, 0), sizeof(unsigned int));
 	int instrucciones_size;
 	memcpy(&(instrucciones_size), list_remove(lista, 0), sizeof(int));
@@ -21,7 +20,6 @@ pcb* recibir_pcb(t_list* lista) {
 	memcpy(proceso->registros.RDX, list_remove(lista, 0), 16);
 	memcpy(&proceso->estimado_proxRafaga, list_remove(lista, 0), sizeof(int));
 	proceso->tiempo_llegada_ready = (char*)list_remove(lista, 0);
-	return proceso;
 }
 
 void enviar_pcb(int conexion, pcb* proceso, op_code estado) {
@@ -142,7 +140,6 @@ enum_instrucciones interpretar_instrucciones(pcb* proceso) {
 			case I_O:
 				instruccion_i_o(parsed, proceso);
 				return IO_BLOCK;
-				// break;
 			case F_OPEN:
 				instruccion_f_open(parsed, proceso);
 				break;
@@ -164,11 +161,9 @@ enum_instrucciones interpretar_instrucciones(pcb* proceso) {
 			case I_WAIT:
 				instruccion_wait(parsed, proceso);
 				return WAIT;
-//				break;
 			case I_SIGNAL:
 				instruccion_signal(parsed, proceso);
 				return SIGNAL;
-//				break;
 			case CREATE_SEGMENT:
 				instruccion_create_segment(parsed, proceso);
 				break;
@@ -266,14 +261,12 @@ void instruccion_f_truncate(char** parsed, pcb* proceso)
 void instruccion_wait(char** parsed, pcb* proceso)
 {
 	log_info(logger, "PID: %d - Ejecutando: %s - %s", proceso->pid, parsed[0], parsed[1]);
-	log_warning(logger, "PID: %d - Advertencia: Instruccion en proceso de implementación", proceso->pid);
 	proceso->program_counter++;
 }
 
 void instruccion_signal(char** parsed, pcb* proceso)
 {
 	log_info(logger, "PID: %d - Ejecutando: %s - %s", proceso->pid, parsed[0], parsed[1]);
-	log_warning(logger, "PID: %d - Advertencia: Instruccion en proceso de implementación", proceso->pid);
 	proceso->program_counter++;
 }
 

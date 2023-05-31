@@ -6,14 +6,14 @@ int conexion_filesystem;
 t_queue* qnew;
 t_queue* qready;
 t_queue* qexec;
-t_queue* q_ioblock;
+t_queue* q_block;
 t_queue* qexit;
 sem_t* sem_largo_plazo;
 sem_t* sem_cpu;
 sem_t* sem_new;
 sem_t* sem_ready;
 sem_t* sem_exec;
-sem_t* sem_ioblock;
+sem_t* sem_block;
 sem_t* sem_exit;
 sem_t* sem_new_ready;
 sem_t* sem_exec_exit;
@@ -24,7 +24,7 @@ void iniciar_colas(void) {
 	qnew = queue_create();
 	qready = queue_create();
 	qexec = queue_create();
-	q_ioblock = queue_create();
+	q_block = queue_create();
 	qexit = queue_create();
 }
 
@@ -32,7 +32,7 @@ void destruir_colas(void) {
 	queue_destroy(qnew);
 	queue_destroy(qready);
 	queue_destroy(qexec);
-	queue_destroy(q_ioblock);
+	queue_destroy(q_block);
 	queue_destroy(qexit);
 }
 
@@ -42,7 +42,7 @@ void iniciar_semaforos(void) {
 	sem_new = iniciar_semaforo(0, 1);
 	sem_ready = iniciar_semaforo(0, 1);
 	sem_exec = iniciar_semaforo(0, 1);
-	sem_ioblock = iniciar_semaforo(0, 1);
+	sem_block = iniciar_semaforo(0, 1);
 	sem_exit = iniciar_semaforo(0, 1);
 	sem_new_ready = iniciar_semaforo(0, 0);
 	sem_exec_exit = iniciar_semaforo(0, 0);
@@ -54,7 +54,7 @@ void destruir_semaforos(void) {
 	destruir_semaforo(sem_new);
 	destruir_semaforo(sem_ready);
 	destruir_semaforo(sem_exec);
-	destruir_semaforo(sem_ioblock);
+	destruir_semaforo(sem_block);
 	destruir_semaforo(sem_exit);
 	destruir_semaforo(sem_new_ready);
 	destruir_semaforo(sem_exec_exit);
@@ -159,11 +159,11 @@ void exec_a_ready(void) {
 	pthread_detach(thread);
 }
 
-pcb* exec_a_ioblock() {
+pcb* exec_a_block() {
 	pcb* proceso = queue_pop(qexec);
-	sem_wait(sem_ioblock);
-	queue_push(q_ioblock, proceso);
-	sem_post(sem_ioblock);
+	sem_wait(sem_block);
+	queue_push(q_block, proceso);
+	sem_post(sem_block);
 	log_info(logger, "PID: %d - Estado Anterior: EXEC - Estado Actual: BLOCK", proceso->pid);
 	calcular_estimacion(proceso, temporal_gettime(tiempo_en_cpu));
 	temporal_destroy(tiempo_en_cpu);
@@ -171,10 +171,10 @@ pcb* exec_a_ioblock() {
 	return proceso;
 }
 
-void ioblock_a_ready(pcb* proceso) {
-	sem_wait(sem_ioblock);
-	queue_extract(q_ioblock, proceso);
-	sem_post(sem_ioblock);
+void block_a_ready(pcb* proceso) {
+	sem_wait(sem_block);
+	queue_extract(q_block, proceso);
+	sem_post(sem_block);
 	sem_wait(sem_ready);
 	queue_push(qready, proceso);
 	sem_post(sem_ready);
@@ -257,10 +257,7 @@ void enviar_pcb(int conexion, pcb* proceso, op_code codigo) {
 	eliminar_paquete(paquete);
 }
 
-void recibir_pcb(t_list* lista) {
-//	free(queue_pop(qexec));
-//	pcb* proceso = malloc(sizeof(pcb));
-	pcb* proceso = queue_peek(qexec);
+void recibir_pcb(t_list* lista, pcb* proceso) {
 	memcpy(&(proceso->pid), list_remove(lista, 0), sizeof(unsigned int));
 	int cantidad_instrucciones;
 	memcpy(&(cantidad_instrucciones), list_remove(lista, 0), sizeof(int));
@@ -280,7 +277,6 @@ void recibir_pcb(t_list* lista) {
 	memcpy(proceso->registros.RDX, list_remove(lista, 0), 16);
 	memcpy(&proceso->estimado_proxRafaga, list_remove(lista, 0), sizeof(int));
 	proceso->tiempo_llegada_ready = (char*)list_remove(lista, 0);
-//	queue_push(qexec, proceso);
 }
 
 //void planificador(t_queue* queue) {
@@ -329,7 +325,7 @@ int seconds_from_string_time(char* timestamp) {
 }
 
 void io_block(void) {
-	pcb* proceso = exec_a_ioblock();
+	pcb* proceso = exec_a_block();
 	log_info(logger, "PID: %d - Bloqueado por: IO", proceso->pid);
 	char* instruccion = list_get(proceso->instrucciones, proceso->program_counter-1);
 	char** parsed = string_split(instruccion, " ");
@@ -337,7 +333,7 @@ void io_block(void) {
 	int delay_in_seconds = atoi(parsed[1]);
 	log_info(logger, "PID: %d - Ejecuta IO: %d", proceso->pid, delay_in_seconds);
 	delay(delay_in_seconds*1000);
-	ioblock_a_ready(proceso);
+	block_a_ready(proceso);
 }
 
 char* queue_iterator(t_queue* queue) {

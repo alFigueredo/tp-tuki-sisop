@@ -38,7 +38,7 @@ typedef enum
 	I_EXIT
 }enum_instrucciones;
 
-pcb* recibir_pcb(t_list*);
+void recibir_pcb(t_list*, pcb*);
 void enviar_pcb(int, pcb*, op_code);
 void delay(int);
 t_dictionary* diccionario_instrucciones(void);
