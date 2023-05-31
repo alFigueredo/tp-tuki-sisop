@@ -14,7 +14,7 @@ typedef struct Recurso {
     struct Recurso *siguiente;
 } Recurso;
 
-extern tlist* recursos;
+extern t_list* recursos;
 
 t_list* leerRecursos(t_config *config);
 

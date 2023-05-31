@@ -11,8 +11,8 @@ t_list* leerRecursos(t_config *config) {
 
     for(int i = 0; i<numRecursos ;i++) {
 		Recurso* nuevoRecurso = malloc(sizeof(Recurso));
-		strcpy(nuevoRecurso->nombre, recursoToken);
-		nuevoRecurso->instancias = atoi(instanciaToken);
+		strcpy(nuevoRecurso->nombre, recursosConfig[i]);
+		nuevoRecurso->instancias = instanciasConfig[i];
 		nuevoRecurso->siguiente = NULL;
 		nuevoRecurso->procesosBloqueados = queue_create();
 		list_add(listaRecursos, nuevoRecurso);
@@ -23,42 +23,45 @@ t_list* leerRecursos(t_config *config) {
 
 
 
-void procesar_contexto_ejecucion(tlist* contexto) {
+void procesar_contexto_ejecucion(t_list* contexto) {
     // Obtener el contexto actual de ejecución
-    proceso = (tlist*)list_get(contexto, 0);
+    pcb* proceso = list_get(contexto, 0);
 
-    char** parsed = string_split(list_get(proceso->instrucciones, proceso->program_counter), " "); //Partes de la instruccion actual
+    char** parsed = string_split(list_get(proceso->instrucciones, proceso->program_counter-1), " "); //Partes de la instruccion actual
 
     char* operacion = parsed[0];
-    char* recurso = parsed[1];
 
-    Recurso* recurso = NULL;
+    bool recursoExiste = false;
+
+    Recurso* recursoActual = NULL;
+
     for (int i = 0; i < list_size(recursos); i++) {
-        Recurso* recursoActual = list_get(recursos, i);
-        if (strcmp(recursoActual->nombre, nombreRecurso) == 0) {
-            recurso = recursoActual;
+        recursoActual = list_get(recursos, i);
+        if (strcmp(recursoActual->nombre, parsed[1]) == 0) {
+            recursoExiste = true;
             break;
         }
     }
 
-    if (recurso == NULL) {
+    if (!recursoExiste) {
     	exec_a_exit();
     } else {
         if (strcmp(operacion, "WAIT") == 0) {
             // Procesar operación WAIT
-            recurso->instancias--;
-            if (recurso->instancias < 0) {
-            	queue.push(recursos->procesosBloqueados, proceso);
+            recursoActual->instancias--;
+            if (recursoActual->instancias < 0) {
+            	queue_push(recursoActual->procesosBloqueados, proceso);
             	exec_a_block();
             }
         } else if (strcmp(operacion, "SIGNAL") == 0) {
             // Procesar operación SIGNAL
-            recurso->instancias++;
-            if (recurso->instancias < 0) {
-                queue.pop(recursos->procesosBloqueados,proceso);
-                exec_a_ready();
+            recursoActual->instancias++;
+            if (recursoActual->instancias < 0) {
+                block_a_ready(queue_peek(recursoActual->procesosBloqueados));
+                queue_pop(recursoActual->procesosBloqueados);
+                // Desbloquear primer proceso en la cola de bloqueados del recurso (si corresponde)
             }
-            // Desbloquear primer proceso en la cola de bloqueados del recurso (si corresponde)
+            
         }
     }
 }
