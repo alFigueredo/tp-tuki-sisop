@@ -83,7 +83,8 @@ void atender_servidor(int* socket_servidor){
 				instruccion = list_get(((pcb*)queue_peek(qexec))->instrucciones, ((pcb*)queue_peek(qexec))->program_counter-1);
 				log_trace(logger, "PID: %d - Wait", ((pcb*)queue_peek(qexec))->pid);
 				log_trace(logger, "PID. %d - Instruccion: %s", ((pcb*)queue_peek(qexec))->pid, instruccion);
-				enviar_pcb(conexion_cpu, queue_peek(qexec), EXEC);
+				manejo_recursos(((pcb*)queue_peek(qexec)), instruccion);
+
 				break;
 			case SIGNAL:
 				lista = recibir_paquete(*socket_servidor);
@@ -91,7 +92,7 @@ void atender_servidor(int* socket_servidor){
 				instruccion = list_get(((pcb*)queue_peek(qexec))->instrucciones, ((pcb*)queue_peek(qexec))->program_counter-1);
 				log_trace(logger, "PID: %d - Signal", ((pcb*)queue_peek(qexec))->pid);
 				log_trace(logger, "PID. %d - Instruccion: %s", ((pcb*)queue_peek(qexec))->pid, instruccion);
-				enviar_pcb(conexion_cpu, queue_peek(qexec), EXEC);
+				manejo_recursos(((pcb*)queue_peek(qexec)), instruccion);
 				break;
 			case EXIT:
 				lista = recibir_paquete(*socket_servidor);

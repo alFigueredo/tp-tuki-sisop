@@ -280,6 +280,9 @@ void recibir_pcb(t_list* lista) {
 	memcpy(proceso->registros.RDX, list_remove(lista, 0), 16);
 	memcpy(&proceso->estimado_proxRafaga, list_remove(lista, 0), sizeof(int));
 	proceso->tiempo_llegada_ready = (char*)list_remove(lista, 0);
+
+
+
 //	queue_push(qexec, proceso);
 }
 

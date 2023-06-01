@@ -13,6 +13,8 @@
 #include <commons/config.h>
 #include "proceso.h"
 #include "server.h"
+#include "recursos.h"
+
 
 int crear_conexion(char*, char*);
 void send_handshake(int);
