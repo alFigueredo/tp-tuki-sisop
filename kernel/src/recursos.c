@@ -30,7 +30,7 @@ t_list* leerRecursos(t_config *config) {
 
 void manejo_recursos(pcb* proceso, char* instruccion) {
 
-    char** parsed = string_split(instruccion, " "); //Partes de la instruccion actual
+    char** parsed = string_split(string_split(instruccion, "\r")[0], " "); //Partes de la instruccion actual
 
     char* operacion = parsed[0];
 
@@ -47,6 +47,7 @@ void manejo_recursos(pcb* proceso, char* instruccion) {
     }
 
     if (!recursoExiste) {
+        log_error(logger, "PID: %d - %s de recurso no existente. Finalizando proceso", proceso->pid, parsed[0]);
     	exec_a_exit();
     } else {
         if (strcmp(operacion, "WAIT") == 0) {
@@ -60,7 +61,7 @@ void manejo_recursos(pcb* proceso, char* instruccion) {
             else{
                 enviar_pcb(conexion_cpu, proceso, EXEC);
             }
-            log_info(logger, "PID: %d - Wait: %s - Instancias: %d", ((pcb*)queue_peek(qexec))->pid, recursoActual->nombre, recursoActual->instancias);
+            log_info(logger, "PID: %d - Wait: %s - Instancias: %d", proceso->pid, recursoActual->nombre, recursoActual->instancias);
         } else if (strcmp(operacion, "SIGNAL") == 0) {
             // Procesar operación SIGNAL
             recursoActual->instancias++;
@@ -70,7 +71,7 @@ void manejo_recursos(pcb* proceso, char* instruccion) {
                 // Desbloquear primer proceso en la cola de bloqueados del recurso (si corresponde)
             }
             enviar_pcb(conexion_cpu, proceso, EXEC);
-            log_info(logger, "PID: %d - Signal: %s - Instancias: %d", ((pcb*)queue_peek(qexec))->pid, recursoActual->nombre, recursoActual->instancias);
+            log_info(logger, "PID: %d - Signal: %s - Instancias: %d", proceso->pid, recursoActual->nombre, recursoActual->instancias);
         }
     }
 }

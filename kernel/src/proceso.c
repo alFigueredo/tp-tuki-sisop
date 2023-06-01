@@ -197,7 +197,7 @@ void exec_a_exit() {
 	calcular_estimacion(proceso, temporal_gettime(tiempo_en_cpu));
 	temporal_destroy(tiempo_en_cpu);
 
-//	log_trace(logger, "Registro AX: %s", string_substring_until(proceso->registros.AX, 4));
+//	log_trace(logger, "Registro RAX: %s", string_substring_until(proceso->registros.RAX, 16));
 
 	enviar_operacion(*(int*)dictionary_remove(conexiones, string_itoa(proceso->pid)), EXIT);
 	log_info(logger, "Finaliza el proceso %d - Motivo: SUCCESS", proceso->pid);
@@ -227,25 +227,29 @@ void planificador(t_queue* queue) {
 
 void calcular_estimacion(pcb* proceso, int64_t tiempo_transcurrido) {
 	double alfa = config_get_double_value(config,"HRRN_ALFA");
-	proceso->estimado_proxRafaga=alfa*tiempo_transcurrido+proceso->estimado_proxRafaga*(1-alfa);
+	proceso->estimado_proxRafaga=alfa*tiempo_transcurrido+proceso->estimado_proxRafaga*(1.0-alfa);
 }
 
 bool HRRN_comparator(void* proceso1, void* proceso2) {
 	double r1 = HRRN_R((pcb*)proceso1);
 	double r2 = HRRN_R((pcb*)proceso2);
+	// log_trace(logger, "PID1: %d, R1: %f; PID2: %d, R2: %f", ((pcb*)proceso1)->pid, r1, ((pcb*)proceso2)->pid, r2);
 	return r1>=r2;
 }
 
 double HRRN_R(pcb* proceso) {
 	int arrival_time = seconds_from_string_time(proceso->tiempo_llegada_ready);
 	int current_time = seconds_from_string_time(temporal_get_string_time("%y:%m:%d:%H:%M:%S:%MS"));
+	// log_trace(logger, "HRRN: %d; Estimación: %f", proceso->pid, (double)(current_time-arrival_time+proceso->estimado_proxRafaga)/proceso->estimado_proxRafaga);
+	// log_trace(logger, "PID: %d; HRRN: %d %d", proceso->pid, current_time-arrival_time, proceso->estimado_proxRafaga);
 	return (double)(current_time-arrival_time+proceso->estimado_proxRafaga)/proceso->estimado_proxRafaga;
 }
 
 int seconds_from_string_time(char* timestamp) {
 	char** ts_sorted = string_split(timestamp, ":");
-	// Estimado, no tiene en cuenta los años y todos los meses tienen 31 días
-	int datetime = atoi(ts_sorted[0])/4+(atoi(ts_sorted[0])-2021)*365+month_days(atoi(ts_sorted[1])-1)+atoi(ts_sorted[2]-1);
+	// Estimado
+	int datetime = atoi(ts_sorted[0])/4+(atoi(ts_sorted[0])-21)*365+month_days(atoi(ts_sorted[1])-1)+atoi(ts_sorted[2]-1);
+	// log_trace(logger, "Timestamp: %s, Datetime: %d", timestamp, ((datetime*24+atoi(ts_sorted[3])*60+atoi(ts_sorted[4]))*60+atoi(ts_sorted[5]))*1000+atoi(ts_sorted[6]));
 	return ((datetime*24+atoi(ts_sorted[3])*60+atoi(ts_sorted[4]))*60+atoi(ts_sorted[5]))*1000+atoi(ts_sorted[6]);
 }
 
@@ -263,8 +267,8 @@ void io_block(void) {
 	char* instruccion = list_get(proceso->instrucciones, proceso->program_counter-1);
 	char** parsed = string_split(instruccion, " ");
 	// Supuse que el parámetro está en segundos
-	int delay_in_milliseconds = atoi(parsed[1]);
-	log_info(logger, "PID: %d - Ejecuta IO: %d", proceso->pid, delay_in_milliseconds);
-	delay(delay_in_milliseconds);
+	int delay_in_seconds = atoi(parsed[1]);
+	log_info(logger, "PID: %d - Ejecuta IO: %d", proceso->pid, delay_in_seconds);
+	delay(delay_in_seconds*1000);
 	block_a_ready(proceso);
 }

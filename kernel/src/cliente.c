@@ -81,15 +81,12 @@ void atender_servidor(int* socket_servidor){
 				lista = recibir_paquete(*socket_servidor);
 				recibir_pcb(lista, queue_peek(qexec));
 				instruccion = list_get(((pcb*)queue_peek(qexec))->instrucciones, ((pcb*)queue_peek(qexec))->program_counter-1);
-				log_trace(logger, "PID: %d - Instruccion: %s", ((pcb*)queue_peek(qexec))->pid, instruccion);
 				manejo_recursos(((pcb*)queue_peek(qexec)), instruccion);
-
 				break;
 			case SIGNAL:
 				lista = recibir_paquete(*socket_servidor);
 				recibir_pcb(lista, queue_peek(qexec));
 				instruccion = list_get(((pcb*)queue_peek(qexec))->instrucciones, ((pcb*)queue_peek(qexec))->program_counter-1);
-				log_trace(logger, "PID: %d - Instruccion: %s", ((pcb*)queue_peek(qexec))->pid, instruccion);
 				manejo_recursos(((pcb*)queue_peek(qexec)), instruccion);
 				break;
 			case EXIT:
