@@ -11,9 +11,8 @@
 #include <string.h>
 #include <commons/log.h>
 #include <commons/config.h>
-#include "proceso.h"
-#include "server.h"
 #include "recursos.h"
+#include "server.h"
 
 
 int crear_conexion(char*, char*);

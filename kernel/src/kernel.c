@@ -44,10 +44,12 @@ int main(int argc, char** argv) {
 	socket_servidor = iniciar_servidor(puerto_escucha);
 	esperar_cliente(socket_servidor);
 
+	// Liberar todo al finalizar
 	destruir_colas();
 	dictionary_destroy(conexiones);
-	queue_destroy(recursos->procesosBloqueados);
-	list_destroy_and_destroy_elements(recursos, free);
+	// Destruir recursos
+	// queue_destroy(recursos->procesosBloqueados);
+	destruir_recursos(recursos);
 	liberar_conexion(conexion_cpu);
 	liberar_conexion(conexion_memoria);
 	liberar_conexion(conexion_filesystem);

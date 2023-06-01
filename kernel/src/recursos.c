@@ -1,5 +1,6 @@
 #include "recursos.h"
 
+t_list* recursos;
 
 t_list* leerRecursos(t_config *config) {
     t_list* listaRecursos = list_create();
@@ -7,12 +8,16 @@ t_list* leerRecursos(t_config *config) {
     char** recursosConfig =  config_get_array_value(config, "RECURSOS");
     char** instanciasConfig = config_get_array_value(config, "INSTANCIAS_RECURSOS");
 
-    int numRecursos = sizeof(recursosConfig) / sizeof(recursosConfig[0]);
+    // int numRecursos = sizeof(recursosConfig) / sizeof(recursosConfig[0]);
+    int numRecursos = 0;
+    while (recursosConfig[numRecursos]) {
+        numRecursos++;
+    }
 
     for(int i = 0; i<numRecursos ;i++) {
 		Recurso* nuevoRecurso = malloc(sizeof(Recurso));
 		strcpy(nuevoRecurso->nombre, recursosConfig[i]);
-		nuevoRecurso->instancias = instanciasConfig[i];
+		nuevoRecurso->instancias = atoi(instanciasConfig[i]);
 		nuevoRecurso->siguiente = NULL;
 		nuevoRecurso->procesosBloqueados = queue_create();
 		list_add(listaRecursos, nuevoRecurso);
@@ -50,10 +55,12 @@ void manejo_recursos(pcb* proceso, char* instruccion) {
             if (recursoActual->instancias < 0) {
             	queue_push(recursoActual->procesosBloqueados, proceso);
             	exec_a_block();
+                log_info(logger, "PID: %d - Bloqueado por: %s", proceso->pid, recursoActual->nombre);
             }
             else{
                 enviar_pcb(conexion_cpu, proceso, EXEC);
             }
+            log_info(logger, "PID: %d - Wait: %s - Instancias: %d", ((pcb*)queue_peek(qexec))->pid, recursoActual->nombre, recursoActual->instancias);
         } else if (strcmp(operacion, "SIGNAL") == 0) {
             // Procesar operación SIGNAL
             recursoActual->instancias++;
@@ -63,11 +70,19 @@ void manejo_recursos(pcb* proceso, char* instruccion) {
                 // Desbloquear primer proceso en la cola de bloqueados del recurso (si corresponde)
             }
             enviar_pcb(conexion_cpu, proceso, EXEC);
+            log_info(logger, "PID: %d - Signal: %s - Instancias: %d", ((pcb*)queue_peek(qexec))->pid, recursoActual->nombre, recursoActual->instancias);
         }
     }
 }
 
+void destruir_recursos(t_list* recursos) {
+    list_iterate(recursos, destruir_colas_recursos);
+	list_destroy_and_destroy_elements(recursos, free);
+}
 
+void destruir_colas_recursos(void* recurso) {
+    queue_destroy(((Recurso*)recurso)->procesosBloqueados);
+}
 
 
 

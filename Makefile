@@ -18,3 +18,5 @@ clean:
 	make clean -C cpu
 	make clean -C filesystem
 	make clean -C memoria
+
+rebuild: clean build

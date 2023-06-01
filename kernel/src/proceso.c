@@ -263,8 +263,8 @@ void io_block(void) {
 	char* instruccion = list_get(proceso->instrucciones, proceso->program_counter-1);
 	char** parsed = string_split(instruccion, " ");
 	// Supuse que el parámetro está en segundos
-	int delay_in_seconds = atoi(parsed[1]);
-	log_info(logger, "PID: %d - Ejecuta IO: %d", proceso->pid, delay_in_seconds);
-	delay(delay_in_seconds*1000);
+	int delay_in_milliseconds = atoi(parsed[1]);
+	log_info(logger, "PID: %d - Ejecuta IO: %d", proceso->pid, delay_in_milliseconds);
+	delay(delay_in_milliseconds);
 	block_a_ready(proceso);
 }

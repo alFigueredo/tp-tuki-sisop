@@ -38,3 +38,5 @@ clean:
 	rm -rf *.log
 	make clean -C ../shared
 #	rm -f $(MODULE_NAME) $(OBJECT_FILES)
+
+rebuild: clean build

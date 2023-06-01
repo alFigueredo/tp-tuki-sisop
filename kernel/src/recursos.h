@@ -1,3 +1,6 @@
+#ifndef RECURSOS_H_
+#define RECURSOS_H_
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -6,8 +9,7 @@
 #include "commons/collections/queue.h"
 #include "proceso.h"
 
-
-typedef struct Recurso {
+typedef struct {
     char nombre[20];
     int instancias;
     t_queue* procesosBloqueados;
@@ -20,3 +22,8 @@ t_list* leerRecursos(t_config *config);
 
 void manejo_recursos(pcb* proceso, char* instruccion);
 
+void destruir_recursos(t_list* recursos);
+
+void destruir_colas_recursos(void* recurso);
+
+#endif /* RECURSOS_H_ */
