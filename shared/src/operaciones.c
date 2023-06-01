@@ -187,10 +187,11 @@ void enviar_pcb(int conexion, pcb* proceso, op_code codigo) {
 	agregar_a_paquete(paquete, proceso->registros.RDX, 16);
 
 	agregar_a_paquete(paquete, &(proceso->estimado_proxRafaga), sizeof(int));
-	agregar_a_paquete(paquete, &(proceso->tiempo_llegada_ready), strlen(proceso->tiempo_llegada_ready)+1);
+	agregar_a_paquete(paquete, proceso->tiempo_llegada_ready, strlen(proceso->tiempo_llegada_ready)+1);
 
 	enviar_paquete(paquete, conexion);
 	eliminar_paquete(paquete);
+
 }
 
 void recibir_pcb(t_list* lista, pcb* proceso) {

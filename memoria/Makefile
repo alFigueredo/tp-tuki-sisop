@@ -7,6 +7,7 @@ MODULE_NAME := ./debug/memoria.out
 SOURCE_FILES := $(shell find ./src -type f -iname "*.c" -exec basename {} \;)
 OBJECT_FILES := $(SOURCE_FILES:%.c=./debug/%.o)
 LINK = -lpthread -lcommons -lm
+CONFIG_FILE := ./memoria.config
 
 ### Reglas ###
 
@@ -14,6 +15,17 @@ build: makefolder makeshared $(MODULE_NAME)
 
 debug: CFLAGS := $(CFLAGS) -g
 debug: makeshared_debug build
+
+rebuild: clean build
+
+rrun: build
+	$(MODULE_NAME) $(CONFIG_FILE)
+
+valgrind: debug
+	valgrind --leak-check=full --show-leak-kinds=all --log-file=valgrind.log $(MODULE_NAME) $(CONFIG_FILE)
+
+helgrind: debug
+	valgrind --tool=helgrind --log-file=valgrind.log $(MODULE_NAME) $(CONFIG_FILE)
 
 $(MODULE_NAME): $(OBJECT_FILES)
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) -I$(INCLUDE_PATH) $(LINK)
@@ -38,5 +50,3 @@ clean:
 	rm -rf *.log
 	make clean -C ../shared
 #	rm -f $(MODULE_NAME) $(OBJECT_FILES)
-
-rebuild: clean build

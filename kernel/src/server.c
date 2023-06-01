@@ -83,7 +83,7 @@ void atender_cliente(int* socket_cliente){
 				lista = recibir_paquete(*socket_cliente);
 				log_info(logger, "Me llegaron los siguientes valores:");
 				list_iterate(lista, (void*) iterator);
-				list_clean_and_destroy_elements(lista, free);
+				list_destroy_and_destroy_elements(lista, free);
 				break;
 			case NEW:
 				lista = recibir_paquete(*socket_cliente);

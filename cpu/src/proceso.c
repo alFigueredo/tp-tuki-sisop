@@ -49,7 +49,6 @@ enum_instrucciones interpretar_instrucciones(pcb* proceso) {
 	while (proceso->program_counter<list_size(proceso->instrucciones)) {
 		char* instruccion = list_get(proceso->instrucciones, proceso->program_counter);
 		// log_debug(logger, "Instrucción: %s0", instruccion);
-		replace_r_with_0(instruccion); // Resolver final de línea en algunos archivos
     	char** parsed = string_split(instruccion, " "); //Partes de la instruccion actual
 		int instruccion_enum = (int)(intptr_t)dictionary_get(instrucciones, parsed[0]);
 		switch (instruccion_enum) {
@@ -64,6 +63,8 @@ enum_instrucciones interpretar_instrucciones(pcb* proceso) {
 				break;
 			case I_O:
 				instruccion_i_o(parsed, proceso);
+				destruir_diccionarios(instrucciones, registros);
+				string_array_destroy(parsed);
 				return IO_BLOCK;
 			case F_OPEN:
 				instruccion_f_open(parsed, proceso);
@@ -85,9 +86,13 @@ enum_instrucciones interpretar_instrucciones(pcb* proceso) {
 				break;
 			case I_WAIT:
 				instruccion_wait(parsed, proceso);
+				destruir_diccionarios(instrucciones, registros);
+				string_array_destroy(parsed);
 				return WAIT;
 			case I_SIGNAL:
 				instruccion_signal(parsed, proceso);
+				destruir_diccionarios(instrucciones, registros);
+				string_array_destroy(parsed);
 				return SIGNAL;
 			case CREATE_SEGMENT:
 				instruccion_create_segment(parsed, proceso);
@@ -98,16 +103,20 @@ enum_instrucciones interpretar_instrucciones(pcb* proceso) {
 			case YIELD:
 				instruccion_yield(parsed, proceso);
 				destruir_diccionarios(instrucciones, registros);
+				string_array_destroy(parsed);
 				return READY;
 			case I_EXIT:
 				instruccion_exit(parsed, proceso);
 				destruir_diccionarios(instrucciones, registros);
+				string_array_destroy(parsed);
 				return EXIT;
 			case -1:
 				log_warning(logger, "PID: %d - Advertencia: No se pudo interpretar la instrucción - Ejecutando: EXIT", proceso->pid);
 				destruir_diccionarios(instrucciones, registros);
+				string_array_destroy(parsed);
 				return EXIT;
 		}
+		string_array_destroy(parsed);
 	}
 	log_warning(logger, "PID: %d - Advertencia: Sin instrucciones por ejecutar - Ejecutando: EXIT", proceso->pid);
 	destruir_diccionarios(instrucciones, registros);

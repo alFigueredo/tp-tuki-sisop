@@ -61,7 +61,7 @@ typedef struct{
 }registros_cpu;
 
 typedef struct {
-	int pid;
+	unsigned int pid;
 	t_list* instrucciones;
 	int program_counter;
 	registros_cpu registros;

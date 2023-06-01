@@ -64,7 +64,7 @@ void atender_servidor(int* socket_servidor){
 				lista = recibir_paquete(*socket_servidor);
 				log_info(logger, "Me llegaron los siguientes valores:");
 				list_iterate(lista, (void*) iterator);
-				list_clean_and_destroy_elements(lista, free);
+				list_destroy_and_destroy_elements(lista, free);
 				break;
 			case READY:
 				lista = recibir_paquete(*socket_servidor);
@@ -81,20 +81,19 @@ void atender_servidor(int* socket_servidor){
 				lista = recibir_paquete(*socket_servidor);
 				recibir_pcb(lista, queue_peek(qexec));
 				instruccion = list_get(((pcb*)queue_peek(qexec))->instrucciones, ((pcb*)queue_peek(qexec))->program_counter-1);
-				replace_r_with_0(instruccion); // Resolver final de línea en algunos archivos
 				manejo_recursos(((pcb*)queue_peek(qexec)), instruccion);
 				break;
 			case SIGNAL:
 				lista = recibir_paquete(*socket_servidor);
 				recibir_pcb(lista, queue_peek(qexec));
 				instruccion = list_get(((pcb*)queue_peek(qexec))->instrucciones, ((pcb*)queue_peek(qexec))->program_counter-1);
-				replace_r_with_0(instruccion); // Resolver final de línea en algunos archivos
 				manejo_recursos(((pcb*)queue_peek(qexec)), instruccion);
 				break;
 			case EXIT:
 				lista = recibir_paquete(*socket_servidor);
 				recibir_pcb(lista, queue_peek(qexec));
 				exec_a_exit();
+				list_destroy_and_destroy_elements(lista, free);
 				break;
 			case -1:
 				log_warning(logger, "El servidor se desconecto. Terminando conexion. Abortando sistema.");
