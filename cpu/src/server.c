@@ -88,7 +88,8 @@ void atender_cliente(int* socket_cliente){
 			break;
 		case EXEC:
 			lista = recibir_paquete(*socket_cliente);
-			proceso = recibir_pcb(lista);
+			proceso = malloc(sizeof(pcb));
+			recibir_pcb(lista, proceso);
 			enviar_pcb(*socket_cliente, proceso, (int)interpretar_instrucciones(proceso));
 			break;
 		case -1:

@@ -1,83 +1,5 @@
 #include "proceso.h"
 
-pcb* recibir_pcb(t_list* lista) {
-	pcb* proceso = malloc(sizeof(pcb));
-	memcpy(&(proceso->pid), list_remove(lista, 0), sizeof(unsigned int));
-	int instrucciones_size;
-	memcpy(&(instrucciones_size), list_remove(lista, 0), sizeof(int));
-	proceso->instrucciones = list_take_and_remove(lista, instrucciones_size);
-	memcpy(&(proceso->program_counter), list_remove(lista, 0), sizeof(int));
-	memcpy(proceso->registros.AX, list_remove(lista, 0), 4);
-	memcpy(proceso->registros.BX, list_remove(lista, 0), 4);
-	memcpy(proceso->registros.CX, list_remove(lista, 0), 4);
-	memcpy(proceso->registros.DX, list_remove(lista, 0), 4);
-	memcpy(proceso->registros.EAX, list_remove(lista, 0), 8);
-	memcpy(proceso->registros.EBX, list_remove(lista, 0), 8);
-	memcpy(proceso->registros.ECX, list_remove(lista, 0), 8);
-	memcpy(proceso->registros.EDX, list_remove(lista, 0), 8);
-	memcpy(proceso->registros.RAX, list_remove(lista, 0), 16);
-	memcpy(proceso->registros.RBX, list_remove(lista, 0), 16);
-	memcpy(proceso->registros.RCX, list_remove(lista, 0), 16);
-	memcpy(proceso->registros.RDX, list_remove(lista, 0), 16);
-	memcpy(&proceso->estimado_proxRafaga, list_remove(lista, 0), sizeof(int));
-	proceso->tiempo_llegada_ready = (char*)list_remove(lista, 0);
-	return proceso;
-}
-
-void enviar_pcb(int conexion, pcb* proceso, op_code estado) {
-	t_paquete* paquete = crear_paquete(estado);
-	/*
-	char instruccion[] = list_get(proceso->instrucciones, proceso->program_counter-1);
-	char* parsed = strtok(instruccion, " ");
-	parsed = strtok(NULL, " ");
-	t_list* lista_argumentos = list_create();
-	while(parsed) {
-		list_add(lista_argumentos, parsed);
-		parsed = strtok(NULL, " ");
-	}
-	int cant_argumentos = list_size(lista_argumentos);
-	agregar_a_paquete(paquete, &cant_argumentos, sizeof(int));
-	while(list_size(lista_argumentos)) {
-		char* argumento = list_remove(lista_argumentos, 0);
-		agregar_a_paquete(paquete, argumento, strlen(argumento)+1);
-	}
-	*/
-	agregar_a_paquete(paquete, &(proceso->pid), sizeof(unsigned int));
-	int instrucciones_size = list_size(proceso->instrucciones);
-	agregar_a_paquete(paquete, &instrucciones_size, sizeof(int));
-	for (int i=0; i<instrucciones_size; i++) {
-		char* instruccion = list_get(proceso->instrucciones, i);
-		agregar_a_paquete(paquete, instruccion, strlen(instruccion)+1);
-	}
-	agregar_a_paquete(paquete, &(proceso->program_counter), sizeof(int));
-	agregar_a_paquete(paquete, proceso->registros.AX, 4);
-	agregar_a_paquete(paquete, proceso->registros.BX, 4);
-	agregar_a_paquete(paquete, proceso->registros.CX, 4);
-	agregar_a_paquete(paquete, proceso->registros.DX, 4);
-	agregar_a_paquete(paquete, proceso->registros.EAX, 8);
-	agregar_a_paquete(paquete, proceso->registros.EBX, 8);
-	agregar_a_paquete(paquete, proceso->registros.ECX, 8);
-	agregar_a_paquete(paquete, proceso->registros.EDX, 8);
-	agregar_a_paquete(paquete, proceso->registros.RAX, 16);
-	agregar_a_paquete(paquete, proceso->registros.RBX, 16);
-	agregar_a_paquete(paquete, proceso->registros.RCX, 16);
-	agregar_a_paquete(paquete, proceso->registros.RDX, 16);
-
-	agregar_a_paquete(paquete, &(proceso->estimado_proxRafaga), sizeof(int));
-	agregar_a_paquete(paquete, &(proceso->tiempo_llegada_ready), strlen(proceso->tiempo_llegada_ready)+1);
-
-	enviar_paquete(paquete, conexion);
-	eliminar_paquete(paquete);
-}
-
-void delay(int milliseconds)
-{
-	t_temporal* clock = temporal_create();
-	while(temporal_gettime(clock)<milliseconds)
-		;
-	temporal_destroy(clock);
-}
-
 t_dictionary* diccionario_instrucciones(void) {
 	t_dictionary* instrucciones = dictionary_create();
 	dictionary_put(instrucciones, "SET", (void*)(intptr_t)SET);
@@ -142,7 +64,6 @@ enum_instrucciones interpretar_instrucciones(pcb* proceso) {
 			case I_O:
 				instruccion_i_o(parsed, proceso);
 				return IO_BLOCK;
-				// break;
 			case F_OPEN:
 				instruccion_f_open(parsed, proceso);
 				break;
@@ -164,11 +85,9 @@ enum_instrucciones interpretar_instrucciones(pcb* proceso) {
 			case I_WAIT:
 				instruccion_wait(parsed, proceso);
 				return WAIT;
-//				break;
 			case I_SIGNAL:
 				instruccion_signal(parsed, proceso);
 				return SIGNAL;
-//				break;
 			case CREATE_SEGMENT:
 				instruccion_create_segment(parsed, proceso);
 				break;
@@ -266,14 +185,12 @@ void instruccion_f_truncate(char** parsed, pcb* proceso)
 void instruccion_wait(char** parsed, pcb* proceso)
 {
 	log_info(logger, "PID: %d - Ejecutando: %s - %s", proceso->pid, parsed[0], parsed[1]);
-	log_warning(logger, "PID: %d - Advertencia: Instruccion en proceso de implementación", proceso->pid);
 	proceso->program_counter++;
 }
 
 void instruccion_signal(char** parsed, pcb* proceso)
 {
 	log_info(logger, "PID: %d - Ejecutando: %s - %s", proceso->pid, parsed[0], parsed[1]);
-	log_warning(logger, "PID: %d - Advertencia: Instruccion en proceso de implementación", proceso->pid);
 	proceso->program_counter++;
 }
 

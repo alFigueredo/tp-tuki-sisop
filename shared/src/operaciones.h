@@ -8,6 +8,7 @@
 #include <netdb.h>
 #include <commons/log.h>
 #include <commons/config.h>
+#include <commons/temporal.h>
 #include <commons/collections/list.h>
 #include <commons/collections/queue.h>
 #include <signal.h>
@@ -82,5 +83,8 @@ void agregar_a_paquete(t_paquete*, void*, int);
 void enviar_paquete(t_paquete*, int);
 void eliminar_paquete(t_paquete*);
 t_list* recibir_paquete(int);
+void delay(int);
+void enviar_pcb(int, pcb*, op_code);
+void recibir_pcb(t_list*, pcb*);
 
 #endif /* OPERACIONES_H_ */
