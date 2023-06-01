@@ -30,7 +30,7 @@ t_list* leerRecursos(t_config *config) {
 
 void manejo_recursos(pcb* proceso, char* instruccion) {
 
-    char** parsed = string_split(string_split(instruccion, "\r")[0], " "); //Partes de la instruccion actual
+    char** parsed = string_split(instruccion, " "); //Partes de la instruccion actual
 
     char* operacion = parsed[0];
 

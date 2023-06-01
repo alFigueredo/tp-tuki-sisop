@@ -81,12 +81,14 @@ void atender_servidor(int* socket_servidor){
 				lista = recibir_paquete(*socket_servidor);
 				recibir_pcb(lista, queue_peek(qexec));
 				instruccion = list_get(((pcb*)queue_peek(qexec))->instrucciones, ((pcb*)queue_peek(qexec))->program_counter-1);
+				replace_r_with_0(instruccion); // Resolver final de línea en algunos archivos
 				manejo_recursos(((pcb*)queue_peek(qexec)), instruccion);
 				break;
 			case SIGNAL:
 				lista = recibir_paquete(*socket_servidor);
 				recibir_pcb(lista, queue_peek(qexec));
 				instruccion = list_get(((pcb*)queue_peek(qexec))->instrucciones, ((pcb*)queue_peek(qexec))->program_counter-1);
+				replace_r_with_0(instruccion); // Resolver final de línea en algunos archivos
 				manejo_recursos(((pcb*)queue_peek(qexec)), instruccion);
 				break;
 			case EXIT:

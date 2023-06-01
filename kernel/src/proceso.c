@@ -197,7 +197,7 @@ void exec_a_exit() {
 	calcular_estimacion(proceso, temporal_gettime(tiempo_en_cpu));
 	temporal_destroy(tiempo_en_cpu);
 
-//	log_trace(logger, "Registro RAX: %s", string_substring_until(proceso->registros.RAX, 16));
+//	log_trace(logger, "Registro AX: %s", string_substring_until(proceso->registros.AX, 4));
 
 	enviar_operacion(*(int*)dictionary_remove(conexiones, string_itoa(proceso->pid)), EXIT);
 	log_info(logger, "Finaliza el proceso %d - Motivo: SUCCESS", proceso->pid);

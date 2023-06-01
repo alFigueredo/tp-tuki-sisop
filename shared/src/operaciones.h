@@ -86,5 +86,6 @@ t_list* recibir_paquete(int);
 void delay(int);
 void enviar_pcb(int, pcb*, op_code);
 void recibir_pcb(t_list*, pcb*);
+void replace_r_with_0(char*);
 
 #endif /* OPERACIONES_H_ */

@@ -214,3 +214,10 @@ void recibir_pcb(t_list* lista, pcb* proceso) {
 	memcpy(&proceso->estimado_proxRafaga, list_remove(lista, 0), sizeof(int));
 	proceso->tiempo_llegada_ready = (char*)list_remove(lista, 0);
 }
+
+void replace_r_with_0(char* line) {
+	char* pos = strchr(line, '\r');
+    if (pos) {
+    	*pos = '\0';
+    }
+}

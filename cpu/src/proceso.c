@@ -49,7 +49,8 @@ enum_instrucciones interpretar_instrucciones(pcb* proceso) {
 	while (proceso->program_counter<list_size(proceso->instrucciones)) {
 		char* instruccion = list_get(proceso->instrucciones, proceso->program_counter);
 		// log_debug(logger, "Instrucción: %s0", instruccion);
-		char** parsed = string_split(string_split(instruccion, "\r")[0], " ");
+		replace_r_with_0(instruccion); // Resolver final de línea en algunos archivos
+    	char** parsed = string_split(instruccion, " "); //Partes de la instruccion actual
 		int instruccion_enum = (int)(intptr_t)dictionary_get(instrucciones, parsed[0]);
 		switch (instruccion_enum) {
 			case SET:
