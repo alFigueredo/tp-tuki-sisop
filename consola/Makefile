@@ -8,7 +8,7 @@ SOURCE_FILES := $(shell find ./src -type f -iname "*.c" -exec basename {} \;)
 OBJECT_FILES := $(SOURCE_FILES:%.c=./debug/%.o)
 LINK = -lpthread -lcommons -lreadline -lm
 CONFIG_FILE := ./consola.config
-PSEUDOCODE_FILE := ./pseudocodigo.txt
+PSEUDOCODE_FILE := ./pseudocodigo
 
 ### Reglas ###
 

@@ -9,10 +9,10 @@ int main(int argc, char** argv) {
 
 	logger = iniciar_logger("./filesystem.log", "FileSystem");
 	config = iniciar_config(argv[1]);
-	t_config* superBloque;
-	t_config* fcb1;
-	t_bitarray* bitmap;
-	void* puntero_a_bits=malloc(1);
+//	t_config* superBloque;
+//	t_config* fcb1;
+//	t_bitarray* bitmap;
+//	void* puntero_a_bits=malloc(1);
 	char* ip_memoria = config_get_string_value(config, "IP_MEMORIA");
 	char* puerto_memoria = config_get_string_value(config, "PUERTO_MEMORIA");
 	char* puerto_escucha = config_get_string_value(config, "PUERTO_ESCUCHA");
@@ -23,8 +23,8 @@ int main(int argc, char** argv) {
 
 	//Una vez realizada la coneccion a memoria levanto el bitmap de bloques y recorro FCBs
 
-	superBloque= config_create(config_get_string_value(config,"PATH_SUPERBLOQUE"));
-	bitmap = bitarray_create_with_mode(puntero_a_bits, 1, LSB_FIRST);
+//	superBloque= config_create(config_get_string_value(config,"PATH_SUPERBLOQUE"));
+//	bitmap = bitarray_create_with_mode(puntero_a_bits, 1, LSB_FIRST);
 
 
 	int socket_servidor = -1;
