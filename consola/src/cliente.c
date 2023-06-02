@@ -54,7 +54,7 @@ void atender_kernel(int conexion_kernel){
 				list_clean_and_destroy_elements(lista, free);
 				break;
 			case EXIT:
-				log_info(logger, "Proceso finalizado. Terminando conexion");
+				log_info(logger, "Proceso %d finalizado. Terminando conexion", process_getpid());
 				return;
 			case -1:
 				log_warning(logger, "El servidor se desconecto. Terminando conexion");

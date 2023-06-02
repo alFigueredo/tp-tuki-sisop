@@ -23,6 +23,7 @@ int iniciar_servidor(char* puerto)
 	int reuse = 1;
 	if (setsockopt(socket_servidor, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse)) < 0) {
 	    log_error(logger, "Error al configurar SO_REUSEADDR");
+	    abort();
 	}
 
 	// Asociamos el socket a un puerto
@@ -33,7 +34,7 @@ int iniciar_servidor(char* puerto)
 
 	if (listen(socket_servidor, SOMAXCONN) == -1) {
 		log_error(logger, "¡No se pudo iniciar el servidor!");
-		exit(1);
+		abort();
 	}
 
 	freeaddrinfo(servinfo);
@@ -83,12 +84,14 @@ void atender_cliente(int* socket_cliente){
 			lista = recibir_paquete(*socket_cliente);
 			log_info(logger, "Me llegaron los siguientes valores:");
 			list_iterate(lista, (void*) iterator);
-			list_clean_and_destroy_elements(lista, free);
+			list_destroy_and_destroy_elements(lista, free);
 			break;
 		case EXEC:
 			lista = recibir_paquete(*socket_cliente);
-			proceso = recibir_pcb(lista);
+			proceso = malloc(sizeof(pcb));
+			recibir_pcb(lista, proceso);
 			enviar_pcb(*socket_cliente, proceso, (int)interpretar_instrucciones(proceso));
+			list_destroy_and_destroy_elements(lista, free);
 			break;
 		case -1:
 			log_warning(logger, "El cliente se desconecto. Terminando conexion");

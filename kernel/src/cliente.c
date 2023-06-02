@@ -1,9 +1,5 @@
 #include "cliente.h"
 
-int conexion_cpu;
-int conexion_memoria;
-int conexion_filesystem;
-
 int crear_conexion(char *ip, char* puerto)
 {
 	struct addrinfo hints;
@@ -56,6 +52,8 @@ void esperar_servidor(int conexion){
 
 void atender_servidor(int* socket_servidor){
 	t_list *lista;
+	pthread_t thread;
+	char* instruccion;
 	while (1) {
 		int cod_op = recibir_operacion(*socket_servidor);
 		switch (cod_op) {
@@ -66,21 +64,41 @@ void atender_servidor(int* socket_servidor){
 				lista = recibir_paquete(*socket_servidor);
 				log_info(logger, "Me llegaron los siguientes valores:");
 				list_iterate(lista, (void*) iterator);
-				list_clean_and_destroy_elements(lista, free);
+				list_destroy_and_destroy_elements(lista, free);
 				break;
 			case READY:
 				lista = recibir_paquete(*socket_servidor);
-				recibir_pcb(lista);
-				exec_a_ready(&conexion_cpu);
+				recibir_pcb(lista, queue_peek(qexec));
+				exec_a_ready();
+				break;
+			case IO_BLOCK:
+				lista = recibir_paquete(*socket_servidor);
+				recibir_pcb(lista, queue_peek(qexec));
+				pthread_create(&thread, NULL, (void*) io_block, NULL);
+				pthread_detach(thread);
+				break;
+			case WAIT:
+				lista = recibir_paquete(*socket_servidor);
+				recibir_pcb(lista, queue_peek(qexec));
+				instruccion = list_get(((pcb*)queue_peek(qexec))->instrucciones, ((pcb*)queue_peek(qexec))->program_counter-1);
+				manejo_recursos(((pcb*)queue_peek(qexec)), instruccion);
+				break;
+			case SIGNAL:
+				lista = recibir_paquete(*socket_servidor);
+				recibir_pcb(lista, queue_peek(qexec));
+				instruccion = list_get(((pcb*)queue_peek(qexec))->instrucciones, ((pcb*)queue_peek(qexec))->program_counter-1);
+				manejo_recursos(((pcb*)queue_peek(qexec)), instruccion);
 				break;
 			case EXIT:
 				lista = recibir_paquete(*socket_servidor);
-				recibir_pcb(lista);
+				recibir_pcb(lista, queue_peek(qexec));
 				exec_a_exit();
+				list_destroy_and_destroy_elements(lista, free);
 				break;
 			case -1:
-				log_warning(logger, "El servidor se desconecto. Terminando conexion");
+				log_warning(logger, "El servidor se desconecto. Terminando conexion. Abortando sistema.");
 				free(socket_servidor);
+				abort();
 				return;
 			default:
 				log_warning(logger,"Operacion desconocida. No quieras meter la pata");
