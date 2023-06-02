@@ -1,3 +1,5 @@
 /Debug/
 /debug/
-memoria.log
+*.vscode
+*.log
+*.settings

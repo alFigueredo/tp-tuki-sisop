@@ -51,4 +51,6 @@ Module.symvers
 Mkfile.old
 dkms.conf
 /.metadata/
-.vscode
+*.vscode
+*.log
+*.settings

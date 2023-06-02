@@ -1,3 +1,5 @@
 /Debug/
 /debug/
-filesystem.log
+*.vscode
+*.log
+*.settings
