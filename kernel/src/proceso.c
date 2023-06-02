@@ -96,7 +96,8 @@ void queue_extract(t_queue* queue, pcb* proceso) {
 
 void generar_proceso(t_list* lista, int* socket_cliente) {
 	pcb* proceso = malloc(sizeof(pcb));
-	memcpy(&(proceso->pid), list_remove(lista, 0), sizeof(unsigned int));
+	memcpy(&(proceso->pid), list_get(lista, 0), sizeof(unsigned int));
+	free(list_remove(lista,0));
 	proceso->instrucciones=list_duplicate(lista);
 	proceso->program_counter=0;
 	proceso->estimado_proxRafaga=config_get_int_value(config,"ESTIMACION_INICIAL");
@@ -212,6 +213,8 @@ void exec_a_exit() {
 		sem_post(sem_largo_plazo);
 	}
 	sem_post(sem_cpu);
+	list_destroy_and_destroy_elements(proceso->instrucciones, free);
+	free(proceso->tiempo_llegada_ready);
 	free(queue_pop(qexit));
 }
 
