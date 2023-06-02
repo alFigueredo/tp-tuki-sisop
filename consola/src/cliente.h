@@ -10,7 +10,8 @@
 #include <string.h>
 #include <commons/log.h>
 #include <commons/config.h>
-#include "operaciones.h"
+#include <commons/process.h>
+#include <operaciones.h>
 
 int crear_conexion(char*, char*);
 void send_handshake(int);

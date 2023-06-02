@@ -83,7 +83,8 @@ void paquete_texto(int conexion, char* pseudocodigo)
 	agregar_a_paquete(paquete, &pid, sizeof(unsigned int));
 	while(NULL !=fgets(leido, 64, fptr)) {
 		parsed = strtok(leido, "\n");
-		agregar_a_paquete(paquete, leido, strlen(parsed)+1);
+		replace_r_with_0(parsed);
+		agregar_a_paquete(paquete, parsed, strlen(parsed)+1);
 	}
 	enviar_paquete(paquete, conexion);
 	// ¡No te olvides de cerrar el archivo y liberar paquete antes de regresar!

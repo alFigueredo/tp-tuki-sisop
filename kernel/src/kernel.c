@@ -15,6 +15,11 @@ int main(int argc, char** argv) {
 	iniciar_semaforos();
 	conexiones = dictionary_create();
 
+    recursos = leerRecursos(config);
+
+    // Recorrer la lista de recursos y realizar las operaciones necesarias
+
+
 	// char* ip_memoria = config_get_string_value(config, "IP_MEMORIA");
 	// char* puerto_memoria = config_get_string_value(config, "PUERTO_MEMORIA");
 	char* ip_cpu = config_get_string_value(config, "IP_CPU");
@@ -39,8 +44,12 @@ int main(int argc, char** argv) {
 	socket_servidor = iniciar_servidor(puerto_escucha);
 	esperar_cliente(socket_servidor);
 
+	// Liberar todo al finalizar
 	destruir_colas();
 	dictionary_destroy(conexiones);
+	// Destruir recursos
+	// queue_destroy(recursos->procesosBloqueados);
+	destruir_recursos(recursos);
 	liberar_conexion(conexion_cpu);
 	liberar_conexion(conexion_memoria);
 	liberar_conexion(conexion_filesystem);

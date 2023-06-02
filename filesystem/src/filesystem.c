@@ -9,6 +9,13 @@ int main(int argc, char** argv) {
 
 	logger = iniciar_logger("./filesystem.log", "FileSystem");
 	config = iniciar_config(argv[1]);
+<<<<<<< HEAD
+=======
+//	t_config* superBloque;
+//	t_config* fcb1;
+//	t_bitarray* bitmap;
+//	void* puntero_a_bits=malloc(1);
+>>>>>>> efdf557294c3ddd1e94f5c2122315aabc329512b
 	char* ip_memoria = config_get_string_value(config, "IP_MEMORIA");
 	char* puerto_memoria = config_get_string_value(config, "PUERTO_MEMORIA");
 	int socket_servidor = -1;
@@ -31,6 +38,11 @@ int main(int argc, char** argv) {
 	///////////////////////////////////////////////////////////////////////
 	superBloque = config_create(config_get_string_value(config,"PATH_SUPERBLOQUE"));
 
+<<<<<<< HEAD
+=======
+//	superBloque= config_create(config_get_string_value(config,"PATH_SUPERBLOQUE"));
+//	bitmap = bitarray_create_with_mode(puntero_a_bits, 1, LSB_FIRST);
+>>>>>>> efdf557294c3ddd1e94f5c2122315aabc329512b
 
 
 	socket_servidor = iniciar_servidor(puerto_escucha);

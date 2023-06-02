@@ -23,6 +23,7 @@ int iniciar_servidor(char* puerto)
 	int reuse = 1;
 	if (setsockopt(socket_servidor, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse)) < 0) {
 		log_error(logger, "Error al configurar SO_REUSEADDR");
+		abort();
 	}
 
 	// Asociamos el socket a un puerto
@@ -33,7 +34,7 @@ int iniciar_servidor(char* puerto)
 
 	if (listen(socket_servidor, SOMAXCONN) == -1) {
 		log_error(logger, "¡No se pudo iniciar el servidor!");
-		exit(1);
+		abort();
 	}
 
 	freeaddrinfo(servinfo);

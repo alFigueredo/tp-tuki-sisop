@@ -8,6 +8,7 @@
 #include <netdb.h>
 #include <commons/log.h>
 #include <commons/config.h>
+#include <commons/temporal.h>
 #include <commons/collections/list.h>
 #include <commons/collections/queue.h>
 #include <signal.h>
@@ -24,8 +25,11 @@ typedef enum
 	NEW,
 	READY,
 	EXEC,
-	BLOCK,
-	EXIT
+	EXIT,
+	IO_BLOCK,
+	WAIT,
+	SIGNAL,
+	INIT
 }op_code;
 
 typedef struct
@@ -40,6 +44,33 @@ typedef struct
 	t_buffer* buffer;
 } t_paquete;
 
+typedef struct{
+	 char AX[4];
+	 char BX[4];
+	 char CX[4];
+	 char DX[4];
+	 char EAX[8];
+	 char EBX[8];
+	 char ECX[8];
+	 char EDX[8];
+	 char RAX[16];
+	 char RBX[16];
+	 char RCX[16];
+	 char RDX[16];
+
+}registros_cpu;
+
+typedef struct {
+	unsigned int pid;
+	t_list* instrucciones;
+	int program_counter;
+	registros_cpu registros;
+	t_list* tabla_segmentos;
+	int estimado_proxRafaga;
+	char* tiempo_llegada_ready;
+	t_list* archivos_abiertos;
+}pcb;
+
 int recibir_operacion(int);
 void* serializar_paquete(t_paquete*, int);
 void crear_buffer(t_paquete*);
@@ -52,5 +83,9 @@ void agregar_a_paquete(t_paquete*, void*, int);
 void enviar_paquete(t_paquete*, int);
 void eliminar_paquete(t_paquete*);
 t_list* recibir_paquete(int);
+void delay(int);
+void enviar_pcb(int, pcb*, op_code);
+void recibir_pcb(t_list*, pcb*);
+void replace_r_with_0(char*);
 
 #endif /* OPERACIONES_H_ */

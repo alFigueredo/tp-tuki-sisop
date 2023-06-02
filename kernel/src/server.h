@@ -13,7 +13,7 @@
 #include <string.h>
 #include <assert.h>
 #include <pthread.h>
-#include "proceso.h"
+#include "recursos.h"
 #include "cliente.h"
 
 int iniciar_servidor(char*);

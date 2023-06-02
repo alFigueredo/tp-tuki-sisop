@@ -11,12 +11,9 @@
 #include <string.h>
 #include <commons/log.h>
 #include <commons/config.h>
-#include "proceso.h"
+#include "recursos.h"
 #include "server.h"
 
-extern int conexion_cpu;
-extern int conexion_memoria;
-extern int conexion_filesystem;
 
 int crear_conexion(char*, char*);
 void send_handshake(int);
