@@ -9,13 +9,6 @@ int main(int argc, char** argv) {
 
 	logger = iniciar_logger("./filesystem.log", "FileSystem");
 	config = iniciar_config(argv[1]);
-<<<<<<< HEAD
-=======
-//	t_config* superBloque;
-//	t_config* fcb1;
-//	t_bitarray* bitmap;
-//	void* puntero_a_bits=malloc(1);
->>>>>>> efdf557294c3ddd1e94f5c2122315aabc329512b
 	char* ip_memoria = config_get_string_value(config, "IP_MEMORIA");
 	char* puerto_memoria = config_get_string_value(config, "PUERTO_MEMORIA");
 	int socket_servidor = -1;
@@ -25,6 +18,7 @@ int main(int argc, char** argv) {
 	//Una vez realizada la coneccion a memoria levanto el bitmap de bloques y recorro FCBs
 	// Trabajo sobre file System exclyuyendo conexiones
 
+	/*
 	t_config* superBloque;
 	t_config* fcb1;
 	////////////////////////////////////////////////////////////////////////////
@@ -37,16 +31,13 @@ int main(int argc, char** argv) {
 	bitmap = bitarray_create_with_mode(intermedio, tamanio_bitmap, LSB_FIRST);
 	///////////////////////////////////////////////////////////////////////
 	superBloque = config_create(config_get_string_value(config,"PATH_SUPERBLOQUE"));
-
-<<<<<<< HEAD
-=======
-//	superBloque= config_create(config_get_string_value(config,"PATH_SUPERBLOQUE"));
-//	bitmap = bitarray_create_with_mode(puntero_a_bits, 1, LSB_FIRST);
->>>>>>> efdf557294c3ddd1e94f5c2122315aabc329512b
+	*/
 
 
+	char* puerto_escucha = config_get_string_value(config, "PUERTO_ESCUCHA");
 	socket_servidor = iniciar_servidor(puerto_escucha);
 	esperar_cliente(socket_servidor);
+
 	liberar_conexion(conexion_memoria);
 	terminar_programa(logger, config);
 	return EXIT_SUCCESS;
