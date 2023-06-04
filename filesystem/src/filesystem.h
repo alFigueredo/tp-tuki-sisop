@@ -13,6 +13,7 @@
 #include <commons/bitarray.h>
 #include <sys/mman.h>
 #include <fcntl.h>
+#include <dirent.h>
 void terminar_programa(t_log*, t_config*);
-
+void recorrerFCBs();
 #endif /* FILESYSTEM_H_ */
