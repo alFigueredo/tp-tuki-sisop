@@ -14,6 +14,7 @@
 #include <sys/mman.h>
 #include <fcntl.h>
 #include <dirent.h>
-void terminar_programa(t_log*, t_config*);
-void recorrerFCBs();
+#include <ftw.h>
+void terminar_programa(t_log*, t_config*,char**);
+int recorrerFCBs();
 #endif /* FILESYSTEM_H_ */

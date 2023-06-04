@@ -2,49 +2,63 @@
 
 int main(int argc, char** argv) {
 
-	if (argc < 2) {
+	if (argc < 2)
+	{
 		return EXIT_FAILURE;
 	}
 	int conexion_memoria = -1;
-
 	logger = iniciar_logger("./filesystem.log", "FileSystem");
+	log_info(logger, "logg iniciado");
 	config = iniciar_config(argv[1]);
+
+	/*
 	char* ip_memoria = config_get_string_value(config, "IP_MEMORIA");
 	char* puerto_memoria = config_get_string_value(config, "PUERTO_MEMORIA");
 	int socket_servidor = -1;
 	conexion_memoria = crear_conexion(ip_memoria, puerto_memoria);
 	enviar_mensaje("Intento de conexión del filesystem a la memoria", conexion_memoria, MENSAJE);
+	*/
 
 	//Una vez realizada la coneccion a memoria levanto el bitmap de bloques y recorro FCBs
 	// Trabajo sobre file System exclyuyendo conexiones
-
-
-	t_config* superBloque;
-	t_config* fcb1;
+	int cantFCBs=0;/*
+	t_config* superBloque=iniciar_config(config_get_string_value(config,"PATH_SUPERBLOQUE"));
 	char **vectorDePathsPCBs = NULL;
-	////////////////////////////////////////////////////////////////////////////
 	t_bitarray* bitmap;
-	int *vector;
-	int tamanio_bitmap = config_get_int_value(config,"BLOCK_COUNT")/8;
+	int tamanio_bitmap = ((config_get_int_value(superBloque,"BLOCK_COUNT"))/8);
+
+	//Abro el archivo Bitmap para luego trabajarlo con mmap desde memoria
 	int fd_bitmap = open(config_get_string_value(config,"PATH_BITMAP"),O_CREAT | O_RDWR);
 	void* intermedio = mmap(NULL,tamanio_bitmap,PROT_READ | PROT_WRITE,MAP_SHARED,fd_bitmap,0);
 
 	bitmap = bitarray_create_with_mode(intermedio, tamanio_bitmap, LSB_FIRST);
-	superBloque = config_create(config_get_string_value(config,"PATH_SUPERBLOQUE"));
+	*/
 	//Guardo todas las rutas de los PCBs en un vector
-	recorrerFCBs(config_get_string_value(config,"PATH_FCB"),vectorDePathsPCBs);
-
-
+	log_info(logger, config_get_string_value(config,"PATH_FCB"));
+	cantFCBs = contarArchivosEnCarpeta(config_get_string_value(config,"PATH_FCB"));
+	//recorrerFCBs(config_get_string_value(config,"PATH_FCB"),vectorDePathsPCBs);
+	printf("La cantidad de FCBS es %d",cantFCBs);/*
+	if (existeArchivo("Notas1erParcialK9999", vectorDePathsPCBs, &cantFCBs))
+	{
+		log_info(logger, "Existe el archivo buscado");
+	}
+	else
+	{
+		log_info(logger, "No existe el archivo buscado");
+	}*/
+	/*
 	char* puerto_escucha = config_get_string_value(config, "PUERTO_ESCUCHA");
 	socket_servidor = iniciar_servidor(puerto_escucha);
 	esperar_cliente(socket_servidor);
 
 	liberar_conexion(conexion_memoria);
-	terminar_programa(logger, config);
+	*/
+	//terminar_programa(logger, config,vectorDePathsPCBs);
+
 	return EXIT_SUCCESS;
 }
 
-void terminar_programa(t_log* logger, t_config* config)
+void terminar_programa(t_log* logger, t_config* config, char **vector)
 {
 	if (logger != NULL)
 	{
@@ -54,8 +68,12 @@ void terminar_programa(t_log* logger, t_config* config)
 	{
 		config_destroy(config);
 	}
+	if (vector != NULL)
+	{
+		free(vector);
+	}
 }
-void recorrerFCBs(char *pathDirectorioPCBs,char **file_paths)
+int recorrerFCBs(char *pathDirectorioPCBs,char **file_paths)
 {
 	DIR *dir;
 	struct dirent *ent;
@@ -66,10 +84,9 @@ void recorrerFCBs(char *pathDirectorioPCBs,char **file_paths)
 	if (dir == NULL)
 	{
 		perror("No se pudo abrir la carpeta");
-	    return 1;
+	    return -1;
 	}
-
-	int num_files = 0;
+    int num_files = 0;
 
 	while ((ent = readdir(dir)) != NULL)
 	{
@@ -98,8 +115,25 @@ void recorrerFCBs(char *pathDirectorioPCBs,char **file_paths)
 	}
 
 	closedir(dir);
+	return num_files;
 }
-void abrirArchivo(char *nombreDeArchivo)
-{
-	while(strcpy())
+int contarArchivosEnCarpeta(const char *carpeta) {
+    DIR *dir;
+    struct dirent *ent;
+    int contador = 0;
+
+    dir = opendir(carpeta);
+    if (dir == NULL) {
+        log_info(logger, "No se pudo abrir la carpeta");
+        return -1; // Retorna -1 en caso de error
+    }
+
+    while ((ent = readdir(dir)) != NULL) {
+        if (ent->d_type == DT_REG) { // Verifica si es un archivo regular
+        	contador++;
+        }
+    }
+
+    closedir(dir);
+    return contador;
 }
