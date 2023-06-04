@@ -1,6 +1,6 @@
 # Globales
 CC := gcc
-CFLAGS := -Wall -Werror
+CFLAGS := -Wall
 LDFLAGS := -L../shared/debug -lshared
 INCLUDE_PATH := ../shared/src
 MODULE_NAME := ./debug/kernel.out
