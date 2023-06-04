@@ -99,3 +99,7 @@ void recorrerFCBs(char *pathDirectorioPCBs,char **file_paths)
 
 	closedir(dir);
 }
+void abrirArchivo(char *nombreDeArchivo)
+{
+	while(strcpy())
+}
