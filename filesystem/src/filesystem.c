@@ -33,11 +33,14 @@ int main(int argc, char** argv) {
 
 	bitmap = bitarray_create_with_mode(intermedio, tamanio_bitmap, LSB_FIRST);
 	*/
+	char **vectorDePathsPCBs = NULL;
 	//Guardo todas las rutas de los PCBs en un vector
 	log_info(logger, config_get_string_value(config,"PATH_FCB"));
-	cantFCBs = contarArchivosEnCarpeta(config_get_string_value(config,"PATH_FCB"));
+	cantFCBs = contarArchivosEnCarpeta(config_get_string_value(config,"PATH_FCB"),&vectorDePathsPCBs);
 	//recorrerFCBs(config_get_string_value(config,"PATH_FCB"),vectorDePathsPCBs);
-	printf("La cantidad de FCBS es %d",cantFCBs);/*
+	printf("La cantidad de FCBS es %d\n",cantFCBs);
+    printf("La primera ruta es %s\n",vectorDePathsPCBs[0]);
+	/*
 	if (existeArchivo("Notas1erParcialK9999", vectorDePathsPCBs, &cantFCBs))
 	{
 		log_info(logger, "Existe el archivo buscado");
@@ -117,10 +120,11 @@ int recorrerFCBs(char *pathDirectorioPCBs,char **file_paths)
 	closedir(dir);
 	return num_files;
 }
-int contarArchivosEnCarpeta(const char *carpeta) {
+int contarArchivosEnCarpeta(const char *carpeta, char ***vectoreRutas) {
     DIR *dir;
     struct dirent *ent;
     int contador = 0;
+    int contador2 = 0;
 
     dir = opendir(carpeta);
     if (dir == NULL) {
@@ -133,7 +137,17 @@ int contarArchivosEnCarpeta(const char *carpeta) {
         	contador++;
         }
     }
-
+    *vectoreRutas = malloc(contador * sizeof(char*));
+    closedir(dir);
+    dir = opendir(carpeta);
+    while ((ent = readdir(dir)) != NULL) {
+            if (ent->d_type == DT_REG) { // Verifica si es un archivo regular
+            	contador2++;
+            	*vectoreRutas[contador-1]=malloc((strlen(ent->d_name) + 1) * sizeof(char));
+            	strcpy(*vectoreRutas[contador-1], ent->d_name);
+            	printf("El nombre es %s\n", ent->d_name);
+            }
+        }
     closedir(dir);
     return contador;
 }
