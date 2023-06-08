@@ -21,9 +21,17 @@ typedef struct
 
 archivo_configuracion config_mem;
 
+typedef struct
+{
+	char tipo;
+	char* base;
+	char* limite;
+}segmento;
+
 //VARIABLES
 void* memoria_usuario;
 t_list* lista_tabla_segmentos;
+int contadorSegmentos;
 
 //FUNCIONES
 void terminar_programa(t_log*, t_config*);
