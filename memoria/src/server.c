@@ -22,7 +22,7 @@ int iniciar_servidor(char* puerto)
 
 	int reuse = 1;
 	if (setsockopt(socket_servidor, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse)) < 0) {
-		log_error(logger, "Error al configurar SO_REUSEADDR");
+		log_error(logger, "Error al configurar SO_REUSEADDR \n");
 		abort();
 	}
 
@@ -33,12 +33,12 @@ int iniciar_servidor(char* puerto)
 	// Escuchamos las conexiones entrantes
 
 	if (listen(socket_servidor, SOMAXCONN) == -1) {
-		log_error(logger, "¡No se pudo iniciar el servidor!");
+		log_error(logger, "¡No se pudo iniciar el servidor! \n");
 		abort();
 	}
 
 	freeaddrinfo(servinfo);
-	log_info(logger, "Servidor listo para recibir al cliente");
+	log_info(logger, "Servidor listo para recibir al cliente \n");
 
 	return socket_servidor;
 }
@@ -72,8 +72,10 @@ void esperar_cliente(int socket_servidor){
 
 void atender_cliente(int* socket_cliente){
 	t_list *lista;
+
 	while (1) {
 		int cod_op = recibir_operacion(*socket_cliente);
+
 		switch (cod_op) {
 		case MENSAJE:
 			recibir_mensaje(*socket_cliente);
@@ -85,11 +87,11 @@ void atender_cliente(int* socket_cliente){
 			list_clean_and_destroy_elements(lista, free);
 			break;
 		case -1:
-			log_warning(logger, "El cliente se desconecto. Terminando conexion");
+			log_warning(logger, "El cliente se desconecto. Terminando conexion \n");
 			free(socket_cliente);
 			return;
 		default:
-			log_warning(logger,"Operacion desconocida. No quieras meter la pata");
+			log_warning(logger,"Operacion desconocida \n");
 			break;
 		}
 	}
@@ -97,7 +99,7 @@ void atender_cliente(int* socket_cliente){
 
 void liberar_servidor(int *socket_servidor)
 {
-	log_warning(logger, "Liberando servidor");
+	log_warning(logger, "Liberando servidor \n");
 	close(*socket_servidor);
 	free(socket_servidor);
 }
