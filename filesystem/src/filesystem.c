@@ -37,18 +37,17 @@ int main(int argc, char** argv) {
 	//Guardo todas las rutas de los PCBs en un vector
 	log_info(logger, config_get_string_value(config,"PATH_FCB"));
 	cantFCBs = contarArchivosEnCarpeta(config_get_string_value(config,"PATH_FCB"),&vectorDePathsPCBs);
-	//recorrerFCBs(config_get_string_value(config,"PATH_FCB"),vectorDePathsPCBs);
 	printf("La cantidad de FCBS es %d\n",cantFCBs);
     printf("La primera ruta es %s\n",vectorDePathsPCBs[0]);
-	/*
-	if (existeArchivo("Notas1erParcialK9999", vectorDePathsPCBs, &cantFCBs))
+
+	if (existeArchivo("Notas1erParcialK9990", vectorDePathsPCBs, cantFCBs))
 	{
 		log_info(logger, "Existe el archivo buscado");
 	}
 	else
 	{
 		log_info(logger, "No existe el archivo buscado");
-	}*/
+	}
 	/*
 	char* puerto_escucha = config_get_string_value(config, "PUERTO_ESCUCHA");
 	socket_servidor = iniciar_servidor(puerto_escucha);
@@ -76,58 +75,33 @@ void terminar_programa(t_log* logger, t_config* config, char **vector)
 		free(vector);
 	}
 }
-int recorrerFCBs(char *pathDirectorioPCBs,char **file_paths)
-{
-	DIR *dir;
-	struct dirent *ent;
+char* concatenarCadenas(const char* str1, const char* str2) {
+    size_t len1 = strlen(str1);
+    size_t len2 = strlen(str2);
 
-	const char *folder_path = pathDirectorioPCBs;
+    char* resultado = (char*)malloc((len1 + len2 + 1) * sizeof(char));
 
-	dir = opendir(folder_path);
-	if (dir == NULL)
-	{
-		perror("No se pudo abrir la carpeta");
-	    return -1;
-	}
-    int num_files = 0;
+    if (resultado == NULL) {
+        perror("Error de asignación de memoria");
+        return NULL;
+    }
 
-	while ((ent = readdir(dir)) != NULL)
-	{
-		if (strcmp(ent->d_name, ".") == 0 || strcmp(ent->d_name, "..") == 0)
-		{
-			continue;
-		}
+    strcpy(resultado, str1);
+    strcat(resultado, str2);
 
-		const char *file_name = ent->d_name;
-
-		// Obtener la longitud de la ruta de la carpeta y del nombre del archivo
-		int folder_path_length = strlen(folder_path);
-		int file_name_length = strlen(file_name);
-
-		// Alocar memoria para la ruta absoluta en el vector de strings
-		char *file_path = malloc((folder_path_length + file_name_length + 2) * sizeof(char));
-
-		// Construir la ruta absoluta concatenando la carpeta y el nombre del archivo
-		snprintf(file_path, folder_path_length + file_name_length + 2, "%s/%s", folder_path, file_name);
-
-		// Agregar la ruta absoluta al vector de rutas
-		file_paths = realloc(file_paths, (num_files + 1) * sizeof(char *));
-		file_paths[num_files] = file_path;
-
-		num_files++;
-	}
-
-	closedir(dir);
-	return num_files;
+    return resultado;
 }
 int contarArchivosEnCarpeta(const char *carpeta, char ***vectoreRutas) {
     DIR *dir;
     struct dirent *ent;
     int contador = 0;
     int contador2 = 0;
-
+    char *mediaRutaAbsoluta = concatenarCadenas(carpeta,"/");
+    char *rutaAbsoluta;
     dir = opendir(carpeta);
-    if (dir == NULL) {
+
+    if (dir == NULL)
+    {
         log_info(logger, "No se pudo abrir la carpeta");
         return -1; // Retorna -1 en caso de error
     }
@@ -143,11 +117,28 @@ int contarArchivosEnCarpeta(const char *carpeta, char ***vectoreRutas) {
     while ((ent = readdir(dir)) != NULL) {
             if (ent->d_type == DT_REG) { // Verifica si es un archivo regular
             	contador2++;
-            	*vectoreRutas[contador-1]=malloc((strlen(ent->d_name) + 1) * sizeof(char));
-            	strcpy(*vectoreRutas[contador-1], ent->d_name);
+            	*vectoreRutas[contador-1]=malloc((strlen(ent->d_name) + 1) * sizeof(char) + (strlen(mediaRutaAbsoluta) + 1) * sizeof(char));
+            	rutaAbsoluta = concatenarCadenas(mediaRutaAbsoluta,ent->d_name);
+            	strcpy(*vectoreRutas[contador-1], rutaAbsoluta);
             	printf("El nombre es %s\n", ent->d_name);
+            	free(rutaAbsoluta);
             }
         }
     closedir(dir);
+    free (mediaRutaAbsoluta);
     return contador;
+}
+int existeArchivo(char *nombre, char **vectorDePaths,int cantidadPaths)
+{
+	int i=0;
+	t_config* config_inicial;
+	while (i<=cantidadPaths)
+	{
+		config_inicial= iniciar_config(vectorDePaths[i]);
+		if(strcmp(nombre,config_get_string_value(config_inicial,"NOMBRE_ARCHIVO")) == 0)
+		{
+			return 1;
+		}
+	}
+	return 0;
 }
