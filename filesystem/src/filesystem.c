@@ -40,7 +40,7 @@ int main(int argc, char** argv) {
 	printf("La cantidad de FCBS es %d\n",cantFCBs);
     printf("La primera ruta es %s\n",vectorDePathsPCBs[0]);
 
-	if (existeArchivo("Notas1erParcialK9990", vectorDePathsPCBs, cantFCBs))
+	if (existeArchivo("Notas1erParcialK9999", vectorDePathsPCBs, cantFCBs))
 	{
 		log_info(logger, "Existe el archivo buscado");
 	}
@@ -72,6 +72,7 @@ void terminar_programa(t_log* logger, t_config* config, char **vector)
 	}
 	if (vector != NULL)
 	{
+		free(*vector);
 		free(vector);
 	}
 }
@@ -117,7 +118,7 @@ int contarArchivosEnCarpeta(const char *carpeta, char ***vectoreRutas) {
     while ((ent = readdir(dir)) != NULL) {
             if (ent->d_type == DT_REG) { // Verifica si es un archivo regular
             	contador2++;
-            	*vectoreRutas[contador-1]=malloc((strlen(ent->d_name) + 1) * sizeof(char) + (strlen(mediaRutaAbsoluta) + 1) * sizeof(char));
+            	(*vectoreRutas)[contador-1]=malloc((strlen(ent->d_name) + 1) * sizeof(char) + (strlen(mediaRutaAbsoluta) + 1) * sizeof(char));
             	rutaAbsoluta = concatenarCadenas(mediaRutaAbsoluta,ent->d_name);
             	strcpy(*vectoreRutas[contador-1], rutaAbsoluta);
             	printf("El nombre es %s\n", ent->d_name);
@@ -132,13 +133,16 @@ int existeArchivo(char *nombre, char **vectorDePaths,int cantidadPaths)
 {
 	int i=0;
 	t_config* config_inicial;
-	while (i<=cantidadPaths)
+	while (i<cantidadPaths)
 	{
 		config_inicial= iniciar_config(vectorDePaths[i]);
 		if(strcmp(nombre,config_get_string_value(config_inicial,"NOMBRE_ARCHIVO")) == 0)
 		{
+			config_destroy(config_inicial);
 			return 1;
 		}
+		i++;
+		config_destroy(config_inicial);
 	}
 	return 0;
 }
