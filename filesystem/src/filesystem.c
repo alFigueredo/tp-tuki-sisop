@@ -34,13 +34,15 @@ int main(int argc, char** argv) {
 	bitmap = bitarray_create_with_mode(intermedio, tamanio_bitmap, LSB_FIRST);
 	*/
 	char **vectorDePathsPCBs = NULL;
+
 	//Guardo todas las rutas de los PCBs en un vector
 	log_info(logger, config_get_string_value(config,"PATH_FCB"));
 	cantFCBs = contarArchivosEnCarpeta(config_get_string_value(config,"PATH_FCB"),&vectorDePathsPCBs);
 	printf("La cantidad de FCBS es %d\n",cantFCBs);
-    printf("La primera ruta es %s\n",vectorDePathsPCBs[0]);
+	//////////////////////////
 
-	if (existeArchivo("Notas1erParcialK9999", vectorDePathsPCBs, cantFCBs))
+
+	if (abrirArchivo("Notas1erParcialK9999", vectorDePathsPCBs, cantFCBs))
 	{
 		log_info(logger, "Existe el archivo buscado");
 	}
@@ -48,6 +50,10 @@ int main(int argc, char** argv) {
 	{
 		log_info(logger, "No existe el archivo buscado");
 	}
+
+	crearArchivo("chota.FCB", carpeta)
+
+
 	/*
 	char* puerto_escucha = config_get_string_value(config, "PUERTO_ESCUCHA");
 	socket_servidor = iniciar_servidor(puerto_escucha);
@@ -108,7 +114,9 @@ int contarArchivosEnCarpeta(const char *carpeta, char ***vectoreRutas) {
     }
 
     while ((ent = readdir(dir)) != NULL) {
-        if (ent->d_type == DT_REG) { // Verifica si es un archivo regular
+        if (ent->d_type == DT_REG)
+        { // Verifica si es un archivo regular
+        	log_info(logger, "Se leyo un archivo en el primer while");
         	contador++;
         }
     }
@@ -117,11 +125,12 @@ int contarArchivosEnCarpeta(const char *carpeta, char ***vectoreRutas) {
     dir = opendir(carpeta);
     while ((ent = readdir(dir)) != NULL) {
             if (ent->d_type == DT_REG) { // Verifica si es un archivo regular
-            	contador2++;
-            	(*vectoreRutas)[contador-1]=malloc((strlen(ent->d_name) + 1) * sizeof(char) + (strlen(mediaRutaAbsoluta) + 1) * sizeof(char));
+            	log_info(logger, "Se leyo un archivo en el segundo while");
+            	(*vectoreRutas)[(contador2)]=malloc((strlen(ent->d_name) + 1) * sizeof(char) + (strlen(mediaRutaAbsoluta) + 1) * sizeof(char));
             	rutaAbsoluta = concatenarCadenas(mediaRutaAbsoluta,ent->d_name);
-            	strcpy(*vectoreRutas[contador-1], rutaAbsoluta);
+            	strcpy((*vectoreRutas)[(contador2)], rutaAbsoluta);
             	printf("El nombre es %s\n", ent->d_name);
+            	contador2++;
             	free(rutaAbsoluta);
             }
         }
@@ -129,7 +138,7 @@ int contarArchivosEnCarpeta(const char *carpeta, char ***vectoreRutas) {
     free (mediaRutaAbsoluta);
     return contador;
 }
-int existeArchivo(char *nombre, char **vectorDePaths,int cantidadPaths)
+int abrirArchivo(char *nombre, char **vectorDePaths,int cantidadPaths)
 {
 	int i=0;
 	t_config* config_inicial;
@@ -145,4 +154,24 @@ int existeArchivo(char *nombre, char **vectorDePaths,int cantidadPaths)
 		config_destroy(config_inicial);
 	}
 	return 0;
+}
+int crearArchivo(char *nombre,char *carpeta)
+{
+	FILE* archivo;
+	t_config* configArchivo;
+	char *mediaRutaAbsoluta = concatenarCadenas(carpeta,"/");
+	char *rutaArchivo = malloc ((strlen(nombre) + 1) * sizeof(char) +(strlen(mediaRutaAbsoluta) + 1) * sizeof(char));
+	rutaArchivo = concatenarCadenas(mediaRutaAbsoluta, nombre);
+
+	archivo = fopen(rutaArchivo , "w+");
+	fclose(archivo);
+	configArchivo = iniciar_config(rutaArchivo);
+	config_set_value("NOMBRE_ARCHIVO", nombre);
+	config_set_value("TAMANIO_ARCHIVO", "0");
+	config_save(configArchivo);
+	config_destroy(configArchivo);
+	free (mediaRutaAbsoluta);
+	free(rutaArchivo);
+
+	return 1;
 }

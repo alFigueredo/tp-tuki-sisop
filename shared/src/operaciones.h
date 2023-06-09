@@ -29,7 +29,12 @@ typedef enum
 	IO_BLOCK,
 	WAIT,
 	SIGNAL,
-	INIT
+	INIT,
+	OPEN,
+	CREATE,
+	TRUNCAR,
+	READ,
+	WRITE
 }op_code;
 
 typedef struct
