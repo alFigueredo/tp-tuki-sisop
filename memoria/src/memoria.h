@@ -28,12 +28,6 @@ typedef struct
 
 }segmento;
 
-typedef enum
-{
-	READ,
-	WRITE
-} cod_op_inst;
-
 //VARIABLES
 void* memoria_usuario;
 t_list* tablas_segmentos;

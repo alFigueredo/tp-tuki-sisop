@@ -12,7 +12,7 @@
 #include <string.h>
 #include <assert.h>
 #include <pthread.h>
-#include "operaciones.h"
+#include <operaciones.h>
 
 int iniciar_servidor(char*);
 void recv_handshake(int);

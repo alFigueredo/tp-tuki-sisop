@@ -28,7 +28,7 @@ int main(int argc, char** argv) {
 
 	esperar_cliente(socket_servidor);
 
-	terminar_programa(logger, config , socket_servidor);
+	terminar_memoria(logger, config , socket_servidor);
 	return EXIT_SUCCESS;
 }
 
@@ -56,7 +56,7 @@ void iniciar_memoria (){
 //                                    ACCESO A ESPACIO USUARIO
 
 void manejo_instrucciones (t_list* instrucciones, int* socket_cliente){
-	cod_op_inst tipo_instruccion = *(cod_op_inst *) list_get (instrucciones,0);
+	op_code tipo_instruccion = *(op_code *) list_get (instrucciones,0);
 	uint32_t dir_dada = *(uint32_t*) list_get(instrucciones,1);                                                             //Direccion fisica dada por CPU o FS
 
 	uint32_t valor;
