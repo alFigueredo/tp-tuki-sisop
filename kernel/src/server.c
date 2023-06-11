@@ -90,9 +90,6 @@ void atender_cliente(int* socket_cliente){
 				generar_proceso(lista, socket_cliente);
 				new_a_ready();
 				break;
-			case OPEN:
-				recibir_operacion()
-
 			case -1:
 				log_warning(logger, "El cliente se desconecto. Terminando conexion");
 				free(socket_cliente);
