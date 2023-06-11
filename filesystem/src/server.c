@@ -58,15 +58,10 @@ void recv_handshake(int socket_cliente)
 
 void esperar_cliente(int socket_servidor){
 	while (1) {
-	   pthread_t thread;
 	   int *socket_cliente = malloc(sizeof(int));
 	   *socket_cliente = accept(socket_servidor, NULL, NULL);
 	   recv_handshake(*socket_cliente);
-	   pthread_create(&thread,
-	                  NULL,
-	                  (void*) atender_cliente,
-	                  socket_cliente);
-	   pthread_detach(thread);
+	   atender_cliente(&socket_cliente);
 	}
 }
 
@@ -84,6 +79,8 @@ void atender_cliente(int* socket_cliente){
 			list_iterate(lista, (void*) iterator);
 			list_clean_and_destroy_elements(lista, free);
 			break;
+		case OPEN:
+			recibir_mensaje(*socket_cliente);
 		case -1:
 			log_warning(logger, "El cliente se desconecto. Terminando conexion");
 			free(socket_cliente);

@@ -17,4 +17,12 @@
 #include <ftw.h>
 void terminar_programa(t_log*, t_config*,char**);
 int recorrerFCBs();
+char* concatenarCadenas(const char* str1, const char* str2);
+int contarArchivosEnCarpeta(const char *carpeta, char ***vectoreRutas);
+int abrirArchivo(char *nombre, char **vectorDePaths,int cantidadPaths);
+int crearArchivo(char *nombre,char *carpeta, char ***vectoreRutas, int *cantidadPaths);
+int truncarArchivo(char *nombre,char *carpeta, char ***vectoreRutas, int *cantidadPaths, int tamanioNuevo);
+int dividirRedondeando(int numero1 , int numero2);
+void sacarBloques(int cantidadBloquesOriginal ,int cantidadBloquesNueva);
+void agregarBloques(int cantidadBloquesOriginal ,int cantidadBloquesNueva);
 #endif /* FILESYSTEM_H_ */

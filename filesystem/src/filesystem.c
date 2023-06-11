@@ -197,3 +197,66 @@ int crearArchivo(char *nombre,char *carpeta, char ***vectoreRutas, int *cantidad
 		return 0;
 	}
 }
+
+int truncarArchivo(char *nombre,char *carpeta, char ***vectoreRutas, int *cantidadPaths, int tamanioNuevo)
+{
+	int i=0;
+	t_config* configArchivoActual;
+	t_config* configSuperBloque;
+	configSuperBloque = iniciar_config(config_get_string_value(config,"PATH_SUPERBLOQUE"));
+	int tamanioBloques;
+	int tamanioOriginal;
+	int cantidadBloquesOriginal;
+	int cantidadBloquesNueva;
+
+	while (i<cantidadPaths)
+	{
+		configArchivoActual = iniciar_config(vectoreRutas[i]);
+		if(strcmp(nombre,config_get_string_value(configArchivoActual,"NOMBRE_ARCHIVO")) == 0)
+		{
+			break;
+		}
+		i++;
+		config_destroy(configArchivoActual);
+	}
+
+	tamanioOriginal = config_get_int_value(configArchivoActual,"TAMANIO_ARCHIVO");
+	tamanioBloques = config_get_int_value(configSuperBloque,"BLOCK_SIZE");
+	config_set_value(configArchivoActual,"TAMANIO_ARCHIVO",string_itoa(tamanioNuevo));
+	cantidadBloquesOriginal = dividirRedondeando(tamanioOriginal, tamanioBloques);
+	cantidadBloquesNueva = dividirRedondeando(tamanioNuevo, tamanioBloques);
+
+	if (tamanioOriginal < tamanioNuevo)
+	{
+		agregarBloques(cantidadBloquesOriginal,cantidadBloquesNueva);
+	}
+	else
+	{
+		sacarBloques(cantidadBloquesOriginal,cantidadBloquesNueva);
+	}
+	return 1;
+}
+
+void sacarBloques(int cantidadBloquesOriginal ,int cantidadBloquesNueva)
+{
+	int cantidadBloquesAEliminar = cantidadBloquesOriginal - cantidadBloquesOriginal;
+
+
+
+	return;
+}
+void agregarBloques(int cantidadBloquesOriginal ,int cantidadBloquesNueva)
+{
+	return;
+}
+int dividirRedondeando(int numero1 , int numero2)
+{
+	if(numero1 % numero2 == 0)
+	{
+		return (numero1)/(numero2);
+	}
+	else
+	{
+		return (numero1)/(numero2) + 1;
+	}
+}
