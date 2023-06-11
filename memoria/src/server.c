@@ -1,4 +1,5 @@
 #include"server.h"
+#include "memoria.h"
 
 int iniciar_servidor(char* puerto)
 {
@@ -82,9 +83,14 @@ void atender_cliente(int* socket_cliente){
 			break;
 		case PAQUETE:
 			lista = recibir_paquete(*socket_cliente);
-			log_info(logger, "Me llegaron los siguientes valores:");
+
+			log_info(logger, "Me llegaron las siguientes instrucciones:");
 			list_iterate(lista, (void*) iterator);
+
+			//manejo_instrucciones (lista, *socket_cliente);
+
 			list_clean_and_destroy_elements(lista, free);
+
 			break;
 		case -1:
 			log_warning(logger, "El cliente se desconecto. Terminando conexion \n");
