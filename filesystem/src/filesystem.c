@@ -51,9 +51,14 @@ int main(int argc, char** argv) {
 		log_info(logger, "No existe el archivo buscado");
 	}
 
-	crearArchivo("chota.FCB", carpeta)
-
-
+	if (crearArchivo("archivo de pruebas numero676765.FCB",config_get_string_value(config,"PATH_FCB"),&vectorDePathsPCBs,&cantFCBs))
+		{
+			log_info(logger, "Se creo correctamente el archivo");
+		}
+		else
+		{
+			log_info(logger, "no se creo el archivo AYUDAAAAA");
+		}
 	/*
 	char* puerto_escucha = config_get_string_value(config, "PUERTO_ESCUCHA");
 	socket_servidor = iniciar_servidor(puerto_escucha);
@@ -155,7 +160,7 @@ int abrirArchivo(char *nombre, char **vectorDePaths,int cantidadPaths)
 	}
 	return 0;
 }
-int crearArchivo(char *nombre,char *carpeta)
+int crearArchivo(char *nombre,char *carpeta, char ***vectoreRutas, int *cantidadPaths)
 {
 	FILE* archivo;
 	t_config* configArchivo;
@@ -166,9 +171,14 @@ int crearArchivo(char *nombre,char *carpeta)
 	archivo = fopen(rutaArchivo , "w+");
 	fclose(archivo);
 	configArchivo = iniciar_config(rutaArchivo);
-	config_set_value("NOMBRE_ARCHIVO", nombre);
-	config_set_value("TAMANIO_ARCHIVO", "0");
+	config_set_value(configArchivo,"NOMBRE_ARCHIVO", nombre);
+	config_set_value(configArchivo,"TAMANIO_ARCHIVO", "0");
 	config_save(configArchivo);
+	*vectoreRutas = realloc(*vectoreRutas,(*cantidadPaths + 1) * sizeof(char*));
+	(*vectoreRutas)[*cantidadPaths] = malloc((strlen(rutaArchivo) + 1) * sizeof(char));
+	strcpy((*vectoreRutas)[*cantidadPaths],rutaArchivo);
+	*cantidadPaths = *cantidadPaths + 1;
+	printf("El nuevo archivo agregado al path de archivos es %s",(*vectoreRutas)[*cantidadPaths]);
 	config_destroy(configArchivo);
 	free (mediaRutaAbsoluta);
 	free(rutaArchivo);
