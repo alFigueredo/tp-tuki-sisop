@@ -51,7 +51,7 @@ int main(int argc, char** argv) {
 		log_info(logger, "No existe el archivo buscado");
 	}
 
-	if (crearArchivo("archivo de pruebas numero676765.FCB",config_get_string_value(config,"PATH_FCB"),&vectorDePathsPCBs,&cantFCBs))
+	if (crearArchivo("ISA.FCB",config_get_string_value(config,"PATH_FCB"),&vectorDePathsPCBs,&cantFCBs))
 		{
 			log_info(logger, "Se creo correctamente el archivo");
 		}
@@ -164,6 +164,7 @@ int crearArchivo(char *nombre,char *carpeta, char ***vectoreRutas, int *cantidad
 {
 	FILE* archivo;
 	t_config* configArchivo;
+	char **vectorPruebas;
 	char *mediaRutaAbsoluta = concatenarCadenas(carpeta,"/");
 	char *rutaArchivo = malloc ((strlen(nombre) + 1) * sizeof(char) +(strlen(mediaRutaAbsoluta) + 1) * sizeof(char));
 	rutaArchivo = concatenarCadenas(mediaRutaAbsoluta, nombre);
@@ -174,14 +175,25 @@ int crearArchivo(char *nombre,char *carpeta, char ***vectoreRutas, int *cantidad
 	config_set_value(configArchivo,"NOMBRE_ARCHIVO", nombre);
 	config_set_value(configArchivo,"TAMANIO_ARCHIVO", "0");
 	config_save(configArchivo);
-	*vectoreRutas = realloc(*vectoreRutas,(*cantidadPaths + 1) * sizeof(char*));
-	(*vectoreRutas)[*cantidadPaths] = malloc((strlen(rutaArchivo) + 1) * sizeof(char));
-	strcpy((*vectoreRutas)[*cantidadPaths],rutaArchivo);
-	*cantidadPaths = *cantidadPaths + 1;
-	printf("El nuevo archivo agregado al path de archivos es %s",(*vectoreRutas)[*cantidadPaths]);
-	config_destroy(configArchivo);
-	free (mediaRutaAbsoluta);
-	free(rutaArchivo);
+	vectorPruebas = realloc(*vectoreRutas,(*cantidadPaths + 1) * sizeof(char*));
+	if (vectorPruebas != NULL)
+	{
+		(*vectoreRutas) = vectorPruebas;
 
-	return 1;
+		(*vectoreRutas)[*cantidadPaths] = malloc((strlen(rutaArchivo) + 1) * sizeof(char));
+		strcpy((*vectoreRutas)[*cantidadPaths],rutaArchivo);
+		printf("El nuevo archivo agregado al path de archivos es %s",(*vectoreRutas)[*cantidadPaths]);
+		*cantidadPaths = *cantidadPaths + 1;
+		config_destroy(configArchivo);
+		free (mediaRutaAbsoluta);
+		free(rutaArchivo);
+		return 1;
+	}
+	else
+	{
+		config_destroy(configArchivo);
+		free (mediaRutaAbsoluta);
+		free(rutaArchivo);
+		return 0;
+	}
 }
