@@ -1,3 +1,5 @@
 /Debug/
 /debug/
-consola.log
+*.vscode
+*.log
+*.settings

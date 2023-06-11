@@ -1,6 +1,6 @@
 # Globales
 CC := gcc
-CFLAGS := -Wall -Werror
+CFLAGS := -Wall
 LDFLAGS := -L../shared/debug -lshared
 INCLUDE_PATH := ../shared/src
 MODULE_NAME := ./debug/kernel.out
@@ -23,6 +23,9 @@ run: build
 
 valgrind: debug
 	valgrind --leak-check=full --show-leak-kinds=all --log-file=valgrind.log $(MODULE_NAME) $(CONFIG_FILE)
+
+valgrind_track: debug
+	valgrind --leak-check=full --show-leak-kinds=all --log-file=valgrind.log --track-origins=yes $(MODULE_NAME) $(CONFIG_FILE)
 
 helgrind: debug
 	valgrind --tool=helgrind --log-file=valgrind.log $(MODULE_NAME) $(CONFIG_FILE)
