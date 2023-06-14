@@ -15,6 +15,10 @@
 #include <fcntl.h>
 #include <dirent.h>
 #include <ftw.h>
+
+extern char **vectorDePathsPCBs;
+
+
 void terminar_programa(t_log*, t_config*,char**);
 int recorrerFCBs();
 char* concatenarCadenas(const char* str1, const char* str2);
