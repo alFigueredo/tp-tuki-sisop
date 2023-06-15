@@ -1,5 +1,8 @@
 #include "filesystem.h"
 
+t_config* superBloque;
+t_bitarray *bitmap;
+
 int main(int argc, char** argv) {
 
 	if (argc < 2)
@@ -21,9 +24,8 @@ int main(int argc, char** argv) {
 
 	//Una vez realizada la coneccion a memoria levanto el bitmap de bloques y recorro FCBs
 	// Trabajo sobre file System exclyuyendo conexiones
-	//FILE *archivoBitmap = fopen(config_get_string_value(config, "PATH_BITMAP"),"r+");
 
-	t_config* superBloque=iniciar_config(config_get_string_value(config,"PATH_SUPERBLOQUE"));
+	superBloque=iniciar_config(config_get_string_value(config,"PATH_SUPERBLOQUE"));
 
 	if (superBloque == NULL)
 	{
@@ -53,33 +55,14 @@ int main(int argc, char** argv) {
 
 	//void* espacioBitmap = malloc(tamanioBitmap);
 	//fread(espacioBitmap,tamanioBitmap,1,archivoBitmap);
-	t_bitarray *bitmap = bitarray_create_with_mode(intermedio, tamanioBitmap, LSB_FIRST);
+	bitmap = bitarray_create_with_mode(intermedio, tamanioBitmap, LSB_FIRST);
 
 	if (bitmap == NULL)
 		{
 			log_error(logger, "Error al crear el bitmap");
 			exit(EXIT_FAILURE);
 		}
-	/*
-	bitarray_set_bit(bitmap, 0);
-	bitarray_set_bit(bitmap, 1);
-	bitarray_set_bit(bitmap, 2);
-	bitarray_set_bit(bitmap, 3);
-	*/
-	//bitarray_clean_bit(bitmap,0);
-	bool valor = bitarray_test_bit(bitmap, 0);
-	bool valor2 = bitarray_test_bit(bitmap, 1);
-	bool valor3 = bitarray_test_bit(bitmap, 2);
-	bool valor4 = bitarray_test_bit(bitmap, 3);
 
-
-	printf("El valor del bit 0 es %i\n", valor);
-	printf("El valor del bit 1 es %i\n", valor2);
-	printf("El valor del bit 2 es %i\n", valor3);
-	printf("El valor del bit 3 es %i\n", valor4);
-
-
-	//fclose(archivoBitmap);
 	bitarray_destroy(bitmap);
 
 	if (msync(intermedio, tamanioBitmap, MS_SYNC) == 0)
@@ -271,9 +254,9 @@ int truncarArchivo(char *nombre,char *carpeta, char ***vectoreRutas, int *cantid
 	int cantidadBloquesOriginal;
 	int cantidadBloquesNueva;
 
-	while (i<cantidadPaths)
+	while (i<*cantidadPaths)
 	{
-		configArchivoActual = iniciar_config(vectoreRutas[i]);
+		configArchivoActual = iniciar_config((*vectoreRutas)[i]);
 		if(strcmp(nombre,config_get_string_value(configArchivoActual,"NOMBRE_ARCHIVO")) == 0)
 		{
 			break;
@@ -290,24 +273,38 @@ int truncarArchivo(char *nombre,char *carpeta, char ***vectoreRutas, int *cantid
 
 	if (tamanioOriginal < tamanioNuevo)
 	{
-		agregarBloques(cantidadBloquesOriginal,cantidadBloquesNueva);
+		agregarBloques(cantidadBloquesOriginal,cantidadBloquesNueva,configArchivoActual);
 	}
 	else
 	{
-		sacarBloques(cantidadBloquesOriginal,cantidadBloquesNueva);
+		sacarBloques(cantidadBloquesOriginal,cantidadBloquesNueva,configArchivoActual);
 	}
 	return 1;
 }
 
-void sacarBloques(int cantidadBloquesOriginal ,int cantidadBloquesNueva)
+void sacarBloques(int cantidadBloquesOriginal ,int cantidadBloquesNueva,t_config* configArchivoActual)
 {
 	int cantidadBloquesAEliminar = cantidadBloquesNueva - cantidadBloquesOriginal;
+	uint32_t punteroIndirecto = config_get_int_value(configArchivoActual,"PUNTERO_INDIRECTO");
+	uint32_t punteroACadaBloque;
+	FILE *bloques = fopen(config_get_string_value(config,"PATH_BLOQUES"),"r+");
+	for(int i=0 ; i < cantidadBloquesAEliminar;i++)
+	{
+		void* bloqueTraido = malloc(config_get_int_value(superBloque,"BLOCK_SIZE"));
+		// Me muevo al final del bloque de punteros para eliminar puntero por puntero
+		fseek(bloques,(punteroIndirecto + 1) * config_get_int_value(superBloque,"BLOCK_SIZE"),SEEK_SET);
+		fseek(bloques,-sizeof(uint32_t),SEEK_CUR);
+		fread(&punteroACadaBloque,sizeof(uint32_t),1,bloques);
+		bitarray_clean_bit(bitmap,punteroACadaBloque);
+		l
+
+	}
 
 
 
 	return;
 }
-void agregarBloques(int cantidadBloquesOriginal ,int cantidadBloquesNueva)
+void agregarBloques(int cantidadBloquesOriginal ,int cantidadBloquesNueva,t_config* configArchivoActual)
 {
 	int cantidadBloquesAAGregar = cantidadBloquesNueva - cantidadBloquesOriginal;
 
