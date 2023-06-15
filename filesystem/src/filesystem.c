@@ -21,6 +21,7 @@ int main(int argc, char** argv) {
 
 	//Una vez realizada la coneccion a memoria levanto el bitmap de bloques y recorro FCBs
 	// Trabajo sobre file System exclyuyendo conexiones
+	//FILE *archivoBitmap = fopen(config_get_string_value(config, "PATH_BITMAP"),"r+");
 
 	t_config* superBloque=iniciar_config(config_get_string_value(config,"PATH_SUPERBLOQUE"));
 
@@ -40,7 +41,7 @@ int main(int argc, char** argv) {
 	    log_error(logger, "Error al abrir el archivo del bitmap");
 	    exit(EXIT_FAILURE);
 	}
-	//void* espacioBitmap = malloc(tamanioBitmap);
+
 
 
 	void* intermedio = mmap(NULL, tamanioBitmap, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_SHARED, fd_bitmap, 0);
@@ -49,6 +50,9 @@ int main(int argc, char** argv) {
 	    log_error(logger, "Error al mapear el archivo del bitmap");
 	    exit(EXIT_FAILURE);
 	}
+
+	//void* espacioBitmap = malloc(tamanioBitmap);
+	//fread(espacioBitmap,tamanioBitmap,1,archivoBitmap);
 	t_bitarray *bitmap = bitarray_create_with_mode(intermedio, tamanioBitmap, LSB_FIRST);
 
 	if (bitmap == NULL)
@@ -56,12 +60,13 @@ int main(int argc, char** argv) {
 			log_error(logger, "Error al crear el bitmap");
 			exit(EXIT_FAILURE);
 		}
-
+	/*
 	bitarray_set_bit(bitmap, 0);
 	bitarray_set_bit(bitmap, 1);
 	bitarray_set_bit(bitmap, 2);
 	bitarray_set_bit(bitmap, 3);
-
+	*/
+	//bitarray_clean_bit(bitmap,0);
 	bool valor = bitarray_test_bit(bitmap, 0);
 	bool valor2 = bitarray_test_bit(bitmap, 1);
 	bool valor3 = bitarray_test_bit(bitmap, 2);
@@ -73,7 +78,10 @@ int main(int argc, char** argv) {
 	printf("El valor del bit 2 es %i\n", valor3);
 	printf("El valor del bit 3 es %i\n", valor4);
 
+
+	//fclose(archivoBitmap);
 	bitarray_destroy(bitmap);
+
 	if (msync(intermedio, tamanioBitmap, MS_SYNC) == 0)
 		{
 			log_info(logger, "Se escribió correctamente en el bitmap");
