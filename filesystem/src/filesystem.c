@@ -33,35 +33,47 @@ int main(int argc, char** argv) {
 	size_t tamanioBitmap = config_get_int_value(superBloque, "BLOCK_COUNT") / 8;
 
 	// Abre el archivo Bitmap para trabajar con mmap desde la memoria
-	int fd_bitmap = open(config_get_string_value(config, "PATH_BITMAP"),O_RDWR, 0);
+	int fd_bitmap = open(config_get_string_value(config, "PATH_BITMAP"),O_RDWR);
 
 	if (fd_bitmap == -1)
 	{
 	    log_error(logger, "Error al abrir el archivo del bitmap");
 	    exit(EXIT_FAILURE);
 	}
-	void* espacioBitmap = malloc(tamanioBitmap);
-	t_bitarray* bitmap = bitarray_create_with_mode(espacioBitmap, tamanioBitmap, LSB_FIRST);
+	//void* espacioBitmap = malloc(tamanioBitmap);
 
-	if (bitmap == NULL)
-		{
-		    log_error(logger, "Error al crear el bitmap");
-		    exit(EXIT_FAILURE);
-		}
 
-	void* intermedio = mmap(bitmap, tamanioBitmap, PROT_READ | PROT_WRITE, MAP_SHARED, fd_bitmap, 0);
+	void* intermedio = mmap(NULL, tamanioBitmap, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_SHARED, fd_bitmap, 0);
 	if (intermedio == MAP_FAILED)
 	{
 	    log_error(logger, "Error al mapear el archivo del bitmap");
 	    exit(EXIT_FAILURE);
 	}
+	t_bitarray *bitmap = bitarray_create_with_mode(intermedio, tamanioBitmap, LSB_FIRST);
 
+	if (bitmap == NULL)
+		{
+			log_error(logger, "Error al crear el bitmap");
+			exit(EXIT_FAILURE);
+		}
 
 	bitarray_set_bit(bitmap, 0);
 	bitarray_set_bit(bitmap, 1);
 	bitarray_set_bit(bitmap, 2);
 	bitarray_set_bit(bitmap, 3);
 
+	bool valor = bitarray_test_bit(bitmap, 0);
+	bool valor2 = bitarray_test_bit(bitmap, 1);
+	bool valor3 = bitarray_test_bit(bitmap, 2);
+	bool valor4 = bitarray_test_bit(bitmap, 3);
+
+
+	printf("El valor del bit 0 es %i\n", valor);
+	printf("El valor del bit 1 es %i\n", valor2);
+	printf("El valor del bit 2 es %i\n", valor3);
+	printf("El valor del bit 3 es %i\n", valor4);
+
+	bitarray_destroy(bitmap);
 	if (msync(intermedio, tamanioBitmap, MS_SYNC) == 0)
 		{
 			log_info(logger, "Se escribió correctamente en el bitmap");
@@ -70,6 +82,8 @@ int main(int argc, char** argv) {
 		{
 			log_warning(logger, "No se pudo escribir correctamente en el bitmap");
 		}
+		munmap(intermedio,tamanioBitmap);
+		close(fd_bitmap);
 
 
 	/*
