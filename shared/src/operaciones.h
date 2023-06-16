@@ -30,7 +30,9 @@ typedef enum
 	IO_BLOCK,
 	WAIT,
 	SIGNAL,
-	INIT
+	INIT,
+	CREATE_SEGMENT,
+	DELETE_SEGMENT
 }op_code;
 
 typedef struct

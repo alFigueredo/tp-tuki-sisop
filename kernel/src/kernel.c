@@ -20,18 +20,18 @@ int main(int argc, char** argv) {
     // Recorrer la lista de recursos y realizar las operaciones necesarias
 
 
-	// char* ip_memoria = config_get_string_value(config, "IP_MEMORIA");
-	// char* puerto_memoria = config_get_string_value(config, "PUERTO_MEMORIA");
+	char* ip_memoria = config_get_string_value(config, "IP_MEMORIA");
+	char* puerto_memoria = config_get_string_value(config, "PUERTO_MEMORIA");
 	char* ip_cpu = config_get_string_value(config, "IP_CPU");
 	char* puerto_cpu = config_get_string_value(config, "PUERTO_CPU");
 	// char* ip_filesystem = config_get_string_value(config, "IP_FILESYSTEM");
 	// char* puerto_filesystem = config_get_string_value(config, "PUERTO_FILESYSTEM");
 	char* puerto_escucha = config_get_string_value(config, "PUERTO_ESCUCHA");
 
-	/*
+	
 	conexion_memoria = crear_conexion(ip_memoria, puerto_memoria);
 	enviar_mensaje("Intento de conexión del kernel a la memoria", conexion_memoria, MENSAJE);
-	*/
+	
 	conexion_cpu = crear_conexion(ip_cpu, puerto_cpu);
 	enviar_mensaje("Intento de conexión del kernel al cpu", conexion_cpu, MENSAJE);
 	esperar_servidor(conexion_cpu);
