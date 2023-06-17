@@ -140,6 +140,45 @@ void best_fit (uint32_t tam_segmento){ //Busca el hueco mas chico donde entre el
 	    }
 }
 
+void worst_fit (uint32_t tam_segmento){
+	int segmento_asignado = -1;
+	    int mejor_ajuste = INT_MIN;
+	    segmento* segmento_actual;
+	    int espacio_libre;
+	    segmento* segmento_siguiente;
+	    uint32_t nueva_dir_base;
+
+	    // Buscar el hueco más grande que pueda contener el nuevo segmento
+	    for (int i = 0; i < list_size(memoria_usuario); i++) {
+	        segmento_actual = list_get(memoria_usuario, i);
+
+	        // Verificar si hay espacio suficiente entre el segmento actual y el siguiente
+	        if (i + 1 < list_size(memoria_usuario)) {
+	            segmento_siguiente = list_get(memoria_usuario, i + 1);
+	            espacio_libre = segmento_siguiente->direccion_base - (segmento_actual->direccion_limite + 1);
+
+	            if (espacio_libre >= tam_segmento && espacio_libre > mejor_ajuste) {
+	                segmento_asignado = segmento_actual->id_segmento + 1; // ID del nuevo segmento
+	                mejor_ajuste = espacio_libre;
+	                nueva_dir_base = (segmento_actual->direccion_limite) + 1;
+	            }
+	        }
+	    }
+
+	    if (segmento_asignado != -1) {
+	        // Crear el nuevo segmento y establecer sus direcciones
+	        segmento* nuevo_segmento = malloc(sizeof(segmento));
+	        nuevo_segmento->id_segmento = segmento_asignado;
+	        nuevo_segmento->tam_segmento = tam_segmento;
+	        nuevo_segmento->direccion_base = nueva_dir_base;//list_get(memoria_usuario, segmento_asignado - 1)->direccion_limite + 1;
+	        nuevo_segmento->direccion_limite = nuevo_segmento->direccion_base + tam_segmento - 1;
+
+	        // Insertar el nuevo segmento en la lista de memoria después del segmento anterior al segmento asignado
+	        list_add_in_index(memoria_usuario, segmento_asignado, nuevo_segmento);
+	    }
+
+}
+
 //                                    ACCESO A ESPACIO USUARIO
 
 
