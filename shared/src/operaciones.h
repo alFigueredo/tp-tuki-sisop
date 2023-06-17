@@ -34,8 +34,8 @@ typedef enum
 	OPEN,
 	CREATE,
 	TRUNCAR,
-	READ,
-	WRITE
+	F_READ,
+	f_WRITE
 }op_code;
 
 typedef struct

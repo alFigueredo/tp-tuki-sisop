@@ -1,5 +1,8 @@
 #include "filesystem.h"
 
+t_config* superBloque;
+t_bitarray *bitmap;
+
 int main(int argc, char** argv) {
 
 	if (argc < 2)
@@ -21,20 +24,62 @@ int main(int argc, char** argv) {
 
 	//Una vez realizada la coneccion a memoria levanto el bitmap de bloques y recorro FCBs
 	// Trabajo sobre file System exclyuyendo conexiones
-	int cantFCBs=0;/*
-	t_config* superBloque=iniciar_config(config_get_string_value(config,"PATH_SUPERBLOQUE"));
+
+	superBloque=iniciar_config(config_get_string_value(config,"PATH_SUPERBLOQUE"));
+
+	if (superBloque == NULL)
+	{
+	    log_error(logger, "Error al inicializar la configuración del superbloque");
+	    exit(EXIT_FAILURE);
+	}
+
+	size_t tamanioBitmap = config_get_int_value(superBloque, "BLOCK_COUNT") / 8;
+
+	// Abre el archivo Bitmap para trabajar con mmap desde la memoria
+	int fd_bitmap = open(config_get_string_value(config, "PATH_BITMAP"),O_RDWR);
+
+	if (fd_bitmap == -1)
+	{
+	    log_error(logger, "Error al abrir el archivo del bitmap");
+	    exit(EXIT_FAILURE);
+	}
+
+
+
+	void* intermedio = mmap(NULL, tamanioBitmap, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_SHARED, fd_bitmap, 0);
+	if (intermedio == MAP_FAILED)
+	{
+	    log_error(logger, "Error al mapear el archivo del bitmap");
+	    exit(EXIT_FAILURE);
+	}
+
+	//void* espacioBitmap = malloc(tamanioBitmap);
+	//fread(espacioBitmap,tamanioBitmap,1,archivoBitmap);
+	bitmap = bitarray_create_with_mode(intermedio, tamanioBitmap, LSB_FIRST);
+
+	if (bitmap == NULL)
+		{
+			log_error(logger, "Error al crear el bitmap");
+			exit(EXIT_FAILURE);
+		}
+
+	bitarray_destroy(bitmap);
+
+	if (msync(intermedio, tamanioBitmap, MS_SYNC) == 0)
+		{
+			log_info(logger, "Se escribió correctamente en el bitmap");
+		}
+		else
+		{
+			log_warning(logger, "No se pudo escribir correctamente en el bitmap");
+		}
+		munmap(intermedio,tamanioBitmap);
+		close(fd_bitmap);
+
+
+	/*
 	char **vectorDePathsPCBs = NULL;
-	t_bitarray* bitmap;
-	int tamanio_bitmap = ((config_get_int_value(superBloque,"BLOCK_COUNT"))/8);
-
-	//Abro el archivo Bitmap para luego trabajarlo con mmap desde memoria
-	int fd_bitmap = open(config_get_string_value(config,"PATH_BITMAP"),O_CREAT | O_RDWR);
-	void* intermedio = mmap(NULL,tamanio_bitmap,PROT_READ | PROT_WRITE,MAP_SHARED,fd_bitmap,0);
-
-	bitmap = bitarray_create_with_mode(intermedio, tamanio_bitmap, LSB_FIRST);
-	*/
-	char **vectorDePathsPCBs = NULL;
-
+	int cantFCBs=0;
 	//Guardo todas las rutas de los PCBs en un vector
 	log_info(logger, config_get_string_value(config,"PATH_FCB"));
 	cantFCBs = contarArchivosEnCarpeta(config_get_string_value(config,"PATH_FCB"),&vectorDePathsPCBs);
@@ -209,9 +254,9 @@ int truncarArchivo(char *nombre,char *carpeta, char ***vectoreRutas, int *cantid
 	int cantidadBloquesOriginal;
 	int cantidadBloquesNueva;
 
-	while (i<cantidadPaths)
+	while (i<*cantidadPaths)
 	{
-		configArchivoActual = iniciar_config(vectoreRutas[i]);
+		configArchivoActual = iniciar_config((*vectoreRutas)[i]);
 		if(strcmp(nombre,config_get_string_value(configArchivoActual,"NOMBRE_ARCHIVO")) == 0)
 		{
 			break;
@@ -228,25 +273,46 @@ int truncarArchivo(char *nombre,char *carpeta, char ***vectoreRutas, int *cantid
 
 	if (tamanioOriginal < tamanioNuevo)
 	{
-		agregarBloques(cantidadBloquesOriginal,cantidadBloquesNueva);
+		agregarBloques(cantidadBloquesOriginal,cantidadBloquesNueva,configArchivoActual);
 	}
 	else
 	{
-		sacarBloques(cantidadBloquesOriginal,cantidadBloquesNueva);
+		sacarBloques(cantidadBloquesOriginal,cantidadBloquesNueva,configArchivoActual);
 	}
 	return 1;
 }
 
-void sacarBloques(int cantidadBloquesOriginal ,int cantidadBloquesNueva)
+void sacarBloques(int cantidadBloquesOriginal ,int cantidadBloquesNueva,t_config* configArchivoActual)
 {
-	int cantidadBloquesAEliminar = cantidadBloquesOriginal - cantidadBloquesOriginal;
+	int cantidadBloquesAEliminar = cantidadBloquesNueva - cantidadBloquesOriginal;
+	uint32_t punteroIndirecto = config_get_int_value(configArchivoActual,"PUNTERO_INDIRECTO");
+	uint32_t punteroACadaBloque;
+	FILE *bloques = fopen(config_get_string_value(config,"PATH_BLOQUES"),"r+");
+	for(int i=0 ; i < cantidadBloquesAEliminar;i++)
+	{
+		void* bloqueTraido = malloc(config_get_int_value(superBloque,"BLOCK_SIZE"));
+		// Me muevo al final del bloque de punteros para eliminar puntero por puntero
+		fseek(bloques,(punteroIndirecto + 1) * config_get_int_value(superBloque,"BLOCK_SIZE"),SEEK_SET);
+		fseek(bloques,-sizeof(uint32_t),SEEK_CUR);
+		fread(&punteroACadaBloque,sizeof(uint32_t),1,bloques);
+		bitarray_clean_bit(bitmap,punteroACadaBloque);
+		l
+
+	}
 
 
 
 	return;
 }
-void agregarBloques(int cantidadBloquesOriginal ,int cantidadBloquesNueva)
+void agregarBloques(int cantidadBloquesOriginal ,int cantidadBloquesNueva,t_config* configArchivoActual)
 {
+	int cantidadBloquesAAGregar = cantidadBloquesNueva - cantidadBloquesOriginal;
+
+	//Busco los bloques disponibles en el bitmap:
+
+
+
+
 	return;
 }
 int dividirRedondeando(int numero1 , int numero2)

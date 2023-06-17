@@ -4,7 +4,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <commons/string.h>
+#include <commons/collections/list.h>
 #include "server.h"
+#include <operaciones.h>
+#include <limits.h>
 
 //STRUCTS
 typedef struct
@@ -19,19 +22,26 @@ typedef struct
 	char* algoritmo_asignacion;
 } archivo_configuracion;
 
-archivo_configuracion config_mem;
+extern archivo_configuracion config_mem;
 
 typedef struct
 {
-	char* base;
-	char* limite;
+	uint32_t id_segmento;
+	uint32_t tam_segmento; //BORRAR ???
+	uint32_t direccion_base;
+	uint32_t direccion_limite;
 
 }segmento;
 
+typedef enum {
+	M_READ,
+	M_WRITE
+}inst_mem;
+
 //VARIABLES
-void* memoria_usuario;
-t_list* tablas_segmentos;
-t_list* lista_huecos_libre;
+extern void* memoria_usuario;
+extern t_list* tablas_segmentos;
+extern t_list* lista_huecos_libre;
 //int contadorSegmentos;
 
 //FUNCIONES
