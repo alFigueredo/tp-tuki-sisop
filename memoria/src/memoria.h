@@ -19,13 +19,14 @@ typedef struct
 	int   cant_segmentos;
 	int   retardo_memoria;
 	int   retardo_compactacion;
-	char* algoritmo_asignacion;
+	algoritmo_asignacion algoritmo;
 } archivo_configuracion;
 
 extern archivo_configuracion config_mem;
 
 typedef struct
 {
+	unsigned int pid;
 	uint32_t id_segmento;
 	uint32_t tam_segmento; //BORRAR ???
 	uint32_t direccion_base;
@@ -37,6 +38,12 @@ typedef enum {
 	M_READ,
 	M_WRITE
 }inst_mem;
+
+typedef enum {
+	FIRST,
+	BEST,
+	WORST
+}algoritmo_asignacion;
 
 //VARIABLES
 extern void* memoria_usuario;

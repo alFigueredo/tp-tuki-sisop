@@ -48,7 +48,8 @@ void cargar_config (t_config* archivo){
 	config_mem.cant_segmentos       = config_get_int_value    (config, "CANT_SEGMENTOS");
 	config_mem.retardo_memoria      = config_get_int_value    (config, "RETARDO_MEMORIA");
 	config_mem.retardo_compactacion = config_get_int_value    (config, "RETARDO_COMPACTACION");
-	config_mem.algoritmo_asignacion = config_get_string_value (config, "ALGORITMO_ASIGNACION");
+	config_mem.algoritmo            = config_get_int_value    (config, "ALGORITMO_ASIGNACION");
+	//si tomo un valor de config como si fuera un enum, seria un int ???
 }
 
 void iniciar_memoria (){
@@ -71,11 +72,27 @@ void iniciar_memoria (){
 }
 
 void iniciar_estructuras(){
+	pcb* pcb_proceso = recibir_pcb(); //!!!
+	log_info (logger, "Creacion del Proceso %u",pcb_proceso->pid);
+
+	for (uint32_t var = 0; var < config_mem.cant_segmentos; ++var) {
+		//mutex
+		switch(config_mem.algoritmo){
+			case FIRST:
+				first_fit (pcb_proceso->pid, /*tamanio seg*/); // nos e q  tamanio !!!
+			case BEST:
+				best_fit (pcb_proceso->pid, /*tamanio seg*/);
+			case WORST:
+				worst_fit(pcb_proceso->pid, /*tamanio seg*/);
+		}
+		//mutex
+
+	}
 
 }
 
 //                                    ALGORITMOS DE SEGMENTACION
-void first_fit (uint32_t tam_segmento){ //Busca el primer hueco disponible desde el comienzo de memoria
+void first_fit (unsigned int pid_proceso, uint32_t tam_segmento){ //Busca el primer hueco disponible desde el comienzo de memoria
 	int segmento_asignado = -1;
 	segmento* segmento_actual;
 	segmento* segmento_siguiente;
@@ -98,13 +115,15 @@ void first_fit (uint32_t tam_segmento){ //Busca el primer hueco disponible desde
 			    nuevo_segmento->direccion_base = segmento_actual->direccion_limite + 1;
 			    nuevo_segmento->direccion_limite = nuevo_segmento->direccion_base + tam_segmento - 1;
 			    list_add_in_index(memoria_usuario, i + 1, nuevo_segmento);
+			    log_info(logger, "PID: %u - Crear Segmento: %d - Base: %d - Tamanio: %d", pid_proceso , segmento_asignado, nuevo_segmento->direccion_base, tam_segmento);
+
 			    break;
 			}
 		}
 	}
 }
 
-void best_fit (uint32_t tam_segmento){ //Busca el hueco mas chico donde entre el proceso
+void best_fit (unsigned int pid_proceso, uint32_t tam_segmento){ //Busca el hueco mas chico donde entre el proceso
 	int segmento_asignado = -1;
 	int mejor_ajuste = INT_MAX;
 	segmento* segmento_actual;
@@ -137,10 +156,11 @@ void best_fit (uint32_t tam_segmento){ //Busca el hueco mas chico donde entre el
 
 	        // Insertar el nuevo segmento en la lista de memoria después del segmento anterior al segmento asignado
 	        list_add_in_index(memoria_usuario, segmento_asignado, nuevo_segmento);
+	        log_info(logger, "PID: %u - Crear Segmento: %d - Base: %d - Tamanio: %d", pid_proceso , segmento_asignado, nuevo_segmento->direccion_base, tam_segmento);
 	    }
 }
 
-void worst_fit (uint32_t tam_segmento){
+void worst_fit (unsigned int pid_proceso, uint32_t tam_segmento){
 	int segmento_asignado = -1;
 	    int mejor_ajuste = INT_MIN;
 	    segmento* segmento_actual;
@@ -175,6 +195,7 @@ void worst_fit (uint32_t tam_segmento){
 
 	        // Insertar el nuevo segmento en la lista de memoria después del segmento anterior al segmento asignado
 	        list_add_in_index(memoria_usuario, segmento_asignado, nuevo_segmento);
+	        log_info(logger, "PID: %u - Crear Segmento: %d - Base: %d - Tamanio: %d", pid_proceso , segmento_asignado, nuevo_segmento->direccion_base, tam_segmento);
 	    }
 
 }
