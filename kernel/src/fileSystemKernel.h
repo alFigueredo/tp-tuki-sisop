@@ -8,13 +8,15 @@
 
 typedef struct
 {
-	FILE*
+	char *nombreDeArchivo;
 	int disponible;
-}tablaGlobalDeArchivos;
+	t_queue* procesosBloqueados;
+	struct Archivo *siguiente;
+}Archivo;
 
+extern t_list* archivosAbiertos;
 
-
-
+void archivoKernel(pcb*, char*)
 
 
 
