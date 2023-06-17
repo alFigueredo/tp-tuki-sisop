@@ -28,6 +28,6 @@ int abrirArchivo(char *nombre, char **vectorDePaths,int cantidadPaths);
 int crearArchivo(char *nombre,char *carpeta, char ***vectoreRutas, int *cantidadPaths);
 int truncarArchivo(char *nombre,char *carpeta, char ***vectoreRutas, int *cantidadPaths, int tamanioNuevo);
 int dividirRedondeando(int numero1 , int numero2);
-void sacarBloques(int cantidadBloquesOriginal ,int cantidadBloquesNueva,t_config* configArchivoActual);
+void sacarBloques(int cantidadBloquesOriginal ,int cantidadBloquesNueva,t_config* configArchivoActual,int tamanioOriginal);
 void agregarBloques(int cantidadBloquesOriginal ,int cantidadBloquesNueva,t_config* configArchivoActual);
 #endif /* FILESYSTEM_H_ */

@@ -3,7 +3,8 @@
 t_config* superBloque;
 t_bitarray *bitmap;
 
-int main(int argc, char** argv) {
+int main(int argc, char** argv)
+{
 
 	if (argc < 2)
 	{
@@ -190,6 +191,7 @@ int contarArchivosEnCarpeta(const char *carpeta, char ***vectoreRutas) {
 }
 int abrirArchivo(char *nombre, char **vectorDePaths,int cantidadPaths)
 {
+	log_info(logger,"Abrir Archivo: %s",nombre);
 	int i=0;
 	t_config* config_inicial;
 	while (i<cantidadPaths)
@@ -207,6 +209,7 @@ int abrirArchivo(char *nombre, char **vectorDePaths,int cantidadPaths)
 }
 int crearArchivo(char *nombre,char *carpeta, char ***vectoreRutas, int *cantidadPaths)
 {
+	log_info(logger, "Crear Archivo: %s",nombre);
 	FILE* archivo;
 	t_config* configArchivo;
 	char **vectorPruebas;
@@ -245,6 +248,7 @@ int crearArchivo(char *nombre,char *carpeta, char ***vectoreRutas, int *cantidad
 
 int truncarArchivo(char *nombre,char *carpeta, char ***vectoreRutas, int *cantidadPaths, int tamanioNuevo)
 {
+	log_info(logger, "Truncar Archivo: %s - Tamaño: %d",nombre,tamanioNuevo);
 	int i=0;
 	t_config* configArchivoActual;
 	t_config* configSuperBloque;
@@ -277,26 +281,32 @@ int truncarArchivo(char *nombre,char *carpeta, char ***vectoreRutas, int *cantid
 	}
 	else
 	{
-		sacarBloques(cantidadBloquesOriginal,cantidadBloquesNueva,configArchivoActual);
+		sacarBloques(cantidadBloquesOriginal,cantidadBloquesNueva,configArchivoActual, tamanioOriginal);
 	}
 	return 1;
 }
 
-void sacarBloques(int cantidadBloquesOriginal ,int cantidadBloquesNueva,t_config* configArchivoActual)
+void sacarBloques(int cantidadBloquesOriginal ,int cantidadBloquesNueva,t_config* configArchivoActual,int tamanioOriginal)
 {
 	int cantidadBloquesAEliminar = cantidadBloquesNueva - cantidadBloquesOriginal;
 	uint32_t punteroIndirecto = config_get_int_value(configArchivoActual,"PUNTERO_INDIRECTO");
 	uint32_t punteroACadaBloque;
 	FILE *bloques = fopen(config_get_string_value(config,"PATH_BLOQUES"),"r+");
+
+	// Me muevo al final del bloque de punteros para eliminar puntero por puntero
+
+	fseek(bloques,punteroIndirecto * config_get_int_value(superBloque,"BLOCK_SIZE"),SEEK_SET);
+	fseek(bloques,sizeof(uint32_t)*(cantidadBloquesOriginal - 1), SEEK_CUR);
+
 	for(int i=0 ; i < cantidadBloquesAEliminar;i++)
 	{
-		void* bloqueTraido = malloc(config_get_int_value(superBloque,"BLOCK_SIZE"));
-		// Me muevo al final del bloque de punteros para eliminar puntero por puntero
-		fseek(bloques,(punteroIndirecto + 1) * config_get_int_value(superBloque,"BLOCK_SIZE"),SEEK_SET);
+
+
 		fseek(bloques,-sizeof(uint32_t),SEEK_CUR);
 		fread(&punteroACadaBloque,sizeof(uint32_t),1,bloques);
 		bitarray_clean_bit(bitmap,punteroACadaBloque);
-		l
+		fseek(bloques,-sizeof(uint32_t),SEEK_CUR);
+
 
 	}
 
