@@ -294,7 +294,7 @@ void sacarBloques(int cantidadBloquesOriginal ,int cantidadBloquesNueva,t_config
 	FILE *bloques = fopen(config_get_string_value(config,"PATH_BLOQUES"),"r+");
 
 	// Me muevo al final del bloque de punteros para eliminar puntero por puntero
-
+	log_info(logger,"Acceso Bloque - Archivo: %s - Bloque Archivo: <NUMERO BLOQUE ARCHIVO> - Bloque File System <NUMERO BLOQUE FS>",config_get_string_value(config,"NOMBRE_ARCHIVO"));
 	fseek(bloques,punteroIndirecto * config_get_int_value(superBloque,"BLOCK_SIZE"),SEEK_SET);
 	fseek(bloques,sizeof(uint32_t)*(cantidadBloquesOriginal - 1), SEEK_CUR);
 
@@ -304,7 +304,9 @@ void sacarBloques(int cantidadBloquesOriginal ,int cantidadBloquesNueva,t_config
 
 		fseek(bloques,-sizeof(uint32_t),SEEK_CUR);
 		fread(&punteroACadaBloque,sizeof(uint32_t),1,bloques);
+		log_info(logger,"Acceso a Bitmap - Bloque: %d - Estado: %d",punteroACadaBloque,bitarray_test_bit(bitmap,punteroACadaBloque));
 		bitarray_clean_bit(bitmap,punteroACadaBloque);
+		log_info(logger,"Bitmap modificado - Bloque: %d Estado nuevo: %d ",punteroACadaBloque,bitarray_test_bit(bitmap,punteroACadaBloque));
 		fseek(bloques,-sizeof(uint32_t),SEEK_CUR);
 
 
