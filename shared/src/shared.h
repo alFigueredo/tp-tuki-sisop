@@ -96,6 +96,8 @@ t_list* recibir_paquete(int);
 void delay(int);
 void enviar_pcb(int, pcb*, op_code);
 void recibir_pcb(t_list*, pcb*);
+void enviar_instruccion(int, t_instruction*, op_code);
+void recibir_instruccion(t_list*, t_instruction*);
 void replace_r_with_0(char*);
 
 #endif /* SHARED_H_ */

@@ -58,9 +58,11 @@ op_code interpretar_instrucciones(pcb* proceso) {
 			case I_MOV_IN:
 				instruccion_mov_in(registros, parsed, proceso);
 				break;
+				// return MOV_IN;
 			case I_MOV_OUT:
 				instruccion_mov_out(registros, parsed, proceso);
 				break;
+				// return MOV_OUT;
 			case I_IO:
 				instruccion_i_o(parsed, proceso);
 				destruir_diccionarios(instrucciones, registros);
