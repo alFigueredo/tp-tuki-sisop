@@ -67,6 +67,10 @@ void esperar_cliente(int socket_servidor){
 
 void atender_cliente(int* socket_cliente){
 	t_list *lista;
+	t_instruction* proceso;
+	char *instruccion;
+	char *nombreArchivo;
+	char **porqueria;
 	while (1) {
 		int cod_op = recibir_operacion(*socket_cliente);
 		switch (cod_op) {
@@ -78,6 +82,25 @@ void atender_cliente(int* socket_cliente){
 			log_info(logger, "Me llegaron los siguientes valores:");
 			list_iterate(lista, (void*) iterator);
 			list_clean_and_destroy_elements(lista, free);
+			break;
+		case F_OPEN:
+			lista = recibir_paquete(*socket_cliente);
+			proceso = malloc(sizeof(t_instruction));
+			recibir_instruccion(lista,proceso);
+			instruccion = proceso->instruccion;
+
+			porqueria=string_split(instruccion, " ");
+			nombreArchivo= porqueria[1];
+
+
+			if(abrirArchivo(nombreArchivo,vectorDePathsPCBs,cantidadPaths))
+			{
+				enviar_operacion(*socket_cliente, OK);
+			}
+			else
+			{
+				enviar_operacion(*socket_cliente, EL_ARCHIVO_NO_EXISTE_PAAAAAAA);
+			}
 			break;
 		case -1:
 			log_warning(logger, "El cliente se desconecto. Terminando conexion");

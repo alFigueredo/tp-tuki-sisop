@@ -2,6 +2,8 @@
 
 t_config* superBloque;
 t_bitarray *bitmap;
+char **vectorDePathsPCBs;
+int cantidadPaths;
 
 int main(int argc, char** argv)
 {

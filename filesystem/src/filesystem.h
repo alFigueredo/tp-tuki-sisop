@@ -19,6 +19,7 @@
 extern char **vectorDePathsPCBs;
 extern t_config* superBloque;
 extern t_bitarray *bitmap;
+extern int cantidadPaths;
 
 void terminar_programa(t_log*, t_config*,char**);
 int recorrerFCBs();

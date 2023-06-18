@@ -40,7 +40,8 @@ typedef enum
 	DELETE_SEGMENT,
 	MOV_IN,
 	MOV_OUT,
-	OK
+	OK,
+	EL_ARCHIVO_NO_EXISTE_PAAAAAAA
 }op_code;
 
 typedef struct
