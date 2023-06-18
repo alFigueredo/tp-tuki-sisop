@@ -20,7 +20,7 @@
 #include <assert.h>
 #include <pthread.h>
 #include <semaphore.h>
-#include <operaciones.h>
+#include <shared.h>
 
 extern int conexion_cpu;
 extern int conexion_memoria;
