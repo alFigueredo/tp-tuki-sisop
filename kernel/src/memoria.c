@@ -6,7 +6,7 @@ bool id_valido(int id, int tamanio){
 }
 
 bool gestionar_creacion(int id_segmento,int tamanio_solicitado,t_list* tabla_segmentos, t_paquete *paquete){
-    if(1 == 0 && tamanio_solicitado <= 2){ // 1 es tamanio_actual del segmento y 2 tamanio_maximo
+    if(1 == 0 && tamanio_solicitado <= 2){ // 1 es tamanio_actual del segmento y 2 tamanio_maximo = LIMITE - BASE - TAMANIO_ACTUAL
         agregar_a_paquete(paquete,tamanio_solicitado, sizeof(tamanio_solicitado));
         enviar_paquete(paquete,conexion_memoria);
         return true;

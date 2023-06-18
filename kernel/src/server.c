@@ -88,10 +88,14 @@ void atender_cliente(int* socket_cliente){
 			case NEW:
 				lista = recibir_paquete(*socket_cliente);
 				generar_proceso(lista, socket_cliente);
-				new_a_ready();
+				enviar_pcb(conexion_memoria,((pcb*)queue_peek(qnew)),NEW);
+
+
+				new_a_ready(); 
 				
 				// list_destroy_and_destroy_elements(lista, free);
 				break;
+
 			case -1:
 				log_warning(logger, "El cliente se desconecto. Terminando conexion");
 				free(socket_cliente);
