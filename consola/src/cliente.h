@@ -11,7 +11,7 @@
 #include <commons/log.h>
 #include <commons/config.h>
 #include <commons/process.h>
-#include <operaciones.h>
+#include <shared.h>
 
 int crear_conexion(char*, char*);
 void send_handshake(int);

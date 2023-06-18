@@ -1,5 +1,5 @@
-#ifndef OPERACIONES_H_
-#define OPERACIONES_H_
+#ifndef SHARED_H_
+#define SHARED_H_
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -30,12 +30,17 @@ typedef enum
 	IO_BLOCK,
 	WAIT,
 	SIGNAL,
-	INIT,
-	OPEN,
-	CREATE,
-	TRUNCAR,
+	F_OPEN,
+	F_CREATE,
+	F_TRUNCATE,
 	F_READ,
-	f_WRITE
+	F_WRITE,
+	F_SEEK,
+	CREATE_SEGMENT,
+	DELETE_SEGMENT,
+	MOV_IN,
+	MOV_OUT,
+	OK
 }op_code;
 
 typedef struct
@@ -77,6 +82,12 @@ typedef struct {
 	t_list* archivos_abiertos;
 }pcb;
 
+typedef struct {
+	unsigned int pid;
+	char* instruccion;
+	t_list* tabla_segmentos;
+} t_instruction;
+
 int recibir_operacion(int);
 void* serializar_paquete(t_paquete*, int);
 void crear_buffer(t_paquete*);
@@ -94,4 +105,4 @@ void enviar_pcb(int, pcb*, op_code);
 void recibir_pcb(t_list*, pcb*);
 void replace_r_with_0(char*);
 
-#endif /* OPERACIONES_H_ */
+#endif /* SHARED_H_ */
