@@ -91,11 +91,19 @@ void atender_cliente(int* socket_cliente){
 			proceso = malloc(sizeof(pcb));
 			proceso->instrucciones=NULL;
 			recibir_pcb(lista, proceso);
-			enviar_pcb(*socket_cliente, proceso, (int)interpretar_instrucciones(proceso));
-			list_destroy_and_destroy_elements(lista, free);
-			list_destroy_and_destroy_elements(proceso->instrucciones, free);
-			free(proceso->tiempo_llegada_ready);
-			free(proceso);
+			op_code codigo = interpretar_instrucciones(proceso);
+			switch (codigo) {
+				case MOV_IN:
+					break;
+				case MOV_OUT:
+					break;
+				default:
+					enviar_pcb(*socket_cliente, proceso, codigo);
+					list_destroy_and_destroy_elements(lista, free);
+					list_destroy_and_destroy_elements(proceso->instrucciones, free);
+					free(proceso->tiempo_llegada_ready);
+					free(proceso);
+			}
 			break;
 		case -1:
 			log_warning(logger, "El cliente se desconecto. Terminando conexion");
