@@ -71,32 +71,64 @@ void iniciar_memoria (){
 	log_info (logger,"Memoria inicializada.");
 }
 
-void iniciar_estructuras(){
-	pcb* pcb_proceso = recibir_pcb(); //!!!
+void iniciar_estructuras(pcb* pcb_proceso, uint32_t tamanio_seg){
 	log_info (logger, "Creacion del Proceso %u",pcb_proceso->pid);
 
-	for (uint32_t var = 0; var < config_mem.cant_segmentos; ++var) {
+	for (int var = 0; var < config_mem.cant_segmentos; ++var) {
+
+		if (hay_espacio_disponible(tamanio_seg)){
 		//mutex
-		switch(config_mem.algoritmo){
-			case FIRST:
-				first_fit (pcb_proceso->pid, /*tamanio seg*/); // nos e q  tamanio !!!
-			case BEST:
-				best_fit (pcb_proceso->pid, /*tamanio seg*/);
-			case WORST:
-				worst_fit(pcb_proceso->pid, /*tamanio seg*/);
+			switch(config_mem.algoritmo){
+				case FIRST:
+					first_fit (pcb_proceso->pid, tamanio_seg);
+					break;
+				case BEST:
+					best_fit (pcb_proceso->pid, tamanio_seg);
+					break;
+				case WORST:
+					worst_fit(pcb_proceso->pid, tamanio_seg);
+					break;
+			}
+		//mutex
 		}
-		//mutex
+		else {
+			log_error (logger, "No hay espacio disponible");
+		}
 
 	}
 
 }
 
 //                                    ALGORITMOS DE SEGMENTACION
+
+int hay_espacio_disponible(int tam_segmento) {
+    int espacio_disponible;
+    segmento* segmento_actual;
+    segmento* segmento_siguiente;
+
+    for (int i = 0; i < list_size(memoria_usuario); i++) { 																//recorre toda la memoria
+    		segmento_actual = list_get(memoria_usuario, i); 															// toma un segmento
+
+    		if (i + 1 < list_size(memoria_usuario)) { 																	// si no es el ultimo
+    			segmento_siguiente = list_get(memoria_usuario, i + 1);													// toma el siguiente
+    			espacio_disponible = (segmento_siguiente->direccion_base) - (segmento_actual->direccion_limite + 1);	// a la direccion base de ese segmento le resta la direccion limite del seg actual + 1, se le suma uno pq seria donde supuestamente empieza el otro segmento
+
+    			if (espacio_disponible >= tam_segmento) {																// despues de calcular la resta, se fija si entra el segmento en ese lugar (si hay espacio en la memoria)
+    				return 1;
+    			}
+    		}
+
+    return 0;
+}
+
+
 void first_fit (unsigned int pid_proceso, uint32_t tam_segmento){ //Busca el primer hueco disponible desde el comienzo de memoria
 	int segmento_asignado = -1;
 	segmento* segmento_actual;
 	segmento* segmento_siguiente;
 	uint32_t espacio_libre;
+	segmento* nuevo_segmento;
+
 
 	for (int i = 0; i < list_size(memoria_usuario); i++) {
 
@@ -109,10 +141,11 @@ void first_fit (unsigned int pid_proceso, uint32_t tam_segmento){ //Busca el pri
 
 			if (espacio_libre >= tam_segmento) {
 				segmento_asignado = segmento_actual->id_segmento + 1; // ID del nuevo segmento
-				segmento* nuevo_segmento = malloc(sizeof(segmento));
-			    nuevo_segmento->id_segmento = segmento_asignado;
-			    nuevo_segmento->tam_segmento = tam_segmento;
-			    nuevo_segmento->direccion_base = segmento_actual->direccion_limite + 1;
+				nuevo_segmento = malloc(sizeof(segmento));
+				nuevo_segmento->pid              = pid_proceso;
+			    nuevo_segmento->id_segmento      = segmento_asignado;
+			    nuevo_segmento->tam_segmento     = tam_segmento;
+			    nuevo_segmento->direccion_base   = segmento_actual->direccion_limite + 1;
 			    nuevo_segmento->direccion_limite = nuevo_segmento->direccion_base + tam_segmento - 1;
 			    list_add_in_index(memoria_usuario, i + 1, nuevo_segmento);
 			    log_info(logger, "PID: %u - Crear Segmento: %d - Base: %d - Tamanio: %d", pid_proceso , segmento_asignado, nuevo_segmento->direccion_base, tam_segmento);
@@ -200,21 +233,17 @@ void worst_fit (unsigned int pid_proceso, uint32_t tam_segmento){
 
 }
 
-//                                    ACCESO A ESPACIO USUARIO
+//                                    ACCESO A ESPACIO USUARIO - COMENTADO PQ NO SE COMO LLEGA LA INFO
 
+/*
+void manejo_instrucciones (inst_mem tipo_instruccion, uint32_t dir_dada, char* origen, uint32_t nuevo_valor,t_list* instrucciones, int* socket_cliente){
+	//inst_mem tipo_instruccion = *(inst_mem *) list_get (instrucciones,0);
+	//uint32_t dir_dada = *(uint32_t*) list_get(instrucciones,1);                                                             //Direccion fisica dada por CPU o FS
 
-void manejo_instrucciones (t_list* instrucciones, int* socket_cliente){
-	inst_mem tipo_instruccion = *(inst_mem *) list_get (instrucciones,0);
-	uint32_t dir_dada = *(uint32_t*) list_get(instrucciones,1);                                                             //Direccion fisica dada por CPU o FS
 
 	uint32_t valor;
-	uint32_t nuevo_valor;
+//	uint32_t nuevo_valor;
 	//int boolEsc;
-
-
-	/*  Tanto CPU como File System pueden, dada una dirección física, solicitar accesos al espacio
-		 de usuario de Memoria.
-		 Para simular la realidad y la velocidad de los accesos a Memoria, cada acceso al espacio de usuario tendrá un tiempo de espera en milisegundos definido por archivo de configuración*/
 
 
 		switch (tipo_instruccion){
@@ -224,12 +253,13 @@ void manejo_instrucciones (t_list* instrucciones, int* socket_cliente){
 			valor = leer_memoria (dir_dada);                                               		   //Busca y retorna el valor en la direccion de memoria dada
 			log_info (logger, "Se leyo el valor %d en la posicion %d", valor, dir_dada);
 
+
 			//AGREGAR TD LO DE PAQUETES !!!
 
 			break;
 
 		case M_WRITE:                                                                                // Ante un pedido de escritura, escribir lo indicado en la posición pedida y responder un mensaje de ‘OK’.
-			nuevo_valor = *(uint32_t*) list_get(instrucciones,2);
+			//nuevo_valor = *(uint32_t*) list_get(instrucciones,2);
 
 			usleep (config_mem.retardo_memoria * 1000);
 			escribir_memoria (nuevo_valor, dir_dada);
@@ -242,8 +272,8 @@ void manejo_instrucciones (t_list* instrucciones, int* socket_cliente){
 					break;
 		}
 
-}
-
+}*/
+/*
 //no dividir funcion ???
 uint32_t leer_memoria (uint32_t direccion){
 	uint32_t valorLeido;
@@ -260,7 +290,7 @@ void escribir_memoria (uint32_t valor, uint32_t direccion) {
 		memcpy (memoria_usuario + direccion, &valor, sizeof(uint32_t));
 		//MUTEX SC !!!
 }
-
+*/
 
 void terminar_memoria(t_log* logger, t_config* config, int socket)
 {

@@ -8,6 +8,7 @@
 #include "server.h"
 #include <operaciones.h>
 #include <limits.h>
+#include <stdbool.h>
 
 //STRUCTS
 typedef struct
@@ -54,9 +55,14 @@ extern t_list* lista_huecos_libre;
 //FUNCIONES
 void iniciar_memoria ();
 void cargar_config (t_config* );
-void terminar_memoria(t_log*, t_config*,int);
-void manejo_instrucciones (t_list* , int* );
+void iniciar_estructuras(pcb*, uint32_t);
+int hay_espacio_disponible(int);
+void first_fit (unsigned int, uint32_t);
+void best_fit (unsigned int, uint32_t);
+void worst_fit (unsigned int, uint32_t);
+//void manejo_instrucciones (t_list* , int* );
 uint32_t leer_memoria (uint32_t );
 void escribir_memoria (uint32_t , uint32_t );
+void terminar_memoria(t_log*, t_config*,int);
 
 #endif /* MEMORIA_H_ */
