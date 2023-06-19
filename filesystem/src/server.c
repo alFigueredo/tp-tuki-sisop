@@ -102,6 +102,25 @@ void atender_cliente(int* socket_cliente){
 				enviar_operacion(*socket_cliente, EL_ARCHIVO_NO_EXISTE_PAAAAAAA);
 			}
 			break;
+		case F_CREATE:
+			lista = recibir_paquete(*socket_cliente);
+			proceso = malloc(sizeof(t_instruction));
+			recibir_instruccion(lista,proceso);
+			instruccion = proceso->instruccion;
+
+			porqueria=string_split(instruccion, " ");
+			nombreArchivo= porqueria[1];
+			if(crearArchivo(nombreArchivo, config_get_string_value(config,"PATH_FCB"), &vectorDePathsPCBs, &cantidadPaths))
+			{
+				enviar_operacion(*socket_cliente, OK);
+			}
+			else
+			{
+				log_error(logger,
+						"No se pudo crear el archivo pibe. Algo se rompio zarpado");
+			}
+
+			break;
 		case -1:
 			log_warning(logger, "El cliente se desconecto. Terminando conexion");
 			free(socket_cliente);

@@ -14,6 +14,7 @@
 #include <pthread.h>
 #include <shared.h>
 #include "cliente.h"
+#include "filesystem.h"
 
 int iniciar_servidor(char*);
 void recv_handshake(int);
