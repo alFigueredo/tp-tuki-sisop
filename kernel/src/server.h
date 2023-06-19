@@ -13,8 +13,9 @@
 #include <string.h>
 #include <assert.h>
 #include <pthread.h>
-#include "recursos.h"
 #include "cliente.h"
+#include "memoria.h"
+
 
 int iniciar_servidor(char*);
 void recv_handshake(int);

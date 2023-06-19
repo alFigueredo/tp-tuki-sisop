@@ -32,7 +32,8 @@ typedef enum
 	SIGNAL,
 	INIT,
 	CREATE_SEGMENT,
-	DELETE_SEGMENT
+	DELETE_SEGMENT,
+	COMPACTACION
 }op_code;
 
 typedef struct
