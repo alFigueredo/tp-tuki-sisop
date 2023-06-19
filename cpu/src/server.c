@@ -61,6 +61,7 @@ void esperar_cliente(int socket_servidor){
 	   pthread_t thread;
 	   int *socket_cliente = malloc(sizeof(int));
 	   *socket_cliente = accept(socket_servidor, NULL, NULL);
+	   conexion_kernel = *socket_cliente;
 	   log_info(logger, "¡Se conecto un cliente!");
 	   recv_handshake(*socket_cliente);
 	   pthread_create(&thread,
@@ -73,7 +74,6 @@ void esperar_cliente(int socket_servidor){
 
 void atender_cliente(int* socket_cliente){
 	t_list *lista;
-	pcb* proceso;
 	while (1) {
 		int cod_op = recibir_operacion(*socket_cliente);
 		switch (cod_op) {
@@ -91,19 +91,12 @@ void atender_cliente(int* socket_cliente){
 			proceso = malloc(sizeof(pcb));
 			proceso->instrucciones=NULL;
 			recibir_pcb(lista, proceso);
-			op_code codigo = interpretar_instrucciones(proceso);
-			switch (codigo) {
-				case MOV_IN:
-					break;
-				case MOV_OUT:
-					break;
-				default:
-					enviar_pcb(*socket_cliente, proceso, codigo);
-					list_destroy_and_destroy_elements(lista, free);
-					list_destroy_and_destroy_elements(proceso->instrucciones, free);
-					free(proceso->tiempo_llegada_ready);
-					free(proceso);
-			}
+			interpretar_instrucciones(proceso);
+			list_destroy_and_destroy_elements(lista, free);
+			break;
+		case EXIT:
+			error_exit(proceso);
+			list_destroy_and_destroy_elements(lista, free);
 			break;
 		case -1:
 			log_warning(logger, "El cliente se desconecto. Terminando conexion");
