@@ -152,7 +152,8 @@ void instruccion_mov_in(char** parsed)
 		// error_exit(EXIT_SEG_FAULT);
 		return;
 	}
-	char* instruccion = string_from_format("%s %s %s", parsed[0], (char*)dictionary_get(registros, parsed[1]), dir_fisica);
+	char* instruccion = string_from_format("%s %s %s", parsed[0], parsed[1], dir_fisica);
+	// char* instruccion = string_from_format("%s %s %s", parsed[0], (char*)dictionary_get(registros, parsed[1]), dir_fisica);
 	char* ins_alloc = malloc(strlen(instruccion)+1);
 	strcpy(ins_alloc, instruccion);
 	list_replace_and_destroy_element(proceso->instrucciones, proceso->program_counter, ins_alloc, free);
