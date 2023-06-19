@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <commons/log.h>
+#include <commons/collections/list.h>
+#include <commons/collections/queue.h>
 
 typedef struct
 {

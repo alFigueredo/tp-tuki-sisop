@@ -97,7 +97,7 @@ void atender_servidor(int* socket_servidor){
 				lista = recibir_paquete(*socket_servidor);
 				recibir_pcb(lista, queue_peek(qexec));
 				instruccion = list_get(((pcb*)queue_peek(qexec))->instrucciones, ((pcb*)queue_peek(qexec))->program_counter-1);
-				if(abriArchivoKernel(lista, instruccion))
+				if(abriArchivoKernel(((pcb*)queue_peek(qexec)), instruccion))
 				{
 
 				//PUEDO HACER ESTO?????
@@ -119,7 +119,10 @@ void atender_servidor(int* socket_servidor){
 
 				break;
 			case F_CLOSE:
-
+				lista = recibir_paquete(*socket_servidor);
+				recibir_pcb(lista, queue_peek(qexec));
+				instruccion = list_get(((pcb*)queue_peek(qexec))->instrucciones, ((pcb*)queue_peek(qexec))->program_counter-1);
+				cerrarArchivoKernel(((pcb*)queue_peek(qexec)), instruccion);
 				break;
 			case EXIT:
 				lista = recibir_paquete(*socket_servidor);

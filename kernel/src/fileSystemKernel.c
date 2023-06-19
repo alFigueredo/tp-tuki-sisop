@@ -1,11 +1,13 @@
 #include "fileSystemKernel.h"
 
+t_list* archivosAbiertos;
+
 int abriArchivoKernel(pcb* proceso, char* instruccion)
 {
 	char** parsed = string_split(instruccion, " "); //Partes de la instruccion actual
 	char* nombreArchivo = parsed[1];
 	bool archivoExisteEnTabla = false;
-	Archivo* archivoActual = NULL;
+	Archivo* archivoActual = malloc(sizeof(Archivo));
 	int* punteroOriginal;
 	//verificar si el archivo esta en la tabla global.
 	for (int i = 0; i < list_size(archivosAbiertos); i++)
@@ -20,6 +22,8 @@ int abriArchivoKernel(pcb* proceso, char* instruccion)
 	if (!archivoExisteEnTabla)
 	{
 		//agrega el archivo a la lista global
+		archivoActual->nombreDeArchivo = nombreArchivo;
+		archivoActual->procesosBloqueados = queue_create();
 		archivoActual->puntero=0;
 		list_add(archivosAbiertos, archivoActual);
 		return 1;
@@ -27,7 +31,7 @@ int abriArchivoKernel(pcb* proceso, char* instruccion)
 	else
 	{
 		//agregar el proceso a la lista de procesos bloqueados por este archivo
-		list_add(archivoActual->procesosBloqueados, proceso);
+		archivoActual->procesosBloqueados = queue_create();
 		punteroOriginal=archivoActual->puntero;
 		archivoActual->puntero=0;
 		//agregar el archivo a la lista de archivos abiertos del proceso
@@ -45,9 +49,8 @@ void cerrarArchivoKernel(pcb* proceso, char* instruccion)
 	char** parsed = string_split(instruccion, " "); //Partes de la instruccion actual
 	char* nombreArchivo = parsed[1];
 	bool archivoExisteEnTabla = false;
-	Archivo* archivoActual = NULL;
-	int* punteroOriginal;
-	//verificar si el archivo esta en la tabla global.
+	Archivo* archivoActual = malloc(sizeof(Archivo));
+	//verificar si el archivo esta en la tabla global y obtenerlo.
 	for (int i = 0; i < list_size(archivosAbiertos); i++)
 	{
 	    archivoActual = list_get(archivosAbiertos, i);
@@ -57,6 +60,21 @@ void cerrarArchivoKernel(pcb* proceso, char* instruccion)
 	        break;
 	    }
 	}
+	//saca el archivo de la lista de archivos del proceso
+	list_remove_and_destroy_by_condition(proceso->archivos_abiertos,strcmp(archivoActual->nombreDeArchivo, nombreArchivo) == 0,free(Archivo));
+	if(queue_is_empty(archivoActual->procesosBloqueados))
+	{
+		//saca el archivo de la lista global
+		list_remove_and_destroy_by_condition(archivosAbiertos,strcmp(archivoActual->nombreDeArchivo, nombreArchivo) == 0,free(Archivo));
+	}
+	else
+	{
+		//saca de bloqueados al primer proceso de la cola de procesos bloqueados del archivo
+		block_a_ready(queue_peek(archivoActual->procesosBloqueados));
+		queue_pop(archivoActual->procesosBloqueados);
+	}
+
+
 }
 
 

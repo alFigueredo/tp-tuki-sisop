@@ -16,7 +16,7 @@ int main(int argc, char** argv) {
 	conexiones = dictionary_create();
 
     recursos = leerRecursos(config);
-    archivosAbiertos=list_create;
+    archivosAbiertos=list_create();
     // Recorrer la lista de recursos y realizar las operaciones necesarias
 
 
