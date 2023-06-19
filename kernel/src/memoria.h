@@ -13,7 +13,10 @@ bool gestionar_creacion(int id_segmento,int tamanio_solicitado,t_list* tabla_seg
 bool id_valido(int id, int tamanio);
 void enviar_segmento(char* instruccion, t_list* tabla_segmentos);
 void evaluar_respuesta(int resultado,int tipo_resultado);
-void actualizar_tablas(t_list* lista);
+pcb* buscar_proceso(int pid_buscado,t_list* lista);
+void actualizar_cola(t_queue* cola,t_queue* cola_copia, t_list* lista_update);
+void actualizar_tablas(t_list* lista_update);
+
 
 #endif /* MEMORIA_H_ */
 
