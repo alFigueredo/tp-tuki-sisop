@@ -107,6 +107,7 @@ void atender_servidor(int* socket_servidor){
 
 
 				}
+				enviar_pcb()
 				list_destroy_and_destroy_elements(lista, free);
 				break;
 			case EL_ARCHIVO_NO_EXISTE_PAAAAAAA:
@@ -123,6 +124,14 @@ void atender_servidor(int* socket_servidor){
 				recibir_pcb(lista, queue_peek(qexec));
 				instruccion = list_get(((pcb*)queue_peek(qexec))->instrucciones, ((pcb*)queue_peek(qexec))->program_counter-1);
 				cerrarArchivoKernel(((pcb*)queue_peek(qexec)), instruccion);
+				list_destroy_and_destroy_elements(lista, free);
+				break;
+			case F_SEEK:
+				lista = recibir_paquete(*socket_servidor);
+				recibir_pcb(lista, queue_peek(qexec));
+				instruccion = list_get(((pcb*)queue_peek(qexec))->instrucciones, ((pcb*)queue_peek(qexec))->program_counter-1);
+				buscarEnArchivo(((pcb*)queue_peek(qexec)), instruccion);
+				list_destroy_and_destroy_elements(lista, free);
 				break;
 			case EXIT:
 				lista = recibir_paquete(*socket_servidor);

@@ -20,7 +20,7 @@ extern t_list* archivosAbiertos;
 
 int abrirArchivoKernel(pcb*, char*);
 void cerrarArchivoKernel(pcb*, char*);
-
+void buscarEnArchivo(pcb*, char*);
 
 
 

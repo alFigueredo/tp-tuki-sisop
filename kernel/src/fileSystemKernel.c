@@ -26,6 +26,7 @@ int abriArchivoKernel(pcb* proceso, char* instruccion)
 		archivoActual->procesosBloqueados = queue_create();
 		archivoActual->puntero=0;
 		list_add(archivosAbiertos, archivoActual);
+		enviar_pcb(conexion_cpu, proceso, EXEC);
 		return 1;
 	}
 	else
@@ -76,6 +77,24 @@ void cerrarArchivoKernel(pcb* proceso, char* instruccion)
 
 
 }
+
+void buscarEnArchivo(pcb* proceso, char* instruccion)
+{
+	char** parsed = string_split(instruccion, " "); //Partes de la instruccion actual
+	char* nombreArchivo = parsed[1];
+	int numero = atoi(parsed[2]);
+	Archivo* archivoActual = malloc(sizeof(Archivo));
+	for (int i = 0; i < list_size(archivosAbiertos); i++)
+		{
+		    archivoActual = list_get(archivosAbiertos, i);
+		    if (strcmp(archivoActual->nombreDeArchivo, nombreArchivo) == 0)
+		    {
+		        break;
+		    }
+		}
+	archivoActual->puntero = numero;
+}
+
 
 
 
