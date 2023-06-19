@@ -28,7 +28,7 @@ extern archivo_configuracion config_mem;
 typedef struct
 {
 	unsigned int pid; //-1-> segmento 0 , -2-> hueco
-	//uint32_t id_segmento;
+	uint32_t id;
 	//int libre;				//bool
 	uint32_t tam_segmento; //BORRAR ???
 	uint32_t direccion_base;

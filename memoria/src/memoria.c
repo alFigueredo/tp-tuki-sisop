@@ -61,9 +61,9 @@ void iniciar_memoria()
 	tabla_segmentos_total = list_create();
 	huecos = list_create();
 
-	segmento *segmento_0 = (segmento*)malloc(sizeof(segmento));
+	segmento *segmento_0 = (segmento *)malloc(sizeof(segmento));
 	segmento_0->pid = -1;
-	//segmento_0->id_segmento = 0;
+	segmento_0->id = 0;
 	segmento_0->tam_segmento = config_mem.tam_segmento_0;
 	segmento_0->direccion_base = 0;
 	segmento_0->direccion_limite = config_mem.tam_segmento_0 - 1;
@@ -73,10 +73,11 @@ void iniciar_memoria()
 	log_info(logger, "Memoria inicializada.");
 }
 
-void iniciar_estructuras(pcb *pcb_proceso, uint32_t tamanio_seg)
+//                                    MANEJO DE SEGMENTOS
+
+void crear_segmento(unsigned int pid, uint32_t tamanio_seg)
 {
 	int sumatoria;
-	log_info(logger, "Creacion del Proceso %u", pcb_proceso->pid);
 
 	for (int var = 0; var < config_mem.cant_segmentos; ++var)
 	{
@@ -87,13 +88,13 @@ void iniciar_estructuras(pcb *pcb_proceso, uint32_t tamanio_seg)
 			switch (config_mem.algoritmo)
 			{
 			case FIRST:
-				first_fit(pcb_proceso->pid, tamanio_seg);
+				first_fit(pid, tamanio_seg);
 				break;
 			case BEST:
-				best_fit(pcb_proceso->pid, tamanio_seg);
+				best_fit(pid, tamanio_seg);
 				break;
 			case WORST:
-				worst_fit(pcb_proceso->pid, tamanio_seg);
+				worst_fit(pid, tamanio_seg);
 				break;
 			}
 			// mutex
@@ -102,34 +103,98 @@ void iniciar_estructuras(pcb *pcb_proceso, uint32_t tamanio_seg)
 		{
 			sumatoria = sumatoria_huecos;
 
-			if (sumatoria > 0)
+			if (sumatoria >= tamanio_seg)
 			{
-				//INFORMAR KERNEL COMPACTAR !!!
+				// INFORMAR KERNEL COMPACTAR !!!
 			}
 
 			else
 			{
-				//FALTA DE ESPACIO LIBRE KERNEL !!!
+				// FALTA DE ESPACIO LIBRE KERNEL !!!
 			}
 		}
 	}
 }
 
-//                                    MANEJO DE SEGMENTOS
+void eliminar_segmento(uint32_t id)
+{
+	segmento *seg;
 
-int comparar_segmentos(void* seg1, void* seg2) {
-    segmento* segmento1 = (segmento*)seg1;
-    segmento* segmento2 = (segmento*)seg2;
-
-    if (segmento1->direccion_base < segmento2->direccion_base) {
-        return -1;
-    } else if (segmento1->direccion_base > segmento2->direccion_base) {
-        return 1;
-    } else {
-        return 0;
-    }
+	for (int i = 0; i < list_size(tabla_segmentos_total); i++)
+	{
+		seg = list_get(tabla_segmentos_total, i);
+		if (seg->id == id)
+		{
+			list_remove(tabla_segmentos_total, i);
+			consolidar_segmentos(seg->direccion_base, seg->direccion_limite);
+			free(seg);
+			break; // Terminar el bucle una vez que se encuentra el segmento
+		}
+	}
 }
 
+void agrupar_huecos(uint32_t base, uint32_t limite) // seguro esta MAL
+{
+	segmento *hueco_izquierdo = NULL;
+	segmento *hueco_derecho = NULL;
+	segmento *hueco;
+	segmento *hueco_agrupado;
+
+	for (int i = 0; i < list_size(huecos); i++)
+	{
+		hueco = list_get(huecos, i);
+		if (hueco->direccion_limite == base)
+		{
+			hueco_izquierdo = hueco;
+			break;
+		}
+	}
+
+	for (int i = 0; i < list_size(huecos); i++)
+	{
+		hueco = list_get(huecos, i);
+		if (hueco->direccion_base == limite)
+		{
+			hueco_derecho = hueco;
+			break;
+		}
+	}
+
+	if (hueco_izquierdo != NULL && hueco_derecho != NULL)
+	{
+		list_remove(huecos, list_index_of(huecos, hueco_izquierdo));
+		list_remove(huecos, list_index_of(huecos, hueco_derecho));
+
+		hueco_agrupado = malloc(sizeof(segmento));
+		hueco_agrupado->direccion_base = hueco_derecho->direccion_limite;
+		hueco_agrupado->direccion_limite = hueco_izquierdo->direccion_limite;
+		free(hueco_derecho);
+		free(hueco_izquierdo);
+
+		list_add(huecos, hueco_agrupado);
+	}
+}
+
+int comparar_segmentos(void *seg1, void *seg2)
+{
+	segmento *segmento1 = (segmento *)seg1;
+	segmento *segmento2 = (segmento *)seg2;
+
+	if (segmento1->direccion_base < segmento2->direccion_base)
+	{
+		return -1;
+	}
+	else if (segmento1->direccion_base > segmento2->direccion_base)
+	{
+		return 1;
+	}
+	else
+	{
+		return 0;
+	}
+}
+
+/*
 void obtener_huecos_libres ()
 {
 	list_sort(tabla_segmentos_total, comparar_segmentos);
@@ -141,36 +206,36 @@ void obtener_huecos_libres ()
 	int direccion_limite_anterior = -1;
 
 	for (int i = 0; i < list_size(tabla_segmentos_total); i++) {
-	        segmento_actual = list_get(tabla_segmentos_total, i);
+			segmento_actual = list_get(tabla_segmentos_total, i);
 
-	        if (direccion_base_anterior < segmento_actual->direccion_base) // Hay un hueco libre entre los segmentos anteriores y el actual
-	        {
-	            hueco -> pid = -2;
-	            hueco->direccion_base = direccion_limite_anterior + 1;
-	            hueco->direccion_limite = segmento_actual->direccion_base - 1;
-	            hueco->tam_segmento = (segmento_actual->direccion_base - 1) - (direccion_limite_anterior + 1);
+			if (direccion_base_anterior < segmento_actual->direccion_base) // Hay un hueco libre entre los segmentos anteriores y el actual
+			{
+				hueco -> pid = -2;
+				hueco->direccion_base = direccion_limite_anterior + 1;
+				hueco->direccion_limite = segmento_actual->direccion_base - 1;
+				hueco->tam_segmento = (segmento_actual->direccion_base - 1) - (direccion_limite_anterior + 1);
 
-	            list_add (huecos,hueco);
-	        }
+				list_add (huecos,hueco);
+			}
 
-	        direccion_base_anterior = segmento_actual->direccion_base;
-	        direccion_limite_anterior = segmento_actual->direccion_limite;
+			direccion_base_anterior = segmento_actual->direccion_base;
+			direccion_limite_anterior = segmento_actual->direccion_limite;
 	}
 
-}
+}*/
 
 int sumatoria_huecos()
 {
-    uint32_t sumatoria = 0;
-    segmento* seg;
+	uint32_t sumatoria = 0;
+	segmento *seg;
 
-    for (int i = 0; i < list_size(huecos); i++)
-    {
-        seg = (segmento*)list_get(huecos, i);
-        sumatoria += seg->tam_segmento;
-    }
+	for (int i = 0; i < list_size(huecos); i++)
+	{
+		seg = (segmento *)list_get(huecos, i);
+		sumatoria += seg->tam_segmento;
+	}
 
-    return sumatoria;
+	return sumatoria;
 }
 
 int hay_espacio_disponible(int tam_segmento)
@@ -196,227 +261,232 @@ int hay_espacio_disponible(int tam_segmento)
 
 		return 0;
 	}
+}
 
-	void first_fit(unsigned int pid_proceso, uint32_t tam_segmento)
-	{ // Busca el primer hueco disponible desde el comienzo de memoria
-		int segmento_asignado = -1;
-		segmento *segmento_actual;
-		segmento *segmento_siguiente;
-		uint32_t espacio_libre;
-		segmento *nuevo_segmento;
+void first_fit(unsigned int pid_proceso, uint32_t tam_segmento)
+{ // Busca el primer hueco disponible desde el comienzo de memoria
+	int segmento_asignado = -1;
+	segmento *segmento_actual;
+	segmento *segmento_siguiente;
+	uint32_t espacio_libre;
+	segmento *nuevo_segmento;
 
-		for (int i = 0; i < list_size(memoria_usuario); i++)
+	for (int i = 0; i < list_size(memoria_usuario); i++)
+	{
+
+		segmento_actual = list_get(memoria_usuario, i); // Recorre todos los segmentos
+
+		if (i + 1 < config_mem.tam_memoria)
+		{ // Ve si hay otro segmento
+			segmento_siguiente = list_get(memoria_usuario, i + 1);
+
+			espacio_libre = segmento_siguiente->direccion_base - (segmento_actual->direccion_limite + 1);
+
+			if (espacio_libre >= tam_segmento)
+			{
+				segmento_asignado = segmento_actual->id + 1; // ID del nuevo segmento
+				nuevo_segmento = (segmento *)malloc(sizeof(segmento));
+				nuevo_segmento->pid = pid_proceso;
+				nuevo_segmento->id = segmento_asignado;
+				nuevo_segmento->tam_segmento = tam_segmento;
+				nuevo_segmento->direccion_base = segmento_actual->direccion_limite + 1;
+				nuevo_segmento->direccion_limite = nuevo_segmento->direccion_base + tam_segmento - 1;
+				list_add_in_index(memoria_usuario, i + 1, nuevo_segmento);
+				log_info(logger, "PID: %u - Crear Segmento: %d - Base: %d - Tamanio: %d", pid_proceso, segmento_asignado, nuevo_segmento->direccion_base, tam_segmento);
+
+				break;
+			}
+		}
+	}
+}
+
+void best_fit(unsigned int pid_proceso, uint32_t tam_segmento)
+{ // Busca el hueco mas chico donde entre el proceso
+	int segmento_asignado = -1;
+	int mejor_ajuste = INT_MAX;
+	segmento *segmento_actual;
+	segmento *segmento_siguiente;
+	int espacio_libre;
+	segmento *nuevo_segmento;
+	uint32_t nueva_dir_base;
+
+	for (int i = 0; i < list_size(memoria_usuario); i++)
+	{
+		segmento_actual = list_get(memoria_usuario, i);
+
+		if (i + 1 < list_size(memoria_usuario))
 		{
+			segmento_siguiente = list_get(memoria_usuario, i + 1);
+			espacio_libre = segmento_siguiente->direccion_base - (segmento_actual->direccion_limite + 1);
 
-			segmento_actual = list_get(memoria_usuario, i); // Recorre todos los segmentos
+			if (espacio_libre >= tam_segmento && espacio_libre < mejor_ajuste)
+			{
+				segmento_asignado = segmento_actual->id + 1;
+				mejor_ajuste = espacio_libre;
+				nueva_dir_base = segmento_actual->direccion_limite + 1;
+			}
+		}
+	}
 
-			if (i + 1 < config_mem.tam_memoria)
-			{ // Ve si hay otro segmento
-				segmento_siguiente = list_get(memoria_usuario, i + 1);
+	if (segmento_asignado != -1)
+	{
+		nuevo_segmento = (segmento *)malloc(sizeof(segmento));
+		nuevo_segmento->id = segmento_asignado;
+		nuevo_segmento->tam_segmento = tam_segmento;
+		nuevo_segmento->direccion_base = nueva_dir_base;
+		nuevo_segmento->direccion_limite = nuevo_segmento->direccion_base + tam_segmento - 1;
 
-				espacio_libre = segmento_siguiente->direccion_base - (segmento_actual->direccion_limite + 1);
+		// Insertar el nuevo segmento en la lista de memoria después del segmento anterior al segmento asignado
+		list_add_in_index(memoria_usuario, segmento_asignado, nuevo_segmento);
+		log_info(logger, "PID: %u - Crear Segmento: %d - Base: %d - Tamanio: %d", pid_proceso, segmento_asignado, nuevo_segmento->direccion_base, tam_segmento);
+	}
+}
 
-				if (espacio_libre >= tam_segmento)
-				{
-					//segmento_asignado = segmento_actual->id_segmento + 1; // ID del nuevo segmento
-					nuevo_segmento = (segmento*)malloc(sizeof(segmento));
-					nuevo_segmento->pid = pid_proceso;
-				//	nuevo_segmento->id_segmento = segmento_asignado;
-					nuevo_segmento->tam_segmento = tam_segmento;
-					nuevo_segmento->direccion_base = segmento_actual->direccion_limite + 1;
-					nuevo_segmento->direccion_limite = nuevo_segmento->direccion_base + tam_segmento - 1;
-					list_add_in_index(memoria_usuario, i + 1, nuevo_segmento);
-					log_info(logger, "PID: %u - Crear Segmento: %d - Base: %d - Tamanio: %d", pid_proceso, segmento_asignado, nuevo_segmento->direccion_base, tam_segmento);
+void worst_fit(unsigned int pid_proceso, uint32_t tam_segmento)
+{
+	int segmento_asignado = -1;
+	int mejor_ajuste = INT_MIN;
+	segmento *segmento_actual;
+	int espacio_libre;
+	segmento *segmento_siguiente;
+	uint32_t nueva_dir_base;
 
+	// Buscar el hueco más grande que pueda contener el nuevo segmento
+	for (int i = 0; i < list_size(memoria_usuario); i++)
+	{
+		segmento_actual = list_get(memoria_usuario, i);
+
+		// Verificar si hay espacio suficiente entre el segmento actual y el siguiente
+		if (i + 1 < list_size(memoria_usuario))
+		{
+			segmento_siguiente = list_get(memoria_usuario, i + 1);
+			espacio_libre = segmento_siguiente->direccion_base - (segmento_actual->direccion_limite + 1);
+
+			if (espacio_libre >= tam_segmento && espacio_libre > mejor_ajuste)
+			{
+				segmento_asignado = segmento_actual->id + 1; // ID del nuevo segmento
+				mejor_ajuste = espacio_libre;
+				nueva_dir_base = (segmento_actual->direccion_limite) + 1;
+			}
+		}
+	}
+
+	if (segmento_asignado != -1)
+	{
+		// Crear el nuevo segmento y establecer sus direcciones
+		segmento *nuevo_segmento = (segmento *)malloc(sizeof(segmento));
+		nuevo_segmento->id = segmento_asignado;
+		nuevo_segmento->tam_segmento = tam_segmento;
+		nuevo_segmento->direccion_base = nueva_dir_base; // list_get(memoria_usuario, segmento_asignado - 1)->direccion_limite + 1;
+		nuevo_segmento->direccion_limite = nuevo_segmento->direccion_base + tam_segmento - 1;
+
+		// Insertar el nuevo segmento en la lista de memoria después del segmento anterior al segmento asignado
+		list_add_in_index(memoria_usuario, segmento_asignado, nuevo_segmento);
+		log_info(logger, "PID: %u - Crear Segmento: %d - Base: %d - Tamanio: %d", pid_proceso, segmento_asignado, nuevo_segmento->direccion_base, tam_segmento);
+	}
+}
+
+//                                    ACCESO A ESPACIO USUARIO - COMENTADO PQ NO SE COMO LLEGA LA INFO
+
+/*
+void manejo_instrucciones (inst_mem tipo_instruccion, uint32_t dir_dada, char* origen, uint32_t nuevo_valor,t_list* instrucciones, int* socket_cliente){
+	//inst_mem tipo_instruccion = *(inst_mem *) list_get (instrucciones,0);
+	//uint32_t dir_dada = *(uint32_t*) list_get(instrucciones,1);                                                             //Direccion fisica dada por CPU o FS
+
+
+	uint32_t valor;
+//	uint32_t nuevo_valor;
+	//int boolEsc;
+
+
+		switch (tipo_instruccion){
+		case M_READ:                                                                                 //Ante un pedido de lectura, devolver el valor que se encuentra en la posicion pedida.
+			delay (config_mem.retardo_memoria);                                            //Tiempo de espera
+				//Microsegundos = Milisegundos * 1000
+			valor = leer_memoria (dir_dada);                                               		   //Busca y retorna el valor en la direccion de memoria dada
+			log_info (logger, "Se leyo el valor %d en la posicion %d", valor, dir_dada);
+
+
+			//AGREGAR TD LO DE PAQUETES !!!
+
+			break;
+
+		case M_WRITE:                                                                                // Ante un pedido de escritura, escribir lo indicado en la posición pedida y responder un mensaje de ‘OK’.
+			//nuevo_valor = *(uint32_t*) list_get(instrucciones,2);
+
+			delay (config_mem.retardo_memoria);
+			escribir_memoria (nuevo_valor, dir_dada);
+			//responder con un msj OK !!!
+			log_info (logger, "Se escribio el valor %d en la posicion %d", nuevo_valor, dir_dada);
+			break;
+
+		default:
+					log_warning(logger,"Operacion desconocida \n");
 					break;
-				}
-			}
-		}
-	}
-
-	void best_fit(unsigned int pid_proceso, uint32_t tam_segmento)
-	{ // Busca el hueco mas chico donde entre el proceso
-		int segmento_asignado = -1;
-		int mejor_ajuste = INT_MAX;
-		segmento *segmento_actual;
-		segmento *segmento_siguiente;
-		int espacio_libre;
-		segmento *nuevo_segmento;
-		uint32_t nueva_dir_base;
-
-		for (int i = 0; i < list_size(memoria_usuario); i++)
-		{
-			segmento_actual = list_get(memoria_usuario, i);
-
-			if (i + 1 < list_size(memoria_usuario))
-			{
-				segmento_siguiente = list_get(memoria_usuario, i + 1);
-				espacio_libre = segmento_siguiente->direccion_base - (segmento_actual->direccion_limite + 1);
-
-				if (espacio_libre >= tam_segmento && espacio_libre < mejor_ajuste)
-				{
-					//segmento_asignado = segmento_actual->id_segmento + 1;
-					mejor_ajuste = espacio_libre;
-					nueva_dir_base = segmento_actual->direccion_limite + 1;
-				}
-			}
 		}
 
-		if (segmento_asignado != -1)
-		{
-			nuevo_segmento = (segmento*)malloc(sizeof(segmento));
-			//nuevo_segmento->id_segmento = segmento_asignado;
-			nuevo_segmento->tam_segmento = tam_segmento;
-			nuevo_segmento->direccion_base = nueva_dir_base;
-			nuevo_segmento->direccion_limite = nuevo_segmento->direccion_base + tam_segmento - 1;
+}*/
 
-			// Insertar el nuevo segmento en la lista de memoria después del segmento anterior al segmento asignado
-			list_add_in_index(memoria_usuario, segmento_asignado, nuevo_segmento);
-			log_info(logger, "PID: %u - Crear Segmento: %d - Base: %d - Tamanio: %d", pid_proceso, segmento_asignado, nuevo_segmento->direccion_base, tam_segmento);
-		}
-	}
+uint32_t leer_memoria(int direccion)
+{
+	segmento *seg;
 
-	void worst_fit(unsigned int pid_proceso, uint32_t tam_segmento)
+	uint32_t *memoria = (uint32_t *)memoria_usuario; // Conversión de tipo a uint32_t *
+
+	for (int i = 0; i < list_size(tabla_segmentos_total); i++)
 	{
-		int segmento_asignado = -1;
-		int mejor_ajuste = INT_MIN;
-		segmento *segmento_actual;
-		int espacio_libre;
-		segmento *segmento_siguiente;
-		uint32_t nueva_dir_base;
+		seg = list_get(tabla_segmentos_total, i);
 
-		// Buscar el hueco más grande que pueda contener el nuevo segmento
-		for (int i = 0; i < list_size(memoria_usuario); i++)
+		if (direccion >= seg->direccion_base && direccion <= seg->direccion_limite)
 		{
-			segmento_actual = list_get(memoria_usuario, i);
-
-			// Verificar si hay espacio suficiente entre el segmento actual y el siguiente
-			if (i + 1 < list_size(memoria_usuario))
-			{
-				segmento_siguiente = list_get(memoria_usuario, i + 1);
-				espacio_libre = segmento_siguiente->direccion_base - (segmento_actual->direccion_limite + 1);
-
-				if (espacio_libre >= tam_segmento && espacio_libre > mejor_ajuste)
-				{
-				//	segmento_asignado = segmento_actual->id_segmento + 1; // ID del nuevo segmento
-					mejor_ajuste = espacio_libre;
-					nueva_dir_base = (segmento_actual->direccion_limite) + 1;
-				}
-			}
-		}
-
-		if (segmento_asignado != -1)
-		{
-			// Crear el nuevo segmento y establecer sus direcciones
-			segmento *nuevo_segmento = (segmento*)malloc(sizeof(segmento));
-			//nuevo_segmento->id_segmento = segmento_asignado;
-			nuevo_segmento->tam_segmento = tam_segmento;
-			nuevo_segmento->direccion_base = nueva_dir_base; // list_get(memoria_usuario, segmento_asignado - 1)->direccion_limite + 1;
-			nuevo_segmento->direccion_limite = nuevo_segmento->direccion_base + tam_segmento - 1;
-
-			// Insertar el nuevo segmento en la lista de memoria después del segmento anterior al segmento asignado
-			list_add_in_index(memoria_usuario, segmento_asignado, nuevo_segmento);
-			log_info(logger, "PID: %u - Crear Segmento: %d - Base: %d - Tamanio: %d", pid_proceso, segmento_asignado, nuevo_segmento->direccion_base, tam_segmento);
+			// Encontrado el segmento que contiene la dirección
+			// Realizar la lectura de la memoria en esa dirección
+			uint32_t valorLeido = memoria[direccion];
+			return valorLeido;
 		}
 	}
 
-	//                                    ACCESO A ESPACIO USUARIO - COMENTADO PQ NO SE COMO LLEGA LA INFO
+	log_error(logger, "Error: Dirección de memoria inválida\n");
+	return 0;
+}
 
-	/*
-	void manejo_instrucciones (inst_mem tipo_instruccion, uint32_t dir_dada, char* origen, uint32_t nuevo_valor,t_list* instrucciones, int* socket_cliente){
-		//inst_mem tipo_instruccion = *(inst_mem *) list_get (instrucciones,0);
-		//uint32_t dir_dada = *(uint32_t*) list_get(instrucciones,1);                                                             //Direccion fisica dada por CPU o FS
+void escribir_memoria(int direccion, uint32_t nuevo_valor)
+{
+	segmento *seg;
+	uint32_t *memoria = (uint32_t *)memoria_usuario; // Conversión de tipo a uint32_t *
 
-
-		uint32_t valor;
-	//	uint32_t nuevo_valor;
-		//int boolEsc;
-
-
-			switch (tipo_instruccion){
-			case M_READ:                                                                                 //Ante un pedido de lectura, devolver el valor que se encuentra en la posicion pedida.
-				delay (config_mem.retardo_memoria);                                            //Tiempo de espera
-					//Microsegundos = Milisegundos * 1000
-				valor = leer_memoria (dir_dada);                                               		   //Busca y retorna el valor en la direccion de memoria dada
-				log_info (logger, "Se leyo el valor %d en la posicion %d", valor, dir_dada);
-
-
-				//AGREGAR TD LO DE PAQUETES !!!
-
-				break;
-
-			case M_WRITE:                                                                                // Ante un pedido de escritura, escribir lo indicado en la posición pedida y responder un mensaje de ‘OK’.
-				//nuevo_valor = *(uint32_t*) list_get(instrucciones,2);
-
-				delay (config_mem.retardo_memoria);
-				escribir_memoria (nuevo_valor, dir_dada);
-				//responder con un msj OK !!!
-				log_info (logger, "Se escribio el valor %d en la posicion %d", nuevo_valor, dir_dada);
-				break;
-
-			default:
-						log_warning(logger,"Operacion desconocida \n");
-						break;
-			}
-
-	}*/
-
-	uint32_t leer_memoria(int direccion)
+	for (int i = 0; i < list_size(tabla_segmentos_total); i++)
 	{
-		segmento *seg;
+		seg = list_get(tabla_segmentos_total, i);
 
-		uint32_t *memoria = (uint32_t *)memoria_usuario; // Conversión de tipo a uint32_t *
-
-		for (int i = 0; i < list_size(tabla_segmentos_total); i++)
+		if (direccion >= seg->direccion_base && direccion <= seg->direccion_limite)
 		{
-			seg = list_get(tabla_segmentos_total, i);
-
-			if (direccion >= seg->direccion_base && direccion <= seg->direccion_limite)
-			{
-				// Encontrado el segmento que contiene la dirección
-				// Realizar la lectura de la memoria en esa dirección
-				uint32_t valorLeido = memoria[direccion];
-				return valorLeido;
-			}
+			// Encontrado el segmento que contiene la dirección
+			// Realizar la escritura de la memoria en esa dirección
+			memoria[direccion] = nuevo_valor;
+			return;
 		}
-
-		log_error(logger, "Error: Dirección de memoria inválida\n");
-		return 0;
 	}
 
-	void escribir_memoria(int direccion, uint32_t nuevo_valor)
+	// Dirección no encontrada en ningún segmento
+	log_error(logger, "Error: Dirección de memoria inválida\n");
+}
+
+void terminar_memoria(t_log *logger, t_config *config, int socket)
+{
+	list_destroy_and_destroy_elements(tabla_segmentos_total, free);
+	list_destroy_and_destroy_elements(huecos, free);
+	free(memoria_usuario);
+
+	log_info(logger, "Finalizando memoria");
+	if (logger != NULL)
 	{
-		segmento *seg;
-		uint32_t *memoria = (uint32_t *)memoria_usuario; // Conversión de tipo a uint32_t *
-
-		for (int i = 0; i < list_size(tabla_segmentos_total); i++)
-		{
-			seg = list_get(tabla_segmentos_total, i);
-
-			if (direccion >= seg->direccion_base && direccion <= seg->direccion_limite)
-			{
-				// Encontrado el segmento que contiene la dirección
-				// Realizar la escritura de la memoria en esa dirección
-				memoria[direccion] = nuevo_valor;
-				return;
-			}
-		}
-
-		// Dirección no encontrada en ningún segmento
-		log_error(logger, "Error: Dirección de memoria inválida\n");
+		log_destroy(logger);
 	}
-
-	void terminar_memoria(t_log * logger, t_config * config, int socket)
+	if (config != NULL)
 	{
-		log_info(logger, "Finalizando memoria");
-		if (logger != NULL)
-		{
-			log_destroy(logger);
-		}
-		if (config != NULL)
-		{
-			config_destroy(config);
-		}
-
-		liberar_servidor(socket);
+		config_destroy(config);
 	}
+
+	liberar_servidor(socket);
+}
