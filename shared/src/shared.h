@@ -1,5 +1,5 @@
-#ifndef OPERACIONES_H_
-#define OPERACIONES_H_
+#ifndef SHARED_H_
+#define SHARED_H_
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -33,7 +33,12 @@ typedef enum
 	INIT,
 	CREATE_SEGMENT,
 	DELETE_SEGMENT,
-	COMPACTACION
+	COMPACTACION,
+	MOV_IN,
+	MOV_OUT,
+	OK,
+	EXIT_SEG_FAULT,
+	EXIT_OUT_OF_MEMORY
 }op_code;
 
 typedef struct
@@ -75,6 +80,12 @@ typedef struct {
 	t_list* archivos_abiertos;
 }pcb;
 
+typedef struct {
+	unsigned int pid;
+	char* instruccion;
+	t_list* tabla_segmentos;
+} t_instruction;
+
 int recibir_operacion(int);
 void* serializar_paquete(t_paquete*, int);
 void crear_buffer(t_paquete*);
@@ -90,6 +101,9 @@ t_list* recibir_paquete(int);
 void delay(int);
 void enviar_pcb(int, pcb*, op_code);
 void recibir_pcb(t_list*, pcb*);
+void enviar_instruccion(int, t_instruction*, op_code);
+void recibir_instruccion(t_list*, t_instruction*);
+void generar_instruccion(pcb*, t_instruction*, char*);
 void replace_r_with_0(char*);
 
-#endif /* OPERACIONES_H_ */
+#endif /* SHARED_H_ */

@@ -11,7 +11,7 @@
 #include <string.h>
 #include <commons/log.h>
 #include <commons/config.h>
-#include "operaciones.h"
+#include <shared.h>
 #include "server.h"
 
 int crear_conexion(char*, char*);
