@@ -93,6 +93,34 @@ void atender_servidor(int* socket_servidor){
 				manejo_recursos(((pcb*)queue_peek(qexec)), instruccion);
 				list_destroy_and_destroy_elements(lista, free);
 				break;
+			case F_OPEN:
+				lista = recibir_paquete(*socket_servidor);
+				recibir_pcb(lista, queue_peek(qexec));
+				instruccion = list_get(((pcb*)queue_peek(qexec))->instrucciones, ((pcb*)queue_peek(qexec))->program_counter-1);
+				if(abriArchivoKernel(lista, instruccion))
+				{
+
+				//PUEDO HACER ESTO?????
+
+
+					enviar_operacion(*socket_servidor, F_OPEN);
+
+
+				}
+				list_destroy_and_destroy_elements(lista, free);
+				break;
+			case EL_ARCHIVO_NO_EXISTE_PAAAAAAA:
+
+				//PUEDO HACER ESTO????? X2
+
+
+				enviar_operacion(*socket_servidor, F_CREATE);
+
+
+				break;
+			case F_CLOSE:
+
+				break;
 			case EXIT:
 				lista = recibir_paquete(*socket_servidor);
 				recibir_pcb(lista, queue_peek(qexec));

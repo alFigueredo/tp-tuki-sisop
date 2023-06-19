@@ -1,15 +1,17 @@
 #include "fileSystemKernel.h"
 
-void archivoKernel(pcb* proceso, char* instruccion)
+int abriArchivoKernel(pcb* proceso, char* instruccion)
 {
 	char** parsed = string_split(instruccion, " "); //Partes de la instruccion actual
-	char* operacion = parsed[0];
+	char* nombreArchivo = parsed[1];
 	bool archivoExisteEnTabla = false;
 	Archivo* archivoActual = NULL;
+	int* punteroOriginal;
+	//verificar si el archivo esta en la tabla global.
 	for (int i = 0; i < list_size(archivosAbiertos); i++)
 	{
 	    archivoActual = list_get(archivosAbiertos, i);
-	    if (strcmp(archivoActual->nombreDeArchivo, parsed[1]) == 0)
+	    if (strcmp(archivoActual->nombreDeArchivo, nombreArchivo) == 0)
 	    {
 	        archivoExisteEnTabla = true;
 	        break;
@@ -17,16 +19,52 @@ void archivoKernel(pcb* proceso, char* instruccion)
 	}
 	if (!archivoExisteEnTabla)
 	{
-
+		//agrega el archivo a la lista global
+		archivoActual->puntero=0;
+		list_add(archivosAbiertos, archivoActual);
+		return 1;
 	}
 	else
 	{
-		if (recursoActual->instancias < 0)
-		{
-		    queue_push(recursoActual->procesosBloqueados, proceso);
-		    exec_a_block();
-		    log_info(logger, "PID: %d - Bloqueado por: %s", proceso->pid, rarchivoActual->nombreDeArchivo);
-		}
+		//agregar el proceso a la lista de procesos bloqueados por este archivo
+		list_add(archivoActual->procesosBloqueados, proceso);
+		punteroOriginal=archivoActual->puntero;
+		archivoActual->puntero=0;
+		//agregar el archivo a la lista de archivos abiertos del proceso
+		list_add(proceso->archivos_abiertos,archivoActual);
+		archivoActual->puntero=punteroOriginal;
+		exec_a_block();
+		log_info(logger, "PID: %d - Bloqueado porque archivo %s ya esta abierto", proceso->pid, archivoActual->nombreDeArchivo);
+		return 0;
 	}
 
 }
+
+void cerrarArchivoKernel(pcb* proceso, char* instruccion)
+{
+	char** parsed = string_split(instruccion, " "); //Partes de la instruccion actual
+	char* nombreArchivo = parsed[1];
+	bool archivoExisteEnTabla = false;
+	Archivo* archivoActual = NULL;
+	int* punteroOriginal;
+	//verificar si el archivo esta en la tabla global.
+	for (int i = 0; i < list_size(archivosAbiertos); i++)
+	{
+	    archivoActual = list_get(archivosAbiertos, i);
+	    if (strcmp(archivoActual->nombreDeArchivo, nombreArchivo) == 0)
+	    {
+	        archivoExisteEnTabla = true;
+	        break;
+	    }
+	}
+}
+
+
+
+
+
+
+
+
+
+

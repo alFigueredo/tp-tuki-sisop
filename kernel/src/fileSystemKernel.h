@@ -9,15 +9,15 @@
 typedef struct
 {
 	char *nombreDeArchivo;
-	int disponible;
+	int* puntero;
 	t_queue* procesosBloqueados;
 	struct Archivo *siguiente;
 }Archivo;
 
 extern t_list* archivosAbiertos;
 
-void archivoKernel(pcb*, char*)
-
+int abrirArchivoKernel(pcb*, char*);
+void cerrarArchivoKernel(pcb*, char*);
 
 
 

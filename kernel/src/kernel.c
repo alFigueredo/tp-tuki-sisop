@@ -16,7 +16,7 @@ int main(int argc, char** argv) {
 	conexiones = dictionary_create();
 
     recursos = leerRecursos(config);
-
+    archivosAbiertos=list_create;
     // Recorrer la lista de recursos y realizar las operaciones necesarias
 
 
@@ -38,6 +38,7 @@ int main(int argc, char** argv) {
 	/*
 	conexion_filesystem = crear_conexion(ip_filesystem, puerto_filesystem);
 	enviar_mensaje("Intento de conexión del kernel al filesystem", conexion_filesystem, MENSAJE);
+	esperar_servidor(conexion_filesystem);
 	*/
 
 	int socket_servidor = -1;
