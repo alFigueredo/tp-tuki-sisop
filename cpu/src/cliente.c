@@ -39,6 +39,62 @@ void send_handshake(int socket_cliente)
 	}
 }
 
+void esperar_servidor(int conexion){
+	pthread_t thread;
+	int *socket_servidor = malloc(sizeof(int));
+	*socket_servidor = conexion;
+	pthread_create(&thread,
+	               NULL,
+	               (void*) atender_servidor,
+	               socket_servidor);
+	pthread_detach(thread);
+}
+
+void atender_servidor(int* socket_servidor){
+	t_list *lista;
+	t_instruction* instruccion;
+	while (1) {
+		int cod_op = recibir_operacion(*socket_servidor);
+		switch (cod_op) {
+			case MENSAJE:
+				recibir_mensaje(*socket_servidor);
+				break;
+			case PAQUETE:
+				lista = recibir_paquete(*socket_servidor);
+				log_info(logger, "Me llegaron los siguientes valores:");
+				list_iterate(lista, (void*) iterator);
+				list_destroy_and_destroy_elements(lista, free);
+				break;
+			case MOV_IN:
+				lista = recibir_paquete(*socket_servidor);
+				instruccion = malloc(sizeof(t_instruction));
+				recibir_instruccion(lista, instruccion);
+				mov_in(instruccion);
+				interpretar_instrucciones(proceso);
+				list_destroy_and_destroy_elements(lista, free);
+				free(instruccion);
+				break;
+			case OK:
+				proceso->program_counter++;
+				interpretar_instrucciones(proceso);
+				list_destroy_and_destroy_elements(lista, free);
+				break;
+			case EXIT:
+				error_exit(proceso);
+				list_destroy_and_destroy_elements(lista, free);
+				break;
+			case -1:
+				log_warning(logger, "El servidor se desconecto. Terminando conexion. Abortando sistema.");
+				free(socket_servidor);
+				abort();
+				return;
+			default:
+				log_warning(logger,"Operacion desconocida. No quieras meter la pata");
+				break;
+		}
+	}
+}
+
 void liberar_conexion(int socket_cliente)
 {
 	if (socket_cliente != -1) {

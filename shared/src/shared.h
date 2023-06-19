@@ -41,7 +41,9 @@ typedef enum
 	MOV_IN,
 	MOV_OUT,
 	OK,
-	EL_ARCHIVO_NO_EXISTE_PAAAAAAA
+	EL_ARCHIVO_NO_EXISTE_PAAAAAAA,
+	EXIT_SEG_FAULT,
+	EXIT_OUT_OF_MEMORY
 }op_code;
 
 typedef struct
@@ -106,6 +108,7 @@ void enviar_pcb(int, pcb*, op_code);
 void recibir_pcb(t_list*, pcb*);
 void enviar_instruccion(int, t_instruction*, op_code);
 void recibir_instruccion(t_list*, t_instruction*);
+void generar_instruccion(pcb*, t_instruction*, char*);
 void replace_r_with_0(char*);
 
 #endif /* SHARED_H_ */
