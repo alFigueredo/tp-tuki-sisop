@@ -6,7 +6,7 @@
 #include <commons/string.h>
 #include <commons/collections/list.h>
 #include "server.h"
-#include <operaciones.h>
+#include <shared.h>
 #include <limits.h>
 #include <stdbool.h>
 
@@ -48,7 +48,7 @@ typedef enum {
 
 //VARIABLES
 extern void* memoria_usuario;
-extern t_list* tablas_segmentos;
+extern t_list* tabla_segmentos_total;
 extern t_list* lista_huecos_libre;
 //int contadorSegmentos;
 
@@ -61,7 +61,7 @@ void first_fit (unsigned int, uint32_t);
 void best_fit (unsigned int, uint32_t);
 void worst_fit (unsigned int, uint32_t);
 //void manejo_instrucciones (t_list* , int* );
-uint32_t leer_memoria (uint32_t );
+uint32_t leer_memoria(int direccion);
 void escribir_memoria (uint32_t , uint32_t );
 void terminar_memoria(t_log*, t_config*,int);
 

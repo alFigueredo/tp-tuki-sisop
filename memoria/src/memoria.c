@@ -4,13 +4,15 @@ char* ip_memoria ;
 
 archivo_configuracion config_mem;
 void* memoria_usuario;
-t_list* tablas_segmentos;
+t_list* tabla_segmentos_total;
 t_list* lista_huecos_libre;
 
 //completar: !!!
 //posibles cambios: ???
 
 /*
+
+ DELAY cambiar de usleep
 
  tema paqutes mensajes de sesrver
  */
@@ -55,8 +57,8 @@ void cargar_config (t_config* archivo){
 void iniciar_memoria (){
 	memoria_usuario    = malloc (config_mem.tam_memoria);
 
-	tablas_segmentos   = list_create();
-	lista_huecos_libre = list_create();
+	tabla_segmentos_total = list_create();
+	lista_huecos_libre    = list_create();
 
 	segmento* segmento_0 = malloc (sizeof(segmento));
 	segmento_0->id_segmento = 0;
@@ -65,7 +67,7 @@ void iniciar_memoria (){
 	segmento_0->direccion_limite = config_mem.tam_segmento_0 - 1;
 
 
-	list_add(tablas_segmentos, segmento_0);
+	list_add(tabla_segmentos_total, segmento_0);
 	list_add(memoria_usuario, segmento_0);
 
 	log_info (logger,"Memoria inicializada.");
@@ -248,7 +250,7 @@ void manejo_instrucciones (inst_mem tipo_instruccion, uint32_t dir_dada, char* o
 
 		switch (tipo_instruccion){
 		case M_READ:                                                                                 //Ante un pedido de lectura, devolver el valor que se encuentra en la posicion pedida.
-			usleep (config_mem.retardo_memoria * 1000);                                            //Tiempo de espera
+			delay (config_mem.retardo_memoria);                                            //Tiempo de espera
 				//Microsegundos = Milisegundos * 1000
 			valor = leer_memoria (dir_dada);                                               		   //Busca y retorna el valor en la direccion de memoria dada
 			log_info (logger, "Se leyo el valor %d en la posicion %d", valor, dir_dada);
@@ -261,7 +263,7 @@ void manejo_instrucciones (inst_mem tipo_instruccion, uint32_t dir_dada, char* o
 		case M_WRITE:                                                                                // Ante un pedido de escritura, escribir lo indicado en la posición pedida y responder un mensaje de ‘OK’.
 			//nuevo_valor = *(uint32_t*) list_get(instrucciones,2);
 
-			usleep (config_mem.retardo_memoria * 1000);
+			delay (config_mem.retardo_memoria);
 			escribir_memoria (nuevo_valor, dir_dada);
 			//responder con un msj OK !!!
 			log_info (logger, "Se escribio el valor %d en la posicion %d", nuevo_valor, dir_dada);
@@ -273,24 +275,46 @@ void manejo_instrucciones (inst_mem tipo_instruccion, uint32_t dir_dada, char* o
 		}
 
 }*/
-/*
-//no dividir funcion ???
-uint32_t leer_memoria (uint32_t direccion){
-	uint32_t valorLeido;
 
-	//MUTEX SC !!!
-	memcpy (&valorLeido, memoria_usuario + direccion, sizeof (uint32_t ));
-	//MUTEX SC !!!
+uint32_t leer_memoria(int direccion) {
+	segmento* seg;
 
-	return valorLeido;
+	uint32_t *memoria = (uint32_t *)memoria_usuario; // Conversión de tipo a uint32_t *
+
+    for (int i = 0; i < list_size(tabla_segmentos_total); i++) {
+        seg = list_get(tabla_segmentos_total, i);
+
+        if (direccion >= seg->direccion_base && direccion <= seg->direccion_limite) {
+            // Encontrado el segmento que contiene la dirección
+            // Realizar la lectura de la memoria en esa dirección
+            uint32_t valorLeido = memoria[direccion];
+            return valorLeido;
+        }
+    }
+
+    log_error (logger, "Error: Dirección de memoria inválida\n");
+    return 0;
 }
 
-void escribir_memoria (uint32_t valor, uint32_t direccion) {
-		//MUTEX SC !!!
-		memcpy (memoria_usuario + direccion, &valor, sizeof(uint32_t));
-		//MUTEX SC !!!
+void escribir_memoria(int direccion, uint32_t nuevo_valor) {
+	segmento* seg;
+	uint32_t* memoria = (uint32_t *) memoria_usuario; // Conversión de tipo a uint32_t *
+
+	for (int i = 0; i < list_size(tabla_segmentos_total); i++) {
+		seg = list_get(tabla_segmentos_total, i);
+
+		if (direccion >= seg->direccion_base && direccion <= seg->direccion_limite) {
+	            // Encontrado el segmento que contiene la dirección
+	            // Realizar la escritura de la memoria en esa dirección
+			memoria[direccion] = nuevo_valor;
+			return;
+		}
+	}
+
+    // Dirección no encontrada en ningún segmento
+    log_error (logger, "Error: Dirección de memoria inválida\n");
 }
-*/
+
 
 void terminar_memoria(t_log* logger, t_config* config, int socket)
 {
