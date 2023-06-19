@@ -91,11 +91,11 @@ void atender_cliente(int* socket_cliente){
 			proceso = malloc(sizeof(pcb));
 			proceso->instrucciones=NULL;
 			recibir_pcb(lista, proceso);
-			interpretar_instrucciones(proceso);
+			interpretar_instrucciones();
 			list_destroy_and_destroy_elements(lista, free);
 			break;
 		case EXIT:
-			error_exit(proceso);
+			error_exit(EXIT);
 			list_destroy_and_destroy_elements(lista, free);
 			break;
 		case -1:

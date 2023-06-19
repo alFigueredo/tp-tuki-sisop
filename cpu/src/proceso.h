@@ -47,26 +47,26 @@ typedef enum
 
 void iniciar_diccionario_instrucciones(void);
 void iniciar_diccionario_registros(registros_cpu*);
-void destruir_diccionarios();
-void interpretar_instrucciones(pcb*);
-void instruccion_set(char**, pcb*);
-void instruccion_mov_in(char**, pcb*);
+void destruir_diccionarios(void);
+void interpretar_instrucciones();
+void instruccion_set(char**);
+void instruccion_mov_in(char**);
 void mov_in(t_instruction*);
-void instruccion_mov_out(char**, pcb*);
-void instruccion_i_o(char**, pcb*);
-void instruccion_f_open(char**, pcb*);
-void instruccion_f_close(char**, pcb*);
-void instruccion_f_seek(char**, pcb*);
-void instruccion_f_read(char**, pcb*);
-void instruccion_f_write(char**, pcb*);
-void instruccion_f_truncate(char**, pcb*);
-void instruccion_wait(char**, pcb*);
-void instruccion_signal(char**, pcb*);
-void instruccion_create_segment(char**, pcb*);
-void instruccion_delete_segment(char**, pcb*);
-void instruccion_yield(char**, pcb*);
-void instruccion_exit(char**, pcb*);
-void error_exit(pcb*);
+void instruccion_mov_out(char**);
+void instruccion_i_o(char**);
+void instruccion_f_open(char**);
+void instruccion_f_close(char**);
+void instruccion_f_seek(char**);
+void instruccion_f_read(char**);
+void instruccion_f_write(char**);
+void instruccion_f_truncate(char**);
+void instruccion_wait(char**);
+void instruccion_signal(char**);
+void instruccion_create_segment(char**);
+void instruccion_delete_segment(char**);
+void instruccion_yield(char**);
+void instruccion_exit(char**);
+void error_exit(op_code);
 char* traducir_dir_logica(char*);
 
 #endif /* PROCESO_H_ */
