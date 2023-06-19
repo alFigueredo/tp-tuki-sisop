@@ -62,11 +62,11 @@ void cerrarArchivoKernel(pcb* proceso, char* instruccion)
 	    }
 	}
 	//saca el archivo de la lista de archivos del proceso
-	list_remove_and_destroy_by_condition(proceso->archivos_abiertos,strcmp(archivoActual->nombreDeArchivo, nombreArchivo) == 0,free(Archivo));
+	list_remove_and_destroy_by_condition(proceso->archivos_abiertos,strcmp(archivoActual->nombreDeArchivo, nombreArchivo) == 0,free);
 	if(queue_is_empty(archivoActual->procesosBloqueados))
 	{
 		//saca el archivo de la lista global
-		list_remove_and_destroy_by_condition(archivosAbiertos,strcmp(archivoActual->nombreDeArchivo, nombreArchivo) == 0,free(Archivo));
+		list_remove_and_destroy_by_condition(archivosAbiertos,strcmp(archivoActual->nombreDeArchivo, nombreArchivo) == 0,free);
 	}
 	else
 	{
@@ -93,6 +93,7 @@ void buscarEnArchivo(pcb* proceso, char* instruccion)
 		    }
 		}
 	archivoActual->puntero = numero;
+	enviar_pcb(conexion_cpu, proceso, EXEC);
 }
 
 

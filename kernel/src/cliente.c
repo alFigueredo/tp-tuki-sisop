@@ -102,20 +102,22 @@ void atender_servidor(int* socket_servidor){
 
 				//PUEDO HACER ESTO?????
 
-
-					enviar_operacion(*socket_servidor, F_OPEN);
+					t_instruction* laCosaQueMando = malloc(sizeof(t_instruction));
+					laCosaQueMando->pid=((pcb*)queue_peek(qexec));
+					laCosaQueMando->instruccion=instruccion;
+					enviar_instruccion(*socket_servidor,laCosaQueMando,F_OPEN);
 
 
 				}
-				enviar_pcb()
 				list_destroy_and_destroy_elements(lista, free);
 				break;
 			case EL_ARCHIVO_NO_EXISTE_PAAAAAAA:
 
 				//PUEDO HACER ESTO????? X2
-
-
-				enviar_operacion(*socket_servidor, F_CREATE);
+				t_instruction* laCosaQueMando = malloc(sizeof(t_instruction));
+				laCosaQueMando->pid=((pcb*)queue_peek(qexec));
+				laCosaQueMando->instruccion=instruccion;
+				enviar_instruccion(*socket_servidor,laCosaQueMando,F_CREATE);
 
 
 				break;
