@@ -70,17 +70,17 @@ void atender_servidor(int* socket_servidor){
 				instruccion = malloc(sizeof(t_instruction));
 				recibir_instruccion(lista, instruccion);
 				mov_in(instruccion);
-				interpretar_instrucciones(proceso);
+				interpretar_instrucciones();
 				list_destroy_and_destroy_elements(lista, free);
 				free(instruccion);
 				break;
 			case OK:
 				proceso->program_counter++;
-				interpretar_instrucciones(proceso);
+				interpretar_instrucciones();
 				list_destroy_and_destroy_elements(lista, free);
 				break;
 			case EXIT:
-				error_exit(proceso);
+				error_exit(EXIT);
 				list_destroy_and_destroy_elements(lista, free);
 				break;
 			case -1:

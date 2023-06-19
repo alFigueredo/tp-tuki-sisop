@@ -48,7 +48,7 @@ void destruir_diccionarios(void) {
 	dictionary_destroy(registros);
 }
 
-void interpretar_instrucciones(pcb* proceso) {
+void interpretar_instrucciones(void) {
 	iniciar_diccionario_instrucciones();
 	iniciar_diccionario_registros(&proceso->registros);
 	while (proceso->program_counter<list_size(proceso->instrucciones)) {
@@ -58,85 +58,102 @@ void interpretar_instrucciones(pcb* proceso) {
 		int instruccion_enum = (int)(intptr_t)dictionary_get(instrucciones, parsed[0]);
 		switch (instruccion_enum) {
 			case I_SET:
-				instruccion_set(parsed, proceso);
+				instruccion_set(parsed);
 				break;
 			case I_MOV_IN:
-				instruccion_mov_in(parsed, proceso);
-				// return MOV_IN;
+				instruccion_mov_in(parsed);
+				// return;
 				break;
 			case I_MOV_OUT:
-				instruccion_mov_out(parsed, proceso);
-				// return MOV_OUT;
+				instruccion_mov_out(parsed);
+				// return;
 				break;
 			case I_IO:
-				instruccion_i_o(parsed, proceso);
+				instruccion_i_o(parsed);
 				destruir_diccionarios();
 				return;
 			case I_F_OPEN:
-				instruccion_f_open(parsed, proceso);
+				instruccion_f_open(parsed);
+				// return;
 				break;
 			case I_F_CLOSE:
-				instruccion_f_close(parsed, proceso);
+				instruccion_f_close(parsed);
+				// return;
 				break;
 			case I_F_SEEK:
-				instruccion_f_seek(parsed, proceso);
+				instruccion_f_seek(parsed);
+				// return;
 				break;
 			case I_F_READ:
-				instruccion_f_read(parsed, proceso);
+				instruccion_f_read(parsed);
+				// return;
 				break;
 			case I_F_WRITE:
-				instruccion_f_write(parsed, proceso);
+				instruccion_f_write(parsed);
+				// return;
 				break;
 			case I_F_TRUNCATE:
-				instruccion_f_truncate(parsed, proceso);
+				instruccion_f_truncate(parsed);
+				// return;
 				break;
 			case I_WAIT:
-				instruccion_wait(parsed, proceso);
+				instruccion_wait(parsed);
 				destruir_diccionarios();
 				return;
 			case I_SIGNAL:
-				instruccion_signal(parsed, proceso);
+				instruccion_signal(parsed);
 				destruir_diccionarios();
 				return;
 			case I_CREATE_SEGMENT:
-				instruccion_create_segment(parsed, proceso);
+				instruccion_create_segment(parsed);
+				// return;
 				break;
 			case I_DELETE_SEGMENT:
-				instruccion_delete_segment(parsed, proceso);
+				instruccion_delete_segment(parsed);
+				// return;
 				break;
 			case I_YIELD:
-				instruccion_yield(parsed, proceso);
+				instruccion_yield(parsed);
 				destruir_diccionarios();
 				return;
 			case I_EXIT:
-				instruccion_exit(parsed, proceso);
+				instruccion_exit(parsed);
 				destruir_diccionarios();
 				return;
 			case -1:
 				log_warning(logger, "PID: %d - Advertencia: No se pudo interpretar la instrucción - Ejecutando: EXIT", proceso->pid);
-				error_exit(proceso);
+				error_exit(EXIT);
 				destruir_diccionarios();
 				return;
 		}
 		string_array_destroy(parsed);
 	}
 	log_warning(logger, "PID: %d - Advertencia: Sin instrucciones por ejecutar - Ejecutando: EXIT", proceso->pid);
-	error_exit(proceso);
+	error_exit(EXIT);
 	destruir_diccionarios();
 	return;
 }
 
-void instruccion_set(char** parsed, pcb* proceso) {
+void instruccion_set(char** parsed) {
 	log_info(logger, "PID: %d - Ejecutando: %s - %s %s", proceso->pid, parsed[0], parsed[1], parsed[2]);
 	memcpy(dictionary_get(registros, parsed[1]), parsed[2], strlen(parsed[2]));
 	delay(config_get_int_value(config, "RETARDO_INSTRUCCION"));
 	proceso->program_counter++;
 }
 
-void instruccion_mov_in(char** parsed, pcb* proceso)
+void instruccion_mov_in(char** parsed)
 {
+	// Para probar la función hay que descomentar lo comentado, descomentar el return en el case correspondiente, y comentar en donde se modifica el program_counter
+
 	log_info(logger, "PID: %d - Ejecutando: %s - %s %s", proceso->pid, parsed[0], parsed[1], parsed[2]);
-	char* instruccion = string_from_format("%s %s %s", parsed[0], (char*)dictionary_get(registros, parsed[1]), traducir_dir_logica(parsed[2]));
+	char* dir_fisica = traducir_dir_logica(parsed[2]);
+	if (strcmp(dir_fisica, "SEG_FAULT")==0) {
+		log_error(logger, "Error: segmentation fault");
+		// error_exit(EXIT_SEG_FAULT);
+		return;
+	}
+	char* instruccion = string_from_format("%s %s %s", parsed[0], parsed[1], dir_fisica);
+	// char* instruccion = string_from_format("%s %s %s", parsed[0], (char*)dictionary_get(registros, parsed[1]), dir_fisica);
 	char* ins_alloc = malloc(strlen(instruccion)+1);
 	strcpy(ins_alloc, instruccion);
 	list_replace_and_destroy_element(proceso->instrucciones, proceso->program_counter, ins_alloc, free);
@@ -158,10 +175,18 @@ void mov_in(t_instruction* instruccion_proceso) {
 	proceso->program_counter++;
 }
 
-void instruccion_mov_out(char** parsed, pcb* proceso)
+void instruccion_mov_out(char** parsed)
 {
+	// Para probar la función hay que descomentar lo comentado, descomentar el return en el case correspondiente, y comentar en donde se modifica el program_counter
+
 	log_info(logger, "PID: %d - Ejecutando: %s - %s %s", proceso->pid, parsed[0], parsed[1], parsed[2]);
-	char* instruccion = string_from_format("%s %s %s", parsed[0], traducir_dir_logica(parsed[1]), parsed[2]);
+	char* dir_fisica = traducir_dir_logica(parsed[1]);
+	if (strcmp(dir_fisica, "SEG_FAULT")==0) {
+		log_error(logger, "Error: segmentation fault");
+		// error_exit(EXIT_SEG_FAULT);
+		return;
+	}
+	char* instruccion = string_from_format("%s %s %s", parsed[0], dir_fisica, parsed[2]);
 	char* ins_alloc = malloc(strlen(instruccion)+1);
 	strcpy(ins_alloc, instruccion);
 	list_replace_and_destroy_element(proceso->instrucciones, proceso->program_counter, ins_alloc, free);
@@ -173,7 +198,7 @@ void instruccion_mov_out(char** parsed, pcb* proceso)
 	proceso->program_counter++;
 }
 
-void instruccion_i_o(char** parsed, pcb* proceso)
+void instruccion_i_o(char** parsed)
 {
 	log_info(logger, "PID: %d - Ejecutando: %s - %s", proceso->pid, parsed[0], parsed[1]);
 	proceso->program_counter++;
@@ -182,59 +207,101 @@ void instruccion_i_o(char** parsed, pcb* proceso)
 	free(proceso);
 }
 
-void instruccion_f_open(char** parsed, pcb* proceso)
+void instruccion_f_open(char** parsed)
 {
+	// Para probar la función hay que descomentar lo comentado y descomentar el return en el case correspondiente
+
 	log_info(logger, "PID: %d - Ejecutando: %s - %s", proceso->pid, parsed[0], parsed[1]);
 	log_warning(logger, "PID: %d - Advertencia: Instruccion sin realizar", proceso->pid);
 	proceso->program_counter++;
+	// enviar_pcb(conexion_kernel, proceso, F_OPEN);
+	// list_destroy_and_destroy_elements(proceso->instrucciones, free);
+	// free(proceso);
 }
 
-void instruccion_f_close(char** parsed, pcb* proceso)
+void instruccion_f_close(char** parsed)
 {
+	// Para probar la función hay que descomentar lo comentado y descomentar el return en el case correspondiente
+
 	log_info(logger, "PID: %d - Ejecutando: %s - %s", proceso->pid, parsed[0], parsed[1]);
 	log_warning(logger, "PID: %d - Advertencia: Instruccion sin realizar", proceso->pid);
 	proceso->program_counter++;
+	// enviar_pcb(conexion_kernel, proceso, F_CLOSE);
+	// list_destroy_and_destroy_elements(proceso->instrucciones, free);
+	// free(proceso);
 }
 
-void instruccion_f_seek(char** parsed, pcb* proceso)
+void instruccion_f_seek(char** parsed)
 {
+	// Para probar la función hay que descomentar lo comentado y descomentar el return en el case correspondiente
+
 	log_info(logger, "PID: %d - Ejecutando: %s - %s %s", proceso->pid, parsed[0], parsed[1], parsed[2]);
 	log_warning(logger, "PID: %d - Advertencia: Instruccion sin realizar", proceso->pid);
 	proceso->program_counter++;
+	// enviar_pcb(conexion_kernel, proceso, F_SEEK);
+	// list_destroy_and_destroy_elements(proceso->instrucciones, free);
+	// free(proceso);
 }
 
-void instruccion_f_read(char** parsed, pcb* proceso)
+void instruccion_f_read(char** parsed)
 {
+	// Para probar la función hay que descomentar lo comentado y descomentar el return en el case correspondiente
+
 	log_info(logger, "PID: %d - Ejecutando: %s - %s %s %s", proceso->pid, parsed[0], parsed[1], parsed[2], parsed[3]);
-	char* instruccion = string_from_format("%s %s %s %s", parsed[0], parsed[1], traducir_dir_logica(parsed[2]), parsed[3]);
+	char* dir_fisica = traducir_dir_logica(parsed[2]);
+	if (strcmp(dir_fisica, "SEG_FAULT")==0) {
+		log_error(logger, "Error: segmentation fault");
+		// error_exit(EXIT_SEG_FAULT);
+		return;
+	}
+	char* instruccion = string_from_format("%s %s %s %s", parsed[0], parsed[1], dir_fisica, parsed[3]);
 	char* ins_alloc = malloc(strlen(instruccion)+1);
 	strcpy(ins_alloc, instruccion);
 	list_replace_and_destroy_element(proceso->instrucciones, proceso->program_counter, ins_alloc, free);
 	log_trace(logger, "PID: %d - Instruccion traducida: %s", proceso->pid, (char*)list_get(proceso->instrucciones, proceso->program_counter));
 	log_warning(logger, "PID: %d - Advertencia: Instruccion sin realizar", proceso->pid);
 	proceso->program_counter++;
+	// enviar_pcb(conexion_kernel, proceso, F_READ);
+	// list_destroy_and_destroy_elements(proceso->instrucciones, free);
+	// free(proceso);
 }
 
-void instruccion_f_write(char** parsed, pcb* proceso)
+void instruccion_f_write(char** parsed)
 {
+	// Para probar la función hay que descomentar lo comentado y descomentar el return en el case correspondiente
+
 	log_info(logger, "PID: %d - Ejecutando: %s - %s %s %s", proceso->pid, parsed[0], parsed[1], parsed[2], parsed[3]);
-	char* instruccion = string_from_format("%s %s %s %s", parsed[0], parsed[1], traducir_dir_logica(parsed[2]), parsed[3]);
+	char* dir_fisica = traducir_dir_logica(parsed[2]);
+	if (strcmp(dir_fisica, "SEG_FAULT")==0) {
+		log_error(logger, "Error: segmentation fault");
+		// error_exit(EXIT_SEG_FAULT);
+		return;
+	}
+	char* instruccion = string_from_format("%s %s %s %s", parsed[0], parsed[1], dir_fisica, parsed[3]);
 	char* ins_alloc = malloc(strlen(instruccion)+1);
 	strcpy(ins_alloc, instruccion);
 	list_replace_and_destroy_element(proceso->instrucciones, proceso->program_counter, ins_alloc, free);
 	log_trace(logger, "PID: %d - Instruccion traducida: %s", proceso->pid, (char*)list_get(proceso->instrucciones, proceso->program_counter));
 	log_warning(logger, "PID: %d - Advertencia: Instruccion sin realizar", proceso->pid);
 	proceso->program_counter++;
+	// enviar_pcb(conexion_kernel, proceso, F_WRITE);
+	// list_destroy_and_destroy_elements(proceso->instrucciones, free);
+	// free(proceso);
 }
 
-void instruccion_f_truncate(char** parsed, pcb* proceso)
+void instruccion_f_truncate(char** parsed)
 {
+	// Para probar la función hay que descomentar lo comentado y descomentar el return en el case correspondiente
+
 	log_info(logger, "PID: %d - Ejecutando: %s - %s %s", proceso->pid, parsed[0], parsed[1], parsed[2]);
 	log_warning(logger, "PID: %d - Advertencia: Instruccion sin realizar", proceso->pid);
 	proceso->program_counter++;
+	// enviar_pcb(conexion_kernel, proceso, F_TRUNCATE);
+	// list_destroy_and_destroy_elements(proceso->instrucciones, free);
+	// free(proceso);
 }
 
-void instruccion_wait(char** parsed, pcb* proceso)
+void instruccion_wait(char** parsed)
 {
 	log_info(logger, "PID: %d - Ejecutando: %s - %s", proceso->pid, parsed[0], parsed[1]);
 	proceso->program_counter++;
@@ -243,7 +310,7 @@ void instruccion_wait(char** parsed, pcb* proceso)
 	free(proceso);
 }
 
-void instruccion_signal(char** parsed, pcb* proceso)
+void instruccion_signal(char** parsed)
 {
 	log_info(logger, "PID: %d - Ejecutando: %s - %s", proceso->pid, parsed[0], parsed[1]);
 	proceso->program_counter++;
@@ -252,21 +319,31 @@ void instruccion_signal(char** parsed, pcb* proceso)
 	free(proceso);
 }
 
-void instruccion_create_segment(char** parsed, pcb* proceso)
+void instruccion_create_segment(char** parsed)
 {
+	// Para probar la función hay que descomentar lo comentado y descomentar el return en el case correspondiente
+
 	log_info(logger, "PID: %d - Ejecutando: %s - %s %s", proceso->pid, parsed[0], parsed[1], parsed[2]);
 	log_warning(logger, "PID: %d - Advertencia: Instruccion sin realizar", proceso->pid);
 	proceso->program_counter++;
+	// enviar_pcb(conexion_kernel, proceso, CREATE_SEGMENT);
+	// list_destroy_and_destroy_elements(proceso->instrucciones, free);
+	// free(proceso);
 }
 
-void instruccion_delete_segment(char** parsed, pcb* proceso)
+void instruccion_delete_segment(char** parsed)
 {
+	// Para probar la función hay que descomentar lo comentado y descomentar el return en el case correspondiente
+
 	log_info(logger, "PID: %d - Ejecutando: %s - %s", proceso->pid, parsed[0], parsed[1]);
 	log_warning(logger, "PID: %d - Advertencia: Instruccion sin realizar", proceso->pid);
 	proceso->program_counter++;
+	// enviar_pcb(conexion_kernel, proceso, DELETE_SEGMENT);
+	// list_destroy_and_destroy_elements(proceso->instrucciones, free);
+	// free(proceso);
 }
 
-void instruccion_yield(char** parsed, pcb* proceso) {
+void instruccion_yield(char** parsed) {
 	log_info(logger, "PID: %d - Ejecutando: %s", proceso->pid, parsed[0]);
 	proceso->program_counter++;
 	enviar_pcb(conexion_kernel, proceso, READY);
@@ -274,7 +351,7 @@ void instruccion_yield(char** parsed, pcb* proceso) {
 	free(proceso);
 }
 
-void instruccion_exit(char** parsed, pcb* proceso) {
+void instruccion_exit(char** parsed) {
 	log_info(logger, "PID: %d - Ejecutando: %s", proceso->pid, parsed[0]);
 	proceso->program_counter++;
 	enviar_pcb(conexion_kernel, proceso, EXIT);
@@ -282,8 +359,8 @@ void instruccion_exit(char** parsed, pcb* proceso) {
 	free(proceso);
 }
 
-void error_exit(pcb* proceso) {
-	enviar_pcb(conexion_kernel, proceso, EXIT);
+void error_exit(op_code codigo) {
+	enviar_pcb(conexion_kernel, proceso, codigo);
 	list_destroy_and_destroy_elements(proceso->instrucciones, free);
 	free(proceso);
 }
@@ -293,5 +370,7 @@ char* traducir_dir_logica(char* direccion_logica) {
 	// int tam_max_segmento = 8;
 	int num_segmento = floor((double)atoi(direccion_logica)/tam_max_segmento);
 	int desplazamiento_segmento = atoi(direccion_logica)%tam_max_segmento;
+	if (desplazamiento_segmento>tam_max_segmento)
+		return "SEG_FAULT";
 	return string_from_format("[%d,%d]", num_segmento, desplazamiento_segmento);
 }
