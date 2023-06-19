@@ -115,7 +115,7 @@ void enviar_paquete(t_paquete *paquete, int socket_cliente)
 {
 	int bytes = paquete->buffer->size + 2 * sizeof(int);
 	void *a_enviar = serializar_paquete(paquete, bytes);
-
+	
 	send(socket_cliente, a_enviar, bytes, 0);
 
 	free(a_enviar);
@@ -187,7 +187,7 @@ void enviar_pcb(int conexion, pcb *proceso, op_code codigo)
 	agregar_a_paquete(paquete, proceso->registros.RBX, 16);
 	agregar_a_paquete(paquete, proceso->registros.RCX, 16);
 	agregar_a_paquete(paquete, proceso->registros.RDX, 16);
-
+	
 	enviar_paquete(paquete, conexion);
 	eliminar_paquete(paquete);
 }
@@ -228,10 +228,17 @@ void enviar_instruccion(int conexion, t_instruction* proceso, op_code codigo) {
 }
 
 void recibir_instruccion(t_list* lista, t_instruction* proceso) {
+
 	int i=0;
-	
+
 	memcpy(&(proceso->pid), list_get(lista, i++), sizeof(unsigned int));
 	proceso->instruccion = list_remove(lista, i);
+}
+
+void generar_instruccion(pcb* proceso, t_instruction* instruccion_proceso, char* instruccion) {
+	instruccion_proceso->pid = proceso->pid;
+	instruccion_proceso->instruccion = instruccion;
+	instruccion_proceso->tabla_segmentos = proceso->tabla_segmentos;
 }
 
 void replace_r_with_0(char *line)

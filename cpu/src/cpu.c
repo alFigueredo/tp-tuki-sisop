@@ -5,7 +5,9 @@ int main(int argc, char** argv) {
 	if (argc < 2) {
 		return EXIT_FAILURE;
 	}
-	int conexion_memoria = -1;
+	conexion_kernel = -1;
+	conexion_memoria = -1;
+	int socket_servidor = -1;
 
 	logger = iniciar_logger("./cpu.log", "CPU");
 	config = iniciar_config(argv[1]);
@@ -18,7 +20,6 @@ int main(int argc, char** argv) {
 	conexion_memoria = crear_conexion(ip_memoria, puerto_memoria);
 	enviar_mensaje("Intento de conexión del cpu a la memoria", conexion_memoria, MENSAJE);
 	*/
-	int socket_servidor = -1;
 	socket_servidor = iniciar_servidor(puerto_escucha);
 	esperar_cliente(socket_servidor);
 

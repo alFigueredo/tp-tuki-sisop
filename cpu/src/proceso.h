@@ -19,6 +19,12 @@
 #include <pthread.h>
 #include <shared.h>
 
+extern int conexion_kernel;
+extern int conexion_memoria;
+extern pcb* proceso;
+extern t_dictionary* instrucciones;
+extern t_dictionary* registros;
+
 typedef enum
 {
 	I_SET,
@@ -39,13 +45,14 @@ typedef enum
 	I_EXIT
 }enum_instrucciones;
 
-t_dictionary* diccionario_instrucciones(void);
-t_dictionary* diccionario_registros(registros_cpu*);
-void destruir_diccionarios(t_dictionary*, t_dictionary*);
-op_code interpretar_instrucciones(pcb*);
-void instruccion_set(t_dictionary*, char**, pcb*);
-void instruccion_mov_in(t_dictionary*, char**, pcb*);
-void instruccion_mov_out(t_dictionary*, char**, pcb*);
+void iniciar_diccionario_instrucciones(void);
+void iniciar_diccionario_registros(registros_cpu*);
+void destruir_diccionarios();
+void interpretar_instrucciones(pcb*);
+void instruccion_set(char**, pcb*);
+void instruccion_mov_in(char**, pcb*);
+void mov_in(t_instruction*);
+void instruccion_mov_out(char**, pcb*);
 void instruccion_i_o(char**, pcb*);
 void instruccion_f_open(char**, pcb*);
 void instruccion_f_close(char**, pcb*);
@@ -59,6 +66,7 @@ void instruccion_create_segment(char**, pcb*);
 void instruccion_delete_segment(char**, pcb*);
 void instruccion_yield(char**, pcb*);
 void instruccion_exit(char**, pcb*);
+void error_exit(pcb*);
 char* traducir_dir_logica(char*);
 
 #endif /* PROCESO_H_ */
