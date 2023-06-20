@@ -56,10 +56,19 @@ typedef enum {
 extern void* memoria_usuario;
 extern t_list* tabla_segmentos_total;
 extern t_list* huecos;
-extern t_list* listas_segmentos_procesos;
+//extern t_list* listas_segmentos_procesos;
+extern archivo_configuracion config_mem;
 //int contadorSegmentos;
 
 //FUNCIONES
+algoritmo_asignacion cambiar_enum_algoritmo (char* );
+t_list* obtener_segmentos_PID(int );
+void crear_segmento(unsigned int , uint32_t );
+void eliminar_segmento(uint32_t );
+void iniciar_proceso(pcb* , int );
+void finalizar_proceso(pcb* , int );
+void agrupar_huecos(uint32_t , uint32_t );
+
 void iniciar_memoria ();
 void cargar_config (t_config* );
 void iniciar_estructuras(pcb*, uint32_t);
@@ -68,7 +77,7 @@ void first_fit (unsigned int, uint32_t);
 void best_fit (unsigned int, uint32_t);
 void worst_fit (unsigned int, uint32_t);
 //void manejo_instrucciones (t_list* , int* );
-uint32_t leer_memoria(int direccion);
+uint32_t leer_memoria(int );
 void escribir_memoria (int , uint32_t );
 void terminar_memoria(t_log*, t_config*,int);
 int comparar_segmentos(void* , void* );

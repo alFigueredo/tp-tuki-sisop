@@ -56,23 +56,27 @@ void iniciar_proceso(pcb* pcb_proceso, int tamanio)
 
 void finalizar_proceso(pcb* pcb_proceso, int tamanio)
 {
-	for (int var = 0; var < config_mem.cant_segmentos ; ++var)
+	t_list* segmentos_proc = obtener_segmentos_PID (pcb_proceso->pid);
+	segmento* seg;
+
+	for (int var = 0; var < list_size(segmentos_proc); ++var)
 		{
-			eliminar_segmento (pcb_proceso->pid, tamanio);
+			seg = list_get(segmentos_proc, var);
+			eliminar_segmento (seg->id);
 		}
-	//vaciar la lista del proceso si esta la lista de listas
+	list_destroy_and_destroy_elements(segmentos_proc, free);
 }
 
 //funcion que recorre la lista y filtra por pid
-/*
-t_list* obtener_segmentos_PID(t_list* listaSegmentos, int pid)
+
+t_list* obtener_segmentos_PID(int pid)
 {
     t_list* segmentosPorPID = list_create();
     segmento* seg;
 
-    for (int i = 0; i < list_size(listaSegmentos); i++)
+    for (int i = 0; i < list_size(tabla_segmentos_total); i++)
     {
-        seg = list_get(listaSegmentos, i);
+        seg = list_get(tabla_segmentos_total, i);
         if (seg->pid == pid) {
             list_add(segmentosPorPID, seg);
         }
@@ -80,13 +84,18 @@ t_list* obtener_segmentos_PID(t_list* listaSegmentos, int pid)
 
     return segmentosPorPID;
 }
-*/
+
+//void eliminar_segmentos_pid
 
 //                                      INICIALIZACION DE MEMORIA
 
 // config memoria
 void cargar_config(t_config *archivo)
 {
+	char* algoritmo = config_get_string_value(config, "ALGORITMO_ASIGNACION");
+	char* primera_letra = string_substring_until(algoritmo, 1);
+	algoritmo_asignacion alg = cambiar_enum_algritmo (primera_letra);
+
 	config_mem.ip_memoria = config_get_string_value(config, "IP_MEMORIA");
 	config_mem.puerto_escucha = config_get_string_value(config, "PUERTO_ESCUCHA");
 	config_mem.tam_memoria = config_get_int_value(config, "TAM_MEMORIA");
@@ -94,8 +103,24 @@ void cargar_config(t_config *archivo)
 	config_mem.cant_segmentos = config_get_int_value(config, "CANT_SEGMENTOS");
 	config_mem.retardo_memoria = config_get_int_value(config, "RETARDO_MEMORIA");
 	config_mem.retardo_compactacion = config_get_int_value(config, "RETARDO_COMPACTACION");
-	config_mem.algoritmo = config_get_int_value(config, "ALGORITMO_ASIGNACION");
-	// si tomo un valor de config como si fuera un enum, seria un int ???
+	config_mem.algoritmo = alg;
+}
+
+algoritmo_asignacion cambiar_enum_algoritmo (char* letra)
+{
+	algoritmo_asignacion algoritmo;
+
+    if (string_equals_ignore_case(letra, "F")) {
+    	algoritmo = FIRST;
+    }
+    else if (string_equals_ignore_case(letra, "B")) {
+    	algoritmo = BEST;
+    }
+    else if (string_equals_ignore_case(letra, "W")) {
+    	algoritmo = WORST;
+    }
+
+    return algoritmo;
 }
 
 void iniciar_memoria()
@@ -170,7 +195,7 @@ void eliminar_segmento(uint32_t id)
 		if (seg->id == id)
 		{
 			list_remove(tabla_segmentos_total, i);
-			consolidar_segmentos(seg->direccion_base, seg->direccion_limite);
+			agrupar_huecos(seg->direccion_base, seg->direccion_limite);
 			free(seg);
 			break; // Terminar el bucle una vez que se encuentra el segmento
 		}
@@ -206,8 +231,9 @@ void agrupar_huecos(uint32_t base, uint32_t limite) // seguro esta MAL
 
 	if (hueco_izquierdo != NULL && hueco_derecho != NULL)
 	{
-		list_remove(huecos, list_index_of(huecos, hueco_izquierdo));
-		list_remove(huecos, list_index_of(huecos, hueco_derecho));
+
+		//list_remove(huecos, list_index_of(huecos, hueco_izquierdo));
+		//list_remove(huecos, list_index_of(huecos, hueco_derecho));
 
 		hueco_agrupado = malloc(sizeof(segmento));
 		hueco_agrupado->direccion_base = hueco_derecho->direccion_limite;
@@ -302,9 +328,8 @@ int hay_espacio_disponible(int tam_segmento)
 				return 1;
 			}
 		}
-
-		return 0;
 	}
+	return 0;
 }
 
 void first_fit(unsigned int pid_proceso, uint32_t tam_segmento)
