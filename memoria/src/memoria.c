@@ -94,7 +94,7 @@ void cargar_config(t_config *archivo)
 {
 	char* algoritmo = config_get_string_value(config, "ALGORITMO_ASIGNACION");
 	char* primera_letra = string_substring_until(algoritmo, 1);
-	algoritmo_asignacion alg = cambiar_enum_algritmo (primera_letra);
+	algoritmo_asignacion alg = cambiar_enum_algoritmo (primera_letra);
 
 	config_mem.ip_memoria = config_get_string_value(config, "IP_MEMORIA");
 	config_mem.puerto_escucha = config_get_string_value(config, "PUERTO_ESCUCHA");
@@ -146,7 +146,7 @@ void iniciar_memoria()
 
 void crear_segmento(unsigned int pid, uint32_t tamanio_seg)
 {
-	int sumatoria;
+	uint32_t sumatoria;
 
 	for (int var = 0; var < config_mem.cant_segmentos; ++var)
 	{
@@ -170,7 +170,7 @@ void crear_segmento(unsigned int pid, uint32_t tamanio_seg)
 		}
 		else
 		{
-			sumatoria = sumatoria_huecos;
+			sumatoria = sumatoria_huecos; //warnings por punteros
 
 			if (sumatoria >= tamanio_seg)
 			{
@@ -205,26 +205,30 @@ void eliminar_segmento(uint32_t id)
 void agrupar_huecos(uint32_t base, uint32_t limite) // seguro esta MAL
 {
 	segmento *hueco_izquierdo = NULL;
+	int index_izq;
 	segmento *hueco_derecho = NULL;
+	int index_der;
 	segmento *hueco;
 	segmento *hueco_agrupado;
 
 	for (int i = 0; i < list_size(huecos); i++)
 	{
 		hueco = list_get(huecos, i);
-		if (hueco->direccion_limite == base)
+		if ((hueco->direccion_limite + 1) == base)
 		{
 			hueco_izquierdo = hueco;
+			index_izq = i;
 			break;
 		}
 	}
 
-	for (int i = 0; i < list_size(huecos); i++)
+	for (int j = 0; j < list_size(huecos); j++)
 	{
-		hueco = list_get(huecos, i);
-		if (hueco->direccion_base == limite)
+		hueco = list_get(huecos, j);
+		if ((hueco->direccion_base - 1) == limite)
 		{
 			hueco_derecho = hueco;
+			index_der = j;
 			break;
 		}
 	}
@@ -232,8 +236,8 @@ void agrupar_huecos(uint32_t base, uint32_t limite) // seguro esta MAL
 	if (hueco_izquierdo != NULL && hueco_derecho != NULL)
 	{
 
-		//list_remove(huecos, list_index_of(huecos, hueco_izquierdo));
-		//list_remove(huecos, list_index_of(huecos, hueco_derecho));
+		list_remove(huecos, index_izq);
+		list_remove(huecos, index_der);
 
 		hueco_agrupado = malloc(sizeof(segmento));
 		hueco_agrupado->direccion_base = hueco_derecho->direccion_limite;
@@ -244,6 +248,21 @@ void agrupar_huecos(uint32_t base, uint32_t limite) // seguro esta MAL
 		list_add(huecos, hueco_agrupado);
 	}
 }
+/*
+int list_index(t_list* lista, void* element) {
+    int index = 0;
+    t_link_element* actual = lista->head;
+
+    while (actual != NULL) {
+        if (actual->data == element) {
+            return index;
+        }
+        actual = actual->next;
+        index++;
+    }
+
+    return -1;  // Element not found
+}*/
 
 int comparar_segmentos(void *seg1, void *seg2)
 {
@@ -294,7 +313,7 @@ void obtener_huecos_libres ()
 
 }*/
 
-int sumatoria_huecos()
+uint32_t sumatoria_huecos()
 {
 	uint32_t sumatoria = 0;
 	segmento *seg;

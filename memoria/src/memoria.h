@@ -82,6 +82,6 @@ void escribir_memoria (int , uint32_t );
 void terminar_memoria(t_log*, t_config*,int);
 int comparar_segmentos(void* , void* );
 void obtener_huecos_libres ();
-int sumatoria_huecos();
+uint32_t sumatoria_huecos();
 
 #endif /* MEMORIA_H_ */
