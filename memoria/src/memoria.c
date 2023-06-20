@@ -3,15 +3,18 @@
 char *ip_memoria;
 
 archivo_configuracion config_mem;
-void *memoria_usuario;
-t_list *tabla_segmentos_total;
-t_list *huecos;
+void* memoria_usuario;
+t_list* tabla_segmentos_total;
+//t_list* tabla_segmentos_procesos;
+t_list* huecos;
 
 // completar: !!!
 // posibles cambios: ???
 
 /*
- tema paqutes mensajes de sesrver
+	TO DO
+	- Iniciar memoria
+	- Iniciar procesos
  */
 
 int main(int argc, char **argv)
@@ -38,7 +41,48 @@ int main(int argc, char **argv)
 	return EXIT_SUCCESS;
 }
 
-//                                      INICIALIZACION DEL PROCESO
+//										PROCESOS
+void iniciar_proceso(pcb* pcb_proceso, int tamanio)
+{
+	for (int var = 0; var < config_mem.cant_segmentos ; ++var)
+	{
+		crear_segmento (pcb_proceso->pid, tamanio);
+	}
+
+	//no se si hacer una lista de listas e ir guardando los segmentos cuabndo son creados en una lista por proceso, o recorrer la lista de segmentos y filtrar en otra lista x pid
+
+	//MANDAR TABLA A NO SE QUI9EN
+}
+
+void finalizar_proceso(pcb* pcb_proceso, int tamanio)
+{
+	for (int var = 0; var < config_mem.cant_segmentos ; ++var)
+		{
+			eliminar_segmento (pcb_proceso->pid, tamanio);
+		}
+	//vaciar la lista del proceso si esta la lista de listas
+}
+
+//funcion que recorre la lista y filtra por pid
+/*
+t_list* obtener_segmentos_PID(t_list* listaSegmentos, int pid)
+{
+    t_list* segmentosPorPID = list_create();
+    segmento* seg;
+
+    for (int i = 0; i < list_size(listaSegmentos); i++)
+    {
+        seg = list_get(listaSegmentos, i);
+        if (seg->pid == pid) {
+            list_add(segmentosPorPID, seg);
+        }
+    }
+
+    return segmentosPorPID;
+}
+*/
+
+//                                      INICIALIZACION DE MEMORIA
 
 // config memoria
 void cargar_config(t_config *archivo)
@@ -439,8 +483,7 @@ uint32_t leer_memoria(int direccion)
 
 		if (direccion >= seg->direccion_base && direccion <= seg->direccion_limite)
 		{
-			// Encontrado el segmento que contiene la dirección
-			// Realizar la lectura de la memoria en esa dirección
+			delay (config_mem.retardo_memoria);
 			uint32_t valorLeido = memoria[direccion];
 			return valorLeido;
 		}
@@ -461,16 +504,13 @@ void escribir_memoria(int direccion, uint32_t nuevo_valor)
 
 		if (direccion >= seg->direccion_base && direccion <= seg->direccion_limite)
 		{
-			// Encontrado el segmento que contiene la dirección
-			// Realizar la escritura de la memoria en esa dirección
+			delay (config_mem.retardo_memoria);
 			memoria[direccion] = nuevo_valor;
 			return;
 		}
 	}
-
-	// Dirección no encontrada en ningún segmento
-	log_error(logger, "Error: Dirección de memoria inválida\n");
 }
+
 
 void terminar_memoria(t_log *logger, t_config *config, int socket)
 {

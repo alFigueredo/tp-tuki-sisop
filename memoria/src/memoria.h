@@ -11,6 +11,16 @@
 #include <stdbool.h>
 
 //STRUCTS
+typedef struct {
+    t_list* segmentos;
+} lista_tablas;
+
+typedef enum {
+	FIRST,
+	BEST,
+	WORST
+}algoritmo_asignacion;
+
 typedef struct
 {
 	char* ip_memoria;
@@ -41,16 +51,12 @@ typedef enum {
 	M_WRITE
 }inst_mem;
 
-typedef enum {
-	FIRST,
-	BEST,
-	WORST
-}algoritmo_asignacion;
 
 //VARIABLES
 extern void* memoria_usuario;
 extern t_list* tabla_segmentos_total;
 extern t_list* huecos;
+extern t_list* listas_segmentos_procesos;
 //int contadorSegmentos;
 
 //FUNCIONES
@@ -63,7 +69,7 @@ void best_fit (unsigned int, uint32_t);
 void worst_fit (unsigned int, uint32_t);
 //void manejo_instrucciones (t_list* , int* );
 uint32_t leer_memoria(int direccion);
-void escribir_memoria (uint32_t , uint32_t );
+void escribir_memoria (int , uint32_t );
 void terminar_memoria(t_log*, t_config*,int);
 int comparar_segmentos(void* , void* );
 void obtener_huecos_libres ();
