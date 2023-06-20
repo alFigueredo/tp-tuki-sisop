@@ -32,16 +32,15 @@ int main(int argc, char **argv)
 
 	iniciar_memoria();
 
-	// int socket_servidor = -1;
+	// SERIVIDOR
 	int socket_servidor = iniciar_servidor(config_mem.puerto_escucha);
-
 	esperar_cliente(socket_servidor);
 
-	terminar_memoria(logger, config, socket_servidor);
+	//terminar_memoria(logger, config, socket_servidor);
 	return EXIT_SUCCESS;
 }
 
-//										PROCESOS
+//-------------------PROCESOS------------------------------------------------------------------------------------------------------------------------------------------------------------
 void iniciar_proceso(pcb* pcb_proceso, int tamanio)
 {
 	for (int var = 0; var < config_mem.cant_segmentos ; ++var)
@@ -49,9 +48,13 @@ void iniciar_proceso(pcb* pcb_proceso, int tamanio)
 		crear_segmento (pcb_proceso->pid, tamanio);
 	}
 
+	//FALTA AGREGAR A MEMORIA USUARIO !!!
+
 	//no se si hacer una lista de listas e ir guardando los segmentos cuabndo son creados en una lista por proceso, o recorrer la lista de segmentos y filtrar en otra lista x pid
 
 	//MANDAR TABLA A NO SE QUI9EN
+
+	log_info (logger, "Creacion de proceso PID: %u",pcb_proceso->pid);
 }
 
 void finalizar_proceso(pcb* pcb_proceso, int tamanio)
@@ -59,12 +62,15 @@ void finalizar_proceso(pcb* pcb_proceso, int tamanio)
 	t_list* segmentos_proc = obtener_segmentos_PID (pcb_proceso->pid);
 	segmento* seg;
 
+	//FALTA ELIMINAR DE MEMORIA USUARIO !!!
+
 	for (int var = 0; var < list_size(segmentos_proc); ++var)
 		{
 			seg = list_get(segmentos_proc, var);
 			eliminar_segmento (seg->id);
 		}
 	list_destroy_and_destroy_elements(segmentos_proc, free);
+	log_info (logger, "Eliminacion de proceso PID: %u",pcb_proceso->pid);
 }
 
 //funcion que recorre la lista y filtra por pid
@@ -85,11 +91,7 @@ t_list* obtener_segmentos_PID(int pid)
     return segmentosPorPID;
 }
 
-//void eliminar_segmentos_pid
-
-//                                      INICIALIZACION DE MEMORIA
-
-// config memoria
+//-------------------INICIALIZACION DE MEMORIA------------------------------------------------------------------------------------------------------------------------------------------------------------
 void cargar_config(t_config *archivo)
 {
 	char* algoritmo = config_get_string_value(config, "ALGORITMO_ASIGNACION");
@@ -142,7 +144,7 @@ void iniciar_memoria()
 	log_info(logger, "Memoria inicializada.");
 }
 
-//                                    MANEJO DE SEGMENTOS
+//-------------------MANEJO DE SEGMENTOS-----------------------------------------------------------------------------------
 
 void crear_segmento(unsigned int pid, uint32_t tamanio_seg)
 {
@@ -170,10 +172,11 @@ void crear_segmento(unsigned int pid, uint32_t tamanio_seg)
 		}
 		else
 		{
-			sumatoria = sumatoria_huecos; //warnings por punteros
+			sumatoria = sumatoria_huecos(); //warnings por punteros
 
 			if (sumatoria >= tamanio_seg)
 			{
+				log_info(logger, "Solicitud de Compactacion");
 				// INFORMAR KERNEL COMPACTAR !!!
 			}
 
@@ -183,26 +186,38 @@ void crear_segmento(unsigned int pid, uint32_t tamanio_seg)
 			}
 		}
 	}
+
 }
 
-void eliminar_segmento(uint32_t id)
+void eliminar_segmento(unsigned int pid, uint32_t id)
 {
 	segmento *seg;
+	segmento *hueco;
+	int ady;
 
 	for (int i = 0; i < list_size(tabla_segmentos_total); i++)
 	{
 		seg = list_get(tabla_segmentos_total, i);
 		if (seg->id == id)
 		{
+			log_info(logger, "PID: %u - Eliminar Segmento: %d - Base: %d - Tamanio: %d", pid, seg->id, seg->direccion_base, seg->tam_segmento);
 			list_remove(tabla_segmentos_total, i);
-			agrupar_huecos(seg->direccion_base, seg->direccion_limite);
+			ady = agrupar_huecos(seg->direccion_base, seg->direccion_limite);
+			if (ady == 0)
+			{
+				hueco = malloc(sizeof(segmento));
+				hueco->direccion_base = seg->direccion_base;
+				hueco->direccion_limite = seg->direccion_limite;
+				list_add(huecos, hueco);
+			}
 			free(seg);
-			break; // Terminar el bucle una vez que se encuentra el segmento
+
+			break;
 		}
 	}
 }
 
-void agrupar_huecos(uint32_t base, uint32_t limite) // seguro esta MAL
+int agrupar_huecos(uint32_t base, uint32_t limite) // seguro esta MAL
 {
 	segmento *hueco_izquierdo = NULL;
 	int index_izq;
@@ -246,6 +261,13 @@ void agrupar_huecos(uint32_t base, uint32_t limite) // seguro esta MAL
 		free(hueco_izquierdo);
 
 		list_add(huecos, hueco_agrupado);
+
+		return 1;
+	}
+
+	else
+	{
+		return 0;
 	}
 }
 /*
