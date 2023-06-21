@@ -31,4 +31,7 @@ int truncarArchivo(char *nombre,char *carpeta, char ***vectoreRutas, int *cantid
 int dividirRedondeando(int numero1 , int numero2);
 void sacarBloques(int cantidadBloquesOriginal ,int cantidadBloquesNueva,t_config* configArchivoActual,int tamanioOriginal);
 void agregarBloques(int cantidadBloquesOriginal ,int cantidadBloquesNueva,t_config* configArchivoActual);
+void iniciarArchivoBitmap();
+bool accesoBitmap(t_bitarray* bitmapAAcceder, off_t bit_index);
+void setearBitmap(t_bitarray* bitmapAAcceder, off_t bit_index);
 #endif /* FILESYSTEM_H_ */

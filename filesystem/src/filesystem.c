@@ -279,10 +279,12 @@ int truncarArchivo(char *nombre,char *carpeta, char ***vectoreRutas, int *cantid
 
 	if (tamanioOriginal < tamanioNuevo)
 	{
+		log_info(logger,"Se agranda el archivo");
 		agregarBloques(cantidadBloquesOriginal,cantidadBloquesNueva,configArchivoActual);
 	}
 	else
 	{
+		log_info(logger,"Se achica el archivo");
 		sacarBloques(cantidadBloquesOriginal,cantidadBloquesNueva,configArchivoActual, tamanioOriginal);
 	}
 	return 1;
@@ -291,10 +293,15 @@ int truncarArchivo(char *nombre,char *carpeta, char ***vectoreRutas, int *cantid
 void sacarBloques(int cantidadBloquesOriginal ,int cantidadBloquesNueva,t_config* configArchivoActual,int tamanioOriginal)
 {
 	int cantidadBloquesAEliminar = cantidadBloquesNueva - cantidadBloquesOriginal;
+	if (cantidadBloquesOriginal <= 1)
+		{
+			//busco un bloque libre para agregar como bloque de punteros
+			log_info(logger,"El archivo solo tiene un bloque. No se modifica nada referido a los bloques");
+			return;
+		}
 	uint32_t punteroIndirecto = config_get_int_value(configArchivoActual,"PUNTERO_INDIRECTO");
 	uint32_t punteroACadaBloque;
 	FILE *bloques = fopen(config_get_string_value(config,"PATH_BLOQUES"),"r+");
-
 	// Me muevo al final del bloque de punteros para eliminar puntero por puntero
 	log_info(logger,"Acceso Bloque - Archivo: %s - Bloque Archivo: bloque de punteros - Bloque File System %d",config_get_string_value(config,"NOMBRE_ARCHIVO"),punteroIndirecto);
 	fseek(bloques,punteroIndirecto * config_get_int_value(superBloque,"BLOCK_SIZE"),SEEK_SET);
@@ -313,7 +320,7 @@ void sacarBloques(int cantidadBloquesOriginal ,int cantidadBloquesNueva,t_config
 
 
 	}
-
+	fclose(bloques);
 
 
 	return;
@@ -321,8 +328,26 @@ void sacarBloques(int cantidadBloquesOriginal ,int cantidadBloquesNueva,t_config
 void agregarBloques(int cantidadBloquesOriginal ,int cantidadBloquesNueva,t_config* configArchivoActual)
 {
 	int cantidadBloquesAAGregar = cantidadBloquesNueva - cantidadBloquesOriginal;
+	if (cantidadBloquesOriginal <= 1 && cantidadBloquesNueva !=1)
+		{
+			//busco un bloque libre para agregar como bloque de punteros
+			log_info(logger,"Se busca bloque libre para agregar los punteros a bloques");
+			for(int i=0;i<config_get_int_value(superBloque, "BLOCK_COUNT");i++)
+			{
+				if (accesoBitmap(bitmap, i))
+				{
+					//Encontre un bloque vacio lo marco como ocupado
+					setearBitmap(bitmap,i);
+					config_set_value(configArchivoActual,"PUNTERO_INDIRECTO",i);
+					break;
 
-
+				}
+			}
+		}
+	uint32_t punteroIndirecto = config_get_int_value(configArchivoActual,"PUNTERO_INDIRECTO");
+	uint32_t punteroACadaBloque;
+	FILE *bloques = fopen(config_get_string_value(config,"PATH_BLOQUES"),"r+");
+	log_info(logger,"Acceso Bloque - Archivo: %s - Bloque Archivo: bloque de punteros - Bloque File System %d",config_get_string_value(config,"NOMBRE_ARCHIVO"),punteroIndirecto);
 
 	//Busco los bloques disponibles en el bitmap:
 
@@ -341,4 +366,29 @@ int dividirRedondeando(int numero1 , int numero2)
 	{
 		return (numero1)/(numero2) + 1;
 	}
+}
+void iniciarArchivoBitmap()
+{
+	FILE *archivoBitmap=fopen(config_get_string_value(config,"PATH_BITMAP"),"r+");
+	void* punteroABitmapPruebas = malloc(config_get_int_value(superBloque, "BLOCK_COUNT") / 8);
+	t_bitarray *bitmapPruebas = bitarray_create_with_mode(punteroABitmapPruebas, config_get_int_value(superBloque, "BLOCK_COUNT") / 8, LSB_FIRST);
+	fwrite(bitmapPruebas->bitarray,config_get_int_value(superBloque, "BLOCK_COUNT") / 8,1,archivoBitmap);
+	fclose(archivoBitmap);
+	bitarray_destroy(bitmapPruebas);
+	free(punteroABitmapPruebas);
+	return;
+}
+bool accesoBitmap(t_bitarray* bitmapAAcceder, off_t bit_index)
+{
+	int posicionIndicada = bit_index;
+	log_info(logger,"Acceso a Bitmap - Bloque: %d - Estado: %d",posicionIndicada,bitarray_test_bit(bitmapAAcceder,bit_index));
+	return bitarray_test_bit(bitmapAAcceder,bit_index);
+
+}
+void setearBitmap(t_bitarray* bitmapAAcceder, off_t bit_index)
+{
+	int posicionIndicada = bit_index;
+	log_info(logger,"Acceso a Bitmap - Bloque: %d - Estado: %d",posicionIndicada,bitarray_test_bit(bitmapAAcceder,bit_index));
+	bitarray_set_bit(bitmapAAcceder, bit_index);
+	return;
 }
