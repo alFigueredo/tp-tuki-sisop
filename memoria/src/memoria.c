@@ -67,7 +67,7 @@ void finalizar_proceso(pcb* pcb_proceso, int tamanio)
 	for (int var = 0; var < list_size(segmentos_proc); ++var)
 		{
 			seg = list_get(segmentos_proc, var);
-			eliminar_segmento (seg->id);
+			eliminar_segmento (pcb_proceso->pid,seg->id);
 		}
 	list_destroy_and_destroy_elements(segmentos_proc, free);
 	log_info (logger, "Eliminacion de proceso PID: %u",pcb_proceso->pid);
@@ -145,7 +145,7 @@ void iniciar_memoria()
 }
 
 //-------------------MANEJO DE SEGMENTOS-----------------------------------------------------------------------------------
-
+/* cambio de implementacion. No me gustaba que haga el switch dentro del for, pq el algoritmo no cambia.
 void crear_segmento(unsigned int pid, uint32_t tamanio_seg)
 {
 	uint32_t sumatoria;
@@ -186,6 +186,90 @@ void crear_segmento(unsigned int pid, uint32_t tamanio_seg)
 			}
 		}
 	}
+
+}*/
+
+void crear_segmento(unsigned int pid, uint32_t tamanio_seg)
+{
+	uint32_t sumatoria;
+
+
+	switch (config_mem.algoritmo){
+	case FIRST:
+		for (int var = 0; var < config_mem.cant_segmentos; ++var)
+		{
+			if (hay_espacio_disponible(tamanio_seg))
+			{
+				first_fit(pid, tamanio_seg);
+			}
+			else
+			{
+				sumatoria = sumatoria_huecos(); //warnings por punteros
+
+				if (sumatoria >= tamanio_seg)
+				{
+					log_info(logger, "Solicitud de Compactacion");
+					// INFORMAR KERNEL COMPACTAR !!!
+				}
+
+				else
+				{
+					// FALTA DE ESPACIO LIBRE KERNEL !!!
+				}
+			}
+		}
+		break;
+	case BEST	:
+			for (int var = 0; var < config_mem.cant_segmentos; ++var)
+			{
+				if (hay_espacio_disponible(tamanio_seg))
+				{
+					best_fit(pid, tamanio_seg);
+				}
+				else
+				{
+					sumatoria = sumatoria_huecos(); //warnings por punteros
+
+					if (sumatoria >= tamanio_seg)
+					{
+						log_info(logger, "Solicitud de Compactacion");
+						// INFORMAR KERNEL COMPACTAR !!!
+					}
+
+					else
+					{
+						// FALTA DE ESPACIO LIBRE KERNEL !!!
+					}
+				}
+			}
+			break;
+	case WORST	:
+				for (int var = 0; var < config_mem.cant_segmentos; ++var)
+				{
+					if (hay_espacio_disponible(tamanio_seg))
+					{
+						worst_fit(pid, tamanio_seg);
+					}
+					else
+					{
+						sumatoria = sumatoria_huecos(); //warnings por punteros
+
+						if (sumatoria >= tamanio_seg)
+						{
+							log_info(logger, "Solicitud de Compactacion");
+							// INFORMAR KERNEL COMPACTAR !!!
+						}
+
+						else
+						{
+							// FALTA DE ESPACIO LIBRE KERNEL !!!
+						}
+					}
+				}
+				break;
+
+	}
+
 
 }
 

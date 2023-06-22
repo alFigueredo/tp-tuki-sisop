@@ -64,10 +64,10 @@ extern archivo_configuracion config_mem;
 algoritmo_asignacion cambiar_enum_algoritmo (char* );
 t_list* obtener_segmentos_PID(int );
 void crear_segmento(unsigned int , uint32_t );
-void eliminar_segmento(uint32_t );
+void eliminar_segmento(unsigned int,uint32_t );
 void iniciar_proceso(pcb* , int );
 void finalizar_proceso(pcb* , int );
-void agrupar_huecos(uint32_t , uint32_t );
+int agrupar_huecos(uint32_t , uint32_t );
 
 void iniciar_memoria ();
 void cargar_config (t_config* );
