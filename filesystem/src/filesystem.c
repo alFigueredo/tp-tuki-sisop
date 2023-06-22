@@ -253,8 +253,6 @@ int truncarArchivo(char *nombre,char *carpeta, char ***vectoreRutas, int *cantid
 	log_info(logger, "Truncar Archivo: %s - Tamaño: %d",nombre,tamanioNuevo);
 	int i=0;
 	t_config* configArchivoActual;
-	t_config* configSuperBloque;
-	configSuperBloque = iniciar_config(config_get_string_value(config,"PATH_SUPERBLOQUE"));
 	int tamanioBloques;
 	int tamanioOriginal;
 	int cantidadBloquesOriginal;
@@ -272,7 +270,7 @@ int truncarArchivo(char *nombre,char *carpeta, char ***vectoreRutas, int *cantid
 	}
 
 	tamanioOriginal = config_get_int_value(configArchivoActual,"TAMANIO_ARCHIVO");
-	tamanioBloques = config_get_int_value(configSuperBloque,"BLOCK_SIZE");
+	tamanioBloques = config_get_int_value(superBloque,"BLOCK_SIZE");
 	config_set_value(configArchivoActual,"TAMANIO_ARCHIVO",string_itoa(tamanioNuevo));
 	cantidadBloquesOriginal = dividirRedondeando(tamanioOriginal, tamanioBloques);
 	cantidadBloquesNueva = dividirRedondeando(tamanioNuevo, tamanioBloques);
@@ -328,32 +326,59 @@ void sacarBloques(int cantidadBloquesOriginal ,int cantidadBloquesNueva,t_config
 void agregarBloques(int cantidadBloquesOriginal ,int cantidadBloquesNueva,t_config* configArchivoActual)
 {
 	int cantidadBloquesAAGregar = cantidadBloquesNueva - cantidadBloquesOriginal;
-	if (cantidadBloquesOriginal <= 1 && cantidadBloquesNueva !=1)
+	FILE *bloques = fopen(config_get_string_value(config,"PATH_BLOQUES"),"r+");
+	int punteroABloquePunteros=0;
+	uint32_t punteroACadaBloque;
+	if (cantidadBloquesOriginal == 1 && cantidadBloquesNueva !=1)
 		{
 			//busco un bloque libre para agregar como bloque de punteros
 			log_info(logger,"Se busca bloque libre para agregar los punteros a bloques");
 			for(int i=0;i<config_get_int_value(superBloque, "BLOCK_COUNT");i++)
 			{
-				if (accesoBitmap(bitmap, i))
+				if (accesoBitmap(bitmap, i) == 0)
 				{
 					//Encontre un bloque vacio lo marco como ocupado
 					setearBitmap(bitmap,i);
-					config_set_value(configArchivoActual,"PUNTERO_INDIRECTO",i);
+					config_set_value(configArchivoActual,"PUNTERO_INDIRECTO",string_itoa(i));
+					punteroABloquePunteros = i;
+
 					break;
 
 				}
 			}
+			fseek(bloques,punteroABloquePunteros * config_get_int_value(superBloque,"BLOCK_SIZE"),SEEK_SET);
+			for (int i=0;i< cantidadBloquesAAGregar;i++)
+			{
+				int j=1;
+				int posicion=0;
+				while(j != 0)
+				{
+					j=accesoBitmap(bitmap, posicion);
+					posicion++;
+				}
+				punteroACadaBloque = posicion - 1;
+				fwrite(&punteroACadaBloque,sizeof(uint32_t),1,bloques);
+			}
+			fclose(bloques);
+			return;
 		}
-	uint32_t punteroIndirecto = config_get_int_value(configArchivoActual,"PUNTERO_INDIRECTO");
-	uint32_t punteroACadaBloque;
-	FILE *bloques = fopen(config_get_string_value(config,"PATH_BLOQUES"),"r+");
-	log_info(logger,"Acceso Bloque - Archivo: %s - Bloque Archivo: bloque de punteros - Bloque File System %d",config_get_string_value(config,"NOMBRE_ARCHIVO"),punteroIndirecto);
-
-	//Busco los bloques disponibles en el bitmap:
-
-
-
-
+	if(cantidadBloquesNueva !=1)
+	{
+		fseek(bloques,punteroABloquePunteros * config_get_int_value(superBloque,"BLOCK_SIZE"),SEEK_SET);
+		for (int i=0;i< cantidadBloquesAAGregar;i++)
+		{
+			int j=1;
+			int posicion=0;
+			while(j != 0)
+			{
+				j=accesoBitmap(bitmap, posicion);
+				posicion++;
+			}
+			punteroACadaBloque = posicion - 1;
+			fwrite(&punteroACadaBloque,sizeof(uint32_t),1,bloques);
+		}
+	}
+	fclose(bloques);
 	return;
 }
 int dividirRedondeando(int numero1 , int numero2)
