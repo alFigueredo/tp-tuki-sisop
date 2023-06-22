@@ -377,7 +377,22 @@ int hay_espacio_disponible(int tam_segmento)
 	return 0;
 }
 
-// SI GUARDA EL LUGAR EN UN HUECO, LO TIENE QUE ELIMINAR DE LA LISTA DE HUECOS !!!
+
+void eliminar_hueco(uint32_t base, uint32_t limite)
+{
+	segmento* hueco;
+
+	for (int i = 0; i < list_size(huecos); i++)
+		{
+			hueco = list_get(huecos, i);
+			if (hueco->direccion_limite == base && hueco->direccion_limite == limite)
+			{
+				list_remove(hueco, i);
+				break;
+			}
+		}
+}
+
 
 // Busca el primer hueco disponible desde el comienzo de memoria
 void first_fit(unsigned int pid_proceso, uint32_t tam_segmento)
@@ -410,6 +425,7 @@ void first_fit(unsigned int pid_proceso, uint32_t tam_segmento)
 				nuevo_segmento->direccion_limite = nuevo_segmento->direccion_base + tam_segmento - 1;
 				list_add_in_index(memoria_usuario, i + 1, nuevo_segmento);
 				log_info(logger, "PID: %u - Crear Segmento: %d - Base: %d - Tamanio: %d", pid_proceso, segmento_asignado, nuevo_segmento->direccion_base, tam_segmento);
+				eliminar_hueco(nuevo_segmento->direccion_base, nuevo_segmento->direccion_limite);
 
 				break;
 			}
@@ -457,6 +473,7 @@ void best_fit(unsigned int pid_proceso, uint32_t tam_segmento)
 		// Insertar el nuevo segmento en la lista de memoria después del segmento anterior al segmento asignado
 		list_add_in_index(memoria_usuario, segmento_asignado, nuevo_segmento);
 		log_info(logger, "PID: %u - Crear Segmento: %d - Base: %d - Tamanio: %d", pid_proceso, segmento_asignado, nuevo_segmento->direccion_base, tam_segmento);
+		eliminar_hueco(nuevo_segmento->direccion_base, nuevo_segmento->direccion_limite);
 	}
 }
 
@@ -501,6 +518,7 @@ void worst_fit(unsigned int pid_proceso, uint32_t tam_segmento)
 		// Insertar el nuevo segmento en la lista de memoria después del segmento anterior al segmento asignado
 		list_add_in_index(memoria_usuario, segmento_asignado, nuevo_segmento);
 		log_info(logger, "PID: %u - Crear Segmento: %d - Base: %d - Tamanio: %d", pid_proceso, segmento_asignado, nuevo_segmento->direccion_base, tam_segmento);
+		eliminar_hueco(nuevo_segmento->direccion_base, nuevo_segmento->direccion_limite);
 	}
 }
 

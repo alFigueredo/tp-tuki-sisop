@@ -61,6 +61,7 @@ extern archivo_configuracion config_mem;
 //int contadorSegmentos;
 
 //FUNCIONES
+void eliminar_hueco(uint32_t , uint32_t );
 algoritmo_asignacion cambiar_enum_algoritmo (char* );
 t_list* obtener_segmentos_PID(int );
 void crear_segmento(unsigned int , uint32_t );
