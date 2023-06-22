@@ -41,6 +41,7 @@ int main(int argc, char **argv)
 }
 
 //-------------------PROCESOS------------------------------------------------------------------------------------------------------------------------------------------------------------
+//Crea los segmentos del proceso. La cantidad de segmentos esta dada por el config.
 void iniciar_proceso(pcb* pcb_proceso, int tamanio)
 {
 	for (int var = 0; var < config_mem.cant_segmentos ; ++var)
@@ -50,41 +51,42 @@ void iniciar_proceso(pcb* pcb_proceso, int tamanio)
 
 	//FALTA AGREGAR A MEMORIA USUARIO !!!
 
-	//no se si hacer una lista de listas e ir guardando los segmentos cuabndo son creados en una lista por proceso, o recorrer la lista de segmentos y filtrar en otra lista x pid
+	//no se si hacer una lista de listas e ir guardando los segmentos cuabndo son creados en una lista por proceso, o recorrer la lista de segmentos y filtrar en otra lista x pid ???
 
-	//MANDAR TABLA A NO SE QUI9EN
+	//MANDAR TABLA A NO SE QUI9EN !!!
 
 	log_info (logger, "Creacion de proceso PID: %u",pcb_proceso->pid);
 }
 
+//Elimina los segmentos del proceso. Filtra la lista de segmentos y los elimina de la lista de segmentos.
 void finalizar_proceso(pcb* pcb_proceso, int tamanio)
 {
-	t_list* segmentos_proc = obtener_segmentos_PID (pcb_proceso->pid);
+	t_list* segmentos_proc = obtener_segmentos_PID (pcb_proceso->pid); 									//Lista filtrada
 	segmento* seg;
 
 	//FALTA ELIMINAR DE MEMORIA USUARIO !!!
 
-	for (int var = 0; var < list_size(segmentos_proc); ++var)
+	for (int var = 0; var < list_size(segmentos_proc); ++var)											//Recorrre la lista filtrada
 		{
-			seg = list_get(segmentos_proc, var);
-			eliminar_segmento (pcb_proceso->pid,seg->id);
+			seg = list_get(segmentos_proc, var);														//Toma el segmento actual del for
+			eliminar_segmento (pcb_proceso->pid,seg->id);												//Elimina el segmento de la lista de segmentos total.
 		}
+
 	list_destroy_and_destroy_elements(segmentos_proc, free);
 	log_info (logger, "Eliminacion de proceso PID: %u",pcb_proceso->pid);
 }
 
-//funcion que recorre la lista y filtra por pid
-
+//Funcion que recorre la lista y filtra por pid
 t_list* obtener_segmentos_PID(int pid)
 {
     t_list* segmentosPorPID = list_create();
     segmento* seg;
 
-    for (int i = 0; i < list_size(tabla_segmentos_total); i++)
+    for (int i = 0; i < list_size(tabla_segmentos_total); i++)											//Recorre la lista de segmentos
     {
-        seg = list_get(tabla_segmentos_total, i);
-        if (seg->pid == pid) {
-            list_add(segmentosPorPID, seg);
+        seg = list_get(tabla_segmentos_total, i);														//Toma un segmento
+        if (seg->pid == pid) {																			//Ve si pertenece al proceso
+            list_add(segmentosPorPID, seg);																//Si pertenece, lo agrega a la lista de segmentos del proceso
         }
     }
 
@@ -92,11 +94,12 @@ t_list* obtener_segmentos_PID(int pid)
 }
 
 //-------------------INICIALIZACION DE MEMORIA------------------------------------------------------------------------------------------------------------------------------------------------------------
+//Se le asignan a los elementos de un struct global la informacion del config
 void cargar_config(t_config *archivo)
 {
 	char* algoritmo = config_get_string_value(config, "ALGORITMO_ASIGNACION");
 	char* primera_letra = string_substring_until(algoritmo, 1);
-	algoritmo_asignacion alg = cambiar_enum_algoritmo (primera_letra);
+	algoritmo_asignacion alg = cambiar_enum_algoritmo (primera_letra);									//Quiero que el algoritmo de asignacion sea un enum porque uso un switch en crear segmento.
 
 	config_mem.ip_memoria = config_get_string_value(config, "IP_MEMORIA");
 	config_mem.puerto_escucha = config_get_string_value(config, "PUERTO_ESCUCHA");
@@ -108,6 +111,7 @@ void cargar_config(t_config *archivo)
 	config_mem.algoritmo = alg;
 }
 
+//Cambia el string del algoritmo de asignacion del config a un enum propio
 algoritmo_asignacion cambiar_enum_algoritmo (char* letra)
 {
 	algoritmo_asignacion algoritmo;
@@ -132,7 +136,7 @@ void iniciar_memoria()
 	tabla_segmentos_total = list_create();
 	huecos = list_create();
 
-	segmento *segmento_0 = (segmento *)malloc(sizeof(segmento));
+	segmento *segmento_0 = (segmento *)malloc(sizeof(segmento));										//Segmento 0 compartido por todos los procesos
 	segmento_0->pid = -1;
 	segmento_0->id = 0;
 	segmento_0->tam_segmento = config_mem.tam_segmento_0;
@@ -145,16 +149,13 @@ void iniciar_memoria()
 }
 
 //-------------------MANEJO DE SEGMENTOS-----------------------------------------------------------------------------------
-/* cambio de implementacion. No me gustaba que haga el switch dentro del for, pq el algoritmo no cambia.
+//Crea UN segmento segun el algoritmo de asignacion del config si hay espacio en memoria. Si no hay espacio en memoria, solicita una compactacion o le informa al kernel que no hay espacio disponible
 void crear_segmento(unsigned int pid, uint32_t tamanio_seg)
 {
 	uint32_t sumatoria;
 
-	for (int var = 0; var < config_mem.cant_segmentos; ++var)
+	if (hay_espacio_disponible(tamanio_seg))															//Primero se fija si hay espacio disponible en memoria
 	{
-
-		if (hay_espacio_disponible(tamanio_seg))
-		{
 			// mutex
 			switch (config_mem.algoritmo)
 			{
@@ -170,109 +171,24 @@ void crear_segmento(unsigned int pid, uint32_t tamanio_seg)
 			}
 			// mutex
 		}
-		else
+	else																								//No hay espacio disponible en memoria,
+	{
+		sumatoria = sumatoria_huecos();																			//suma el espacio de los huecos
+
+		if (sumatoria >= tamanio_seg)																	//porque los segmentos no estan compactados (hay espacio pero disperso).
 		{
-			sumatoria = sumatoria_huecos(); //warnings por punteros
+			log_info(logger, "Solicitud de Compactacion");
+			// INFORMAR KERNEL COMPACTAR !!!
+		}
 
-			if (sumatoria >= tamanio_seg)
-			{
-				log_info(logger, "Solicitud de Compactacion");
-				// INFORMAR KERNEL COMPACTAR !!!
-			}
-
-			else
-			{
-				// FALTA DE ESPACIO LIBRE KERNEL !!!
-			}
+		else																							//porque no hay mas espacio (si se compactan los segmentos igual no hay espacio).
+		{
+			// FALTA DE ESPACIO LIBRE KERNEL !!!
 		}
 	}
-
-}*/
-
-void crear_segmento(unsigned int pid, uint32_t tamanio_seg)
-{
-	uint32_t sumatoria;
-
-
-	switch (config_mem.algoritmo){
-	case FIRST:
-		for (int var = 0; var < config_mem.cant_segmentos; ++var)
-		{
-			if (hay_espacio_disponible(tamanio_seg))
-			{
-				first_fit(pid, tamanio_seg);
-			}
-			else
-			{
-				sumatoria = sumatoria_huecos(); //warnings por punteros
-
-				if (sumatoria >= tamanio_seg)
-				{
-					log_info(logger, "Solicitud de Compactacion");
-					// INFORMAR KERNEL COMPACTAR !!!
-				}
-
-				else
-				{
-					// FALTA DE ESPACIO LIBRE KERNEL !!!
-				}
-			}
-		}
-		break;
-	case BEST	:
-			for (int var = 0; var < config_mem.cant_segmentos; ++var)
-			{
-				if (hay_espacio_disponible(tamanio_seg))
-				{
-					best_fit(pid, tamanio_seg);
-				}
-				else
-				{
-					sumatoria = sumatoria_huecos(); //warnings por punteros
-
-					if (sumatoria >= tamanio_seg)
-					{
-						log_info(logger, "Solicitud de Compactacion");
-						// INFORMAR KERNEL COMPACTAR !!!
-					}
-
-					else
-					{
-						// FALTA DE ESPACIO LIBRE KERNEL !!!
-					}
-				}
-			}
-			break;
-	case WORST	:
-				for (int var = 0; var < config_mem.cant_segmentos; ++var)
-				{
-					if (hay_espacio_disponible(tamanio_seg))
-					{
-						worst_fit(pid, tamanio_seg);
-					}
-					else
-					{
-						sumatoria = sumatoria_huecos(); //warnings por punteros
-
-						if (sumatoria >= tamanio_seg)
-						{
-							log_info(logger, "Solicitud de Compactacion");
-							// INFORMAR KERNEL COMPACTAR !!!
-						}
-
-						else
-						{
-							// FALTA DE ESPACIO LIBRE KERNEL !!!
-						}
-					}
-				}
-				break;
-
-	}
-
-
 }
 
+//Busca el segmento por su id y lo elimina
 void eliminar_segmento(unsigned int pid, uint32_t id)
 {
 	segmento *seg;
@@ -282,17 +198,17 @@ void eliminar_segmento(unsigned int pid, uint32_t id)
 	for (int i = 0; i < list_size(tabla_segmentos_total); i++)
 	{
 		seg = list_get(tabla_segmentos_total, i);
-		if (seg->id == id)
+		if (seg->id == id)																				//Encuentra el segmento.
 		{
 			log_info(logger, "PID: %u - Eliminar Segmento: %d - Base: %d - Tamanio: %d", pid, seg->id, seg->direccion_base, seg->tam_segmento);
-			list_remove(tabla_segmentos_total, i);
-			ady = agrupar_huecos(seg->direccion_base, seg->direccion_limite);
-			if (ady == 0)
+			list_remove(tabla_segmentos_total, i);														//Lo borra de la tabla de segmentos.
+			ady = agrupar_huecos(seg->direccion_base, seg->direccion_limite);							//Si tiene huecos aledanios, los agrupa.
+			if (ady == 0)																				//Si no los tiene,
 			{
 				hueco = malloc(sizeof(segmento));
 				hueco->direccion_base = seg->direccion_base;
 				hueco->direccion_limite = seg->direccion_limite;
-				list_add(huecos, hueco);
+				list_add(huecos, hueco);																//crea el hueco.
 			}
 			free(seg);
 
@@ -301,7 +217,8 @@ void eliminar_segmento(unsigned int pid, uint32_t id)
 	}
 }
 
-int agrupar_huecos(uint32_t base, uint32_t limite) // seguro esta MAL
+//Si tiene huecos aledanios los agrupa y devuelve 1, sino devuelve 0
+int agrupar_huecos(uint32_t base, uint32_t limite)
 {
 	segmento *hueco_izquierdo = NULL;
 	int index_izq;
@@ -368,7 +285,8 @@ int list_index(t_list* lista, void* element) {
     }
 
     return -1;  // Element not found
-}*/
+}
+
 
 int comparar_segmentos(void *seg1, void *seg2)
 {
@@ -419,6 +337,7 @@ void obtener_huecos_libres ()
 
 }*/
 
+//Suma los espacios de los huecos
 uint32_t sumatoria_huecos()
 {
 	uint32_t sumatoria = 0;
@@ -433,6 +352,7 @@ uint32_t sumatoria_huecos()
 	return sumatoria;
 }
 
+//Si hay espacio disponible devuelve 1, sino devuelve 0
 int hay_espacio_disponible(int tam_segmento)
 {
 	int espacio_disponible;
@@ -440,8 +360,8 @@ int hay_espacio_disponible(int tam_segmento)
 	segmento *segmento_siguiente;
 
 	for (int i = 0; i < list_size(memoria_usuario); i++)
-	{													// recorre toda la memoria
-		segmento_actual = list_get(memoria_usuario, i); // toma un segmento
+	{																									// recorre toda la memoria
+		segmento_actual = list_get(memoria_usuario, i); 												// toma un segmento
 
 		if (i + 1 < list_size(memoria_usuario))
 		{																										 // si no es el ultimo
@@ -457,8 +377,11 @@ int hay_espacio_disponible(int tam_segmento)
 	return 0;
 }
 
+// SI GUARDA EL LUGAR EN UN HUECO, LO TIENE QUE ELIMINAR DE LA LISTA DE HUECOS !!!
+
+// Busca el primer hueco disponible desde el comienzo de memoria
 void first_fit(unsigned int pid_proceso, uint32_t tam_segmento)
-{ // Busca el primer hueco disponible desde el comienzo de memoria
+{
 	int segmento_asignado = -1;
 	segmento *segmento_actual;
 	segmento *segmento_siguiente;
@@ -468,15 +391,15 @@ void first_fit(unsigned int pid_proceso, uint32_t tam_segmento)
 	for (int i = 0; i < list_size(memoria_usuario); i++)
 	{
 
-		segmento_actual = list_get(memoria_usuario, i); // Recorre todos los segmentos
+		segmento_actual = list_get(memoria_usuario, i); 													// Recorre todos los segmentos
 
-		if (i + 1 < config_mem.tam_memoria)
-		{ // Ve si hay otro segmento
+		if (i + 1 < config_mem.tam_memoria)																	// Ve si existe otro segmento
+		{
 			segmento_siguiente = list_get(memoria_usuario, i + 1);
 
-			espacio_libre = segmento_siguiente->direccion_base - (segmento_actual->direccion_limite + 1);
+			espacio_libre = segmento_siguiente->direccion_base - (segmento_actual->direccion_limite + 1); 	// Si existe, calcula el espacio entre ambos
 
-			if (espacio_libre >= tam_segmento)
+			if (espacio_libre >= tam_segmento)																// Si entra el segmento en el espacio, lo agrega
 			{
 				segmento_asignado = segmento_actual->id + 1; // ID del nuevo segmento
 				nuevo_segmento = (segmento *)malloc(sizeof(segmento));
@@ -494,8 +417,9 @@ void first_fit(unsigned int pid_proceso, uint32_t tam_segmento)
 	}
 }
 
+// Busca el hueco mas chico donde entre el proceso
 void best_fit(unsigned int pid_proceso, uint32_t tam_segmento)
-{ // Busca el hueco mas chico donde entre el proceso
+{
 	int segmento_asignado = -1;
 	int mejor_ajuste = INT_MAX;
 	segmento *segmento_actual;
@@ -513,7 +437,7 @@ void best_fit(unsigned int pid_proceso, uint32_t tam_segmento)
 			segmento_siguiente = list_get(memoria_usuario, i + 1);
 			espacio_libre = segmento_siguiente->direccion_base - (segmento_actual->direccion_limite + 1);
 
-			if (espacio_libre >= tam_segmento && espacio_libre < mejor_ajuste)
+			if (espacio_libre >= tam_segmento && espacio_libre < mejor_ajuste)								//Si entra el segmento y si el espacio es menor al menor espacio, lo agrega.
 			{
 				segmento_asignado = segmento_actual->id + 1;
 				mejor_ajuste = espacio_libre;
@@ -536,6 +460,7 @@ void best_fit(unsigned int pid_proceso, uint32_t tam_segmento)
 	}
 }
 
+// Buscar el hueco más grande que pueda contener el nuevo segmento
 void worst_fit(unsigned int pid_proceso, uint32_t tam_segmento)
 {
 	int segmento_asignado = -1;
@@ -545,20 +470,19 @@ void worst_fit(unsigned int pid_proceso, uint32_t tam_segmento)
 	segmento *segmento_siguiente;
 	uint32_t nueva_dir_base;
 
-	// Buscar el hueco más grande que pueda contener el nuevo segmento
+
 	for (int i = 0; i < list_size(memoria_usuario); i++)
 	{
 		segmento_actual = list_get(memoria_usuario, i);
 
-		// Verificar si hay espacio suficiente entre el segmento actual y el siguiente
 		if (i + 1 < list_size(memoria_usuario))
 		{
 			segmento_siguiente = list_get(memoria_usuario, i + 1);
 			espacio_libre = segmento_siguiente->direccion_base - (segmento_actual->direccion_limite + 1);
 
-			if (espacio_libre >= tam_segmento && espacio_libre > mejor_ajuste)
+			if (espacio_libre >= tam_segmento && espacio_libre > mejor_ajuste)								//Si entra el segmento y si el espacio es mayor al mayor espacio, lo agrega.
 			{
-				segmento_asignado = segmento_actual->id + 1; // ID del nuevo segmento
+				segmento_asignado = segmento_actual->id + 1;
 				mejor_ajuste = espacio_libre;
 				nueva_dir_base = (segmento_actual->direccion_limite) + 1;
 			}
@@ -625,7 +549,7 @@ uint32_t leer_memoria(int direccion)
 {
 	segmento *seg;
 
-	uint32_t *memoria = (uint32_t *)memoria_usuario; // Conversión de tipo a uint32_t *
+	uint32_t *memoria = (uint32_t *)memoria_usuario;
 
 	for (int i = 0; i < list_size(tabla_segmentos_total); i++)
 	{
@@ -646,7 +570,7 @@ uint32_t leer_memoria(int direccion)
 void escribir_memoria(int direccion, uint32_t nuevo_valor)
 {
 	segmento *seg;
-	uint32_t *memoria = (uint32_t *)memoria_usuario; // Conversión de tipo a uint32_t *
+	uint32_t *memoria = (uint32_t *)memoria_usuario;
 
 	for (int i = 0; i < list_size(tabla_segmentos_total); i++)
 	{
