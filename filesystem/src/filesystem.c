@@ -4,6 +4,7 @@ t_config* superBloque;
 t_bitarray *bitmap;
 char **vectorDePathsPCBs;
 int cantidadPaths;
+void* memoriaMapeada;
 
 int main(int argc, char** argv)
 {
@@ -49,35 +50,56 @@ int main(int argc, char** argv)
 
 
 
-	void* intermedio = mmap(NULL, tamanioBitmap, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_SHARED, fd_bitmap, 0);
-	if (intermedio == MAP_FAILED)
+	memoriaMapeada = mmap(NULL, tamanioBitmap, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_SHARED, fd_bitmap, 0);
+	if (memoriaMapeada == MAP_FAILED)
 	{
 	    log_error(logger, "Error al mapear el archivo del bitmap");
 	    exit(EXIT_FAILURE);
 	}
 
-	//void* espacioBitmap = malloc(tamanioBitmap);
-	//fread(espacioBitmap,tamanioBitmap,1,archivoBitmap);
-	bitmap = bitarray_create_with_mode(intermedio, tamanioBitmap, LSB_FIRST);
+	bitmap = bitarray_create_with_mode(memoriaMapeada, tamanioBitmap, LSB_FIRST);
 
 	if (bitmap == NULL)
 		{
 			log_error(logger, "Error al crear el bitmap");
 			exit(EXIT_FAILURE);
 		}
+	// PRUEBAS CON UN ARCHIVO GENERICO
+
+	if(abrirArchivo("archivoPruebas",vectorDePathsPCBs,cantidadPaths))
+	{
+		log_info(logger,"Abrir archivo retorna OK");
+	}
+	else
+	{
+		log_info(logger,"Abrir archivo retorna EL_ARCHIVO_NO_EXISTE_PAAAAAAA");
+	}
+	//////////////////////////////////////
+	if(crearArchivo("archivoPruebas", config_get_string_value(config,"PATH_FCB"), &vectorDePathsPCBs, &cantidadPaths))
+	{
+		log_info(logger,"Abrir archivo retorna OK");
+	}
+	else
+	{
+		log_error(logger,"No se pudo crear el archivo pibe. Algo se rompio zarpado");
+	}
+	//////////////////////////////////////
+	if(abrirArchivo("archivoPruebas",vectorDePathsPCBs,cantidadPaths))
+	{
+		log_info(logger,"Abrir archivo retorna OK");
+	}
+	else
+	{
+		log_info(logger,"Abrir archivo retorna EL_ARCHIVO_NO_EXISTE_PAAAAAAA");
+	}
+
+
+
+
 
 	bitarray_destroy(bitmap);
-
-	if (msync(intermedio, tamanioBitmap, MS_SYNC) == 0)
-		{
-			log_info(logger, "Se escribió correctamente en el bitmap");
-		}
-		else
-		{
-			log_warning(logger, "No se pudo escribir correctamente en el bitmap");
-		}
-		munmap(intermedio,tamanioBitmap);
-		close(fd_bitmap);
+	munmap(memoriaMapeada,tamanioBitmap);
+	close(fd_bitmap);
 
 
 	/*
@@ -341,7 +363,7 @@ void agregarBloques(int cantidadBloquesOriginal ,int cantidadBloquesNueva,t_conf
 					setearBitmap(bitmap,i);
 					config_set_value(configArchivoActual,"PUNTERO_INDIRECTO",string_itoa(i));
 					punteroABloquePunteros = i;
-
+					sincronizarBitmap();
 					break;
 
 				}
@@ -416,4 +438,15 @@ void setearBitmap(t_bitarray* bitmapAAcceder, off_t bit_index)
 	log_info(logger,"Acceso a Bitmap - Bloque: %d - Estado: %d",posicionIndicada,bitarray_test_bit(bitmapAAcceder,bit_index));
 	bitarray_set_bit(bitmapAAcceder, bit_index);
 	return;
+}
+void sincronizarBitmap()
+{
+	if (msync(memoriaMapeada, config_get_int_value(superBloque, "BLOCK_COUNT") / 8, MS_SYNC) == 0)
+	{
+		log_info(logger, "Se escribió correctamente en el bitmap");
+	}
+	else
+	{
+		log_warning(logger, "No se pudo escribir correctamente en el bitmap");
+	}
 }

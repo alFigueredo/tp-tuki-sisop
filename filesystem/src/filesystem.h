@@ -20,6 +20,8 @@ extern char **vectorDePathsPCBs;
 extern t_config* superBloque;
 extern t_bitarray *bitmap;
 extern int cantidadPaths;
+extern void* memoriaMapeada;
+
 
 void terminar_programa(t_log*, t_config*,char**);
 int recorrerFCBs();
@@ -34,4 +36,5 @@ void agregarBloques(int cantidadBloquesOriginal ,int cantidadBloquesNueva,t_conf
 void iniciarArchivoBitmap();
 bool accesoBitmap(t_bitarray* bitmapAAcceder, off_t bit_index);
 void setearBitmap(t_bitarray* bitmapAAcceder, off_t bit_index);
+void sincronizarBitmap();
 #endif /* FILESYSTEM_H_ */
