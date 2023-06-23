@@ -11,9 +11,6 @@
 #include <stdbool.h>
 
 //STRUCTS
-typedef struct {
-    t_list* segmentos;
-} lista_tablas;
 
 typedef enum {
 	FIRST,
@@ -39,7 +36,6 @@ typedef struct
 {
 	unsigned int pid; //-1-> segmento 0 , -2-> hueco
 	uint32_t id;
-	//int libre;				//bool
 	uint32_t tam_segmento; //BORRAR ???
 	uint32_t direccion_base;
 	uint32_t direccion_limite;
@@ -63,7 +59,7 @@ extern archivo_configuracion config_mem;
 //FUNCIONES
 void eliminar_hueco(uint32_t , uint32_t );
 algoritmo_asignacion cambiar_enum_algoritmo (char* );
-t_list* obtener_segmentos_PID(int );
+t_list* obtener_segmentos_PID(unsigned int );
 void crear_segmento(unsigned int , uint32_t );
 void eliminar_segmento(unsigned int,uint32_t );
 void iniciar_proceso(pcb* , int );

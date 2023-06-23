@@ -5,17 +5,11 @@ char *ip_memoria;
 archivo_configuracion config_mem;
 void* memoria_usuario;
 t_list* tabla_segmentos_total;
-//t_list* tabla_segmentos_procesos;
 t_list* huecos;
 
 // completar: !!!
 // posibles cambios: ???
 
-/*
-	TO DO
-	- Iniciar memoria
-	- Iniciar procesos
- */
 
 int main(int argc, char **argv)
 {
@@ -44,14 +38,15 @@ int main(int argc, char **argv)
 //Crea los segmentos del proceso. La cantidad de segmentos esta dada por el config.
 void iniciar_proceso(pcb* pcb_proceso, int tamanio)
 {
+	t_list* segmentos;
+
 	for (int var = 0; var < config_mem.cant_segmentos ; ++var)
 	{
 		crear_segmento (pcb_proceso->pid, tamanio);
 	}
 
-	//FALTA AGREGAR A MEMORIA USUARIO !!!
 
-	//no se si hacer una lista de listas e ir guardando los segmentos cuabndo son creados en una lista por proceso, o recorrer la lista de segmentos y filtrar en otra lista x pid ???
+	segmentos = obtener_segmentos_PID(pcb_proceso->pid);
 
 	//MANDAR TABLA A NO SE QUI9EN !!!
 
@@ -77,7 +72,7 @@ void finalizar_proceso(pcb* pcb_proceso, int tamanio)
 }
 
 //Funcion que recorre la lista y filtra por pid
-t_list* obtener_segmentos_PID(int pid)
+t_list* obtener_segmentos_PID(unsigned int pid)
 {
     t_list* segmentosPorPID = list_create();
     segmento* seg;
@@ -183,6 +178,7 @@ void crear_segmento(unsigned int pid, uint32_t tamanio_seg)
 
 		else																							//porque no hay mas espacio (si se compactan los segmentos igual no hay espacio).
 		{
+			log_info(logger, "No hay mas memoria");
 			// FALTA DE ESPACIO LIBRE KERNEL !!!
 		}
 	}
@@ -563,10 +559,10 @@ void manejo_instrucciones (inst_mem tipo_instruccion, uint32_t dir_dada, char* o
 
 }*/
 
-uint32_t leer_memoria(int direccion)
+uint32_t leer_memoria(int direccion) // BUSCAR POR ID DE SEG !!!
 {
 	segmento *seg;
-
+	uint32_t valorLeido;
 	uint32_t *memoria = (uint32_t *)memoria_usuario;
 
 	for (int i = 0; i < list_size(tabla_segmentos_total); i++)
@@ -576,12 +572,12 @@ uint32_t leer_memoria(int direccion)
 		if (direccion >= seg->direccion_base && direccion <= seg->direccion_limite)
 		{
 			delay (config_mem.retardo_memoria);
-			uint32_t valorLeido = memoria[direccion];
+			valorLeido = memoria[direccion];
 			return valorLeido;
 		}
 	}
 
-	log_error(logger, "Error: Dirección de memoria inválida\n");
+	//log_error(logger, "Error: Dirección de memoria inválida\n");
 	return 0;
 }
 

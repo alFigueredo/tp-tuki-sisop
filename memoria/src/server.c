@@ -73,8 +73,12 @@ void esperar_cliente(int socket_servidor){
 
 void atender_cliente(int* socket_cliente){
 	t_list *lista;
-
-	//pasar manejo_instrucciones
+	t_instruction* proceso;
+	char * instruccion;
+	char** parsed;
+	char** dir_fisica;
+	int id_seg;
+	int desp;
 
 	while (1) {
 		int cod_op = recibir_operacion(*socket_cliente);
@@ -83,6 +87,7 @@ void atender_cliente(int* socket_cliente){
 		case MENSAJE:
 			recibir_mensaje(*socket_cliente);
 			break;
+
 		case PAQUETE:
 			lista = recibir_paquete(*socket_cliente);
 
@@ -94,24 +99,36 @@ void atender_cliente(int* socket_cliente){
 			list_clean_and_destroy_elements(lista, free);
 
 			break;
-	/*	case READ:                BORRAR ???                                                                 //Ante un pedido de lectura, devolver el valor que se encuentra en la posicion pedida.
-					usleep (config_mem.retardo_memoria * 1000);                                            //Tiempo de espera
-						//Microsegundos = Milisegundos * 1000
-					valor = leer_memoria (dir_dada);                                               		   //Busca y retorna el valor en la direccion de memoria dada
-					log_info (logger, "Se leyo el valor %d en la posicion %d", valor, dir_dada);
 
-					//AGREGAR TD LO DE PAQUETES !!!
+			//kernel
+		case CREATE_SEGMENT:
+			lista = recibir_paquete(*socket_cliente);
+			proceso = malloc(sizeof(t_instruction));
+			recibir_instruccion(lista,proceso);
 
-					break;
+			break;
+		case DELETE_SEGMENT:
+			break;
 
-		case WRITE:                                                                                // Ante un pedido de escritura, escribir lo indicado en la posición pedida y responder un mensaje de ‘OK’.
-					nuevo_valor = *(uint32_t*) list_get(instrucciones,2);
+			//cpu
+		case MOV_IN: //leer cpu
+			lista = recibir_paquete(*socket_cliente);
+			proceso = malloc(sizeof(t_instruction));
+			recibir_instruccion(lista,proceso);
 
-					usleep (config_mem.retardo_memoria * 1000);
-					escribir_memoria (nuevo_valor, dir_dada);
-					//responder con un msj OK !!!
-					log_info (logger, "Se escribio el valor %d en la posicion %d", nuevo_valor, dir_dada);
-					break;*/
+			instruccion = proceso->instruccion;
+			parsed = string_split(instruccion," ");
+			dir_fisica = string_get_string_as_array(parsed[2]);
+			//----------------------------------------------------
+			id_seg = atoi(dir_fisica[0]); // ID
+			desp = atoi(dir_fisica[1]);  // OFFNOSEUQE MIERDA
+
+			log_info(logger, "PID: %u - Accion: LEER - Direccion fisica: %d - Tamanio: %d - Origen: CPU", proceso->pid);
+			break;
+		case MOV_OUT: //escribir
+			//parsed [1] -> dir fisica
+			// parsed [2 -> vslor
+			break;
 
 		case -1:
 			log_warning(logger, "El cliente se desconecto. Terminando conexion \n");
