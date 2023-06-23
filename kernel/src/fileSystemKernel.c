@@ -85,18 +85,35 @@ void buscarEnArchivo(pcb* proceso, char* instruccion)
 	int numero = atoi(parsed[2]);
 	Archivo* archivoActual = malloc(sizeof(Archivo));
 	for (int i = 0; i < list_size(archivosAbiertos); i++)
-		{
-		    archivoActual = list_get(archivosAbiertos, i);
-		    if (strcmp(archivoActual->nombreDeArchivo, nombreArchivo) == 0)
-		    {
-		        break;
-		    }
-		}
+	{
+	    archivoActual = list_get(archivosAbiertos, i);
+	    if (strcmp(archivoActual->nombreDeArchivo, nombreArchivo) == 0)
+	    {
+	        break;
+	    }
+	}
 	archivoActual->puntero = numero;
 	enviar_pcb(conexion_cpu, proceso, EXEC);
 }
 
+void truncarArchivo(pcb* proceso, char* instruccion)
+{
+	char** parsed = string_split(instruccion, " "); //Partes de la instruccion actual
+	char* nombreArchivo = parsed[1];
+	int numero = atoi(parsed[2]);
+	Archivo* archivoActual = malloc(sizeof(Archivo));
+	for (int i = 0; i < list_size(archivosAbiertos); i++)
+	{
+	    archivoActual = list_get(archivosAbiertos, i);
+	    if (strcmp(archivoActual->nombreDeArchivo, nombreArchivo) == 0)
+	    {
+	        break;
+	    }
+	}
 
+
+
+}
 
 
 

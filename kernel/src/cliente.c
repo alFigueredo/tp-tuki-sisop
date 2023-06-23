@@ -135,6 +135,24 @@ void atender_servidor(int* socket_servidor){
 				buscarEnArchivo(((pcb*)queue_peek(qexec)), instruccion);
 				list_destroy_and_destroy_elements(lista, free);
 				break;
+			case F_TRUNCATE:
+				lista = recibir_paquete(*socket_servidor);
+				recibir_pcb(lista, queue_peek(qexec));
+				instruccion = list_get(((pcb*)queue_peek(qexec))->instrucciones, ((pcb*)queue_peek(qexec))->program_counter-1);
+
+				//PUEDO HACER ESTO????? X2
+				t_instruction* laCosaQueMando = malloc(sizeof(t_instruction));
+				laCosaQueMando->pid=((pcb*)queue_peek(qexec));
+				laCosaQueMando->instruccion=instruccion;
+				enviar_instruccion(*socket_servidor,laCosaQueMando,F_TRUNCATE);
+
+				exec_a_block();
+				break;
+			case YA_SE_TERMINO_LA_TRUNCACION:
+				lista = recibir_paquete(*socket_servidor);
+				recibir_pcb(lista, queue_peek(qexec));
+				block_a_ready();
+				break;
 			case EXIT:
 				lista = recibir_paquete(*socket_servidor);
 				recibir_pcb(lista, queue_peek(qexec));
