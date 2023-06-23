@@ -112,14 +112,16 @@ void atender_servidor(int* socket_servidor){
 				list_destroy_and_destroy_elements(lista, free);
 				break;
 			case EL_ARCHIVO_NO_EXISTE_PAAAAAAA:
-
+				lista = recibir_paquete(*socket_servidor);
+				recibir_pcb(lista, queue_peek(qexec));
+				instruccion = list_get(((pcb*)queue_peek(qexec))->instrucciones, ((pcb*)queue_peek(qexec))->program_counter-1);
 				//PUEDO HACER ESTO????? X2
 				t_instruction* laCosaQueMando = malloc(sizeof(t_instruction));
 				laCosaQueMando->pid=((pcb*)queue_peek(qexec));
 				laCosaQueMando->instruccion=instruccion;
 				enviar_instruccion(*socket_servidor,laCosaQueMando,F_CREATE);
 
-
+				list_destroy_and_destroy_elements(lista, free);
 				break;
 			case F_CLOSE:
 				lista = recibir_paquete(*socket_servidor);
@@ -147,11 +149,13 @@ void atender_servidor(int* socket_servidor){
 				enviar_instruccion(*socket_servidor,laCosaQueMando,F_TRUNCATE);
 
 				exec_a_block();
+				list_destroy_and_destroy_elements(lista, free);
 				break;
 			case YA_SE_TERMINO_LA_TRUNCACION:
 				lista = recibir_paquete(*socket_servidor);
 				recibir_pcb(lista, queue_peek(qexec));
 				block_a_ready();
+				list_destroy_and_destroy_elements(lista, free);
 				break;
 			case EXIT:
 				lista = recibir_paquete(*socket_servidor);
