@@ -69,6 +69,7 @@ int main(int argc, char** argv)
 
 	// PRUEBAS CON UN ARCHIVO GENERICO
 
+	/*
 	if(abrirArchivo("archivoPruebas2",vectorDePathsPCBs,cantidadPaths))
 	{
 		log_info(logger,"Abrir archivo retorna OK");
@@ -97,6 +98,22 @@ int main(int argc, char** argv)
 	}
 	//////////////////////////////////////
 	if(truncarArchivo("archivoPruebas2", config_get_string_value(config,"PATH_FCB"), vectorDePathsPCBs, cantidadPaths, 128))
+	{
+		log_info(logger,"En teoria el archivo deberia estar truncado");
+	}
+	else
+	{
+		log_warning(logger,"El archivo no se pudo truncar");
+	}
+	*/
+
+	// Pruebas genericas PARTE 2
+
+	//Reviso el estado del bitmap
+	revisarBitmap();
+	/////////////////////////
+
+	if(truncarArchivo("archivoPruebas2", config_get_string_value(config,"PATH_FCB"), vectorDePathsPCBs, cantidadPaths, 64))
 	{
 		log_info(logger,"En teoria el archivo deberia estar truncado");
 	}
@@ -138,8 +155,15 @@ int main(int argc, char** argv)
 		else
 		{
 			log_info(logger, "no se creo el archivo AYUDAAAAA");
-		}
-	/*
+		}if(truncarArchivo("archivoPruebas2", config_get_string_value(config,"PATH_FCB"), vectorDePathsPCBs, cantidadPaths, 128))
+	{
+		log_info(logger,"En teoria el archivo deberia estar truncado");
+	}
+	else
+	{
+		log_warning(logger,"El archivo no se pudo truncar");
+	}
+
 	char* puerto_escucha = config_get_string_value(config, "PUERTO_ESCUCHA");
 	socket_servidor = iniciar_servidor(puerto_escucha);
 	esperar_cliente(socket_servidor);
@@ -333,15 +357,31 @@ int truncarArchivo(char *nombre,char *carpeta, char **vectoreRutas, int cantidad
 void sacarBloques(int cantidadBloquesOriginal ,int cantidadBloquesNueva,t_config* configArchivoActual,int tamanioOriginal)
 {
 	int cantidadBloquesAEliminar = cantidadBloquesNueva - cantidadBloquesOriginal;
-	if (cantidadBloquesOriginal <= 1)
-		{
-			//busco un bloque libre para agregar como bloque de punteros
-			log_info(logger,"El archivo solo tiene un bloque. No se modifica nada referido a los bloques");
-			return;
-		}
 	uint32_t punteroIndirecto = config_get_int_value(configArchivoActual,"PUNTERO_INDIRECTO");
 	uint32_t punteroACadaBloque;
 	FILE *bloques = fopen(config_get_string_value(config,"PATH_BLOQUES"),"r+");
+
+	if (cantidadBloquesOriginal <= 1)
+	{
+		//busco un bloque libre para agregar como bloque de punteros
+		log_info(logger,"El archivo solo tiene un bloque. No se modifica nada referido a los bloques");
+		return;
+	}
+	if (cantidadBloquesNueva == 1)
+	{
+		// Me muevo al final del bloque de punteros para eliminar puntero por puntero
+		log_info(logger,"Acceso Bloque - Archivo: %s - Bloque Archivo: bloque de punteros - Bloque File System %d",config_get_string_value(config,"NOMBRE_ARCHIVO"),punteroIndirecto);
+		fseek(bloques,punteroIndirecto * config_get_int_value(superBloque,"BLOCK_SIZE"),SEEK_SET);
+		fseek(bloques,sizeof(uint32_t)*(cantidadBloquesOriginal - 1), SEEK_CUR);
+
+		for(int i=0;i<cantidadBloquesOriginal -1;i++)
+		{
+			fseek(bloques,-sizeof(uint32_t), SEEK_CUR);
+			fread(&punteroACadaBloque,sizeof(uint32_t),1,bloques);
+
+		}
+	}
+
 	// Me muevo al final del bloque de punteros para eliminar puntero por puntero
 	log_info(logger,"Acceso Bloque - Archivo: %s - Bloque Archivo: bloque de punteros - Bloque File System %d",config_get_string_value(config,"NOMBRE_ARCHIVO"),punteroIndirecto);
 	fseek(bloques,punteroIndirecto * config_get_int_value(superBloque,"BLOCK_SIZE"),SEEK_SET);
