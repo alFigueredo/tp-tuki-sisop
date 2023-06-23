@@ -54,6 +54,7 @@ void atender_servidor(int* socket_servidor){
 	t_list *lista;
 	pthread_t thread;
 	char* instruccion;
+	char** parsed;
 	while (1) {
 		int cod_op = recibir_operacion(*socket_servidor);
 		switch (cod_op) {
@@ -146,7 +147,7 @@ void atender_servidor(int* socket_servidor){
 				laCosaQueMando->pid=((pcb*)queue_peek(qexec));
 				laCosaQueMando->instruccion=instruccion;
 				enviar_instruccion(*socket_servidor,laCosaQueMando,F_TRUNCATE);
-				char** parsed = string_split(instruccion, " ");
+				parsed = string_split(instruccion, " ");
 				log_info(logger, "PID: %d - Archivo: %s - Tamaño: %d", laCosaQueMando->pid, parsed[1], parsed[2]);
 				exec_a_block();
 				list_destroy_and_destroy_elements(lista, free);
