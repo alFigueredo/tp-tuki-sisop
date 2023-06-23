@@ -39,10 +39,10 @@ int abriArchivoKernel(pcb* proceso, char* instruccion)
 		list_add(proceso->archivos_abiertos,archivoActual);
 		archivoActual->puntero=punteroOriginal;
 		exec_a_block();
-		log_info(logger, "PID: %d - Bloqueado porque archivo %s ya esta abierto", proceso->pid, archivoActual->nombreDeArchivo);
+		log_warning(logger, "PID: %d - Bloqueado porque archivo %s ya esta abierto", proceso->pid, archivoActual->nombreDeArchivo);
 		return 0;
 	}
-
+	log_info(logger, "PID: %d - Abrir Archivo: %s", proceso->pid, nombreArchivo);
 }
 
 void cerrarArchivoKernel(pcb* proceso, char* instruccion)
@@ -74,7 +74,7 @@ void cerrarArchivoKernel(pcb* proceso, char* instruccion)
 		block_a_ready(queue_peek(archivoActual->procesosBloqueados));
 		queue_pop(archivoActual->procesosBloqueados);
 	}
-
+	log_info(logger,"PID: %d - Cerrar Archivo: %s", proceso->pid, nombreArchivo);
 
 }
 
@@ -94,6 +94,7 @@ void buscarEnArchivo(pcb* proceso, char* instruccion)
 	}
 	archivoActual->puntero = numero;
 	enviar_pcb(conexion_cpu, proceso, EXEC);
+	log_info(logger, "PID: %d - Actualizar puntero Archivo: %s - Puntero: %d", proceso->pid, nombreArchivo, numero);
 }
 
 void truncarArchivo(pcb* proceso, char* instruccion)
