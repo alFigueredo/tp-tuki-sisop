@@ -13,11 +13,10 @@ int main(int argc, char** argv)
 	{
 		return EXIT_FAILURE;
 	}
-	int conexion_memoria = -1;
+	//int conexion_memoria = -1;
 	logger = iniciar_logger("./filesystem.log", "FileSystem");
 	log_info(logger, "logg iniciado");
 	config = iniciar_config(argv[1]);
-
 	/*
 	char* ip_memoria = config_get_string_value(config, "IP_MEMORIA");
 	char* puerto_memoria = config_get_string_value(config, "PUERTO_MEMORIA");
@@ -37,6 +36,9 @@ int main(int argc, char** argv)
 	    exit(EXIT_FAILURE);
 	}
 
+	cantidadPaths = contarArchivosEnCarpeta(config_get_string_value(config,"PATH_FCB"),&vectorDePathsPCBs);
+
+	iniciarArchivoBitmap();
 	size_t tamanioBitmap = config_get_int_value(superBloque, "BLOCK_COUNT") / 8;
 
 	// Abre el archivo Bitmap para trabajar con mmap desde la memoria
@@ -64,9 +66,10 @@ int main(int argc, char** argv)
 			log_error(logger, "Error al crear el bitmap");
 			exit(EXIT_FAILURE);
 		}
+
 	// PRUEBAS CON UN ARCHIVO GENERICO
 
-	if(abrirArchivo("archivoPruebas",vectorDePathsPCBs,cantidadPaths))
+	if(abrirArchivo("archivoPruebas2",vectorDePathsPCBs,cantidadPaths))
 	{
 		log_info(logger,"Abrir archivo retorna OK");
 	}
@@ -75,16 +78,16 @@ int main(int argc, char** argv)
 		log_info(logger,"Abrir archivo retorna EL_ARCHIVO_NO_EXISTE_PAAAAAAA");
 	}
 	//////////////////////////////////////
-	if(crearArchivo("archivoPruebas", config_get_string_value(config,"PATH_FCB"), &vectorDePathsPCBs, &cantidadPaths))
+	if(crearArchivo("archivoPruebas2", config_get_string_value(config,"PATH_FCB"), &vectorDePathsPCBs, &cantidadPaths))
 	{
-		log_info(logger,"Abrir archivo retorna OK");
+		log_info(logger,"Se creo joya el archivo");
 	}
 	else
 	{
 		log_error(logger,"No se pudo crear el archivo pibe. Algo se rompio zarpado");
 	}
 	//////////////////////////////////////
-	if(abrirArchivo("archivoPruebas",vectorDePathsPCBs,cantidadPaths))
+	if(abrirArchivo("archivoPruebas2",vectorDePathsPCBs,cantidadPaths))
 	{
 		log_info(logger,"Abrir archivo retorna OK");
 	}
@@ -92,8 +95,15 @@ int main(int argc, char** argv)
 	{
 		log_info(logger,"Abrir archivo retorna EL_ARCHIVO_NO_EXISTE_PAAAAAAA");
 	}
-
-
+	//////////////////////////////////////
+	if(truncarArchivo("archivoPruebas2", config_get_string_value(config,"PATH_FCB"), vectorDePathsPCBs, cantidadPaths, 128))
+	{
+		log_info(logger,"En teoria el archivo deberia estar truncado");
+	}
+	else
+	{
+		log_warning(logger,"El archivo no se pudo truncar");
+	}
 
 
 
@@ -270,7 +280,7 @@ int crearArchivo(char *nombre,char *carpeta, char ***vectoreRutas, int *cantidad
 	}
 }
 
-int truncarArchivo(char *nombre,char *carpeta, char ***vectoreRutas, int *cantidadPaths, int tamanioNuevo)
+int truncarArchivo(char *nombre,char *carpeta, char **vectoreRutas, int cantidadPaths, int tamanioNuevo)
 {
 	log_info(logger, "Truncar Archivo: %s - Tamaño: %d",nombre,tamanioNuevo);
 	int i=0;
@@ -280,11 +290,12 @@ int truncarArchivo(char *nombre,char *carpeta, char ***vectoreRutas, int *cantid
 	int cantidadBloquesOriginal;
 	int cantidadBloquesNueva;
 
-	while (i<*cantidadPaths)
+	while (i<cantidadPaths)
 	{
-		configArchivoActual = iniciar_config((*vectoreRutas)[i]);
+		configArchivoActual = iniciar_config(vectoreRutas[i]);
 		if(strcmp(nombre,config_get_string_value(configArchivoActual,"NOMBRE_ARCHIVO")) == 0)
 		{
+			log_info(logger,"Truncar archivo dice: ENCONTRE EL ARCHIVO A TRUNCAR");
 			break;
 		}
 		i++;
@@ -296,17 +307,26 @@ int truncarArchivo(char *nombre,char *carpeta, char ***vectoreRutas, int *cantid
 	config_set_value(configArchivoActual,"TAMANIO_ARCHIVO",string_itoa(tamanioNuevo));
 	cantidadBloquesOriginal = dividirRedondeando(tamanioOriginal, tamanioBloques);
 	cantidadBloquesNueva = dividirRedondeando(tamanioNuevo, tamanioBloques);
-
-	if (tamanioOriginal < tamanioNuevo)
+	config_save(configArchivoActual);
+	if (tamanioOriginal < tamanioNuevo && cantidadBloquesOriginal != cantidadBloquesNueva)
 	{
 		log_info(logger,"Se agranda el archivo");
 		agregarBloques(cantidadBloquesOriginal,cantidadBloquesNueva,configArchivoActual);
+		config_destroy(configArchivoActual);
+		return 1;
 	}
 	else
 	{
-		log_info(logger,"Se achica el archivo");
-		sacarBloques(cantidadBloquesOriginal,cantidadBloquesNueva,configArchivoActual, tamanioOriginal);
+		if(cantidadBloquesOriginal != cantidadBloquesNueva)
+		{
+			log_info(logger,"Se achica el archivo");
+			sacarBloques(cantidadBloquesOriginal,cantidadBloquesNueva,configArchivoActual, tamanioOriginal);
+			config_destroy(configArchivoActual);
+			return 1;
+		}
 	}
+	log_info(logger, "No se agregaron bloques al archivo");
+	config_destroy(configArchivoActual);
 	return 1;
 }
 
@@ -351,8 +371,41 @@ void agregarBloques(int cantidadBloquesOriginal ,int cantidadBloquesNueva,t_conf
 	FILE *bloques = fopen(config_get_string_value(config,"PATH_BLOQUES"),"r+");
 	int punteroABloquePunteros=0;
 	uint32_t punteroACadaBloque;
-	if (cantidadBloquesOriginal == 1 && cantidadBloquesNueva !=1)
+	if(cantidadBloquesOriginal == 0 && cantidadBloquesNueva == 1)
+	{
+		//Busco un bloque libre para agregar el primer bloque de datos
+		log_info(logger,"Se busca bloque libre para agregar como primer bloque");
+		for(int i=0;i<config_get_int_value(superBloque, "BLOCK_COUNT");i++)
 		{
+			if (accesoBitmap(bitmap, i) == 0)
+			{
+				//Encontre un bloque vacio lo marco como ocupado
+				setearBitmap(bitmap,i);
+				config_set_value(configArchivoActual,"PUNTERO_DIRECTO",string_itoa(i));
+				config_save(configArchivoActual);
+				sincronizarBitmap();
+				break;
+
+			}
+		}
+	}
+	if (cantidadBloquesOriginal == 0 && cantidadBloquesNueva >1)
+		{
+			//Busco un bloque libre para agregar el primer bloque de datos
+			log_info(logger,"Se busca bloque libre para agregar como primer bloque");
+			for(int i=0;i<config_get_int_value(superBloque, "BLOCK_COUNT");i++)
+			{
+				if (accesoBitmap(bitmap, i) == 0)
+				{
+					//Encontre un bloque vacio lo marco como ocupado
+					setearBitmap(bitmap,i);
+					config_set_value(configArchivoActual,"PUNTERO_DIRECTO",string_itoa(i));
+					config_save(configArchivoActual);
+					sincronizarBitmap();
+					break;
+
+				}
+			}
 			//busco un bloque libre para agregar como bloque de punteros
 			log_info(logger,"Se busca bloque libre para agregar los punteros a bloques");
 			for(int i=0;i<config_get_int_value(superBloque, "BLOCK_COUNT");i++)
@@ -362,14 +415,18 @@ void agregarBloques(int cantidadBloquesOriginal ,int cantidadBloquesNueva,t_conf
 					//Encontre un bloque vacio lo marco como ocupado
 					setearBitmap(bitmap,i);
 					config_set_value(configArchivoActual,"PUNTERO_INDIRECTO",string_itoa(i));
+					config_save(configArchivoActual);
 					punteroABloquePunteros = i;
 					sincronizarBitmap();
 					break;
 
 				}
 			}
+			// Me ubico en el bloque de punteros
 			fseek(bloques,punteroABloquePunteros * config_get_int_value(superBloque,"BLOCK_SIZE"),SEEK_SET);
-			for (int i=0;i< cantidadBloquesAAGregar;i++)
+			log_info(logger,"Busco bloques libres para agregar al archivo");
+			//Busco los espacios libres en el bitmap para agregar los bloques
+			for (int i=0;i< cantidadBloquesAAGregar -1;i++)
 			{
 				int j=1;
 				int posicion=0;
@@ -379,13 +436,31 @@ void agregarBloques(int cantidadBloquesOriginal ,int cantidadBloquesNueva,t_conf
 					posicion++;
 				}
 				punteroACadaBloque = posicion - 1;
+				setearBitmap(bitmap, posicion -1);
 				fwrite(&punteroACadaBloque,sizeof(uint32_t),1,bloques);
 			}
 			fclose(bloques);
 			return;
 		}
-	if(cantidadBloquesNueva !=1)
+	if(cantidadBloquesOriginal == 1 && cantidadBloquesNueva >1)
 	{
+		//busco un bloque libre para agregar como bloque de punteros
+		log_info(logger,"Se busca bloque libre para agregar los punteros a bloques");
+		for(int i=0;i<config_get_int_value(superBloque, "BLOCK_COUNT");i++)
+		{
+			if (accesoBitmap(bitmap, i) == 0)
+			{
+				//Encontre un bloque vacio lo marco como ocupado
+				setearBitmap(bitmap,i);
+				config_set_value(configArchivoActual,"PUNTERO_INDIRECTO",string_itoa(i));
+				config_save(configArchivoActual);
+				punteroABloquePunteros = i;
+				sincronizarBitmap();
+				break;
+
+			}
+		}
+		// Me ubico en el bloque de punteros
 		fseek(bloques,punteroABloquePunteros * config_get_int_value(superBloque,"BLOCK_SIZE"),SEEK_SET);
 		for (int i=0;i< cantidadBloquesAAGregar;i++)
 		{
@@ -395,6 +470,24 @@ void agregarBloques(int cantidadBloquesOriginal ,int cantidadBloquesNueva,t_conf
 			{
 				j=accesoBitmap(bitmap, posicion);
 				posicion++;
+			}
+			setearBitmap(bitmap, posicion -1);
+			punteroACadaBloque = posicion - 1;
+			fwrite(&punteroACadaBloque,sizeof(uint32_t),1,bloques);
+		}
+	}
+	if(cantidadBloquesOriginal > 1)
+	{
+		fseek(bloques,config_get_int_value(configArchivoActual,"PUNTERO_INDIRECTO") * config_get_int_value(superBloque,"BLOCK_SIZE"),SEEK_SET);
+		fseek(bloques,sizeof(uint32_t)*(cantidadBloquesOriginal - 1),SEEK_CUR);
+		for (int i=0;i< cantidadBloquesAAGregar;i++)
+		{
+			int j=1;
+			int posicion=0;
+			while(j != 0)
+			{
+				j=accesoBitmap(bitmap, posicion);
+						posicion++;
 			}
 			punteroACadaBloque = posicion - 1;
 			fwrite(&punteroACadaBloque,sizeof(uint32_t),1,bloques);
@@ -419,7 +512,18 @@ void iniciarArchivoBitmap()
 	FILE *archivoBitmap=fopen(config_get_string_value(config,"PATH_BITMAP"),"r+");
 	void* punteroABitmapPruebas = malloc(config_get_int_value(superBloque, "BLOCK_COUNT") / 8);
 	t_bitarray *bitmapPruebas = bitarray_create_with_mode(punteroABitmapPruebas, config_get_int_value(superBloque, "BLOCK_COUNT") / 8, LSB_FIRST);
-	fwrite(bitmapPruebas->bitarray,config_get_int_value(superBloque, "BLOCK_COUNT") / 8,1,archivoBitmap);
+	for(int i=0;i<config_get_int_value(superBloque, "BLOCK_COUNT") / 8;i++)
+	{
+		bitarray_clean_bit(bitmapPruebas, i);
+	}
+	// Muevo el puntero al final del archivo
+	fseek(archivoBitmap, 0, SEEK_END);
+	// Obtengo la posición actual del puntero
+	 long int size = ftell(archivoBitmap);
+	if(size == 0)
+	{
+		fwrite(bitmapPruebas->bitarray,config_get_int_value(superBloque, "BLOCK_COUNT") / 8,1,archivoBitmap);
+	}
 	fclose(archivoBitmap);
 	bitarray_destroy(bitmapPruebas);
 	free(punteroABitmapPruebas);
@@ -435,8 +539,8 @@ bool accesoBitmap(t_bitarray* bitmapAAcceder, off_t bit_index)
 void setearBitmap(t_bitarray* bitmapAAcceder, off_t bit_index)
 {
 	int posicionIndicada = bit_index;
-	log_info(logger,"Acceso a Bitmap - Bloque: %d - Estado: %d",posicionIndicada,bitarray_test_bit(bitmapAAcceder,bit_index));
 	bitarray_set_bit(bitmapAAcceder, bit_index);
+	log_info(logger,"Modificacion Bitmap - Bloque: %d - Estado nuevo: %d",posicionIndicada,bitarray_test_bit(bitmapAAcceder,bit_index));
 	return;
 }
 void sincronizarBitmap()
@@ -448,5 +552,12 @@ void sincronizarBitmap()
 	else
 	{
 		log_warning(logger, "No se pudo escribir correctamente en el bitmap");
+	}
+}
+void revisarBitmap()
+{
+	for(int i=0; i<config_get_int_value(superBloque, "BLOCK_COUNT") / 8; i++ )
+	{
+		accesoBitmap(bitmap, i);
 	}
 }

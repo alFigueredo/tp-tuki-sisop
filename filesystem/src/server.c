@@ -71,6 +71,7 @@ void atender_cliente(int* socket_cliente){
 	char *instruccion;
 	char *nombreArchivo;
 	char **porqueria;
+	size_t tamanioAtruncar;
 	while (1) {
 		int cod_op = recibir_operacion(*socket_cliente);
 		switch (cod_op) {
@@ -120,6 +121,23 @@ void atender_cliente(int* socket_cliente){
 						"No se pudo crear el archivo pibe. Algo se rompio zarpado");
 			}
 
+			break;
+		case F_TRUNCATE:
+			lista = recibir_paquete(*socket_cliente);
+			proceso = malloc(sizeof(t_instruction));
+			recibir_instruccion(lista,proceso);
+			instruccion = proceso->instruccion;
+			porqueria=string_split(instruccion, " ");
+			nombreArchivo = porqueria[1];
+			tamanioAtruncar = porqueria[2];
+			if(truncarArchivo(nombreArchivo, config_get_string_value(config,"PATH_FCB"), vectorDePathsPCBs, cantidadPaths, tamanioAtruncar))
+			{
+				enviar_operacion(*socket_cliente, YA_SE_TERMINO_LA_TRUNCACION);
+			}
+			else
+			{
+				log_error(logger,"No se pudo truncar el archivo. CAGAAAAMOSSSSS");
+			}
 			break;
 		case -1:
 			log_warning(logger, "El cliente se desconecto. Terminando conexion");

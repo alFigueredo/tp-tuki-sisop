@@ -29,7 +29,7 @@ char* concatenarCadenas(const char* str1, const char* str2);
 int contarArchivosEnCarpeta(const char *carpeta, char ***vectoreRutas);
 int abrirArchivo(char *nombre, char **vectorDePaths,int cantidadPaths);
 int crearArchivo(char *nombre,char *carpeta, char ***vectoreRutas, int *cantidadPaths);
-int truncarArchivo(char *nombre,char *carpeta, char ***vectoreRutas, int *cantidadPaths, int tamanioNuevo);
+int truncarArchivo(char *nombre,char *carpeta, char **vectoreRutas, int cantidadPaths, int tamanioNuevo);
 int dividirRedondeando(int numero1 , int numero2);
 void sacarBloques(int cantidadBloquesOriginal ,int cantidadBloquesNueva,t_config* configArchivoActual,int tamanioOriginal);
 void agregarBloques(int cantidadBloquesOriginal ,int cantidadBloquesNueva,t_config* configArchivoActual);
@@ -37,4 +37,5 @@ void iniciarArchivoBitmap();
 bool accesoBitmap(t_bitarray* bitmapAAcceder, off_t bit_index);
 void setearBitmap(t_bitarray* bitmapAAcceder, off_t bit_index);
 void sincronizarBitmap();
+void revisarBitmap();
 #endif /* FILESYSTEM_H_ */
