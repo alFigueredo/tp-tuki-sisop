@@ -559,7 +559,32 @@ void manejo_instrucciones (inst_mem tipo_instruccion, uint32_t dir_dada, char* o
 
 }*/
 
-uint32_t leer_memoria(int direccion) // BUSCAR POR ID DE SEG !!!
+char* leer_memoria(uint32_t id_buscado, uint32_t desp)
+{
+	segmento *seg;
+	char* valorLeido;
+	char *memoria = (char *)memoria_usuario;
+	int direccion;
+
+	for (int i = 0; i < list_size(tabla_segmentos_total); i++)
+	{
+		seg = list_get(tabla_segmentos_total, i);
+
+		if (seg->id == id_buscado)
+		{
+			delay (config_mem.retardo_memoria);
+			direccion = seg->direccion_base + desp;
+			valorLeido = memoria[direccion];
+			return valorLeido;
+		}
+	}
+
+	//log_error(logger, "Error: Dirección de memoria inválida\n");
+	return 0;
+}
+/*
+ //funcion q lee por direccion fisica (teoria)
+uint32_t leer_memoria(int direccion)
 {
 	segmento *seg;
 	uint32_t valorLeido;
@@ -579,7 +604,7 @@ uint32_t leer_memoria(int direccion) // BUSCAR POR ID DE SEG !!!
 
 	//log_error(logger, "Error: Dirección de memoria inválida\n");
 	return 0;
-}
+}*/
 
 void escribir_memoria(int direccion, uint32_t nuevo_valor)
 {
