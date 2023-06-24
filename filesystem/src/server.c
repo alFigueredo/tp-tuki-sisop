@@ -129,7 +129,7 @@ void atender_cliente(int* socket_cliente){
 			instruccion = proceso->instruccion;
 			porqueria=string_split(instruccion, " ");
 			nombreArchivo = porqueria[1];
-			tamanioAtruncar = porqueria[2];
+			tamanioAtruncar = atoi(porqueria[2]);
 			if(truncarArchivo(nombreArchivo, config_get_string_value(config,"PATH_FCB"), vectorDePathsPCBs, cantidadPaths, tamanioAtruncar))
 			{
 				enviar_operacion(*socket_cliente, YA_SE_TERMINO_LA_TRUNCACION);

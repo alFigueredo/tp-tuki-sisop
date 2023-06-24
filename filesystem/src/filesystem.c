@@ -110,7 +110,7 @@ int main(int argc, char** argv)
 	// Pruebas genericas PARTE 2
 
 	//Reviso el estado del bitmap
-	revisarBitmap();
+	revisarBitmap(10);
 	/////////////////////////
 
 	if(truncarArchivo("archivoPruebas2", config_get_string_value(config,"PATH_FCB"), vectorDePathsPCBs, cantidadPaths, 64))
@@ -371,6 +371,7 @@ void sacarBloques(int cantidadBloquesOriginal ,int cantidadBloquesNueva,t_config
 	{
 		// Me muevo al ultimo puntero del bloque de punteros para eliminar puntero por puntero
 		log_info(logger,"Acceso Bloque - Archivo: %s - Bloque Archivo: bloque de punteros - Bloque File System %d",config_get_string_value(configArchivoActual,"NOMBRE_ARCHIVO"),punteroIndirecto);
+		delay(config_get_int_value(config,"RETARDO_ACCESO_BLOQUE"));
 		fseek(bloques,punteroIndirecto * config_get_int_value(superBloque,"BLOCK_SIZE"),SEEK_SET);
 		fseek(bloques,sizeof(uint32_t)*(cantidadBloquesOriginal - 1), SEEK_CUR);
 
@@ -390,6 +391,7 @@ void sacarBloques(int cantidadBloquesOriginal ,int cantidadBloquesNueva,t_config
 	{
 		// Me muevo al ultimo puntero del bloque de punteros para eliminar puntero por puntero
 		log_info(logger,"Acceso Bloque - Archivo: %s - Bloque Archivo: bloque de punteros - Bloque File System %d",config_get_string_value(configArchivoActual,"NOMBRE_ARCHIVO"),punteroIndirecto);
+		delay(config_get_int_value(config,"RETARDO_ACCESO_BLOQUE"));
 		fseek(bloques,punteroIndirecto * config_get_int_value(superBloque,"BLOCK_SIZE"),SEEK_SET);
 		fseek(bloques,sizeof(uint32_t)*(cantidadBloquesOriginal - 1), SEEK_CUR);
 
@@ -463,7 +465,9 @@ void agregarBloques(int cantidadBloquesOriginal ,int cantidadBloquesNueva,t_conf
 				}
 			}
 			// Me ubico en el bloque de punteros
+			log_info(logger,"Acceso Bloque - Archivo: %s - Bloque Archivo: bloque de punteros - Bloque File System %d",config_get_string_value(configArchivoActual,"NOMBRE_ARCHIVO"),punteroABloquePunteros);
 			fseek(bloques,punteroABloquePunteros * config_get_int_value(superBloque,"BLOCK_SIZE"),SEEK_SET);
+			delay(config_get_int_value(config,"RETARDO_ACCESO_BLOQUE"));
 			log_info(logger,"Busco bloques libres para agregar al archivo");
 			//Busco los espacios libres en el bitmap para agregar los bloques
 			for (int i=0;i< cantidadBloquesAAGregar -1;i++)
@@ -501,7 +505,9 @@ void agregarBloques(int cantidadBloquesOriginal ,int cantidadBloquesNueva,t_conf
 			}
 		}
 		// Me ubico en el bloque de punteros
+		log_info(logger,"Acceso Bloque - Archivo: %s - Bloque Archivo: bloque de punteros - Bloque File System %d",config_get_string_value(configArchivoActual,"NOMBRE_ARCHIVO"),punteroABloquePunteros * config_get_int_value(superBloque,"BLOCK_SIZE"));
 		fseek(bloques,punteroABloquePunteros * config_get_int_value(superBloque,"BLOCK_SIZE"),SEEK_SET);
+		delay(config_get_int_value(config,"RETARDO_ACCESO_BLOQUE"));
 		for (int i=0;i< cantidadBloquesAAGregar;i++)
 		{
 			int j=1;
@@ -518,8 +524,10 @@ void agregarBloques(int cantidadBloquesOriginal ,int cantidadBloquesNueva,t_conf
 	}
 	if(cantidadBloquesOriginal > 1)
 	{
+		log_info(logger,"Acceso Bloque - Archivo: %s - Bloque Archivo: bloque de punteros - Bloque File System %d",config_get_string_value(configArchivoActual,"NOMBRE_ARCHIVO"),config_get_int_value(configArchivoActual,"PUNTERO_INDIRECTO"));
 		fseek(bloques,config_get_int_value(configArchivoActual,"PUNTERO_INDIRECTO") * config_get_int_value(superBloque,"BLOCK_SIZE"),SEEK_SET);
 		fseek(bloques,sizeof(uint32_t)*(cantidadBloquesOriginal - 1),SEEK_CUR);
+		delay(config_get_int_value(config,"RETARDO_ACCESO_BLOQUE"));
 		for (int i=0;i< cantidadBloquesAAGregar;i++)
 		{
 			int j=1;
@@ -600,10 +608,31 @@ void sincronizarBitmap()
 		log_warning(logger, "No se pudo escribir correctamente en el bitmap");
 	}
 }
-void revisarBitmap()
+void revisarBitmap(int hastaDonde)
 {
-	for(int i=0;i<10; i++ )
+	for(int i=0;i<hastaDonde; i++ )
 	{
 		accesoBitmap(bitmap, i);
 	}
+}
+int leerArchivo(char *nombreArchivo,size_t punteroSeek,size_t bytesALeer, int direccion)
+{
+	log_info(logger,"Leer Archivo: %s - Puntero: %d - Memoria: %d - Tamaño: %d",nombreArchivo,punteroSeek,direccion);
+	int i=0;
+	t_config* configArchivoActual;
+
+	while (i<cantidadPaths)
+	{
+		configArchivoActual = iniciar_config(vectorDePathsPCBs[i]);
+		if(strcmp(nombreArchivo,config_get_string_value(configArchivoActual,"NOMBRE_ARCHIVO")) == 0)
+		{
+			log_info(logger,"Truncar archivo dice: ENCONTRE EL ARCHIVO A TRUNCAR");
+			break;
+		}
+		i++;
+		config_destroy(configArchivoActual);
+	}
+
+
+	return 1;
 }

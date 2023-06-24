@@ -37,6 +37,6 @@ void iniciarArchivoBitmap();
 bool accesoBitmap(t_bitarray* bitmapAAcceder, off_t bit_index);
 void setearBitmap(t_bitarray* bitmapAAcceder, off_t bit_index);
 void sincronizarBitmap();
-void revisarBitmap();
+void revisarBitmap(int hastaDonde);
 void limpiarBitmap(t_bitarray* bitmapAAcceder, off_t bit_index);
 #endif /* FILESYSTEM_H_ */
