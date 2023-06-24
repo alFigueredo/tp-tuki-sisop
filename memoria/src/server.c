@@ -77,8 +77,8 @@ void atender_cliente(int* socket_cliente){
 	char * instruccion;
 	char** parsed;
 	char** dir_fisica;
-	int id_seg;
-	int desp;
+	uint32_t id_seg;
+	uint32_t desp;
 
 	while (1) {
 		int cod_op = recibir_operacion(*socket_cliente);
@@ -120,10 +120,10 @@ void atender_cliente(int* socket_cliente){
 			parsed = string_split(instruccion," ");
 			dir_fisica = string_get_string_as_array(parsed[2]);
 			//----------------------------------------------------
-			id_seg = atoi(dir_fisica[0]); // ID
-			desp = atoi(dir_fisica[1]);  // OFFNOSEUQE MIERDA
+			id_seg = atoi(dir_fisica[0]);
+			desp = atoi(dir_fisica[1]);
 
-			log_info(logger, "PID: %u - Accion: LEER - Direccion fisica: %d - Tamanio: %d - Origen: CPU", proceso->pid);
+			log_info(logger, "PID: %u - Accion: LEER - Direccion fisica: (%d - %d) - Tamanio: %d - Origen: CPU", proceso->pid, id_seg, desp);
 			break;
 		case MOV_OUT: //escribir
 			//parsed [1] -> dir fisica
