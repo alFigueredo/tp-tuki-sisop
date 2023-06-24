@@ -69,7 +69,7 @@ int main(int argc, char** argv)
 
 	// PRUEBAS CON UN ARCHIVO GENERICO
 
-	/*
+
 	if(abrirArchivo("archivoPruebas2",vectorDePathsPCBs,cantidadPaths))
 	{
 		log_info(logger,"Abrir archivo retorna OK");
@@ -105,7 +105,7 @@ int main(int argc, char** argv)
 	{
 		log_warning(logger,"El archivo no se pudo truncar");
 	}
-	*/
+
 
 	// Pruebas genericas PARTE 2
 
@@ -349,14 +349,14 @@ int truncarArchivo(char *nombre,char *carpeta, char **vectoreRutas, int cantidad
 			return 1;
 		}
 	}
-	log_info(logger, "No se agregaron bloques al archivo");
+	log_info(logger, "No se modificaron la canidad de bloques del archivo");
 	config_destroy(configArchivoActual);
 	return 1;
 }
 
 void sacarBloques(int cantidadBloquesOriginal ,int cantidadBloquesNueva,t_config* configArchivoActual,int tamanioOriginal)
 {
-	int cantidadBloquesAEliminar = cantidadBloquesNueva - cantidadBloquesOriginal;
+	int cantidadBloquesAEliminar =cantidadBloquesOriginal - cantidadBloquesNueva;
 	uint32_t punteroIndirecto = config_get_int_value(configArchivoActual,"PUNTERO_INDIRECTO");
 	uint32_t punteroACadaBloque;
 	FILE *bloques = fopen(config_get_string_value(config,"PATH_BLOQUES"),"r+");
@@ -369,40 +369,40 @@ void sacarBloques(int cantidadBloquesOriginal ,int cantidadBloquesNueva,t_config
 	}
 	if (cantidadBloquesNueva == 1)
 	{
-		// Me muevo al final del bloque de punteros para eliminar puntero por puntero
-		log_info(logger,"Acceso Bloque - Archivo: %s - Bloque Archivo: bloque de punteros - Bloque File System %d",config_get_string_value(config,"NOMBRE_ARCHIVO"),punteroIndirecto);
+		// Me muevo al ultimo puntero del bloque de punteros para eliminar puntero por puntero
+		log_info(logger,"Acceso Bloque - Archivo: %s - Bloque Archivo: bloque de punteros - Bloque File System %d",config_get_string_value(configArchivoActual,"NOMBRE_ARCHIVO"),punteroIndirecto);
 		fseek(bloques,punteroIndirecto * config_get_int_value(superBloque,"BLOCK_SIZE"),SEEK_SET);
 		fseek(bloques,sizeof(uint32_t)*(cantidadBloquesOriginal - 1), SEEK_CUR);
 
-		for(int i=0;i<cantidadBloquesOriginal -1;i++)
+		for(int i=0;i<cantidadBloquesAEliminar ;i++)
 		{
 			fseek(bloques,-sizeof(uint32_t), SEEK_CUR);
 			fread(&punteroACadaBloque,sizeof(uint32_t),1,bloques);
+			limpiarBitmap(bitmap, punteroACadaBloque);
+			fseek(bloques,-sizeof(uint32_t), SEEK_CUR);
+
+		}
+		limpiarBitmap(bitmap, config_get_int_value(configArchivoActual,"PUNTERO_INDIRECTO"));
+		config_remove_key(configArchivoActual,"PUNTERO_INDIRECTO");
+		config_save(configArchivoActual);
+	}
+	if (cantidadBloquesNueva > 1)
+	{
+		// Me muevo al ultimo puntero del bloque de punteros para eliminar puntero por puntero
+		log_info(logger,"Acceso Bloque - Archivo: %s - Bloque Archivo: bloque de punteros - Bloque File System %d",config_get_string_value(configArchivoActual,"NOMBRE_ARCHIVO"),punteroIndirecto);
+		fseek(bloques,punteroIndirecto * config_get_int_value(superBloque,"BLOCK_SIZE"),SEEK_SET);
+		fseek(bloques,sizeof(uint32_t)*(cantidadBloquesOriginal - 1), SEEK_CUR);
+
+		for(int i=0;i<cantidadBloquesAEliminar ;i++)
+		{
+			fseek(bloques,-sizeof(uint32_t), SEEK_CUR);
+			fread(&punteroACadaBloque,sizeof(uint32_t),1,bloques);
+			limpiarBitmap(bitmap, punteroACadaBloque);
+			fseek(bloques,-sizeof(uint32_t), SEEK_CUR);
 
 		}
 	}
-
-	// Me muevo al final del bloque de punteros para eliminar puntero por puntero
-	log_info(logger,"Acceso Bloque - Archivo: %s - Bloque Archivo: bloque de punteros - Bloque File System %d",config_get_string_value(config,"NOMBRE_ARCHIVO"),punteroIndirecto);
-	fseek(bloques,punteroIndirecto * config_get_int_value(superBloque,"BLOCK_SIZE"),SEEK_SET);
-	fseek(bloques,sizeof(uint32_t)*(cantidadBloquesOriginal - 1), SEEK_CUR);
-
-	for(int i=0 ; i < cantidadBloquesAEliminar;i++)
-	{
-
-
-		fseek(bloques,-sizeof(uint32_t),SEEK_CUR);
-		fread(&punteroACadaBloque,sizeof(uint32_t),1,bloques);
-		log_info(logger,"Acceso a Bitmap - Bloque: %d - Estado: %d",punteroACadaBloque,bitarray_test_bit(bitmap,punteroACadaBloque));
-		bitarray_clean_bit(bitmap,punteroACadaBloque);
-		log_info(logger,"Bitmap modificado - Bloque: %d Estado nuevo: %d ",punteroACadaBloque,bitarray_test_bit(bitmap,punteroACadaBloque));
-		fseek(bloques,-sizeof(uint32_t),SEEK_CUR);
-
-
-	}
 	fclose(bloques);
-
-
 	return;
 }
 void agregarBloques(int cantidadBloquesOriginal ,int cantidadBloquesNueva,t_config* configArchivoActual)
@@ -583,6 +583,12 @@ void setearBitmap(t_bitarray* bitmapAAcceder, off_t bit_index)
 	log_info(logger,"Modificacion Bitmap - Bloque: %d - Estado nuevo: %d",posicionIndicada,bitarray_test_bit(bitmapAAcceder,bit_index));
 	return;
 }
+void limpiarBitmap(t_bitarray* bitmapAAcceder, off_t bit_index)
+{
+	int posicionIndicada = bit_index;
+	bitarray_clean_bit(bitmapAAcceder, bit_index);
+	log_info(logger,"Modificacion Bitmap - Bloque: %d - Estado nuevo: %d",posicionIndicada,bitarray_test_bit(bitmapAAcceder,bit_index));
+}
 void sincronizarBitmap()
 {
 	if (msync(memoriaMapeada, config_get_int_value(superBloque, "BLOCK_COUNT") / 8, MS_SYNC) == 0)
@@ -596,7 +602,7 @@ void sincronizarBitmap()
 }
 void revisarBitmap()
 {
-	for(int i=0; i<config_get_int_value(superBloque, "BLOCK_COUNT") / 8; i++ )
+	for(int i=0;i<10; i++ )
 	{
 		accesoBitmap(bitmap, i);
 	}
