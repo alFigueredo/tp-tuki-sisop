@@ -39,4 +39,5 @@ void setearBitmap(t_bitarray* bitmapAAcceder, off_t bit_index);
 void sincronizarBitmap();
 void revisarBitmap(int hastaDonde);
 void limpiarBitmap(t_bitarray* bitmapAAcceder, off_t bit_index);
+void* concatPunteros(void* ptr1, void* ptr2, size_t size1, size_t size2);
 #endif /* FILESYSTEM_H_ */

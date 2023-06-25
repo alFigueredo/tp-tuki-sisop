@@ -505,7 +505,7 @@ void agregarBloques(int cantidadBloquesOriginal ,int cantidadBloquesNueva,t_conf
 			}
 		}
 		// Me ubico en el bloque de punteros
-		log_info(logger,"Acceso Bloque - Archivo: %s - Bloque Archivo: bloque de punteros - Bloque File System %d",config_get_string_value(configArchivoActual,"NOMBRE_ARCHIVO"),punteroABloquePunteros * config_get_int_value(superBloque,"BLOCK_SIZE"));
+		log_info(logger,"Acceso Bloque - Archivo: %s - Bloque Archivo: bloque de punteros - Bloque File System %d",config_get_string_value(configArchivoActual,"NOMBRE_ARCHIVO"),punteroABloquePunteros);
 		fseek(bloques,punteroABloquePunteros * config_get_int_value(superBloque,"BLOCK_SIZE"),SEEK_SET);
 		delay(config_get_int_value(config,"RETARDO_ACCESO_BLOQUE"));
 		for (int i=0;i< cantidadBloquesAAGregar;i++)
@@ -615,24 +615,73 @@ void revisarBitmap(int hastaDonde)
 		accesoBitmap(bitmap, i);
 	}
 }
-int leerArchivo(char *nombreArchivo,size_t punteroSeek,size_t bytesALeer, int direccion)
+void *leerArchivo(char *nombreArchivo,size_t punteroSeek,size_t bytesALeer, int direccion)
 {
-	log_info(logger,"Leer Archivo: %s - Puntero: %d - Memoria: %d - Tamaño: %d",nombreArchivo,punteroSeek,direccion);
+	log_info(logger,"Leer Archivo: %s - Puntero: %ld - Memoria: %d - Tamaño: %ld",nombreArchivo,punteroSeek,direccion,bytesALeer);
 	int i=0;
 	t_config* configArchivoActual;
-
+	size_t tamanioArchivo;
+	size_t bloqueAleer;
+	void *infoDelArchivo;
+	FILE *bloques = fopen(config_get_string_value(config,"PATH_BLOQUES"),"r+");
+	uint32_t punteroABloques;
 	while (i<cantidadPaths)
 	{
 		configArchivoActual = iniciar_config(vectorDePathsPCBs[i]);
 		if(strcmp(nombreArchivo,config_get_string_value(configArchivoActual,"NOMBRE_ARCHIVO")) == 0)
 		{
-			log_info(logger,"Truncar archivo dice: ENCONTRE EL ARCHIVO A TRUNCAR");
+			log_info(logger,"Leer  dice: ENCONTRE EL ARCHIVO A TRUNCAR");
 			break;
 		}
 		i++;
 		config_destroy(configArchivoActual);
 	}
+	tamanioArchivo = config_get_int_value(configArchivoActual,"TAMANIO_ARCHIVO");
+	bloqueAleer = dividirRedondeando(punteroSeek, config_get_int_value(superBloque,"BLOCK_SIZE"));
 
+	//Busco el bloque desde donde voy a leer usando los punteros del archivo
+	if(bloqueAleer == 1)
+	{
+		log_info(logger,"Acceso Bloque - Archivo: %s - Bloque Archivo: %d - Bloque File System %d",config_get_string_value(configArchivoActual,"NOMBRE_ARCHIVO"),0,config_get_int_value(configArchivoActual,"PUNTERO_DIRECTO"));
+		fseek(bloques,config_get_int_value(superBloque,"BLOCK_SIZE")*config_get_int_value(configArchivoActual,"PUNTERO_DIRECTO"),SEEK_SET);
+		delay(config_get_int_value(config,"RETARDO_ACCESO_BLOQUE"));
+		//Me fijo si todo lo que voy a leer esta en un solo bloque
+		if(bytesALeer > config_get_int_value(superBloque,"BLOCK_SIZE") || bytesALeer + punteroSeek >config_get_int_value(superBloque,"BLOCK_SIZE") )
+		{
+			infoDelArchivo= malloc(bytesALeer);
+			fread(infoDelArchivo,bytesALeer,1,bloques);
+			return infoDelArchivo;
+		}
+		//leo todo lo que puedo en el primer archivo y despues busco en el segundo
+		else
+		{
+			infoDelArchivo= malloc(config_get_int_value(configArchivoActual,"BLOCK_SIZE")-punteroSeek);
+			fread(infoDelArchivo,config_get_int_value(configArchivoActual,"BLOCK_SIZE")-punteroSeek,1,bloques);
+			//Voy al bloque de punteros del archivo a buscar el siguiente bloque
+			log_info(logger,"Acceso Bloque - Archivo: %s - Bloque Archivo: bloque de punteros - Bloque File System %d",config_get_string_value(configArchivoActual,"NOMBRE_ARCHIVO"),config_get_int_value(configArchivoActual,"PUNTERO_INDIRECTO"));
+			delay(config_get_int_value(config,"RETARDO_ACCESO_BLOQUE"));
+			fseek(bloques,config_get_int_value(configArchivoActual,"PUNTERO_INDIRECTO"),SEEK_SET);
+			fread(&punteroABloques,sizeof(uint32_t),1,bloques);
+			//	Ahora leo del bloque encontrado las posiciones en memoria que me faltan
+			log_info(logger,"Acceso Bloque - Archivo: %s - Bloque Archivo: %d - Bloque File System %d",config_get_string_value(configArchivoActual,"NOMBRE_ARCHIVO"),1,punteroABloques);
+			fseek(bloques,punteroABloques,SEEK_SET);
+			delay(config_get_int_value(config,"RETARDO_ACCESO_BLOQUE"));
+			void *infoDelArchivo2 = malloc(bytesALeer - (config_get_int_value(configArchivoActual,"BLOCK_SIZE")-punteroSeek));
+			fread(infoDelArchivo2,bytesALeer - (config_get_int_value(configArchivoActual,"BLOCK_SIZE")-punteroSeek),1,bloques);
+			void *punteroFinal = concatPunteros(infoDelArchivo , infoDelArchivo2 , config_get_int_value(configArchivoActual,"BLOCK_SIZE")-punteroSeek , bytesALeer - (config_get_int_value(configArchivoActual,"BLOCK_SIZE")-punteroSeek));
+			free(infoDelArchivo);
+			free(infoDelArchivo2);
+			return punteroFinal;
+		}
+	}
 
-	return 1;
+}
+void* concatPunteros(void* ptr1, void* ptr2, size_t size1, size_t size2) 
+{
+    char* resultado = malloc(size1 + size2); // Reserva memoria para el resultado
+
+    memcpy(resultado, ptr1, size1); // Copia los bytes de ptr1 al resultado
+    memcpy(resultado + size1, ptr2, size2); // Copia los bytes de ptr2 al resultado
+
+    return resultado;
 }
