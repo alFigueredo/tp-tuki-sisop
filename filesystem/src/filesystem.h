@@ -40,4 +40,6 @@ void sincronizarBitmap();
 void revisarBitmap(int hastaDonde);
 void limpiarBitmap(t_bitarray* bitmapAAcceder, off_t bit_index);
 void* concatPunteros(void* ptr1, void* ptr2, size_t size1, size_t size2);
+void moverPunteroAbloqueDelArchivo(FILE* bloques, t_config* configArchivoActual,int bloqueBuscado);
+void moverPunteroABloquePunteros (FILE* bloques, t_config* configArchivoActual);
 #endif /* FILESYSTEM_H_ */
