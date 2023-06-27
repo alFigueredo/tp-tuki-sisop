@@ -38,7 +38,7 @@ int main(int argc, char **argv)
 //Crea los segmentos del proceso. La cantidad de segmentos esta dada por el config.
 void iniciar_proceso(pcb* pcb_proceso, int tamanio)
 {
-	t_list* segmentos;
+	//t_list* segmentos;
 
 	for (int var = 0; var < config_mem.cant_segmentos ; ++var)
 	{
@@ -46,7 +46,7 @@ void iniciar_proceso(pcb* pcb_proceso, int tamanio)
 	}
 
 
-	segmentos = obtener_segmentos_PID(pcb_proceso->pid);
+	//segmentos = obtener_segmentos_PID(pcb_proceso->pid);
 
 	//MANDAR TABLA A NO SE QUI9EN !!!
 
@@ -303,7 +303,6 @@ int comparar_segmentos(void *seg1, void *seg2)
 	}
 }
 
-/*
 void obtener_huecos_libres ()
 {
 	list_sort(tabla_segmentos_total, comparar_segmentos);
@@ -383,7 +382,7 @@ void eliminar_hueco(uint32_t base, uint32_t limite)
 			hueco = list_get(huecos, i);
 			if (hueco->direccion_limite == base && hueco->direccion_limite == limite)
 			{
-				list_remove(hueco, i);
+				list_remove(huecos, i);
 				break;
 			}
 		}
@@ -563,7 +562,7 @@ char* leer_memoria(uint32_t id_buscado, uint32_t desp)
 {
 	segmento *seg;
 	char* valorLeido;
-	char *memoria = (char *)memoria_usuario;
+	char* memoria = (char *) memoria_usuario;
 	int direccion;
 
 	for (int i = 0; i < list_size(tabla_segmentos_total); i++)
@@ -572,9 +571,10 @@ char* leer_memoria(uint32_t id_buscado, uint32_t desp)
 
 		if (seg->id == id_buscado)
 		{
-			delay (config_mem.retardo_memoria);
 			direccion = seg->direccion_base + desp;
-			valorLeido = memoria[direccion];
+			valorLeido = (char*) malloc(sizeof(char));
+			delay (config_mem.retardo_memoria);
+			*valorLeido = memoria[direccion];
 			return valorLeido;
 		}
 	}
@@ -606,20 +606,22 @@ uint32_t leer_memoria(int direccion)
 	return 0;
 }*/
 
-void escribir_memoria(int direccion, uint32_t nuevo_valor)
+void escribir_memoria(uint32_t id_buscado, uint32_t desp, const char* nuevo_valor)
 {
 	segmento *seg;
-	uint32_t *memoria = (uint32_t *)memoria_usuario;
+	char *memoria = (char *)memoria_usuario;
+	int direccion;
 
 	for (int i = 0; i < list_size(tabla_segmentos_total); i++)
-	{
-		seg = list_get(tabla_segmentos_total, i);
-
-		if (direccion >= seg->direccion_base && direccion <= seg->direccion_limite)
 		{
-			delay (config_mem.retardo_memoria);
-			memoria[direccion] = nuevo_valor;
-			return;
+			seg = list_get(tabla_segmentos_total, i);
+
+			if (seg->id == id_buscado)
+			{
+				direccion = seg->direccion_base + desp;
+				delay (config_mem.retardo_memoria);
+				strcpy(&memoria[direccion], nuevo_valor);
+				return;
 		}
 	}
 }

@@ -75,7 +75,7 @@ void best_fit (unsigned int, uint32_t);
 void worst_fit (unsigned int, uint32_t);
 //void manejo_instrucciones (t_list* , int* );
 char* leer_memoria(uint32_t , uint32_t );
-void escribir_memoria (int , uint32_t );
+void escribir_memoria(uint32_t , uint32_t , const char* );
 void terminar_memoria(t_log*, t_config*,int);
 int comparar_segmentos(void* , void* );
 void obtener_huecos_libres ();
