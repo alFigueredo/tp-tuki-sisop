@@ -30,6 +30,9 @@ int main(int argc, char **argv)
 	int socket_servidor = iniciar_servidor(config_mem.puerto_escucha);
 	esperar_cliente(socket_servidor);
 
+	//pruebas
+
+
 	//terminar_memoria(logger, config, socket_servidor);
 	return EXIT_SUCCESS;
 }
@@ -154,15 +157,15 @@ void crear_segmento(unsigned int pid, uint32_t tamanio_seg)
 			// mutex
 			switch (config_mem.algoritmo)
 			{
-			case FIRST:
-				first_fit(pid, tamanio_seg);
-				break;
-			case BEST:
-				best_fit(pid, tamanio_seg);
-				break;
-			case WORST:
-				worst_fit(pid, tamanio_seg);
-				break;
+				case FIRST:
+					first_fit(pid, tamanio_seg);
+					break;
+				case BEST:
+					best_fit(pid, tamanio_seg);
+					break;
+				case WORST:
+					worst_fit(pid, tamanio_seg);
+					break;
 			}
 			// mutex
 		}
@@ -558,11 +561,10 @@ void manejo_instrucciones (inst_mem tipo_instruccion, uint32_t dir_dada, char* o
 
 }*/
 
-char* leer_memoria(uint32_t id_buscado, uint32_t desp)
+void* leer_memoria(uint32_t id_buscado, uint32_t desp, size_t tamanio)
 {
 	segmento *seg;
-	char* valorLeido;
-	char* memoria = (char *) memoria_usuario;
+	void* valorLeido;
 	int direccion;
 
 	for (int i = 0; i < list_size(tabla_segmentos_total); i++)
@@ -572,44 +574,19 @@ char* leer_memoria(uint32_t id_buscado, uint32_t desp)
 		if (seg->id == id_buscado)
 		{
 			direccion = seg->direccion_base + desp;
-			valorLeido = (char*) malloc(sizeof(char));
+			valorLeido = malloc(tamanio);
 			delay (config_mem.retardo_memoria);
-			*valorLeido = memoria[direccion];
+			memcpy(valorLeido, memoria_usuario + direccion, tamanio);
 			return valorLeido;
 		}
 	}
 
-	//log_error(logger, "Error: Dirección de memoria inválida\n");
 	return 0;
-}
-/*
- //funcion q lee por direccion fisica (teoria)
-uint32_t leer_memoria(int direccion)
+
+
+void escribir_memoria(uint32_t id_buscado, uint32_t desp, void* nuevo_valor, size_t tamanio)
 {
 	segmento *seg;
-	uint32_t valorLeido;
-	uint32_t *memoria = (uint32_t *)memoria_usuario;
-
-	for (int i = 0; i < list_size(tabla_segmentos_total); i++)
-	{
-		seg = list_get(tabla_segmentos_total, i);
-
-		if (direccion >= seg->direccion_base && direccion <= seg->direccion_limite)
-		{
-			delay (config_mem.retardo_memoria);
-			valorLeido = memoria[direccion];
-			return valorLeido;
-		}
-	}
-
-	//log_error(logger, "Error: Dirección de memoria inválida\n");
-	return 0;
-}*/
-
-void escribir_memoria(uint32_t id_buscado, uint32_t desp, const char* nuevo_valor)
-{
-	segmento *seg;
-	char *memoria = (char *)memoria_usuario;
 	int direccion;
 
 	for (int i = 0; i < list_size(tabla_segmentos_total); i++)
@@ -620,7 +597,7 @@ void escribir_memoria(uint32_t id_buscado, uint32_t desp, const char* nuevo_valo
 			{
 				direccion = seg->direccion_base + desp;
 				delay (config_mem.retardo_memoria);
-				strcpy(&memoria[direccion], nuevo_valor);
+				memcpy(memoria_usuario + direccion, nuevo_valor, tamanio);
 				return;
 		}
 	}
@@ -643,5 +620,5 @@ void terminar_memoria(t_log *logger, t_config *config, int socket)
 		config_destroy(config);
 	}
 
-	liberar_servidor(socket);
+	liberar_servidor(&socket);
 }

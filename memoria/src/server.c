@@ -142,7 +142,7 @@ void atender_cliente(int* socket_cliente){
 			id_seg = atoi(dir_fisica[0]);
 			desp = atoi(dir_fisica[1]);
 
-		//	nuevo_valor = string_get_string_as_array(parsed[2]);	warning: assignment to ‘char *’ from incompatible pointer type ‘char **’ [-Wincompatible-pointer-types]
+			nuevo_valor = string_get_string_as_array(parsed[2]);	//warning: assignment to ‘char *’ from incompatible pointer type ‘char **’ [-Wincompatible-pointer-types]
 
 			escribir_memoria(id_seg, desp, nuevo_valor);
 
