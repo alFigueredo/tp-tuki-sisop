@@ -35,10 +35,10 @@ extern archivo_configuracion config_mem;
 typedef struct
 {
 	unsigned int pid; //-1-> segmento 0 , -2-> hueco
-	uint32_t id;
-	uint32_t tam_segmento; //BORRAR ???
-	uint32_t direccion_base;
-	uint32_t direccion_limite;
+	int id;
+	int tam_segmento; //BORRAR ???
+	int direccion_base;
+	int direccion_limite;
 
 }segmento;
 
@@ -57,28 +57,28 @@ extern archivo_configuracion config_mem;
 //int contadorSegmentos;
 
 //FUNCIONES
-void eliminar_hueco(uint32_t , uint32_t );
+void eliminar_hueco(int , int );
 algoritmo_asignacion cambiar_enum_algoritmo (char* );
 t_list* obtener_segmentos_PID(unsigned int );
-void crear_segmento(unsigned int , uint32_t );
-void eliminar_segmento(unsigned int,uint32_t );
+void crear_segmento(unsigned int , int );
+void eliminar_segmento(unsigned int,int );
 void iniciar_proceso(pcb* , int );
 void finalizar_proceso(pcb* , int );
-int agrupar_huecos(uint32_t , uint32_t );
+int agrupar_huecos(int , int );
 
 void iniciar_memoria ();
 void cargar_config (t_config* );
-void iniciar_estructuras(pcb*, uint32_t);
+void iniciar_estructuras(pcb*, int);
 int hay_espacio_disponible(int);
-void first_fit (unsigned int, uint32_t);
-void best_fit (unsigned int, uint32_t);
-void worst_fit (unsigned int, uint32_t);
+void first_fit (unsigned int, int);
+void best_fit (unsigned int, int);
+void worst_fit (unsigned int, int);
 //void manejo_instrucciones (t_list* , int* );
-void* leer_memoria(uint32_t , uint32_t, size_t);
-void escribir_memoria(uint32_t , uint32_t , void* , size_t );
-void terminar_memoria(t_log*, t_config*,int);
+void* leer_memoria(int , int, size_t);
+void escribir_memoria(int id_buscado, int desp, void* nuevo_valor, size_t tamanio);
+void terminar_memoria(t_log *logger, t_config *config, int socket);
 int comparar_segmentos(void* , void* );
 void obtener_huecos_libres ();
-uint32_t sumatoria_huecos();
+int sumatoria_huecos();
 
 #endif /* MEMORIA_H_ */

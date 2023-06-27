@@ -125,7 +125,7 @@ void atender_cliente(int* socket_cliente){
 			id_seg = atoi(dir_fisica[0]);
 			desp = atoi(dir_fisica[1]);
 
-			valor_mem = leer_memoria(id_seg, desp);
+			//valor_mem = leer_memoria(id_seg, desp);
 
 			log_info(logger, "PID: %u - Accion: LEER - Direccion fisica: (%d - %d) - Tamanio: %d - Origen: CPU", proceso->pid, id_seg, desp);
 			break;
@@ -144,7 +144,7 @@ void atender_cliente(int* socket_cliente){
 
 			nuevo_valor = string_get_string_as_array(parsed[2]);	//warning: assignment to ‘char *’ from incompatible pointer type ‘char **’ [-Wincompatible-pointer-types]
 
-			escribir_memoria(id_seg, desp, nuevo_valor);
+			//escribir_memoria(id_seg, desp, nuevo_valor);
 
 			enviar_operacion(*socket_cliente, OK);
 

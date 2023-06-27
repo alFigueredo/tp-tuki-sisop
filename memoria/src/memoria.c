@@ -27,11 +27,14 @@ int main(int argc, char **argv)
 	iniciar_memoria();
 
 	// SERIVIDOR
-	int socket_servidor = iniciar_servidor(config_mem.puerto_escucha);
-	esperar_cliente(socket_servidor);
+	//int socket_servidor = iniciar_servidor(config_mem.puerto_escucha);
+	//esperar_cliente(socket_servidor);
 
 	//pruebas
+	char c = c;
 
+		escribir_memoria(0, 1  , & c, sizeof
+					( char));
 
 	//terminar_memoria(logger, config, socket_servidor);
 	return EXIT_SUCCESS;
@@ -148,9 +151,9 @@ void iniciar_memoria()
 
 //-------------------MANEJO DE SEGMENTOS-----------------------------------------------------------------------------------
 //Crea UN segmento segun el algoritmo de asignacion del config si hay espacio en memoria. Si no hay espacio en memoria, solicita una compactacion o le informa al kernel que no hay espacio disponible
-void crear_segmento(unsigned int pid, uint32_t tamanio_seg)
+void crear_segmento(unsigned int pid, int tamanio_seg)
 {
-	uint32_t sumatoria;
+	int sumatoria;
 
 	if (hay_espacio_disponible(tamanio_seg))															//Primero se fija si hay espacio disponible en memoria
 	{
@@ -188,7 +191,7 @@ void crear_segmento(unsigned int pid, uint32_t tamanio_seg)
 }
 
 //Busca el segmento por su id y lo elimina
-void eliminar_segmento(unsigned int pid, uint32_t id)
+void eliminar_segmento(unsigned int pid, int id)
 {
 	segmento *seg;
 	segmento *hueco;
@@ -217,7 +220,7 @@ void eliminar_segmento(unsigned int pid, uint32_t id)
 }
 
 //Si tiene huecos aledanios los agrupa y devuelve 1, sino devuelve 0
-int agrupar_huecos(uint32_t base, uint32_t limite)
+int agrupar_huecos(int base, int limite)
 {
 	segmento *hueco_izquierdo = NULL;
 	int index_izq;
@@ -336,9 +339,9 @@ void obtener_huecos_libres ()
 }*/
 
 //Suma los espacios de los huecos
-uint32_t sumatoria_huecos()
+int sumatoria_huecos()
 {
-	uint32_t sumatoria = 0;
+	int sumatoria = 0;
 	segmento *seg;
 
 	for (int i = 0; i < list_size(huecos); i++)
@@ -376,7 +379,7 @@ int hay_espacio_disponible(int tam_segmento)
 }
 
 
-void eliminar_hueco(uint32_t base, uint32_t limite)
+void eliminar_hueco(int base, int limite)
 {
 	segmento* hueco;
 
@@ -393,12 +396,12 @@ void eliminar_hueco(uint32_t base, uint32_t limite)
 
 
 // Busca el primer hueco disponible desde el comienzo de memoria
-void first_fit(unsigned int pid_proceso, uint32_t tam_segmento)
+void first_fit(unsigned int pid_proceso, int tam_segmento)
 {
 	int segmento_asignado = -1;
 	segmento *segmento_actual;
 	segmento *segmento_siguiente;
-	uint32_t espacio_libre;
+	int espacio_libre;
 	segmento *nuevo_segmento;
 
 	for (int i = 0; i < list_size(memoria_usuario); i++)
@@ -432,7 +435,7 @@ void first_fit(unsigned int pid_proceso, uint32_t tam_segmento)
 }
 
 // Busca el hueco mas chico donde entre el proceso
-void best_fit(unsigned int pid_proceso, uint32_t tam_segmento)
+void best_fit(unsigned int pid_proceso, int tam_segmento)
 {
 	int segmento_asignado = -1;
 	int mejor_ajuste = INT_MAX;
@@ -440,7 +443,7 @@ void best_fit(unsigned int pid_proceso, uint32_t tam_segmento)
 	segmento *segmento_siguiente;
 	int espacio_libre;
 	segmento *nuevo_segmento;
-	uint32_t nueva_dir_base;
+	int nueva_dir_base;
 
 	for (int i = 0; i < list_size(memoria_usuario); i++)
 	{
@@ -476,14 +479,14 @@ void best_fit(unsigned int pid_proceso, uint32_t tam_segmento)
 }
 
 // Buscar el hueco más grande que pueda contener el nuevo segmento
-void worst_fit(unsigned int pid_proceso, uint32_t tam_segmento)
+void worst_fit(unsigned int pid_proceso, int tam_segmento)
 {
 	int segmento_asignado = -1;
 	int mejor_ajuste = INT_MIN;
 	segmento *segmento_actual;
 	int espacio_libre;
 	segmento *segmento_siguiente;
-	uint32_t nueva_dir_base;
+	int nueva_dir_base;
 
 
 	for (int i = 0; i < list_size(memoria_usuario); i++)
@@ -523,13 +526,13 @@ void worst_fit(unsigned int pid_proceso, uint32_t tam_segmento)
 //                                    ACCESO A ESPACIO USUARIO - COMENTADO PQ NO SE COMO LLEGA LA INFO
 
 /*
-void manejo_instrucciones (inst_mem tipo_instruccion, uint32_t dir_dada, char* origen, uint32_t nuevo_valor,t_list* instrucciones, int* socket_cliente){
+void manejo_instrucciones (inst_mem tipo_instruccion, int dir_dada, char* origen, int nuevo_valor,t_list* instrucciones, int* socket_cliente){
 	//inst_mem tipo_instruccion = *(inst_mem *) list_get (instrucciones,0);
-	//uint32_t dir_dada = *(uint32_t*) list_get(instrucciones,1);                                                             //Direccion fisica dada por CPU o FS
+	//int dir_dada = *(int*) list_get(instrucciones,1);                                                             //Direccion fisica dada por CPU o FS
 
 
-	uint32_t valor;
-//	uint32_t nuevo_valor;
+	int valor;
+//	int nuevo_valor;
 	//int boolEsc;
 
 
@@ -546,7 +549,7 @@ void manejo_instrucciones (inst_mem tipo_instruccion, uint32_t dir_dada, char* o
 			break;
 
 		case M_WRITE:                                                                                // Ante un pedido de escritura, escribir lo indicado en la posición pedida y responder un mensaje de ‘OK’.
-			//nuevo_valor = *(uint32_t*) list_get(instrucciones,2);
+			//nuevo_valor = *(int*) list_get(instrucciones,2);
 
 			delay (config_mem.retardo_memoria);
 			escribir_memoria (nuevo_valor, dir_dada);
@@ -561,7 +564,7 @@ void manejo_instrucciones (inst_mem tipo_instruccion, uint32_t dir_dada, char* o
 
 }*/
 
-void* leer_memoria(uint32_t id_buscado, uint32_t desp, size_t tamanio)
+void* leer_memoria(int id_buscado, int desp, size_t tamanio)
 {
 	segmento *seg;
 	void* valorLeido;
@@ -582,9 +585,9 @@ void* leer_memoria(uint32_t id_buscado, uint32_t desp, size_t tamanio)
 	}
 
 	return 0;
+}
 
-
-void escribir_memoria(uint32_t id_buscado, uint32_t desp, void* nuevo_valor, size_t tamanio)
+void escribir_memoria(int id_buscado, int desp, void* nuevo_valor, size_t tamanio)
 {
 	segmento *seg;
 	int direccion;
@@ -599,9 +602,10 @@ void escribir_memoria(uint32_t id_buscado, uint32_t desp, void* nuevo_valor, siz
 				delay (config_mem.retardo_memoria);
 				memcpy(memoria_usuario + direccion, nuevo_valor, tamanio);
 				return;
+			}
 		}
-	}
 }
+
 
 
 void terminar_memoria(t_log *logger, t_config *config, int socket)
