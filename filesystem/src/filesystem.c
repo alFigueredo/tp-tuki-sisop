@@ -626,7 +626,6 @@ int escribirArchivo(char *nombreArchivo,size_t punteroSeek,size_t bytesAEscribir
 	t_config* configArchivoActual;
 	size_t bloqueAEscribir;
 	FILE *bloques = fopen(config_get_string_value(config,"PATH_BLOQUES"),"r+");
-	uint32_t punteroABloques;
 	size_t tamanioBloque = config_get_int_value(superBloque,"BLOCK_SIZE");
 
 	while (i<cantidadPaths)
@@ -652,7 +651,7 @@ int escribirArchivo(char *nombreArchivo,size_t punteroSeek,size_t bytesAEscribir
 			fclose(bloques);
 			return 1;
 		}
-		//escribo todo lo que puedo en el primer archivo y despues busco en el segundo
+		//escribo todo lo que puedo en el primer archivo y despues exribo en el segundo en el segundo
 		else
 		{
 			fseek(bloques,punteroSeek,SEEK_CUR);
@@ -670,18 +669,14 @@ int escribirArchivo(char *nombreArchivo,size_t punteroSeek,size_t bytesAEscribir
 		if(bytesAEscribir > tamanioBloque || (bytesAEscribir) + (punteroSeek-bloqueAEscribir *tamanioBloque) > tamanioBloque)
 		{
 			//Escribo todo lo que puedo del primer bloque
-			fseek(bloques,punteroSeek-tamanioBloque*bloqueAEscribir,SEEK_CUR);
-			delay(config_get_int_value(config,"RETARDO_ACCESO_BLOQUE"));
+			moverPunteroAbloqueDelArchivo(bloques,configArchivoActual,bloqueAEscribir);
 			fwrite(memoriaAEscribir,tamanioBloque-(punteroSeek-bloqueAEscribir * tamanioBloque),1,bloques);
 
 
 			moverPunteroAbloqueDelArchivo(bloques,configArchivoActual,bloqueAEscribir + 1);
 			//Ahora escribo lo que me falta lo que me falta leer del archivo
-			infoDelArchivo2 = malloc(bytesALeer - tamanioBloque-(punteroSeek-bloqueAleer * tamanioBloque));
-			fwrite(infoDelArchivo2,bytesALeer - tamanioBloque-(punteroSeek-bloqueAleer * tamanioBloque),1,bloques);
-			concatPunteros(infoDelArchivo,infoDelArchivo2,tamanioBloque-(punteroSeek-bloqueAleer * tamanioBloque),bytesALeer - tamanioBloque-(punteroSeek-bloqueAleer * tamanioBloque));
-			free(infoDelArchivo);
-			free(infoDelArchivo2);
+			fwrite(memoriaAEscribir +(tamanioBloque-punteroSeek),bytesAEscribir - tamanioBloque-(punteroSeek-bloqueAEscribir * tamanioBloque),1,bloques);
+			return 1;
 		}
 		//Hay solo un bloque que leer
 		else
@@ -705,7 +700,6 @@ void *leerArchivo(char *nombreArchivo,size_t punteroSeek,size_t bytesALeer, int 
 	void *infoDelArchivo;
 	void *infoDelArchivo2;
 	FILE *bloques = fopen(config_get_string_value(config,"PATH_BLOQUES"),"r+");
-	uint32_t punteroABloques;
 	void *punteroFinal;
 	size_t tamanioBloque = config_get_int_value(superBloque,"BLOCK_SIZE");
 	while (i<cantidadPaths)
@@ -725,9 +719,7 @@ void *leerArchivo(char *nombreArchivo,size_t punteroSeek,size_t bytesALeer, int 
 	//Busco el bloque desde donde voy a leer usando los punteros del archivo
 	if(bloqueAleer == 0)
 	{
-		log_info(logger,"Acceso Bloque - Archivo: %s - Bloque Archivo: %d - Bloque File System %d",config_get_string_value(configArchivoActual,"NOMBRE_ARCHIVO"),0,config_get_int_value(configArchivoActual,"PUNTERO_DIRECTO"));
-		fseek(bloques,tamanioBloque * config_get_int_value(configArchivoActual,"PUNTERO_DIRECTO"),SEEK_SET);
-		delay(config_get_int_value(config,"RETARDO_ACCESO_BLOQUE"));
+		moverPunteroAbloqueDelArchivo(bloques,configArchivoActual,bloqueAleer);
 		//Me fijo si todo lo que voy a leer esta en un solo bloque
 		if(bytesALeer < tamanioBloque || (bytesALeer) + (punteroSeek-bloqueAleer *tamanioBloque) < tamanioBloque )
 		{
@@ -744,16 +736,9 @@ void *leerArchivo(char *nombreArchivo,size_t punteroSeek,size_t bytesALeer, int 
 			fseek(bloques,punteroSeek,SEEK_CUR);
 			fread(infoDelArchivo,tamanioBloque-punteroSeek,1,bloques);
 			
-			//Voy al bloque de punteros del archivo a buscar el siguiente bloque
-			log_info(logger,"Acceso Bloque - Archivo: %s - Bloque Archivo: bloque de punteros - Bloque File System %d",config_get_string_value(configArchivoActual,"NOMBRE_ARCHIVO"),config_get_int_value(configArchivoActual,"PUNTERO_INDIRECTO"));
-			delay(config_get_int_value(config,"RETARDO_ACCESO_BLOQUE"));
-			fseek(bloques,config_get_int_value(configArchivoActual,"PUNTERO_INDIRECTO")* tamanioBloque,SEEK_SET);
-			fread(&punteroABloques,sizeof(uint32_t),1,bloques);
-			
-			//	Ahora leo del bloque encontrado las posiciones en memoria que me faltan
-			log_info(logger,"Acceso Bloque - Archivo: %s - Bloque Archivo: %d - Bloque File System %d",config_get_string_value(configArchivoActual,"NOMBRE_ARCHIVO"),1,punteroABloques);
-			fseek(bloques,punteroABloques * tamanioBloque,SEEK_SET);
-			delay(config_get_int_value(config,"RETARDO_ACCESO_BLOQUE"));
+			//Ahora me voy al bloque siguiente
+			moverPunteroAbloqueDelArchivo(bloques,configArchivoActual,bloqueAleer + 1);
+
 			infoDelArchivo2 = malloc(bytesALeer - (tamanioBloque-punteroSeek));
 			fread(infoDelArchivo2,bytesALeer - (tamanioBloque-punteroSeek),1,bloques);
 			punteroFinal = concatPunteros(infoDelArchivo , infoDelArchivo2 , tamanioBloque-punteroSeek , bytesALeer - (tamanioBloque-punteroSeek));
@@ -765,35 +750,18 @@ void *leerArchivo(char *nombreArchivo,size_t punteroSeek,size_t bytesALeer, int 
 	//no tengo que leer el bloque del puntero directo. Paso a buscar los demas bloques
 	else
 	{
-		//Voy al bloque de punteros a buscar el bloque a leer
-		log_info(logger,"Acceso Bloque - Archivo: %s - Bloque Archivo: bloque de punteros - Bloque File System %d",config_get_string_value(configArchivoActual,"NOMBRE_ARCHIVO"),config_get_int_value(configArchivoActual,"PUNTERO_INDIRECTO"));
-		delay(config_get_int_value(config,"RETARDO_ACCESO_BLOQUE"));
-		fseek(bloques,config_get_int_value(configArchivoActual,"PUNTERO_INDIRECTO")* tamanioBloque,SEEK_SET);
-		fseek(bloques,sizeof(uint32_t)*(bloqueAleer-1),SEEK_CUR);
-		fread(&punteroABloques,sizeof(uint32_t),1,bloques);
-
-		//Muevo el puntero a ese bloque
-		fseek(bloques,punteroABloques * tamanioBloque,SEEK_SET);
+		moverPunteroAbloqueDelArchivo(bloques,configArchivoActual,bloqueAleer);
 
 		//Hay mas de un bloque para leer
 		if(bytesALeer > tamanioBloque || (bytesALeer) + (punteroSeek-bloqueAleer *tamanioBloque) > tamanioBloque)
 		{
 			//Leo lo que puedo del primer bloque
-			infoDelArchivo= malloc(tamanioBloque-(punteroSeek-bloqueAleer * tamanioBloque));
-			log_info(logger,"Acceso Bloque - Archivo: %s - Bloque Archivo: %d - Bloque File System %d",config_get_string_value(configArchivoActual,"NOMBRE_ARCHIVO"),bloqueAleer,punteroABloques);
-			
-			fseek(bloques,punteroSeek-tamanioBloque*bloqueAleer,SEEK_CUR);
-			delay(config_get_int_value(config,"RETARDO_ACCESO_BLOQUE"));
+			infoDelArchivo= malloc(tamanioBloque-(punteroSeek-bloqueAleer * tamanioBloque));			
+			fseek(bloques,punteroSeek,SEEK_CUR);
 			fread(infoDelArchivo,tamanioBloque-(punteroSeek-bloqueAleer * tamanioBloque),1,bloques);
 
 			//Una vez leido todo lo que puedo del primer bloque vuelvo al bloque de punteros a buscar el que sigue
-			log_info(logger,"Acceso Bloque - Archivo: %s - Bloque Archivo: bloque de punteros - Bloque File System %d",config_get_string_value(configArchivoActual,"NOMBRE_ARCHIVO"),config_get_int_value(configArchivoActual,"PUNTERO_INDIRECTO"));
-			delay(config_get_int_value(config,"RETARDO_ACCESO_BLOQUE"));
-			fseek(bloques,config_get_int_value(configArchivoActual,"PUNTERO_INDIRECTO")* tamanioBloque,SEEK_SET);
-			fseek(bloques,sizeof(uint32_t)*(bloqueAleer-1) + 1,SEEK_CUR);
-
-			//Muevo el puntero a ese bloque
-			fseek(bloques,punteroABloques * tamanioBloque,SEEK_SET);
+			moverPunteroAbloqueDelArchivo(bloques,configArchivoActual,bloqueAleer + 1);
 
 			//Ahora leo lo que me falta leer del archivo
 			infoDelArchivo2 = malloc(bytesALeer - tamanioBloque-(punteroSeek-bloqueAleer * tamanioBloque));
@@ -806,6 +774,7 @@ void *leerArchivo(char *nombreArchivo,size_t punteroSeek,size_t bytesALeer, int 
 		else
 		{
 			infoDelArchivo = malloc(bytesALeer);
+			fseek(bloques,punteroSeek,SEEK_CUR);
 			fread(infoDelArchivo,bytesALeer,1,bloques);
 			fclose(bloques);
 			return infoDelArchivo;
