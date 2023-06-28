@@ -144,6 +144,8 @@ int main(int argc, char** argv)
 	char *AlgoALeer = leerArchivo("archivoPruebas2",0,(strlen("Hola estoy escrito en un archivo") + 1) * sizeof(char),0);
 
 	log_info(logger,"Lo leido del archivo es %s", AlgoALeer);
+	
+	
 
 
 
