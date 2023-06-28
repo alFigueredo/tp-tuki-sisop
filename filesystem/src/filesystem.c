@@ -97,7 +97,7 @@ int main(int argc, char** argv)
 		log_info(logger,"Abrir archivo retorna EL_ARCHIVO_NO_EXISTE_PAAAAAAA");
 	}
 	//////////////////////////////////////
-	if(truncarArchivo("archivoPruebas2", config_get_string_value(config,"PATH_FCB"), vectorDePathsPCBs, cantidadPaths, 128))
+	if(truncarArchivo("archivoPruebas2", config_get_string_value(config,"PATH_FCB"), vectorDePathsPCBs, cantidadPaths, 1024))
 	{
 		log_info(logger,"En teoria el archivo deberia estar truncado");
 	}
@@ -113,7 +113,7 @@ int main(int argc, char** argv)
 	revisarBitmap(10);
 	/////////////////////////
 
-	if(truncarArchivo("archivoPruebas2", config_get_string_value(config,"PATH_FCB"), vectorDePathsPCBs, cantidadPaths, 64))
+	if(truncarArchivo("archivoPruebas2", config_get_string_value(config,"PATH_FCB"), vectorDePathsPCBs, cantidadPaths, 320))
 	{
 		log_info(logger,"En teoria el archivo deberia estar truncado");
 	}
@@ -123,6 +123,28 @@ int main(int argc, char** argv)
 	}
 
 	// Escribo algo en el archivo para ver que lee
+
+	//Opcion 1
+	char* infoPrueba = malloc((strlen("Hola estoy escrito en un archivo") + 1) * sizeof(char));
+	strcpy(infoPrueba,"Hola estoy escrito en un archivo");
+
+	//Opcion 2
+	//infoPrueba = string_from_format("Hola estoy escrito en un archivo");
+	
+	
+	if(escribirArchivo("archivoPruebas2",0,(strlen("Hola estoy escrito en un archivo") + 1) * sizeof(char),120,infoPrueba))
+	{
+		log_info(logger,"En teoria se deberia haber escrito el archivo");
+	}
+	else
+	{
+		log_warning(logger,"El archivo no se pudo escribir");
+	}
+
+	char *AlgoALeer = leerArchivo("archivoPruebas2",0,(strlen("Hola estoy escrito en un archivo") + 1) * sizeof(char),0);
+
+	log_info(logger,"Lo leido del archivo es %s", AlgoALeer);
+
 
 
 
@@ -633,13 +655,14 @@ int escribirArchivo(char *nombreArchivo,size_t punteroSeek,size_t bytesAEscribir
 		configArchivoActual = iniciar_config(vectorDePathsPCBs[i]);
 		if(strcmp(nombreArchivo,config_get_string_value(configArchivoActual,"NOMBRE_ARCHIVO")) == 0)
 		{
-			log_info(logger,"Leer  dice: ENCONTRE EL ARCHIVO A LEER");
+			log_info(logger,"Escribir  dice: ENCONTRE EL ARCHIVO A escribir");
 			break;
 		}
 		i++;
 		config_destroy(configArchivoActual);
 	}
 	bloqueAEscribir = punteroSeek /tamanioBloque;
+	log_info(logger,"El bloque del archivo a escribir es el bloque %ld",bloqueAEscribir);
 	if(bloqueAEscribir == 0)
 	{
 		moverPunteroAbloqueDelArchivo(bloques,configArchivoActual,bloqueAEscribir);
@@ -647,6 +670,7 @@ int escribirArchivo(char *nombreArchivo,size_t punteroSeek,size_t bytesAEscribir
 		if(bytesAEscribir < tamanioBloque || (bytesAEscribir) + (punteroSeek-bloqueAEscribir *tamanioBloque) < tamanioBloque )
 		{
 			fseek(bloques,punteroSeek,SEEK_CUR);
+			log_info(logger,"Escribiendo en el archivo solicitado");
 			fwrite(memoriaAEscribir,bytesAEscribir,1,bloques);
 			fclose(bloques);
 			return 1;
@@ -805,6 +829,7 @@ void moverPunteroAbloqueDelArchivo(FILE* bloques, t_config* configArchivoActual,
 	
 	if(bloqueBuscado == 0)
 	{
+		log_info(logger,"Acceso Bloque - Archivo: %s - Bloque Archivo: %d - Bloque File System %d",config_get_string_value(configArchivoActual,"NOMBRE_ARCHIVO"),bloqueBuscado,	config_get_int_value(configArchivoActual,"PUNTERO_DIRECTO"));
 		fseek(bloques,config_get_int_value(configArchivoActual,"PUNTERO_DIRECTO") * config_get_int_value(superBloque,"BLOCK_SIZE") ,SEEK_SET);
 		return;
 	}
