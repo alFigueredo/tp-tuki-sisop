@@ -33,15 +33,13 @@ int main(int argc, char **argv)
 	//esperar_cliente(socket_servidor);
 
 	//pruebas
-	char c = c;
-	segmento *segmento_0 = malloc(sizeof(segmento));
-	segmento_0 = list_get(tabla_segmentos_total, 0);
-	log_info(logger, "pid del segemto 0: %u", segmento_0->pid);
-		escribir_memoria(0, 1  , & c, sizeof
-					( char));
-		void* aaaa=leer_memoria(0, 1, sizeof(char));
+	char* gris = "gris";
+	size_t tam =strlen(gris) + 1;
+		escribir_memoria(0, 0  , gris, tam);
+		void* aaaa=leer_memoria(0, 0, tam);
 		char* asad = (char*) aaaa;
-		log_info(logger,"Valor leido de memoria (en ascii): %c a", *asad);
+		log_info(logger,"pre segf");
+		printf("gris? %s", asad);
 
 	//terminar_memoria(logger, config, socket_servidor);
 	return EXIT_SUCCESS;
@@ -154,15 +152,10 @@ void iniciar_memoria()
 	segmento_0->direccion_base = 0;
 	segmento_0->direccion_limite = (config_get_int_value(config, "TAM_SEGMENTO_0")) - 1;
 
-	list_add(tabla_segmentos_total, (void*)(segmento_0));
+	list_add(tabla_segmentos_total, segmento_0);
 
-	free(segmento_0);
-	segmento* seg= malloc(sizeof(segmento));
-	seg =list_get(tabla_segmentos_total,0);
-	log_info(logger,"PID del segmenmto 0 %u", seg->pid);
-	log_info(logger,"dir base del segmenmto 0 %d", seg->direccion_base);
-	log_info(logger,"dir limite del segmenmto 0 %d", seg->direccion_limite);
-	log_info(logger,"tamanio segmenmto 0 %d", seg->tam_segmento);
+
+	segmento* seg =list_get(tabla_segmentos_total,0);
 	log_info(logger, "Memoria inicializada.");
 }
 
@@ -508,16 +501,18 @@ void worst_fit(unsigned int pid_proceso, int tam_segmento)
 
 void* leer_memoria(int id_buscado, int desp, size_t tamanio)
 {
-	segmento *seg= malloc(sizeof(segmento));;
-	void* valorLeido;
+	segmento *seg= list_get(tabla_segmentos_total, id_buscado);
+	void* valorLeido = NULL;
 	int direccion;
 
-	seg = list_get(tabla_segmentos_total, id_buscado);
+	if (seg != NULL) {
+		log_info(logger,"pid del segmento %u", seg->pid);
+		direccion = seg->direccion_base + desp;
+		log_info(logger,"direccion %d", direccion);
+		valorLeido = malloc(tamanio);
+		delay (config_get_int_value(config, "RETARDO_COMPACTACION"));
+		memcpy(valorLeido, memoria_usuario + direccion, tamanio);
 
-	direccion = seg->direccion_base + desp;
-	valorLeido = malloc(tamanio);
-	delay (config_get_int_value(config, "RETARDO_COMPACTACION"));
-	memcpy(valorLeido, memoria_usuario + direccion, tamanio);
 	/*
 	for (int i = 0; i < list_size(tabla_segmentos_total); i++)
 	{
@@ -533,22 +528,26 @@ void* leer_memoria(int id_buscado, int desp, size_t tamanio)
 			return valorLeido;
 		}
 	}*/
-	free(seg);
+		//free(seg);
+	}
+	else {
+		log_info(logger,"No existe en memoria");
+	}
 	return valorLeido;
 }
 
 void escribir_memoria(int id_buscado, int desp, void* nuevo_valor, size_t tamanio)
 {
-	segmento *seg= malloc(sizeof(segmento));
 	int direccion;
 
-	seg = list_get(tabla_segmentos_total, id_buscado);
+	segmento* seg = list_get(tabla_segmentos_total, id_buscado);
 
-	log_info(logger,"pid del segmento buscado: %u", seg->pid);
+	if (seg != NULL) {
+		log_info(logger,"pid del segmento buscado: %u", seg->pid);
+		direccion = seg->direccion_base + desp;
+		delay (config_get_int_value(config, "RETARDO_COMPACTACION"));
+		memcpy(memoria_usuario + direccion, nuevo_valor, tamanio);
 
-	direccion = seg->direccion_base + desp;
-	delay (config_get_int_value(config, "RETARDO_COMPACTACION"));
-	memcpy(memoria_usuario + direccion, nuevo_valor, tamanio);
 
 	/*for (int i = 0; i < list_size(tabla_segmentos_total); i++)
 		{
@@ -563,7 +562,10 @@ void escribir_memoria(int id_buscado, int desp, void* nuevo_valor, size_t tamani
 				return;
 			}
 		}*/
-	free(seg);
+	}
+	else{
+		log_info(logger,"Segmento no encontrado.");
+	}
 }
 
 
