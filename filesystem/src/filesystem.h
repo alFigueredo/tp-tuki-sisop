@@ -42,4 +42,6 @@ void limpiarBitmap(t_bitarray* bitmapAAcceder, off_t bit_index);
 void* concatPunteros(void* ptr1, void* ptr2, size_t size1, size_t size2);
 void moverPunteroAbloqueDelArchivo(FILE* bloques, t_config* configArchivoActual,int bloqueBuscado);
 void moverPunteroABloquePunteros (FILE* bloques, t_config* configArchivoActual);
+void *leerArchivo(char *nombreArchivo,size_t punteroSeek,size_t bytesALeer, int direccion);
+int escribirArchivo(char *nombreArchivo,size_t punteroSeek,size_t bytesAEscribir,int direccion,void *memoriaAEscribir);
 #endif /* FILESYSTEM_H_ */
