@@ -18,7 +18,7 @@ debug: makeshared_debug build
 
 rebuild: clean build
 
-rrun: build
+run: build
 	$(MODULE_NAME) $(CONFIG_FILE)
 
 valgrind: debug

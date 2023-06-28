@@ -74,13 +74,13 @@ void esperar_cliente(int socket_servidor){
 void atender_cliente(int* socket_cliente){
 	t_list *lista;
 	t_instruction* proceso;
-	char * instruccion;
-	char** parsed;
-	char** dir_fisica;
-	uint32_t id_seg;
-	uint32_t desp;
-	char* valor_mem;
-	char* nuevo_valor;
+	//char * instruccion;
+//	char** parsed;
+//	char** dir_fisica;
+	//int id_seg;
+	//int desp;
+	//char* valor_mem;
+//	char* nuevo_valor;
 
 	while (1) {
 		int cod_op = recibir_operacion(*socket_cliente);
@@ -118,16 +118,16 @@ void atender_cliente(int* socket_cliente){
 			proceso = malloc(sizeof(t_instruction));
 			recibir_instruccion(lista,proceso);
 
-			instruccion = proceso->instruccion;
-			parsed = string_split(instruccion," ");
-			dir_fisica = string_get_string_as_array(parsed[2]);
+		//	instruccion = proceso->instruccion;
+		//	parsed = string_split(instruccion," ");
+		//	dir_fisica = string_get_string_as_array(parsed[2]);
 			//----------------------------------------------------
-			id_seg = atoi(dir_fisica[0]);
-			desp = atoi(dir_fisica[1]);
+		//	id_seg = atoi(dir_fisica[0]);
+	//		desp = atoi(dir_fisica[1]);
 
 			//valor_mem = leer_memoria(id_seg, desp);
 
-			log_info(logger, "PID: %u - Accion: LEER - Direccion fisica: (%d - %d) - Tamanio: %d - Origen: CPU", proceso->pid, id_seg, desp);
+			//log_info(logger, "PID: %u - Accion: LEER - Direccion fisica: (%d - %d) - Tamanio: %d - Origen: CPU", proceso->pid, id_seg, desp);
 			break;
 		case MOV_OUT: //escribir
 			//parsed [1] -> dir fisica
@@ -136,19 +136,19 @@ void atender_cliente(int* socket_cliente){
 			proceso = malloc(sizeof(t_instruction));
 			recibir_instruccion(lista,proceso);
 
-			instruccion = proceso->instruccion;
-			parsed = string_split(instruccion," ");
-			dir_fisica = string_get_string_as_array(parsed[1]);
-			id_seg = atoi(dir_fisica[0]);
-			desp = atoi(dir_fisica[1]);
+		//	instruccion = proceso->instruccion;
+		//	parsed = string_split(instruccion," ");
+	//		dir_fisica = string_get_string_as_array(parsed[1]);
+		//	id_seg = atoi(dir_fisica[0]);
+			//desp = atoi(dir_fisica[1]);
 
-			nuevo_valor = string_get_string_as_array(parsed[2]);	//warning: assignment to ‘char *’ from incompatible pointer type ‘char **’ [-Wincompatible-pointer-types]
+		//	nuevo_valor = string_get_string_as_array(parsed[2]);	//warning: assignment to ‘char *’ from incompatible pointer type ‘char **’ [-Wincompatible-pointer-types]
 
 			//escribir_memoria(id_seg, desp, nuevo_valor);
 
 			enviar_operacion(*socket_cliente, OK);
 
-			log_info(logger, "PID: %u - Accion: ESCRIBIR - Direccion fisica: (%d - %d) - Tamanio: %d - Origen: CPU", proceso->pid, id_seg, desp);
+		//	log_info(logger, "PID: %u - Accion: ESCRIBIR - Direccion fisica: (%d - %d) - Tamanio: %d - Origen: CPU", proceso->pid, id_seg, desp);
 
 			break;
 

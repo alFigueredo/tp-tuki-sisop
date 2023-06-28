@@ -2,10 +2,11 @@
 
 char *ip_memoria;
 
-archivo_configuracion config_mem;
+//archivo_configuracion config_mem;
 void* memoria_usuario;
 t_list* tabla_segmentos_total;
 t_list* huecos;
+t_config *config;
 
 // completar: !!!
 // posibles cambios: ???
@@ -13,16 +14,17 @@ t_list* huecos;
 
 int main(int argc, char **argv)
 {
-
 	if (argc < 2)
 	{
 		return EXIT_FAILURE;
 	}
+
 	logger = iniciar_logger("./memoria.log", "Memoria");
+	log_info(logger,"Log iniciado");
 
 	// CARGAR CONFIG
-	t_config *config = iniciar_config(argv[1]);
-	cargar_config(config);
+	config = iniciar_config(argv[1]);
+	//cargar_config(config);
 
 	iniciar_memoria();
 
@@ -31,10 +33,10 @@ int main(int argc, char **argv)
 	//esperar_cliente(socket_servidor);
 
 	//pruebas
-	char c = c;
+	/*char c = c;
 
 		escribir_memoria(0, 1  , & c, sizeof
-					( char));
+					( char));*/
 
 	//terminar_memoria(logger, config, socket_servidor);
 	return EXIT_SUCCESS;
@@ -42,13 +44,17 @@ int main(int argc, char **argv)
 
 //-------------------PROCESOS------------------------------------------------------------------------------------------------------------------------------------------------------------
 //Crea los segmentos del proceso. La cantidad de segmentos esta dada por el config.
-void iniciar_proceso(pcb* pcb_proceso, int tamanio)
+void iniciar_proceso(pcb* pcb_proceso, int tamanio, int cant_seg)
 {
 	//t_list* segmentos;
+	segmento* seg;
+	seg= malloc(sizeof(segmento));
 
-	for (int var = 0; var < config_mem.cant_segmentos ; ++var)
+	for (int var = 0; var < cant_seg ; ++var)
 	{
-		crear_segmento (pcb_proceso->pid, tamanio);
+		if(config_get_int_value(config, "CANT_SEGMENTOS") > list_size(tabla_segmentos_total)){
+			crear_segmento (pcb_proceso->pid, tamanio);
+		}
 	}
 
 
@@ -63,7 +69,7 @@ void iniciar_proceso(pcb* pcb_proceso, int tamanio)
 void finalizar_proceso(pcb* pcb_proceso, int tamanio)
 {
 	t_list* segmentos_proc = obtener_segmentos_PID (pcb_proceso->pid); 									//Lista filtrada
-	segmento* seg;
+	segmento* seg = malloc(sizeof(segmento));
 
 	//FALTA ELIMINAR DE MEMORIA USUARIO !!!
 
@@ -96,8 +102,10 @@ t_list* obtener_segmentos_PID(unsigned int pid)
 
 //-------------------INICIALIZACION DE MEMORIA------------------------------------------------------------------------------------------------------------------------------------------------------------
 //Se le asignan a los elementos de un struct global la informacion del config
-void cargar_config(t_config *archivo)
+
+/*void cargar_config(t_config *archivo)
 {
+	log_info (logger, "entro a cargar_config" );
 	char* algoritmo = config_get_string_value(config, "ALGORITMO_ASIGNACION");
 	char* primera_letra = string_substring_until(algoritmo, 1);
 	algoritmo_asignacion alg = cambiar_enum_algoritmo (primera_letra);									//Quiero que el algoritmo de asignacion sea un enum porque uso un switch en crear segmento.
@@ -110,9 +118,10 @@ void cargar_config(t_config *archivo)
 	config_mem.retardo_memoria = config_get_int_value(config, "RETARDO_MEMORIA");
 	config_mem.retardo_compactacion = config_get_int_value(config, "RETARDO_COMPACTACION");
 	config_mem.algoritmo = alg;
-}
+}*/
 
 //Cambia el string del algoritmo de asignacion del config a un enum propio
+
 algoritmo_asignacion cambiar_enum_algoritmo (char* letra)
 {
 	algoritmo_asignacion algoritmo;
@@ -132,17 +141,16 @@ algoritmo_asignacion cambiar_enum_algoritmo (char* letra)
 
 void iniciar_memoria()
 {
-	memoria_usuario = malloc(config_mem.tam_memoria);
-
+	memoria_usuario = malloc(config_get_int_value(config, "TAM_MEMORIA"));
 	tabla_segmentos_total = list_create();
 	huecos = list_create();
 
-	segmento *segmento_0 = (segmento *)malloc(sizeof(segmento));										//Segmento 0 compartido por todos los procesos
+	segmento *segmento_0 = malloc(sizeof(segmento));										//Segmento 0 compartido por todos los procesos
 	segmento_0->pid = -1;
 	segmento_0->id = 0;
-	segmento_0->tam_segmento = config_mem.tam_segmento_0;
+	segmento_0->tam_segmento = config_get_int_value(config, "TAM_SEGMENTO_0");
 	segmento_0->direccion_base = 0;
-	segmento_0->direccion_limite = config_mem.tam_segmento_0 - 1;
+	segmento_0->direccion_limite = (config_get_int_value(config, "TAM_SEGMENTO_0")) - 1;
 
 	list_add(tabla_segmentos_total, segmento_0);
 
@@ -155,10 +163,14 @@ void crear_segmento(unsigned int pid, int tamanio_seg)
 {
 	int sumatoria;
 
-	if (hay_espacio_disponible(tamanio_seg))															//Primero se fija si hay espacio disponible en memoria
+	char* primera_letra = malloc(2* sizeof(char));
+	primera_letra = string_substring_until(config_get_string_value(config, "ALGORITMO_ASIGNACION"), 1);
+	algoritmo_asignacion algoritmo = cambiar_enum_algoritmo (primera_letra);
+
+	if (hay_espacio_disponible(tamanio_seg) && config_get_int_value(config, "CANT_SEGMENTOS"))															//Primero se fija si hay espacio disponible en memoria
 	{
 			// mutex
-			switch (config_mem.algoritmo)
+			switch (algoritmo)
 			{
 				case FIRST:
 					first_fit(pid, tamanio_seg);
@@ -409,7 +421,7 @@ void first_fit(unsigned int pid_proceso, int tam_segmento)
 
 		segmento_actual = list_get(memoria_usuario, i); 													// Recorre todos los segmentos
 
-		if (i + 1 < config_mem.tam_memoria)																	// Ve si existe otro segmento
+		if (i + 1 < config_get_int_value(config, "TAM_MEMORIA"))																	// Ve si existe otro segmento
 		{
 			segmento_siguiente = list_get(memoria_usuario, i + 1);
 
@@ -438,7 +450,7 @@ void first_fit(unsigned int pid_proceso, int tam_segmento)
 void best_fit(unsigned int pid_proceso, int tam_segmento)
 {
 	int segmento_asignado = -1;
-	int mejor_ajuste = INT_MAX;
+	int mejor_ajuste = 2147483647;
 	segmento *segmento_actual;
 	segmento *segmento_siguiente;
 	int espacio_libre;
@@ -482,7 +494,7 @@ void best_fit(unsigned int pid_proceso, int tam_segmento)
 void worst_fit(unsigned int pid_proceso, int tam_segmento)
 {
 	int segmento_asignado = -1;
-	int mejor_ajuste = INT_MIN;
+	int mejor_ajuste = 0;
 	segmento *segmento_actual;
 	int espacio_libre;
 	segmento *segmento_siguiente;
@@ -510,7 +522,7 @@ void worst_fit(unsigned int pid_proceso, int tam_segmento)
 	if (segmento_asignado != -1)
 	{
 		// Crear el nuevo segmento y establecer sus direcciones
-		segmento *nuevo_segmento = (segmento *)malloc(sizeof(segmento));
+		segmento *nuevo_segmento = malloc(sizeof(segmento));
 		nuevo_segmento->id = segmento_asignado;
 		nuevo_segmento->tam_segmento = tam_segmento;
 		nuevo_segmento->direccion_base = nueva_dir_base; // list_get(memoria_usuario, segmento_asignado - 1)->direccion_limite + 1;
@@ -578,7 +590,7 @@ void* leer_memoria(int id_buscado, int desp, size_t tamanio)
 		{
 			direccion = seg->direccion_base + desp;
 			valorLeido = malloc(tamanio);
-			delay (config_mem.retardo_memoria);
+			delay (config_get_int_value(config, "RETARDO_COMPACTACION"));
 			memcpy(valorLeido, memoria_usuario + direccion, tamanio);
 			return valorLeido;
 		}
@@ -599,7 +611,7 @@ void escribir_memoria(int id_buscado, int desp, void* nuevo_valor, size_t tamani
 			if (seg->id == id_buscado)
 			{
 				direccion = seg->direccion_base + desp;
-				delay (config_mem.retardo_memoria);
+				delay (config_get_int_value(config, "RETARDO_COMPACTACION"));
 				memcpy(memoria_usuario + direccion, nuevo_valor, tamanio);
 				return;
 			}

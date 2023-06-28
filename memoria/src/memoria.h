@@ -7,7 +7,6 @@
 #include <commons/collections/list.h>
 #include "server.h"
 #include <shared.h>
-#include <limits.h>
 #include <stdbool.h>
 
 //STRUCTS
@@ -18,6 +17,7 @@ typedef enum {
 	WORST
 }algoritmo_asignacion;
 
+/*
 typedef struct
 {
 	char* ip_memoria;
@@ -28,9 +28,7 @@ typedef struct
 	int   retardo_memoria;
 	int   retardo_compactacion;
 	algoritmo_asignacion algoritmo;
-} archivo_configuracion;
-
-extern archivo_configuracion config_mem;
+} archivo_configuracion;*/
 
 typedef struct
 {
@@ -52,9 +50,9 @@ typedef enum {
 extern void* memoria_usuario;
 extern t_list* tabla_segmentos_total;
 extern t_list* huecos;
-//extern t_list* listas_segmentos_procesos;
-extern archivo_configuracion config_mem;
-//int contadorSegmentos;
+extern t_config *config;
+//extern archivo_configuracion config_mem;
+extern char *ip_memoria;
 
 //FUNCIONES
 void eliminar_hueco(int , int );
@@ -62,12 +60,12 @@ algoritmo_asignacion cambiar_enum_algoritmo (char* );
 t_list* obtener_segmentos_PID(unsigned int );
 void crear_segmento(unsigned int , int );
 void eliminar_segmento(unsigned int,int );
-void iniciar_proceso(pcb* , int );
+void iniciar_proceso(pcb* , int , int );
 void finalizar_proceso(pcb* , int );
 int agrupar_huecos(int , int );
 
 void iniciar_memoria ();
-void cargar_config (t_config* );
+//void cargar_config (t_config* );
 void iniciar_estructuras(pcb*, int);
 int hay_espacio_disponible(int);
 void first_fit (unsigned int, int);
