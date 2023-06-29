@@ -132,7 +132,7 @@ int main(int argc, char** argv)
 	//infoPrueba = string_from_format("Hola estoy escrito en un archivo");
 	
 	
-	if(escribirArchivo("archivoPruebas2",0,(strlen("Hola estoy escrito en un archivo") + 1) * sizeof(char),120,infoPrueba))
+	if(escribirArchivo("archivoPruebas2",200,(strlen("Hola estoy escrito en un archivo") + 1) * sizeof(char),120,infoPrueba))
 	{
 		log_info(logger,"En teoria se deberia haber escrito el archivo");
 	}
@@ -140,8 +140,8 @@ int main(int argc, char** argv)
 	{
 		log_warning(logger,"El archivo no se pudo escribir");
 	}
-
-	char *AlgoALeer = leerArchivo("archivoPruebas2",0,(strlen("Hola estoy escrito en un archivo") + 1) * sizeof(char),0);
+	
+	char *AlgoALeer = leerArchivo("archivoPruebas2",200,(strlen("Hola estoy escrito en un archivo") + 1) * sizeof(char),0);
 
 	log_info(logger,"Lo leido del archivo es %s", AlgoALeer);
 	
@@ -671,6 +671,7 @@ int escribirArchivo(char *nombreArchivo,size_t punteroSeek,size_t bytesAEscribir
 		//Me fijo si todo lo que voy a leer esta en un solo bloque
 		if(bytesAEscribir < tamanioBloque || (bytesAEscribir) + (punteroSeek-bloqueAEscribir *tamanioBloque) < tamanioBloque )
 		{
+			log_info(logger,"La informacion a escribir entra en un solo bloque");
 			fseek(bloques,punteroSeek,SEEK_CUR);
 			log_info(logger,"Escribiendo en el archivo solicitado");
 			fwrite(memoriaAEscribir,bytesAEscribir,1,bloques);
@@ -680,11 +681,13 @@ int escribirArchivo(char *nombreArchivo,size_t punteroSeek,size_t bytesAEscribir
 		//escribo todo lo que puedo en el primer archivo y despues exribo en el segundo en el segundo
 		else
 		{
+			log_info(logger,"La informacion a escribir NO entra en un solo bloque");
 			fseek(bloques,punteroSeek,SEEK_CUR);
 			fwrite(memoriaAEscribir,tamanioBloque-punteroSeek,1,bloques);
 			
 			moverPunteroAbloqueDelArchivo(bloques,configArchivoActual,bloqueAEscribir + 1);
 			fwrite(memoriaAEscribir +(tamanioBloque-punteroSeek) ,bytesAEscribir - (tamanioBloque-punteroSeek),1,bloques);
+			return 1;
 		}
 	}
 	//no tengo que escribir el bloque del puntero directo. Paso a buscar el primer bloque
@@ -692,10 +695,11 @@ int escribirArchivo(char *nombreArchivo,size_t punteroSeek,size_t bytesAEscribir
 	{
 		moverPunteroAbloqueDelArchivo(bloques,configArchivoActual,bloqueAEscribir);
 		//Hay mas de un bloque para leer
+		log_info(logger,"Evaluo si la informacion a escribir tiene que ir en mas de un bloque");
 		if(bytesAEscribir > tamanioBloque || (bytesAEscribir) + (punteroSeek-bloqueAEscribir *tamanioBloque) > tamanioBloque)
 		{
+			log_info(logger,"La informacion a escribir NO entra en un solo bloque");
 			//Escribo todo lo que puedo del primer bloque
-			moverPunteroAbloqueDelArchivo(bloques,configArchivoActual,bloqueAEscribir);
 			fwrite(memoriaAEscribir,tamanioBloque-(punteroSeek-bloqueAEscribir * tamanioBloque),1,bloques);
 
 
@@ -707,6 +711,7 @@ int escribirArchivo(char *nombreArchivo,size_t punteroSeek,size_t bytesAEscribir
 		//Hay solo un bloque que leer
 		else
 		{
+			log_info(logger,"La informacion a escribir entra en un solo bloque");
 			fwrite(memoriaAEscribir,bytesAEscribir,1,bloques);
 			fclose(bloques);
 			return 1;
@@ -838,13 +843,15 @@ void moverPunteroAbloqueDelArchivo(FILE* bloques, t_config* configArchivoActual,
 	else
 	{
 		moverPunteroABloquePunteros(bloques,configArchivoActual);
+		fseek(bloques,sizeof(uint32_t) * (bloqueBuscado - 1),SEEK_CUR);
 		//leo la posicion del bloque buscado bloque buscado
-		fread(&punteroAbloqueBuscado,sizeof(uint32_t) * (bloqueBuscado - 1),1,bloques);
+		fread(&punteroAbloqueBuscado,sizeof(uint32_t),1,bloques);
 		//Me muevo a ese bloque
 		log_info(logger,"Acceso Bloque - Archivo: %s - Bloque Archivo: %d - Bloque File System %d",config_get_string_value(configArchivoActual,"NOMBRE_ARCHIVO"),bloqueBuscado,	punteroAbloqueBuscado);
 		fseek(bloques,punteroAbloqueBuscado * config_get_int_value(superBloque,"BLOCK_SIZE"),SEEK_SET);
 		delay(config_get_int_value(config,"RETARDO_ACCESO_BLOQUE"));
+		return;
 	}
-	return;
+	
 
 }
