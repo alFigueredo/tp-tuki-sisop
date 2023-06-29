@@ -19,6 +19,7 @@ int crear_conexion(char*, char*);
 void send_handshake(int);
 void esperar_servidor(int);
 void atender_servidor(int*);
+void enviar_instruccion_parseada(instruccion);
 void liberar_conexion(int);
 
 #endif /* CLIENTE_H_ */

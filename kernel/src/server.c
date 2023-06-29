@@ -88,9 +88,29 @@ void atender_cliente(int* socket_cliente){
 			case NEW:
 				lista = recibir_paquete(*socket_cliente);
 				generar_proceso(lista, socket_cliente);
-				new_a_ready();
+				enviar_pcb(conexion_memoria,((pcb*)queue_peek(qnew)),NEW);
 				// list_destroy_and_destroy_elements(lista, free);
 				break;
+			case READY:
+				lista = recibir_paquete(*socket_cliente);
+				buscar_proceso(qready,lista);
+				((pcb*)queue_peek(qnew))->tabla_segmentos = list_get(lista,0); //Actualiza la tabla de segmentos
+				new_a_ready(); //Memoria dice que el proceso está listo
+
+			case CREATE_SEGMENT:
+				lista = recibir_paquete(*socket_cliente); //Debería enviar la base/id_segmento + el tipo de resultado que se obtuvo: 0-> Todo bien, 1->No hay espacio, 2->Requiere compactacion
+				evaluar_respuesta(list_get(lista,1) ,list_get(lista,2)); 
+			case DELETE_SEGMENT:
+				lista = recibir_paquete(socket_cliente);
+				((pcb*)queue_peek(qexec))->tabla_segmentos = list_get(lista,0); //Actualiza la tabla de segmentos
+				enviar_pcb(conexion_cpu,((pcb*)queue_peek(qexec)),EXEC);
+			case EXEC:
+				enviar_mensaje("Traeme las tablas de segmentos",conexion_memoria,COMPACTACION);
+			case COMPACTACION:
+				lista = recibir_paquete(*socket_cliente);
+				actualizar_tablas(lista);
+				char* instruccion = list_get(((pcb*)queue_peek(qexec))->instrucciones, ((pcb*)queue_peek(qexec))->program_counter-1);
+				enviar_segmento(instruccion,((pcb*)queue_peek(qexec))->tabla_segmentos);
 			case -1:
 				log_warning(logger, "El cliente se desconecto. Terminando conexion");
 				free(socket_cliente);

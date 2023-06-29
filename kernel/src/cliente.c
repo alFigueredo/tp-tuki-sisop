@@ -46,7 +46,7 @@ void esperar_servidor(int conexion){
 	pthread_create(&thread,
 	               NULL,
 	               (void*) atender_servidor,
-	               socket_servidor);
+	               (void*) socket_servidor);
 	pthread_detach(thread);
 }
 
@@ -158,10 +158,25 @@ void atender_servidor(int* socket_servidor){
 				block_a_ready();
 				list_destroy_and_destroy_elements(lista, free);
 				break;
-			case EXIT:
+			case CREATE_SEGMENT:
 				lista = recibir_paquete(*socket_servidor);
 				recibir_pcb(lista, queue_peek(qexec));
+				instruccion = list_get(((pcb*)queue_peek(qexec))->instrucciones, ((pcb*)queue_peek(qexec))->program_counter-1);
+				enviar_segmento(instruccion, ((pcb*)queue_peek(qexec))->tabla_segmentos);
+				list_destroy_and_destroy_elements(lista, free);
+				
+			case DELETE_SEGMENT:
+				lista = recibir_paquete(*socket_servidor);
+				recibir_pcb(lista, queue_peek(qexec));
+				instruccion = list_get(((pcb*)queue_peek(qexec))->instrucciones, ((pcb*)queue_peek(qexec))->program_counter-1);
+				enviar_segmento(instruccion, ((pcb*)queue_peek(qexec))->tabla_segmentos);
+				
+				list_destroy_and_destroy_elements(lista, free);
+			case EXIT:
+				lista = recibir_paquete(*socket_servidor);
+				recibir_pcb(lista, (pcb*)queue_peek(qexec));
 				exec_a_exit();
+				enviar_pcb(conexion_memoria,(pcb*)queue_peek(qexec),EXIT);
 				list_destroy_and_destroy_elements(lista, free);
 				break;
 			case -1:
