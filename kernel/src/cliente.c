@@ -54,7 +54,10 @@ void atender_servidor(int* socket_servidor){
 	t_list *lista;
 	pthread_t thread;
 	char* instruccion;
+	char* numero = malloc(sizeof(char)*10); //No se me ocurre otra forma de hacerlo
 	char** parsed;
+	t_instruction* laCosaQueMando;
+	Archivo archivoQueUso;
 	while (1) {
 		int cod_op = recibir_operacion(*socket_servidor);
 		switch (cod_op) {
@@ -102,8 +105,7 @@ void atender_servidor(int* socket_servidor){
 				{
 
 				//PUEDO HACER ESTO?????
-
-					t_instruction* laCosaQueMando = malloc(sizeof(t_instruction));
+					laCosaQueMando = malloc(sizeof(t_instruction));
 					laCosaQueMando->pid=((pcb*)queue_peek(qexec));
 					laCosaQueMando->instruccion=instruccion;
 					enviar_instruccion(*socket_servidor,laCosaQueMando,F_OPEN);
@@ -116,7 +118,7 @@ void atender_servidor(int* socket_servidor){
 				recibir_pcb(lista, queue_peek(qexec));
 				instruccion = list_get(((pcb*)queue_peek(qexec))->instrucciones, ((pcb*)queue_peek(qexec))->program_counter-1);
 				//PUEDO HACER ESTO????? X2
-				t_instruction* laCosaQueMando = malloc(sizeof(t_instruction));
+				laCosaQueMando = malloc(sizeof(t_instruction));
 				laCosaQueMando->pid=((pcb*)queue_peek(qexec));
 				laCosaQueMando->instruccion=instruccion;
 				enviar_instruccion(*socket_servidor,laCosaQueMando,F_CREATE);
@@ -143,7 +145,7 @@ void atender_servidor(int* socket_servidor){
 				instruccion = list_get(((pcb*)queue_peek(qexec))->instrucciones, ((pcb*)queue_peek(qexec))->program_counter-1);
 
 				//PUEDO HACER ESTO????? X2
-				t_instruction* laCosaQueMando = malloc(sizeof(t_instruction));
+				laCosaQueMando = malloc(sizeof(t_instruction));
 				laCosaQueMando->pid=((pcb*)queue_peek(qexec));
 				laCosaQueMando->instruccion=instruccion;
 				enviar_instruccion(*socket_servidor,laCosaQueMando,F_TRUNCATE);
@@ -157,6 +159,56 @@ void atender_servidor(int* socket_servidor){
 				recibir_pcb(lista, queue_peek(qexec));
 				block_a_ready();
 				list_destroy_and_destroy_elements(lista, free);
+				break;
+			case F_READ:
+				lista = recibir_paquete(*socket_servidor);
+				recibir_pcb(lista, queue_peek(qexec));
+				instruccion = list_get(((pcb*)queue_peek(qexec))->instrucciones, ((pcb*)queue_peek(qexec))->program_counter-1);
+				parsed = string_split(instruccion, " ");
+
+				//esto deberia devolver el archivo que voy a usar
+				archivoQueUso = estoDevuelveUnArchivo(((pcb*)queue_peek(qexec)), instruccion);
+
+				sprintf(numero, "&d", archivoQueUso->puntero);
+
+				//le meto el numero (como string) a la instruccion para mandarselo a file system
+				strcat(instruccion," ");
+				strcat(instruccion, numero);
+
+				//PUEDO HACER ESTO????? X2
+				laCosaQueMando = malloc(sizeof(t_instruction));
+				laCosaQueMando->pid=((pcb*)queue_peek(qexec));
+				laCosaQueMando->instruccion=instruccion;
+				enviar_instruccion(*socket_servidor,laCosaQueMando,F_READ);
+
+				exec_a_block();
+				list_destroy_and_destroy_elements(lista, free);
+
+				break;
+			case F_WRITE:
+				lista = recibir_paquete(*socket_servidor);
+				recibir_pcb(lista, queue_peek(qexec));
+				instruccion = list_get(((pcb*)queue_peek(qexec))->instrucciones, ((pcb*)queue_peek(qexec))->program_counter-1);
+				parsed = string_split(instruccion, " ");
+
+				//esto deberia devolver el archivo que voy a usar
+				archivoQueUso = estoDevuelveUnArchivo(((pcb*)queue_peek(qexec)), instruccion);
+
+				sprintf(numero, "&d", archivoQueUso->puntero);
+
+				//le meto el numero (como string) a la instruccion para mandarselo a file system
+				strcat(instruccion," ");
+				strcat(instruccion, numero);
+
+				//PUEDO HACER ESTO????? X2
+				laCosaQueMando = malloc(sizeof(t_instruction));
+				laCosaQueMando->pid=((pcb*)queue_peek(qexec));
+				laCosaQueMando->instruccion=instruccion;
+				enviar_instruccion(*socket_servidor,laCosaQueMando,F_WRITE);
+
+				exec_a_block();
+				list_destroy_and_destroy_elements(lista, free);
+
 				break;
 			case CREATE_SEGMENT:
 				lista = recibir_paquete(*socket_servidor);

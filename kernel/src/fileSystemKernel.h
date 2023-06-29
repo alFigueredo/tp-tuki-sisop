@@ -11,18 +11,19 @@
 typedef struct
 {
 	char *nombreDeArchivo;
-	size_t puntero;
+	int puntero;
 	t_queue* procesosBloqueados;
 	struct Archivo *siguiente;
 }Archivo;
 
 extern t_list* archivosAbiertos;
 
+
 int abrirArchivoKernel(pcb*, char*);
 void cerrarArchivoKernel(pcb*, char*);
 void buscarEnArchivo(pcb*, char*);
 void truncarArchivo(pcb*, char*);
-
+Archivo estoDevuelveUnArchivo(pcb*, char*);
 
 
 #endif /* FILESYSTEMKERNEL_H_ */
