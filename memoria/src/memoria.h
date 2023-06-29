@@ -60,7 +60,7 @@ algoritmo_asignacion cambiar_enum_algoritmo (char* );
 t_list* obtener_segmentos_PID(unsigned int );
 void crear_segmento(unsigned int , int );
 void eliminar_segmento(unsigned int,int );
-void iniciar_proceso(pcb* , int , int );
+//void iniciar_proceso(unsigned int , int , int );
 void finalizar_proceso(pcb* , int );
 int agrupar_huecos(int , int );
 
