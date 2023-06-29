@@ -14,7 +14,7 @@
 #include <assert.h>
 #include <pthread.h>
 #include "cliente.h"
-#include "operaciones.h"
+#include "shared.h"
 #include "memoria.h"
 
 
