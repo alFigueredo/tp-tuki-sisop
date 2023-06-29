@@ -92,11 +92,13 @@ void atender_cliente(int* socket_cliente){
 				// list_destroy_and_destroy_elements(lista, free);
 				break;
 			case READY:
-				recibir_mensaje(*socket_cliente);
+				lista = recibir_paquete(*socket_cliente);
+				buscar_proceso(qready,lista);
+				((pcb*)queue_peek(qnew))->tabla_segmentos = list_get(lista,0); //Actualiza la tabla de segmentos
 				new_a_ready(); //Memoria dice que el proceso está listo
 
 			case CREATE_SEGMENT:
-				lista = recibir_paquete(*socket_cliente); //Debería enviar la base o el id_segmento + el tipo de resultado que se obtuvo (0,1,2)
+				lista = recibir_paquete(*socket_cliente); //Debería enviar la base/id_segmento + el tipo de resultado que se obtuvo: 0-> Todo bien, 1->No hay espacio, 2->Requiere compactacion
 				evaluar_respuesta(list_get(lista,1) ,list_get(lista,2)); 
 			case DELETE_SEGMENT:
 				lista = recibir_paquete(socket_cliente);
