@@ -23,7 +23,7 @@ extern int cantidadPaths;
 extern void* memoriaMapeada;
 
 
-void terminar_programa(t_log*, t_config*,char**);
+void terminar_programa(t_log* logger, t_config* config,int fd_bitmap);
 int recorrerFCBs();
 char* concatenarCadenas(const char* str1, const char* str2);
 int contarArchivosEnCarpeta(const char *carpeta, char ***vectoreRutas);
@@ -44,4 +44,5 @@ void moverPunteroAbloqueDelArchivo(FILE* bloques, t_config* configArchivoActual,
 void moverPunteroABloquePunteros (FILE* bloques, t_config* configArchivoActual);
 void *leerArchivo(char *nombreArchivo,size_t punteroSeek,size_t bytesALeer, int direccion);
 int escribirArchivo(char *nombreArchivo,size_t punteroSeek,size_t bytesAEscribir,int direccion,void *memoriaAEscribir);
+int cantidadDeBloquesAAcceder(t_config *archivoActual,size_t punteroAInformacion,size_t bytesAOperar);
 #endif /* FILESYSTEM_H_ */

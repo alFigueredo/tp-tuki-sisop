@@ -108,11 +108,6 @@ int main(int argc, char** argv)
 
 
 	// Pruebas genericas PARTE 2
-
-	//Reviso el estado del bitmap
-	revisarBitmap(10);
-	/////////////////////////
-
 	if(truncarArchivo("archivoPruebas2", config_get_string_value(config,"PATH_FCB"), vectorDePathsPCBs, cantidadPaths, 320))
 	{
 		log_info(logger,"En teoria el archivo deberia estar truncado");
@@ -132,7 +127,7 @@ int main(int argc, char** argv)
 	//infoPrueba = string_from_format("Hola estoy escrito en un archivo");
 	
 	
-	if(escribirArchivo("archivoPruebas2",200,(strlen("Hola estoy escrito en un archivo") + 1) * sizeof(char),120,infoPrueba))
+	if(escribirArchivo("archivoPruebas2",123,(strlen("Hola estoy escrito en un archivo") + 1) * sizeof(char),120,infoPrueba))
 	{
 		log_info(logger,"En teoria se deberia haber escrito el archivo");
 	}
@@ -141,7 +136,7 @@ int main(int argc, char** argv)
 		log_warning(logger,"El archivo no se pudo escribir");
 	}
 	
-	char *AlgoALeer = leerArchivo("archivoPruebas2",200,(strlen("Hola estoy escrito en un archivo") + 1) * sizeof(char),0);
+	char *AlgoALeer = leerArchivo("archivoPruebas2",123,(strlen("Hola estoy escrito en un archivo") + 1) * sizeof(char),0);
 
 	log_info(logger,"Lo leido del archivo es %s", AlgoALeer);
 	
@@ -196,25 +191,27 @@ int main(int argc, char** argv)
 
 	liberar_conexion(conexion_memoria);
 	*/
-	//terminar_programa(logger, config,vectorDePathsPCBs);
+	terminar_programa(logger, config,fd_bitmap);
 
 	return EXIT_SUCCESS;
 }
 
-void terminar_programa(t_log* logger, t_config* config, char **vector)
+void terminar_programa(t_log* logger, t_config* config,int fd_bitmap)
 {
 	if (logger != NULL)
 	{
 		log_destroy(logger);
 	}
+	munmap(memoriaMapeada,config_get_int_value(superBloque,"BLOCK_COUNT")/8);
+	close(fd_bitmap);
+	bitarray_destroy(bitmap);
 	if (config != NULL)
 	{
 		config_destroy(config);
 	}
-	if (vector != NULL)
+	if (superBloque != NULL)
 	{
-		free(*vector);
-		free(vector);
+		config_destroy(superBloque);
 	}
 }
 char* concatenarCadenas(const char* str1, const char* str2) {
@@ -251,7 +248,6 @@ int contarArchivosEnCarpeta(const char *carpeta, char ***vectoreRutas) {
     while ((ent = readdir(dir)) != NULL) {
         if (ent->d_type == DT_REG)
         { // Verifica si es un archivo regular
-        	log_info(logger, "Se leyo un archivo en el primer while");
         	contador++;
         }
     }
@@ -260,11 +256,9 @@ int contarArchivosEnCarpeta(const char *carpeta, char ***vectoreRutas) {
     dir = opendir(carpeta);
     while ((ent = readdir(dir)) != NULL) {
             if (ent->d_type == DT_REG) { // Verifica si es un archivo regular
-            	log_info(logger, "Se leyo un archivo en el segundo while");
             	(*vectoreRutas)[(contador2)]=malloc((strlen(ent->d_name) + 1) * sizeof(char) + (strlen(mediaRutaAbsoluta) + 1) * sizeof(char));
             	rutaAbsoluta = concatenarCadenas(mediaRutaAbsoluta,ent->d_name);
             	strcpy((*vectoreRutas)[(contador2)], rutaAbsoluta);
-            	printf("El nombre es %s\n", ent->d_name);
             	contador2++;
             	free(rutaAbsoluta);
             }
@@ -314,7 +308,6 @@ int crearArchivo(char *nombre,char *carpeta, char ***vectoreRutas, int *cantidad
 
 		(*vectoreRutas)[*cantidadPaths] = malloc((strlen(rutaArchivo) + 1) * sizeof(char));
 		strcpy((*vectoreRutas)[*cantidadPaths],rutaArchivo);
-		printf("El nuevo archivo agregado al path de archivos es %s",(*vectoreRutas)[*cantidadPaths]);
 		*cantidadPaths = *cantidadPaths + 1;
 		config_destroy(configArchivo);
 		free (mediaRutaAbsoluta);
@@ -651,6 +644,7 @@ int escribirArchivo(char *nombreArchivo,size_t punteroSeek,size_t bytesAEscribir
 	size_t bloqueAEscribir;
 	FILE *bloques = fopen(config_get_string_value(config,"PATH_BLOQUES"),"r+");
 	size_t tamanioBloque = config_get_int_value(superBloque,"BLOCK_SIZE");
+	size_t escritoAnteriormente = 0;
 
 	while (i<cantidadPaths)
 	{
@@ -663,55 +657,71 @@ int escribirArchivo(char *nombreArchivo,size_t punteroSeek,size_t bytesAEscribir
 		i++;
 		config_destroy(configArchivoActual);
 	}
+	int cantidadBloquesAEscribir = cantidadDeBloquesAAcceder(configArchivoActual,punteroSeek,bytesAEscribir);
 	bloqueAEscribir = punteroSeek /tamanioBloque;
 	log_info(logger,"El bloque del archivo a escribir es el bloque %ld",bloqueAEscribir);
 	if(bloqueAEscribir == 0)
 	{
 		moverPunteroAbloqueDelArchivo(bloques,configArchivoActual,bloqueAEscribir);
 		//Me fijo si todo lo que voy a leer esta en un solo bloque
-		if(bytesAEscribir < tamanioBloque || (bytesAEscribir) + (punteroSeek-bloqueAEscribir *tamanioBloque) < tamanioBloque )
+		if(cantidadBloquesAEscribir)
 		{
-			log_info(logger,"La informacion a escribir entra en un solo bloque");
-			fseek(bloques,punteroSeek,SEEK_CUR);
-			log_info(logger,"Escribiendo en el archivo solicitado");
-			fwrite(memoriaAEscribir,bytesAEscribir,1,bloques);
-			fclose(bloques);
-			return 1;
-		}
-		//escribo todo lo que puedo en el primer archivo y despues exribo en el segundo en el segundo
-		else
-		{
+			//Escribo todo lo que puedo en el primer bloque del archivo y luego paso al segundo
 			log_info(logger,"La informacion a escribir NO entra en un solo bloque");
 			fseek(bloques,punteroSeek,SEEK_CUR);
 			fwrite(memoriaAEscribir,tamanioBloque-punteroSeek,1,bloques);
 			
-			moverPunteroAbloqueDelArchivo(bloques,configArchivoActual,bloqueAEscribir + 1);
-			fwrite(memoriaAEscribir +(tamanioBloque-punteroSeek) ,bytesAEscribir - (tamanioBloque-punteroSeek),1,bloques);
+			escritoAnteriormente = tamanioBloque-(punteroSeek-bloqueAEscribir * tamanioBloque);
+			for(int i = 1;i<cantidadBloquesAEscribir;i++)
+			{
+				moverPunteroAbloqueDelArchivo(bloques,configArchivoActual,bloqueAEscribir + i);
+				fwrite(memoriaAEscribir + escritoAnteriormente,(bytesAEscribir - escritoAnteriormente)-((cantidadBloquesAEscribir - (i+1)) * tamanioBloque),1,bloques);
+				escritoAnteriormente = memoriaAEscribir + (bytesAEscribir - escritoAnteriormente)-((cantidadBloquesAEscribir - (i+1)) * tamanioBloque);	
+			}
+			fclose(bloques);
+			return 1;
+		}
+		//escribo todo en el bloque 0
+		else
+		{
+			log_info(logger,"La informacion a escribir entra en un solo bloque");
+			fseek(bloques,punteroSeek,SEEK_CUR);
+			log_info(logger,"Escribiendo en el bloque solicitado");
+			fwrite(memoriaAEscribir,bytesAEscribir,1,bloques);
+			fclose(bloques);
 			return 1;
 		}
 	}
 	//no tengo que escribir el bloque del puntero directo. Paso a buscar el primer bloque
 	else
 	{
-		moverPunteroAbloqueDelArchivo(bloques,configArchivoActual,bloqueAEscribir);
 		//Hay mas de un bloque para leer
 		log_info(logger,"Evaluo si la informacion a escribir tiene que ir en mas de un bloque");
-		if(bytesAEscribir > tamanioBloque || (bytesAEscribir) + (punteroSeek-bloqueAEscribir *tamanioBloque) > tamanioBloque)
+		if(cantidadBloquesAEscribir)
 		{
 			log_info(logger,"La informacion a escribir NO entra en un solo bloque");
+			moverPunteroAbloqueDelArchivo(bloques,configArchivoActual,bloqueAEscribir);
 			//Escribo todo lo que puedo del primer bloque
+			fseek(bloques,punteroSeek-(tamanioBloque * bloqueAEscribir),SEEK_CUR);
 			fwrite(memoriaAEscribir,tamanioBloque-(punteroSeek-bloqueAEscribir * tamanioBloque),1,bloques);
+			escritoAnteriormente = tamanioBloque-(punteroSeek-bloqueAEscribir * tamanioBloque);
+			for(int i = 1;i<cantidadBloquesAEscribir;i++)
+			{
+				moverPunteroAbloqueDelArchivo(bloques,configArchivoActual,bloqueAEscribir + i);
+				fwrite(memoriaAEscribir + escritoAnteriormente,(bytesAEscribir - escritoAnteriormente)-((cantidadBloquesAEscribir - (i+1)) * tamanioBloque),1,bloques);
+				escritoAnteriormente = memoriaAEscribir + (bytesAEscribir - escritoAnteriormente)-((cantidadBloquesAEscribir - (i+1)) * tamanioBloque);
 
-
-			moverPunteroAbloqueDelArchivo(bloques,configArchivoActual,bloqueAEscribir + 1);
-			//Ahora escribo lo que me falta lo que me falta leer del archivo
-			fwrite(memoriaAEscribir +(tamanioBloque-punteroSeek),bytesAEscribir - tamanioBloque-(punteroSeek-bloqueAEscribir * tamanioBloque),1,bloques);
+				
+			}
+			fclose(bloques);
 			return 1;
 		}
 		//Hay solo un bloque que leer
 		else
 		{
 			log_info(logger,"La informacion a escribir entra en un solo bloque");
+			moverPunteroAbloqueDelArchivo(bloques,configArchivoActual,bloqueAEscribir);
+			fseek(bloques,punteroSeek-(tamanioBloque * bloqueAEscribir),SEEK_CUR);
 			fwrite(memoriaAEscribir,bytesAEscribir,1,bloques);
 			fclose(bloques);
 			return 1;
@@ -729,10 +739,10 @@ void *leerArchivo(char *nombreArchivo,size_t punteroSeek,size_t bytesALeer, int 
 	t_config* configArchivoActual;
 	size_t bloqueAleer;
 	void *infoDelArchivo;
-	void *infoDelArchivo2;
 	FILE *bloques = fopen(config_get_string_value(config,"PATH_BLOQUES"),"r+");
 	void *punteroFinal;
 	size_t tamanioBloque = config_get_int_value(superBloque,"BLOCK_SIZE");
+	size_t leidoAnteriormente = 0;
 	while (i<cantidadPaths)
 	{
 		configArchivoActual = iniciar_config(vectorDePathsPCBs[i]);
@@ -745,36 +755,38 @@ void *leerArchivo(char *nombreArchivo,size_t punteroSeek,size_t bytesALeer, int 
 		config_destroy(configArchivoActual);
 	}
 	bloqueAleer = punteroSeek /tamanioBloque;
-	
+	int cantidadBloquesALeer = cantidadDeBloquesAAcceder(configArchivoActual,punteroSeek,bytesALeer);
 
 	//Busco el bloque desde donde voy a leer usando los punteros del archivo
 	if(bloqueAleer == 0)
 	{
 		moverPunteroAbloqueDelArchivo(bloques,configArchivoActual,bloqueAleer);
 		//Me fijo si todo lo que voy a leer esta en un solo bloque
-		if(bytesALeer < tamanioBloque || (bytesALeer) + (punteroSeek-bloqueAleer *tamanioBloque) < tamanioBloque )
+		if(cantidadBloquesALeer)
+		{
+			infoDelArchivo= malloc(bytesALeer);
+			fseek(bloques,punteroSeek,SEEK_CUR);
+			fread(infoDelArchivo,tamanioBloque-punteroSeek,1,bloques);
+			
+			//Ahora me voy al bloque siguiente
+			leidoAnteriormente = tamanioBloque-(punteroSeek-bloqueAleer * tamanioBloque);
+			for(int i = 1;i<cantidadBloquesALeer;i++)
+			{
+				moverPunteroAbloqueDelArchivo(bloques,configArchivoActual,bloqueAleer + i);
+				fread(infoDelArchivo + leidoAnteriormente,(bytesALeer - leidoAnteriormente)-((cantidadBloquesALeer - (i+1)) * tamanioBloque),1,bloques);
+				leidoAnteriormente = infoDelArchivo + (bytesALeer - leidoAnteriormente)-((cantidadBloquesALeer - (i+1)) * tamanioBloque);
+			}
+			fclose(bloques);
+			return infoDelArchivo;
+		}
+		//leo todo del primer bloque
+		else
 		{
 			infoDelArchivo= malloc(bytesALeer);
 			fseek(bloques,punteroSeek,SEEK_CUR);
 			fread(infoDelArchivo,bytesALeer,1,bloques);
 			fclose(bloques);
 			return infoDelArchivo;
-		}
-		//leo todo lo que puedo en el primer archivo y despues busco en el segundo
-		else
-		{
-			infoDelArchivo= malloc(tamanioBloque-punteroSeek);
-			fseek(bloques,punteroSeek,SEEK_CUR);
-			fread(infoDelArchivo,tamanioBloque-punteroSeek,1,bloques);
-			
-			//Ahora me voy al bloque siguiente
-			moverPunteroAbloqueDelArchivo(bloques,configArchivoActual,bloqueAleer + 1);
-
-			infoDelArchivo2 = malloc(bytesALeer - (tamanioBloque-punteroSeek));
-			fread(infoDelArchivo2,bytesALeer - (tamanioBloque-punteroSeek),1,bloques);
-			punteroFinal = concatPunteros(infoDelArchivo , infoDelArchivo2 , tamanioBloque-punteroSeek , bytesALeer - (tamanioBloque-punteroSeek));
-			free(infoDelArchivo);
-			free(infoDelArchivo2);
 
 		}
 	}
@@ -784,28 +796,28 @@ void *leerArchivo(char *nombreArchivo,size_t punteroSeek,size_t bytesALeer, int 
 		moverPunteroAbloqueDelArchivo(bloques,configArchivoActual,bloqueAleer);
 
 		//Hay mas de un bloque para leer
-		if(bytesALeer > tamanioBloque || (bytesALeer) + (punteroSeek-bloqueAleer *tamanioBloque) > tamanioBloque)
+		if(cantidadBloquesALeer)
 		{
 			//Leo lo que puedo del primer bloque
-			infoDelArchivo= malloc(tamanioBloque-(punteroSeek-bloqueAleer * tamanioBloque));			
-			fseek(bloques,punteroSeek,SEEK_CUR);
+			infoDelArchivo= malloc(bytesALeer);			
+			fseek(bloques,punteroSeek-(tamanioBloque * bloqueAleer),SEEK_CUR);
 			fread(infoDelArchivo,tamanioBloque-(punteroSeek-bloqueAleer * tamanioBloque),1,bloques);
-
-			//Una vez leido todo lo que puedo del primer bloque vuelvo al bloque de punteros a buscar el que sigue
-			moverPunteroAbloqueDelArchivo(bloques,configArchivoActual,bloqueAleer + 1);
-
-			//Ahora leo lo que me falta leer del archivo
-			infoDelArchivo2 = malloc(bytesALeer - tamanioBloque-(punteroSeek-bloqueAleer * tamanioBloque));
-			fread(infoDelArchivo2,bytesALeer - tamanioBloque-(punteroSeek-bloqueAleer * tamanioBloque),1,bloques);
-			concatPunteros(infoDelArchivo,infoDelArchivo2,tamanioBloque-(punteroSeek-bloqueAleer * tamanioBloque),bytesALeer - tamanioBloque-(punteroSeek-bloqueAleer * tamanioBloque));
-			free(infoDelArchivo);
-			free(infoDelArchivo2);
+			
+			leidoAnteriormente = tamanioBloque-(punteroSeek-bloqueAleer * tamanioBloque);
+			for(int i = 1;i<cantidadBloquesALeer;i++)
+			{
+				moverPunteroAbloqueDelArchivo(bloques,configArchivoActual,bloqueAleer + i);
+				fread(infoDelArchivo + leidoAnteriormente,(bytesALeer - leidoAnteriormente)-((cantidadBloquesALeer - (i+1)) * tamanioBloque),1,bloques);
+				leidoAnteriormente = infoDelArchivo + (bytesALeer - leidoAnteriormente)-((cantidadBloquesALeer - (i+1)) * tamanioBloque);
+			}
+			fclose(bloques);
+			return infoDelArchivo;
 		}
 		//Hay solo un bloque que leer
 		else
 		{
 			infoDelArchivo = malloc(bytesALeer);
-			fseek(bloques,punteroSeek,SEEK_CUR);
+			fseek(bloques,punteroSeek-(tamanioBloque * bloqueAleer),SEEK_CUR);
 			fread(infoDelArchivo,bytesALeer,1,bloques);
 			fclose(bloques);
 			return infoDelArchivo;
@@ -838,6 +850,7 @@ void moverPunteroAbloqueDelArchivo(FILE* bloques, t_config* configArchivoActual,
 	{
 		log_info(logger,"Acceso Bloque - Archivo: %s - Bloque Archivo: %d - Bloque File System %d",config_get_string_value(configArchivoActual,"NOMBRE_ARCHIVO"),bloqueBuscado,	config_get_int_value(configArchivoActual,"PUNTERO_DIRECTO"));
 		fseek(bloques,config_get_int_value(configArchivoActual,"PUNTERO_DIRECTO") * config_get_int_value(superBloque,"BLOCK_SIZE") ,SEEK_SET);
+		delay(config_get_int_value(config,"RETARDO_ACCESO_BLOQUE"));
 		return;
 	}
 	else
@@ -853,5 +866,12 @@ void moverPunteroAbloqueDelArchivo(FILE* bloques, t_config* configArchivoActual,
 		return;
 	}
 	
+
+}
+int cantidadDeBloquesAAcceder(t_config *archivoActual,size_t punteroAInformacion,size_t bytesAOperar)
+{
+	size_t tamanioBloque = config_get_int_value(superBloque,"BLOCK_SIZE");
+	int bloquesAleer = (punteroAInformacion + bytesAOperar)/tamanioBloque;
+	return bloquesAleer;
 
 }
