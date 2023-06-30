@@ -103,14 +103,14 @@ void atender_cliente(int* socket_cliente){
 			break;
 
 			//kernel
-		case CREATE_SEGMENT:
+		/*case CREATE_SEGMENT:
 			lista = recibir_paquete(*socket_cliente);
 			proceso = malloc(sizeof(t_instruction));
 			recibir_instruccion(lista,proceso);
 
 			break;
 		case DELETE_SEGMENT:
-			break;
+			break;*/
 
 			//cpu
 		case MOV_IN: //leer cpu
