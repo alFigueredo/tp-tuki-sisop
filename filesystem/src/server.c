@@ -170,7 +170,17 @@ void atender_cliente(int* socket_cliente)
 				punteroAArchivo = atoi(porqueria[2]);
 				cantidadBytesALeer = atoi(porqueria[3]);
 				direccionFisica = atoi(porqueria[4]);
-				informacionLeidaOEscrita = leerArchivo(nombreArchivo,punteroAArchivo,cantidadBytesALeer,direccionFisica);
+				//Le pido a memoria que me pase lo que hay en la direccion fisica
+				// Lo recibo
+				if (escribirArchivo(nombreArchivo,punteroAArchivo,cantidadBytesALeer,direccionFisica,informacionLeidaOEscrita))
+				{
+					enviar_operacion(*socket_cliente, SE_PUDO_ESCRIBIR_EL_ARCHIVO);
+				}
+				else
+				{
+					log_error(logger,"No se pudo truncar el archivo. CAGAAAAMOSSSSS");
+				}
+				break;
 			case -1:
 				log_warning(logger, "El cliente se desconecto. Terminando conexion");
 				free(socket_cliente);

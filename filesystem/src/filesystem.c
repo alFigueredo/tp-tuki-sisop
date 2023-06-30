@@ -686,7 +686,6 @@ int escribirArchivo(char *nombreArchivo,size_t punteroSeek,size_t bytesAEscribir
 		{
 			log_info(logger,"La informacion a escribir entra en un solo bloque");
 			fseek(bloques,punteroSeek,SEEK_CUR);
-			log_info(logger,"Escribiendo en el bloque solicitado");
 			fwrite(memoriaAEscribir,bytesAEscribir,1,bloques);
 			fclose(bloques);
 			return 1;
@@ -696,7 +695,6 @@ int escribirArchivo(char *nombreArchivo,size_t punteroSeek,size_t bytesAEscribir
 	else
 	{
 		//Hay mas de un bloque para leer
-		log_info(logger,"Evaluo si la informacion a escribir tiene que ir en mas de un bloque");
 		if(cantidadBloquesAEscribir)
 		{
 			log_info(logger,"La informacion a escribir NO entra en un solo bloque");
@@ -728,7 +726,7 @@ int escribirArchivo(char *nombreArchivo,size_t punteroSeek,size_t bytesAEscribir
 		}
 	}
 	fclose(bloques);
-	return 1;
+	return 0;
 
 }
 
@@ -756,7 +754,7 @@ void *leerArchivo(char *nombreArchivo,size_t punteroSeek,size_t bytesALeer, int 
 	}
 	bloqueAleer = punteroSeek /tamanioBloque;
 	int cantidadBloquesALeer = cantidadDeBloquesAAcceder(configArchivoActual,punteroSeek,bytesALeer);
-
+	log_info(logger,"El bloque del archivo a leer es el bloque %ld",bloqueAleer);
 	//Busco el bloque desde donde voy a leer usando los punteros del archivo
 	if(bloqueAleer == 0)
 	{
@@ -764,6 +762,7 @@ void *leerArchivo(char *nombreArchivo,size_t punteroSeek,size_t bytesALeer, int 
 		//Me fijo si todo lo que voy a leer esta en un solo bloque
 		if(cantidadBloquesALeer)
 		{
+			log_info(logger,"La informacion a leer NO esta en un solo bloque");
 			infoDelArchivo= malloc(bytesALeer);
 			fseek(bloques,punteroSeek,SEEK_CUR);
 			fread(infoDelArchivo,tamanioBloque-punteroSeek,1,bloques);
@@ -782,6 +781,7 @@ void *leerArchivo(char *nombreArchivo,size_t punteroSeek,size_t bytesALeer, int 
 		//leo todo del primer bloque
 		else
 		{
+			log_info(logger,"La informacion a leer esta en un solo bloque");
 			infoDelArchivo= malloc(bytesALeer);
 			fseek(bloques,punteroSeek,SEEK_CUR);
 			fread(infoDelArchivo,bytesALeer,1,bloques);
