@@ -104,13 +104,13 @@ void atender_cliente(int* socket_cliente){
 				lista = recibir_paquete(socket_cliente);
 				((pcb*)queue_peek(qexec))->tabla_segmentos = list_get(lista,0); //Actualiza la tabla de segmentos
 				enviar_pcb(conexion_cpu,((pcb*)queue_peek(qexec)),EXEC);
-			case EXEC:
+			case SE_PUEDE_COMPACTAR:
 				enviar_mensaje("Traeme las tablas de segmentos",conexion_memoria,COMPACTACION);
 			case COMPACTACION:
 				lista = recibir_paquete(*socket_cliente);
 				actualizar_tablas(lista);
 				char* instruccion = list_get(((pcb*)queue_peek(qexec))->instrucciones, ((pcb*)queue_peek(qexec))->program_counter-1);
-				enviar_segmento(instruccion,((pcb*)queue_peek(qexec))->tabla_segmentos);
+				enviar_segmento(instruccion,((pcb*)queue_peek(qexec))->tabla_segmentos); //Volvemos a solicitar la creacion del segmento
 			case -1:
 				log_warning(logger, "El cliente se desconecto. Terminando conexion");
 				free(socket_cliente);
