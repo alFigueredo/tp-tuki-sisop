@@ -65,87 +65,119 @@ void esperar_cliente(int socket_servidor){
 	}
 }
 
-void atender_cliente(int* socket_cliente){
+void atender_cliente(int* socket_cliente)
+{
 	t_list *lista;
 	t_instruction* proceso;
 	char *instruccion;
 	char *nombreArchivo;
 	char **porqueria;
 	size_t tamanioAtruncar;
-	while (1) {
+	size_t punteroAArchivo;
+	size_t cantidadBytesALeer;
+	int direccionFisica;
+	void *informacionLeidaOEscrita;
+	while (1) 
+	{
 		int cod_op = recibir_operacion(*socket_cliente);
-		switch (cod_op) {
-		case MENSAJE:
-			recibir_mensaje(*socket_cliente);
-			break;
-		case PAQUETE:
-			lista = recibir_paquete(*socket_cliente);
-			log_info(logger, "Me llegaron los siguientes valores:");
-			list_iterate(lista, (void*) iterator);
-			list_clean_and_destroy_elements(lista, free);
-			break;
-		case F_OPEN:
-			lista = recibir_paquete(*socket_cliente);
-			proceso = malloc(sizeof(t_instruction));
-			recibir_instruccion(lista,proceso);
-			instruccion = proceso->instruccion;
+		switch (cod_op) 
+		{
+			case MENSAJE:
+				recibir_mensaje(*socket_cliente);
+				break;
+			case PAQUETE:
+				lista = recibir_paquete(*socket_cliente);
+				log_info(logger, "Me llegaron los siguientes valores:");
+				list_iterate(lista, (void*) iterator);
+				list_clean_and_destroy_elements(lista, free);
+				break;
+			case F_OPEN:
+				lista = recibir_paquete(*socket_cliente);
+				proceso = malloc(sizeof(t_instruction));
+				recibir_instruccion(lista,proceso);
+				instruccion = proceso->instruccion;
 
-			porqueria=string_split(instruccion, " ");
-			nombreArchivo= porqueria[1];
+				porqueria=string_split(instruccion, " ");
+				nombreArchivo= porqueria[1];
 
 
-			if(abrirArchivo(nombreArchivo,vectorDePathsPCBs,cantidadPaths))
-			{
-				enviar_operacion(*socket_cliente, OK);
-			}
-			else
-			{
-				enviar_operacion(*socket_cliente, EL_ARCHIVO_NO_EXISTE_PAAAAAAA);
-			}
-			break;
-		case F_CREATE:
-			lista = recibir_paquete(*socket_cliente);
-			proceso = malloc(sizeof(t_instruction));
-			recibir_instruccion(lista,proceso);
-			instruccion = proceso->instruccion;
+				if(abrirArchivo(nombreArchivo,vectorDePathsPCBs,cantidadPaths))
+				{
+					enviar_operacion(*socket_cliente, OK);
+				}
+				else
+				{
+					enviar_operacion(*socket_cliente, EL_ARCHIVO_NO_EXISTE_PAAAAAAA);
+				}
+				break;
+			case F_CREATE:
+				lista = recibir_paquete(*socket_cliente);
+				proceso = malloc(sizeof(t_instruction));
+				recibir_instruccion(lista,proceso);
+				instruccion = proceso->instruccion;
 
-			porqueria=string_split(instruccion, " ");
-			nombreArchivo= porqueria[1];
-			if(crearArchivo(nombreArchivo, config_get_string_value(config,"PATH_FCB"), &vectorDePathsPCBs, &cantidadPaths))
-			{
-				enviar_operacion(*socket_cliente, OK);
-			}
-			else
-			{
-				log_error(logger,
+				porqueria=string_split(instruccion, " ");
+				nombreArchivo= porqueria[1];
+				if(crearArchivo(nombreArchivo, config_get_string_value(config,"PATH_FCB"), &vectorDePathsPCBs, &cantidadPaths))
+				{
+					enviar_operacion(*socket_cliente, OK);
+				}
+				else
+				{
+					log_error(logger,
 						"No se pudo crear el archivo pibe. Algo se rompio zarpado");
-			}
+				}
 
-			break;
-		case F_TRUNCATE:
-			lista = recibir_paquete(*socket_cliente);
-			proceso = malloc(sizeof(t_instruction));
-			recibir_instruccion(lista,proceso);
-			instruccion = proceso->instruccion;
-			porqueria=string_split(instruccion, " ");
-			nombreArchivo = porqueria[1];
-			tamanioAtruncar = atoi(porqueria[2]);
-			if(truncarArchivo(nombreArchivo, config_get_string_value(config,"PATH_FCB"), vectorDePathsPCBs, cantidadPaths, tamanioAtruncar))
-			{
-				enviar_operacion(*socket_cliente, YA_SE_TERMINO_LA_TRUNCACION);
-			}
-			else
-			{
-				log_error(logger,"No se pudo truncar el archivo. CAGAAAAMOSSSSS");
-			}
-			break;
-		case -1:
-			log_warning(logger, "El cliente se desconecto. Terminando conexion");
-			free(socket_cliente);
-			return;
-		default:
-			log_warning(logger,"Operacion desconocida. No quieras meter la pata");
-			break;
+				break;
+			case F_TRUNCATE:
+				lista = recibir_paquete(*socket_cliente);
+				proceso = malloc(sizeof(t_instruction));
+				recibir_instruccion(lista,proceso);
+				instruccion = proceso->instruccion;
+				porqueria=string_split(instruccion, " ");
+				nombreArchivo = porqueria[1];
+				tamanioAtruncar = atoi(porqueria[2]);
+				if(truncarArchivo(nombreArchivo, config_get_string_value(config,"PATH_FCB"), vectorDePathsPCBs, cantidadPaths, tamanioAtruncar))
+				{
+					enviar_operacion(*socket_cliente, YA_SE_TERMINO_LA_TRUNCACION);
+				}
+				else
+				{
+					log_error(logger,"No se pudo truncar el archivo. CAGAAAAMOSSSSS");
+				}
+				break;
+			case F_READ:
+				lista = recibir_paquete(*socket_cliente);
+				proceso = malloc(sizeof(t_instruction));
+				recibir_instruccion(lista,proceso);
+				instruccion = proceso->instruccion;
+				porqueria=string_split(instruccion, " ");
+				nombreArchivo = porqueria[1];
+				punteroAArchivo = atoi(porqueria[2]);
+				cantidadBytesALeer = atoi(porqueria[3]);
+				direccionFisica = atoi(porqueria[4]);
+				informacionLeidaOEscrita = leerArchivo(nombreArchivo,punteroAArchivo,cantidadBytesALeer,direccionFisica);
+				// Enviar mensaje a memoria y mandarle la merca
+				//recibir el ok en memoria
+				enviar_operacion(*socket_cliente, MEMORIA_DIJO_QUE_PUDO_ESCRIBIR_JOYA);
+			case F_WRITE:
+				lista = recibir_paquete(*socket_cliente);
+				proceso = malloc(sizeof(t_instruction));
+				recibir_instruccion(lista,proceso);
+				instruccion = proceso->instruccion;
+				porqueria=string_split(instruccion, " ");
+				nombreArchivo = porqueria[1];
+				punteroAArchivo = atoi(porqueria[2]);
+				cantidadBytesALeer = atoi(porqueria[3]);
+				direccionFisica = atoi(porqueria[4]);
+				informacionLeidaOEscrita = leerArchivo(nombreArchivo,punteroAArchivo,cantidadBytesALeer,direccionFisica);
+			case -1:
+				log_warning(logger, "El cliente se desconecto. Terminando conexion");
+				free(socket_cliente);
+				return;
+			default:
+				log_warning(logger,"Operacion desconocida. No quieras meter la pata");
+				break;
 		}
 	}
 }
