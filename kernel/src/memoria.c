@@ -66,7 +66,7 @@ void evaluar_respuesta(int resultado,int tipo_resultado){
             log_error(logger,"Out of memory: No se encóntró espacio para el segmento id=%d en memoria, por lo que se finaliza el proceso en ejecucion", resultado);
             exec_a_exit();
         case 2:
-            enviar_mensaje("Hay ejecuciones en curso?",conexion_filesystem,EXEC);
+            enviar_mensaje("Confirmame, si puedo solicitar compactacion",conexion_filesystem,SE_PUEDE_COMPACTAR);
     }
 }
 
