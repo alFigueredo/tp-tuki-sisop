@@ -18,6 +18,7 @@ typedef struct
 
 extern t_list* archivosAbiertos;
 
+extern int contadorDeEscrituraOLectura;
 
 int abrirArchivoKernel(pcb*, char*);
 void cerrarArchivoKernel(pcb*, char*);

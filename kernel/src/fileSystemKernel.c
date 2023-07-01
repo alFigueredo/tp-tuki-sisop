@@ -7,7 +7,7 @@ int abriArchivoKernel(pcb* proceso, char* instruccion)
 	char** parsed = string_split(instruccion, " "); //Partes de la instruccion actual
 	bool archivoExisteEnTabla = false;
 	Archivo* archivoActual = malloc(sizeof(Archivo));
-	int* punteroOriginal;
+	int punteroOriginal;
 	//verificar si el archivo esta en la tabla global.
 	for (int i = 0; i < list_size(archivosAbiertos); i++)
 	{
@@ -26,7 +26,10 @@ int abriArchivoKernel(pcb* proceso, char* instruccion)
 		archivoActual->procesosBloqueados = queue_create();
 		archivoActual->puntero=0;
 		list_add(archivosAbiertos, archivoActual);
+		//agregar el archivo a la lista de archivos abiertos del proceso
+		list_add(proceso->archivos_abiertos,archivoActual);
 		enviar_pcb(conexion_cpu, proceso, EXEC);
+		log_info(logger, "PID: %d - Abrir Archivo: %s", proceso->pid, parsed[1]);
 		return 1;
 	}
 	else
@@ -42,13 +45,13 @@ int abriArchivoKernel(pcb* proceso, char* instruccion)
 		log_warning(logger, "PID: %d - Bloqueado porque archivo %s ya esta abierto", proceso->pid, archivoActual->nombreDeArchivo);
 		return 0;
 	}
-	log_info(logger, "PID: %d - Abrir Archivo: %s", proceso->pid, parsed[1]);
 }
 
 void cerrarArchivoKernel(pcb* proceso, char* instruccion)
 {
 	char** parsed = string_split(instruccion, " "); //Partes de la instruccion actual
 	bool archivoExisteEnTabla = false;
+	pcb* procesoAux;
 	Archivo* archivoActual = malloc(sizeof(Archivo));
 	//verificar si el archivo esta en la tabla global y obtenerlo.
 	for (int i = 0; i < list_size(archivosAbiertos); i++)
@@ -71,7 +74,9 @@ void cerrarArchivoKernel(pcb* proceso, char* instruccion)
 	{
 		//saca de bloqueados al primer proceso de la cola de procesos bloqueados del archivo
 		block_a_ready(queue_peek(archivoActual->procesosBloqueados));
-		queue_pop(archivoActual->procesosBloqueados);
+		procesoAux=queue_pop(archivoActual->procesosBloqueados);
+		log_info(logger, "PID: %d - Abrir Archivo: %s", procesoAux->pid, parsed[1]);
+
 	}
 	log_info(logger,"PID: %d - Cerrar Archivo: %s", proceso->pid, parsed[1]);
 

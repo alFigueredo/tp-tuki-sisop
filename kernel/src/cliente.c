@@ -181,9 +181,19 @@ void atender_servidor(int* socket_servidor){
 				laCosaQueMando->instruccion=instruccion;
 				enviar_instruccion(*socket_servidor,laCosaQueMando,F_READ);
 
+				contadorDeEscrituraOLectura ++;
+
 				exec_a_block();
 				list_destroy_and_destroy_elements(lista, free);
 
+				break;
+			case MEMORIA_DIJO_QUE_PUDO_ESCRIBIR_JOYA:
+				lista = recibir_paquete(*socket_servidor);
+				recibir_pcb(lista, queue_peek(qexec));
+				instruccion = list_get(((pcb*)queue_peek(qexec))->instrucciones, ((pcb*)queue_peek(qexec))->program_counter-1);
+				block_a_ready();
+				contadorDeEscrituraOLectura --;
+				list_destroy_and_destroy_elements(lista, free);
 				break;
 			case F_WRITE:
 				lista = recibir_paquete(*socket_servidor);
@@ -206,9 +216,19 @@ void atender_servidor(int* socket_servidor){
 				laCosaQueMando->instruccion=instruccion;
 				enviar_instruccion(*socket_servidor,laCosaQueMando,F_WRITE);
 
+				contadorDeEscrituraOLectura ++;
+
 				exec_a_block();
 				list_destroy_and_destroy_elements(lista, free);
 
+				break;
+			case SE_PUDO_ESCRIBIR_EL_ARCHIVO:
+				lista = recibir_paquete(*socket_servidor);
+				recibir_pcb(lista, queue_peek(qexec));
+				instruccion = list_get(((pcb*)queue_peek(qexec))->instrucciones, ((pcb*)queue_peek(qexec))->program_counter-1);
+				block_a_ready();
+				contadorDeEscrituraOLectura --;
+				list_destroy_and_destroy_elements(lista, free);
 				break;
 			case CREATE_SEGMENT:
 				lista = recibir_paquete(*socket_servidor);

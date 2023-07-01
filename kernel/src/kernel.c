@@ -21,6 +21,9 @@ int main(int argc, char** argv) {
     archivosAbiertos=list_create();
     //Crear la lista de archivos abiertos global
 
+    //Inicio el contador para luego
+    int contadorDeEscrituraOLectura = 0;
+
 
 	char* ip_memoria = config_get_string_value(config, "IP_MEMORIA");
 	char* puerto_memoria = config_get_string_value(config, "PUERTO_MEMORIA");
