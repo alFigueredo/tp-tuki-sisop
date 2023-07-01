@@ -17,6 +17,7 @@ sem_t* sem_block;
 sem_t* sem_exit;
 sem_t* sem_new_ready;
 sem_t* sem_exec_exit;
+sem_t* sem_escrituraLectura;
 t_temporal* tiempo_en_cpu;
 t_dictionary* conexiones;
 
@@ -58,6 +59,7 @@ void destruir_semaforos(void) {
 	destruir_semaforo(sem_exit);
 	destruir_semaforo(sem_new_ready);
 	destruir_semaforo(sem_exec_exit);
+	destruir_semaforo(sem_escrituraLectura);
 }
 
 sem_t* iniciar_semaforo(int pshared, unsigned int value) {

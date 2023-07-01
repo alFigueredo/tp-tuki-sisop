@@ -109,7 +109,7 @@ void atender_servidor(int* socket_servidor){
 					laCosaQueMando->pid=((pcb*)queue_peek(qexec));
 					laCosaQueMando->instruccion=instruccion;
 					enviar_instruccion(*socket_servidor,laCosaQueMando,F_OPEN);
-
+					free(laCosaQueMando);
 				}
 				list_destroy_and_destroy_elements(lista, free);
 				break;
@@ -122,6 +122,7 @@ void atender_servidor(int* socket_servidor){
 				laCosaQueMando->pid=((pcb*)queue_peek(qexec));
 				laCosaQueMando->instruccion=instruccion;
 				enviar_instruccion(*socket_servidor,laCosaQueMando,F_CREATE);
+				free(laCosaQueMando);
 
 				list_destroy_and_destroy_elements(lista, free);
 				break;
@@ -149,6 +150,7 @@ void atender_servidor(int* socket_servidor){
 				laCosaQueMando->pid=((pcb*)queue_peek(qexec));
 				laCosaQueMando->instruccion=instruccion;
 				enviar_instruccion(*socket_servidor,laCosaQueMando,F_TRUNCATE);
+				free(laCosaQueMando);
 				parsed = string_split(instruccion, " ");
 				log_info(logger, "PID: %d - Archivo: %s - Tamaño: %d", laCosaQueMando->pid, parsed[1], parsed[2]);
 				exec_a_block();
@@ -180,9 +182,13 @@ void atender_servidor(int* socket_servidor){
 				laCosaQueMando->pid=((pcb*)queue_peek(qexec));
 				laCosaQueMando->instruccion=instruccion;
 				enviar_instruccion(*socket_servidor,laCosaQueMando,F_READ);
+				free(laCosaQueMando);
 
+				sem_wait(sem_escrituraLectura);
 				contadorDeEscrituraOLectura ++;
+				sem_post(sem_escrituraLectura);
 
+				log_info(logger, "PID: %d - Leer Archivo: %s - Puntero: %d - Direccion Memoria %d - Tamaño %d", parsed[0], parsed[1], parsed[2], parsed[3], parsed[4]);
 				exec_a_block();
 				list_destroy_and_destroy_elements(lista, free);
 
@@ -192,7 +198,11 @@ void atender_servidor(int* socket_servidor){
 				recibir_pcb(lista, queue_peek(qexec));
 				instruccion = list_get(((pcb*)queue_peek(qexec))->instrucciones, ((pcb*)queue_peek(qexec))->program_counter-1);
 				block_a_ready();
+
+				sem_wait(sem_escrituraLectura);
 				contadorDeEscrituraOLectura --;
+				sem_post(sem_escrituraLectura);
+
 				list_destroy_and_destroy_elements(lista, free);
 				break;
 			case F_WRITE:
@@ -215,9 +225,13 @@ void atender_servidor(int* socket_servidor){
 				laCosaQueMando->pid=((pcb*)queue_peek(qexec));
 				laCosaQueMando->instruccion=instruccion;
 				enviar_instruccion(*socket_servidor,laCosaQueMando,F_WRITE);
+				free(laCosaQueMando);
 
+				sem_wait(sem_escrituraLectura);
 				contadorDeEscrituraOLectura ++;
+				sem_post(sem_escrituraLectura);
 
+				log_info(logger, "PID: %d - Escribir Archivo: %s - Puntero: %d - Direccion Memoria %d - Tamaño %d", parsed[0], parsed[1], parsed[2], parsed[3], parsed[4]);
 				exec_a_block();
 				list_destroy_and_destroy_elements(lista, free);
 
@@ -227,7 +241,11 @@ void atender_servidor(int* socket_servidor){
 				recibir_pcb(lista, queue_peek(qexec));
 				instruccion = list_get(((pcb*)queue_peek(qexec))->instrucciones, ((pcb*)queue_peek(qexec))->program_counter-1);
 				block_a_ready();
+
+				sem_wait(sem_escrituraLectura);
 				contadorDeEscrituraOLectura --;
+				sem_post(sem_escrituraLectura);
+
 				list_destroy_and_destroy_elements(lista, free);
 				break;
 			case CREATE_SEGMENT:

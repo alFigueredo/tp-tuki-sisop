@@ -39,6 +39,7 @@ extern sem_t* sem_block;
 extern sem_t* sem_exit;
 extern sem_t* sem_new_ready;
 extern sem_t* sem_exec_exit;
+extern sem_t* sem_escrituraLectura;
 extern t_temporal* tiempo_en_cpu;
 extern t_dictionary* conexiones;
 

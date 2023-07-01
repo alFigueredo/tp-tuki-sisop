@@ -1,6 +1,7 @@
 #include "fileSystemKernel.h"
 
 t_list* archivosAbiertos;
+int contadorDeEscrituraOLectura;
 
 int abriArchivoKernel(pcb* proceso, char* instruccion)
 {
