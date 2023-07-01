@@ -111,4 +111,6 @@ void actualizar_tablas(t_list* tablas_actualizadas){
     actualizar_cola(qblock,qblock_copia, tablas_actualizadas);
     actualizar_cola(qexec,qexec_copia, tablas_actualizadas);
 
+    list_destroy(tablas_actualizadas);
+
 }
