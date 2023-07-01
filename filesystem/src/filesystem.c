@@ -51,7 +51,6 @@ int main(int argc, char** argv)
 	}
 
 
-
 	memoriaMapeada = mmap(NULL, tamanioBitmap, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_SHARED, fd_bitmap, 0);
 	if (memoriaMapeada == MAP_FAILED)
 	{
@@ -67,124 +66,11 @@ int main(int argc, char** argv)
 			exit(EXIT_FAILURE);
 		}
 
-	// PRUEBAS CON UN ARCHIVO GENERICO
-
-
-	if(abrirArchivo("archivoPruebas2",vectorDePathsPCBs,cantidadPaths))
-	{
-		log_info(logger,"Abrir archivo retorna OK");
-	}
-	else
-	{
-		log_info(logger,"Abrir archivo retorna EL_ARCHIVO_NO_EXISTE_PAAAAAAA");
-	}
-	//////////////////////////////////////
-	if(crearArchivo("archivoPruebas2", config_get_string_value(config,"PATH_FCB"), &vectorDePathsPCBs, &cantidadPaths))
-	{
-		log_info(logger,"Se creo joya el archivo");
-	}
-	else
-	{
-		log_error(logger,"No se pudo crear el archivo pibe. Algo se rompio zarpado");
-	}
-	//////////////////////////////////////
-	if(abrirArchivo("archivoPruebas2",vectorDePathsPCBs,cantidadPaths))
-	{
-		log_info(logger,"Abrir archivo retorna OK");
-	}
-	else
-	{
-		log_info(logger,"Abrir archivo retorna EL_ARCHIVO_NO_EXISTE_PAAAAAAA");
-	}
-	//////////////////////////////////////
-	if(truncarArchivo("archivoPruebas2", config_get_string_value(config,"PATH_FCB"), vectorDePathsPCBs, cantidadPaths, 1024))
-	{
-		log_info(logger,"En teoria el archivo deberia estar truncado");
-	}
-	else
-	{
-		log_warning(logger,"El archivo no se pudo truncar");
-	}
-
-
-	// Pruebas genericas PARTE 2
-	if(truncarArchivo("archivoPruebas2", config_get_string_value(config,"PATH_FCB"), vectorDePathsPCBs, cantidadPaths, 320))
-	{
-		log_info(logger,"En teoria el archivo deberia estar truncado");
-	}
-	else
-	{
-		log_warning(logger,"El archivo no se pudo truncar");
-	}
-
-	// Escribo algo en el archivo para ver que lee
-
-	//Opcion 1
-	char* infoPrueba = malloc((strlen("Hola estoy escrito en un archivo") + 1) * sizeof(char));
-	strcpy(infoPrueba,"Hola estoy escrito en un archivo");
-
-	//Opcion 2
-	//infoPrueba = string_from_format("Hola estoy escrito en un archivo");
-	
-	
-	if(escribirArchivo("archivoPruebas2",123,(strlen("Hola estoy escrito en un archivo") + 1) * sizeof(char),120,infoPrueba))
-	{
-		log_info(logger,"En teoria se deberia haber escrito el archivo");
-	}
-	else
-	{
-		log_warning(logger,"El archivo no se pudo escribir");
-	}
-	
-	char *AlgoALeer = leerArchivo("archivoPruebas2",123,(strlen("Hola estoy escrito en un archivo") + 1) * sizeof(char),0);
-
-	log_info(logger,"Lo leido del archivo es %s", AlgoALeer);
-	
-	
-
-
-
-
-	bitarray_destroy(bitmap);
 	munmap(memoriaMapeada,tamanioBitmap);
 	close(fd_bitmap);
 
 
 	/*
-	char **vectorDePathsPCBs = NULL;
-	int cantFCBs=0;
-	//Guardo todas las rutas de los PCBs en un vector
-	log_info(logger, config_get_string_value(config,"PATH_FCB"));
-	cantFCBs = contarArchivosEnCarpeta(config_get_string_value(config,"PATH_FCB"),&vectorDePathsPCBs);
-	printf("La cantidad de FCBS es %d\n",cantFCBs);
-	//////////////////////////
-
-
-	if (abrirArchivo("Notas1erParcialK9999", vectorDePathsPCBs, cantFCBs))
-	{
-		log_info(logger, "Existe el archivo buscado");
-	}
-	else
-	{
-		log_info(logger, "No existe el archivo buscado");
-	}
-
-	if (crearArchivo("ISA.FCB",config_get_string_value(config,"PATH_FCB"),&vectorDePathsPCBs,&cantFCBs))
-		{
-			log_info(logger, "Se creo correctamente el archivo");
-		}
-		else
-		{
-			log_info(logger, "no se creo el archivo AYUDAAAAA");
-		}if(truncarArchivo("archivoPruebas2", config_get_string_value(config,"PATH_FCB"), vectorDePathsPCBs, cantidadPaths, 128))
-	{
-		log_info(logger,"En teoria el archivo deberia estar truncado");
-	}
-	else
-	{
-		log_warning(logger,"El archivo no se pudo truncar");
-	}
-
 	char* puerto_escucha = config_get_string_value(config, "PUERTO_ESCUCHA");
 	socket_servidor = iniciar_servidor(puerto_escucha);
 	esperar_cliente(socket_servidor);
@@ -874,4 +760,154 @@ int cantidadDeBloquesAAcceder(t_config *archivoActual,size_t punteroAInformacion
 	int bloquesAleer = (punteroAInformacion + bytesAOperar)/tamanioBloque;
 	return bloquesAleer;
 
+}
+void pruebaArchivos()
+{
+	// PRUEBAS CON UN ARCHIVO GENERICO
+
+	
+	if(abrirArchivo("archivoPruebas2",vectorDePathsPCBs,cantidadPaths))
+	{
+		log_info(logger,"Abrir archivo retorna OK");
+	}
+	else
+	{
+		log_info(logger,"Abrir archivo retorna EL_ARCHIVO_NO_EXISTE_PAAAAAAA");
+	}
+	//////////////////////////////////////
+	if(crearArchivo("archivoPruebas2", config_get_string_value(config,"PATH_FCB"), &vectorDePathsPCBs, &cantidadPaths))
+	{
+		log_info(logger,"Se creo joya el archivo");
+	}
+	else
+	{
+		log_error(logger,"No se pudo crear el archivo pibe. Algo se rompio zarpado");
+	}
+	//////////////////////////////////////
+	if(abrirArchivo("archivoPruebas2",vectorDePathsPCBs,cantidadPaths))
+	{
+		log_info(logger,"Abrir archivo retorna OK");
+	}
+	else
+	{
+		log_info(logger,"Abrir archivo retorna EL_ARCHIVO_NO_EXISTE_PAAAAAAA");
+	}
+	//////////////////////////////////////
+	if(truncarArchivo("archivoPruebas2", config_get_string_value(config,"PATH_FCB"), vectorDePathsPCBs, cantidadPaths, 1024))
+	{
+		log_info(logger,"En teoria el archivo deberia estar truncado");
+	}
+	else
+	{
+		log_warning(logger,"El archivo no se pudo truncar");
+	}
+
+
+	// Pruebas genericas PARTE 2
+	if(truncarArchivo("archivoPruebas2", config_get_string_value(config,"PATH_FCB"), vectorDePathsPCBs, cantidadPaths, 320))
+	{
+		log_info(logger,"En teoria el archivo deberia estar truncado");
+	}
+	else
+	{
+		log_warning(logger,"El archivo no se pudo truncar");
+	}
+	
+	
+	if(crearArchivo("elQueMireElArchivoEsGay", config_get_string_value(config,"PATH_FCB"), &vectorDePathsPCBs, &cantidadPaths))
+	{
+		log_info(logger,"Se creo joya el archivo");
+	}
+	else
+	{
+		log_error(logger,"No se pudo crear el archivo pibe. Algo se rompio zarpado");
+	}
+
+	if(crearArchivo("toyotaSupra", config_get_string_value(config,"PATH_FCB"), &vectorDePathsPCBs, &cantidadPaths))
+	{
+		log_info(logger,"Se creo joya el archivo");
+	}
+	else
+	{
+		log_error(logger,"No se pudo crear el archivo pibe. Algo se rompio zarpado");
+	}
+
+	if(crearArchivo("tomate", config_get_string_value(config,"PATH_FCB"), &vectorDePathsPCBs, &cantidadPaths))
+	{
+		log_info(logger,"Se creo joya el archivo");
+	}
+	else
+	{
+		log_error(logger,"No se pudo crear el archivo pibe. Algo se rompio zarpado");
+	}
+	
+	
+	if(truncarArchivo("elQueMireElArchivoEsGay", config_get_string_value(config,"PATH_FCB"), vectorDePathsPCBs, cantidadPaths, 100))
+	{
+		log_info(logger,"En teoria el archivo deberia estar truncado");
+	}
+	else
+	{
+		log_warning(logger,"El archivo no se pudo truncar");
+	}
+
+	if(truncarArchivo("toyotaSupra", config_get_string_value(config,"PATH_FCB"), vectorDePathsPCBs, cantidadPaths, 150))
+	{
+		log_info(logger,"En teoria el archivo deberia estar truncado");
+	}
+	else
+	{
+		log_warning(logger,"El archivo no se pudo truncar");
+	}
+
+	if(truncarArchivo("tomate", config_get_string_value(config,"PATH_FCB"), vectorDePathsPCBs, cantidadPaths, 60))
+	{
+		log_info(logger,"En teoria el archivo deberia estar truncado");
+	}
+	else
+	{
+		log_warning(logger,"El archivo no se pudo truncar");
+	}
+
+	// Escribo algo en el archivo para ver que lee
+
+	//Opcion 1
+	char* infoPrueba = malloc((strlen("Hola estoy escrito en un archivo") + 1) * sizeof(char));
+	strcpy(infoPrueba,"Hola estoy escrito en un archivo");
+
+	//Opcion 2
+	//infoPrueba = string_from_format("Hola estoy escrito en un archivo");
+	
+	
+	if(escribirArchivo("archivoPruebas2",123,(strlen("Hola estoy escrito en un archivo") + 1) * sizeof(char),120,infoPrueba))
+	{
+		log_info(logger,"En teoria se deberia haber escrito el archivo");
+	}
+	else
+	{
+		log_warning(logger,"El archivo no se pudo escribir");
+	}
+	
+	char *AlgoALeer = leerArchivo("archivoPruebas2",123,(strlen("Hola estoy escrito en un archivo") + 1) * sizeof(char),0);
+
+	log_info(logger,"Lo leido del archivo es %s", AlgoALeer);
+	
+	char *infoPrueba3 = string_from_format("Hola soy un toyota supra sututu");
+	if(escribirArchivo("toyotaSupra",123,(strlen("Hola soy un toyota supra sututu") + 1) * sizeof(char),120,infoPrueba3))
+	{
+		log_info(logger,"En teoria se deberia haber escrito el archivo");
+	}
+	else
+	{
+		log_warning(logger,"El archivo no se pudo escribir");
+	}
+	char *infoPrueba2 = string_from_format("Hola soy un tomate");
+	if(escribirArchivo("tomate",5,(strlen("Hola soy un tomate") + 1) * sizeof(char),120,infoPrueba2))
+	{
+		log_info(logger,"En teoria se deberia haber escrito el archivo");
+	}
+	else
+	{
+		log_warning(logger,"El archivo no se pudo escribir");
+	}
 }
