@@ -6,7 +6,7 @@ bool id_valido(int id, int tamanio){
 }
 
 bool gestionar_creacion(int tamanio_solicitado, Segmento* segmento, t_paquete *paquete){
-    if(segmento->tam_segmento == 0 && tamanio_solicitado <= (segmento->direccion_limite - segmento->direccion_base)){ // 1 es tamanio_actual del segmento y 2 tamanio_maximo = LIMITE - BASE 
+    if(segmento->tam_segmento == 0 && tamanio_solicitado <= (segmento->direccion_limite - segmento->direccion_base)){ //tamanio_maximo = LIMITE - BASE 
         agregar_a_paquete(paquete,tamanio_solicitado, sizeof(tamanio_solicitado));
         enviar_paquete(paquete,conexion_memoria);
         return true;
@@ -66,7 +66,7 @@ void evaluar_respuesta(int resultado,int tipo_resultado){
             log_error(logger,"Out of memory: No se encóntró espacio para el segmento id=%d en memoria, por lo que se finaliza el proceso en ejecucion", resultado);
             exec_a_exit();
         case 2:
-            enviar_mensaje("Confirmame, si puedo solicitar compactacion",conexion_filesystem,SE_PUEDE_COMPACTAR);
+            // enviar_mensaje("Confirmame, si puedo solicitar compactacion",conexion_filesystem,SE_PUEDE_COMPACTAR);
     }
 }
 
@@ -106,8 +106,8 @@ void actualizar_tablas(t_list* tablas_actualizadas){
     t_queue* qblock_copia = queue_create();  
     t_queue* qexec_copia = queue_create();  
 
-    actualizar_cola(&qready,qready_copia, tablas_actualizadas);
-    actualizar_cola(&qblock,qblock_copia, tablas_actualizadas);
-    actualizar_cola(&qexec,qexec_copia, tablas_actualizadas);
+    actualizar_cola(qready,qready_copia, tablas_actualizadas);
+    actualizar_cola(qblock,qblock_copia, tablas_actualizadas);
+    actualizar_cola(qexec,qexec_copia, tablas_actualizadas);
 
 }

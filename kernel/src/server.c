@@ -104,8 +104,8 @@ void atender_cliente(int* socket_cliente){
 				lista = recibir_paquete(socket_cliente);
 				((pcb*)queue_peek(qexec))->tabla_segmentos = list_get(lista,0); //Actualiza la tabla de segmentos
 				enviar_pcb(conexion_cpu,((pcb*)queue_peek(qexec)),EXEC);
-			case SE_PUEDE_COMPACTAR:
-				enviar_mensaje("Traeme las tablas de segmentos",conexion_memoria,COMPACTACION);
+			// case SE_PUEDE_COMPACTAR:
+			// 	enviar_mensaje("Traeme las tablas de segmentos",conexion_memoria,COMPACTACION);
 			case COMPACTACION:
 				lista = recibir_paquete(*socket_cliente);
 				actualizar_tablas(lista);
