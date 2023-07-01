@@ -65,11 +65,11 @@ void cerrarArchivoKernel(pcb* proceso, char* instruccion)
 	    }
 	}
 	//saca el archivo de la lista de archivos del proceso
-	list_remove_and_destroy_by_condition(proceso->archivos_abiertos,strcmp(archivoActual->nombreDeArchivo, parsed[1]) == 0,free);
+	list_remove_and_destroy_by_condition(proceso->archivos_abiertos,condicionParaBorrar(proceso->archivos_abiertos,parsed[1]),free);
 	if(queue_is_empty(archivoActual->procesosBloqueados))
 	{
 		//saca el archivo de la lista global
-		list_remove_and_destroy_by_condition(archivosAbiertos,strcmp(archivoActual->nombreDeArchivo, parsed[1]) == 0,free);
+		list_remove_and_destroy_by_condition(archivosAbiertos,condicionParaBorrar(proceso->archivos_abiertos,parsed[1]),free);
 	}
 	else
 	{
@@ -102,7 +102,7 @@ void buscarEnArchivo(pcb* proceso, char* instruccion)
 }
 
 
-Archivo estoDevuelveUnArchivo(pcb* proceso, char* instruccion)
+Archivo *estoDevuelveUnArchivo(pcb* proceso, char* instruccion)
 {
 	char** parsed = string_split(instruccion, " "); //Partes de la instruccion actual
 	Archivo* archivoActual = malloc(sizeof(Archivo));
@@ -117,7 +117,17 @@ Archivo estoDevuelveUnArchivo(pcb* proceso, char* instruccion)
 	return archivoActual;
 }
 
-
+bool condicionParaBorrar(t_list* lista, char* nombre)
+{
+	for (int i = 0; i < list_size(lista); i++)
+	{
+	    archivoActual = list_get(lista, i);
+	    if (strcmp(archivoActual->nombreDeArchivo, nombre) == 0)
+	    {
+	        return 1;
+	    }
+	}
+}
 
 
 

@@ -25,7 +25,8 @@ int abrirArchivoKernel(pcb*, char*);
 void cerrarArchivoKernel(pcb*, char*);
 void buscarEnArchivo(pcb*, char*);
 void truncarArchivo(pcb*, char*);
-Archivo estoDevuelveUnArchivo(pcb*, char*);
+Archivo *estoDevuelveUnArchivo(pcb*, char*);
+bool condicionParaBorrar(t_list*, char*);
 
 
 #endif /* FILESYSTEMKERNEL_H_ */
