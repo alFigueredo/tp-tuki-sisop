@@ -99,6 +99,7 @@ void actualizar_cola(t_queue* cola,t_queue* cola_copia, t_list* tablas_actualiza
             
     }
     cola = cola_copia;
+    queue_destroy(cola_copia);
 }
 
 void actualizar_tablas(t_list* tablas_actualizadas){
