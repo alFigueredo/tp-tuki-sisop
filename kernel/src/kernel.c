@@ -6,7 +6,7 @@ int main(int argc, char** argv) {
 	    return EXIT_FAILURE;
 	}
 	conexion_cpu = -1;
-	conexion_memoria = -1;
+	// conexion_memoria = -1;
 	conexion_filesystem = -1;
 
 	logger = iniciar_logger("./kernel.log", "Kernel");
@@ -25,8 +25,8 @@ int main(int argc, char** argv) {
     contadorDeEscrituraOLectura = 0;
 
 
-	char* ip_memoria = config_get_string_value(config, "IP_MEMORIA");
-	char* puerto_memoria = config_get_string_value(config, "PUERTO_MEMORIA");
+	// char* ip_memoria = config_get_string_value(config, "IP_MEMORIA");
+	// char* puerto_memoria = config_get_string_value(config, "PUERTO_MEMORIA");
 	char* ip_cpu = config_get_string_value(config, "IP_CPU");
 	char* puerto_cpu = config_get_string_value(config, "PUERTO_CPU");
 	char* ip_filesystem = config_get_string_value(config, "IP_FILESYSTEM");
@@ -34,8 +34,8 @@ int main(int argc, char** argv) {
 	char* puerto_escucha = config_get_string_value(config, "PUERTO_ESCUCHA");
 
 	
-	conexion_memoria = crear_conexion(ip_memoria, puerto_memoria);
-	enviar_mensaje("Intento de conexión del kernel a la memoria", conexion_memoria, MENSAJE);
+	// conexion_memoria = crear_conexion(ip_memoria, puerto_memoria);
+	// enviar_mensaje("Intento de conexión del kernel a la memoria", conexion_memoria, MENSAJE);
 	
 	conexion_cpu = crear_conexion(ip_cpu, puerto_cpu);
 	enviar_mensaje("Intento de conexión del kernel al cpu", conexion_cpu, MENSAJE);
