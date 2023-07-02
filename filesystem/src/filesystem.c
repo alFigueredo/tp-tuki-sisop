@@ -68,16 +68,13 @@ int main(int argc, char** argv)
 	}
 
 
-
-	munmap(memoriaMapeada,tamanioBitmap);
-	close(fd_bitmap);
-
-
 	
 	char* puerto_escucha = config_get_string_value(config, "PUERTO_ESCUCHA");
 	socket_servidor = iniciar_servidor(puerto_escucha);
 	esperar_cliente(socket_servidor);
 
+	munmap(memoriaMapeada,tamanioBitmap);
+	close(fd_bitmap);
 	liberar_conexion(conexion_memoria);
 
 	terminar_programa(logger, config,fd_bitmap);
