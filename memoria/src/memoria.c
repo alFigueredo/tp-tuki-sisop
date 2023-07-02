@@ -167,7 +167,7 @@ void crear_segmento(unsigned int pid, int tamanio_seg)
 	algoritmo_asignacion algoritmo = cambiar_enum_algoritmo (primera_letra);
 
 
-	if ((hay_espacio_disponible(tamanio_seg) ==1)/*&& (config_get_int_value(config, "CANT_SEGMENTOS") > list_size(tabla_segmentos_total))*/)															//Primero se fija si hay espacio disponible en memoria
+	if (hay_espacio_disponible(tamanio_seg) && hay_segmentos_disponibles(pid))															//Primero se fija si hay espacio disponible en memoria
 	{
 			// mutex
 			switch (algoritmo)
@@ -184,7 +184,7 @@ void crear_segmento(unsigned int pid, int tamanio_seg)
 			}
 			// mutex
 		}
-	else																								//No hay espacio disponible en memoria,
+	else if (!hay_espacio_disponible(tamanio_seg))																								//No hay espacio disponible en memoria,
 	{
 		sumatoria = sumatoria_huecos();																			//suma el espacio de los huecos
 
@@ -200,8 +200,24 @@ void crear_segmento(unsigned int pid, int tamanio_seg)
 			// FALTA DE ESPACIO LIBRE KERNEL !!!
 		}
 	}
+	else if(!hay_segmentos_disponibles(pid))
+	{
+		log_info(logger, "No hay mas memoria");
+		// FALTA DE ESPACIO LIBRE KERNEL !!!
+	}
 }
+int hay_segmentos_disponibles(unsigned int pid)
+{
+	t_list* listaPID = list_create();
+	listaPID = obtener_segmentos_PID(pid);
+	if(list_size(listaPID)<config_get_int_value(config, "CANT_SEGMENTOS")){
+		return 1;
+	}
+	else{
+		return 0;
+	}
 
+}
 //Busca el segmento por su id y lo elimina
 void eliminar_segmento(unsigned int pid, int id)
 {
@@ -313,7 +329,6 @@ int agrupar_huecos(int base, int limite)
     if (hueco_izquierdo != NULL && hueco_derecho != NULL)
     {
         list_remove(huecos, index_izq);
-        printf("2 sf?\n");
         if (index_der > index_izq)
         {
             // Restamos 1 al índice si se eliminó un elemento antes
@@ -348,11 +363,10 @@ int hay_espacio_disponible(int tam_segmento)
 	int espacio;
 	segmento *segmento_actual;
 
-	for (int i = 0; i < list_size(tabla_segmentos_total); i++)
-	{																									// recorre toda la memoria
-		segmento_actual = list_get(tabla_segmentos_total, i); 												// toma un segmento
-		espacio = segmento_actual->direccion_limite;
-	}
+	if (list_size(tabla_segmentos_total) > 0) {
+	        segmento_actual = list_get(tabla_segmentos_total, list_size(tabla_segmentos_total) - 1);
+	        espacio = segmento_actual->direccion_limite;
+	    }
 
 	if(espacio<config_get_int_value(config, "TAM_MEMORIA") ){
 		return 1;
@@ -364,7 +378,7 @@ int hay_espacio_disponible(int tam_segmento)
 void modificar_hueco (int base, int limite)
 {
 
-	segmento* hueco = malloc(sizeof(segmento));
+	segmento* hueco /*= malloc(sizeof(segmento))*/;
 	segmento* hueco_modificado = malloc(sizeof(segmento));
 
 	////printf("base %d \n", base);
@@ -376,16 +390,14 @@ void modificar_hueco (int base, int limite)
 
 		if (hueco->direccion_base == base && hueco->direccion_limite == limite)
 		{
-			//log_info(logger, "grisss");
 			list_remove(huecos, i);
 			break;
 		}
 		else if (hueco->direccion_base == base && hueco->direccion_limite > limite )
 		{
-			//printf("grissssuaidjskak \n");
 			hueco_modificado->direccion_limite = hueco->direccion_limite;
 			hueco_modificado->direccion_base = limite;
-			hueco_modificado->pid = 222222;
+			hueco_modificado->pid = 0;
 			//list_replace(huecos, i, hueco_modificado);
 			list_remove(huecos, i);
 			list_add_in_index(huecos,i, hueco_modificado);
