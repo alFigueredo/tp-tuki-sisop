@@ -58,6 +58,7 @@ extern char *ip_memoria;
 void eliminar_hueco(int , int );
 algoritmo_asignacion cambiar_enum_algoritmo (char* );
 t_list* obtener_segmentos_PID(unsigned int );
+int hay_segmentos_disponibles(unsigned int );
 void crear_segmento(unsigned int , int );
 void eliminar_segmento(unsigned int,int );
 //void iniciar_proceso(unsigned int , int , int );
