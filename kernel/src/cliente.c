@@ -114,7 +114,7 @@ void atender_servidor(int* socket_servidor){
 					// enviar_pcb(conexion_cpu, (pcb*)queue_peek(qexec), EXEC);
 				}
 				// list_destroy_and_destroy_elements(lista, free);
-				log_debug(logger, "DEBUG_F_OPEN");
+				log_trace(logger, "TRACE: F_OPEN");
 				break;
 			case OK:
 				lista = recibir_paquete(*socket_servidor);
@@ -123,7 +123,7 @@ void atender_servidor(int* socket_servidor){
 				enviar_pcb(conexion_cpu, (pcb*)queue_peek(qexec), EXEC);
 				list_destroy_and_destroy_elements(lista, free);
 				free(laCosaQueMando);
-				log_debug(logger, "DEBUG_OK");
+				log_trace(logger, "TRACE: OK");
 				break;
 			case EL_ARCHIVO_NO_EXISTE_PAAAAAAA:
 				lista = recibir_paquete(*socket_servidor);
@@ -134,7 +134,7 @@ void atender_servidor(int* socket_servidor){
 
 				list_destroy_and_destroy_elements(lista, free);
 				free(laCosaQueMando);
-				log_debug(logger, "DEBUG_F_CREATE");
+				log_trace(logger, "TRACE: F_CREATE");
 				break;
 			case F_CLOSE:
 				lista = recibir_paquete(*socket_servidor);
@@ -162,10 +162,10 @@ void atender_servidor(int* socket_servidor){
 				laCosaQueMando->instruccion=malloc(strlen(instruccion)+1);
 				strcpy(laCosaQueMando->instruccion,instruccion);
 				enviar_instruccion(conexion_filesystem,laCosaQueMando,F_TRUNCATE);
-				free(laCosaQueMando);
 				parsed = string_split(instruccion, " ");
 				log_info(logger, "PID: %d - Archivo: %s - Tamaño: %s", laCosaQueMando->pid, parsed[1], parsed[2]);
 				exec_a_block();
+				free(laCosaQueMando);
 				list_destroy_and_destroy_elements(lista, free);
 				break;
 			case YA_SE_TERMINO_LA_TRUNCACION:

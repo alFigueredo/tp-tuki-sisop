@@ -77,7 +77,6 @@ void cerrarArchivoKernel(pcb* proceso, char* instruccion)
 
 		for (int i = 0; i < list_size(archivosAbiertos); i++)
 		{
-			log_debug(logger, "Nombre archivo: %s", ((Archivo*)list_get(archivosAbiertos, i))->nombreDeArchivo);
 	    	archivoActual = (Archivo*)list_get(archivosAbiertos, i);
 	    	if (strcmp(archivoActual->nombreDeArchivo, parsed[1]) == 0)
 	        	list_remove_and_destroy_element(archivosAbiertos, i, free);
