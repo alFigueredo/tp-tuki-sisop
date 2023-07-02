@@ -85,6 +85,17 @@ char* queue_iterator(t_queue* queue) {
 	return list;
 }
 
+pcb* queue_seek(t_queue* queue, unsigned int pid){
+    int size_queue = queue_size(queue);
+	pcb* proceso;
+	for (int i=0; i<size_queue; i++) {
+		if (((pcb*)queue_peek(queue))->pid==pid)
+			proceso = (pcb*)queue_peek(queue);
+		queue_push(queue, queue_pop(queue));
+	}
+	return proceso;
+}
+
 void queue_extract(t_queue* queue, pcb* proceso) {
 	int size_queue = queue_size(queue);
 	for (int i=0; i<size_queue; i++) {

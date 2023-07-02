@@ -103,12 +103,14 @@ void atender_cliente(int* socket_cliente)
 
 				if(abrirArchivo(nombreArchivo,vectorDePathsPCBs,cantidadPaths))
 				{
-					enviar_operacion(*socket_cliente, OK);
+					enviar_instruccion(*socket_cliente,proceso,OK);
 				}
 				else
 				{
-					enviar_operacion(*socket_cliente, EL_ARCHIVO_NO_EXISTE_PAAAAAAA);
+					enviar_instruccion(*socket_cliente,proceso,EL_ARCHIVO_NO_EXISTE_PAAAAAAA);
 				}
+				free(proceso);
+				free(porqueria);
 				break;
 			case F_CREATE:
 				lista = recibir_paquete(*socket_cliente);
@@ -120,14 +122,14 @@ void atender_cliente(int* socket_cliente)
 				nombreArchivo= porqueria[1];
 				if(crearArchivo(nombreArchivo, config_get_string_value(config,"PATH_FCB"), &vectorDePathsPCBs, &cantidadPaths))
 				{
-					enviar_operacion(*socket_cliente, OK);
+					enviar_instruccion(*socket_cliente, proceso ,OK);
 				}
 				else
 				{
-					log_error(logger,
-						"No se pudo crear el archivo pibe. Algo se rompio zarpado");
+					log_error(logger,"No se pudo crear el archivo pibe. Algo se rompio zarpado");
 				}
-
+				free(proceso);
+				free(porqueria);
 				break;
 			case F_TRUNCATE:
 				lista = recibir_paquete(*socket_cliente);
@@ -139,12 +141,14 @@ void atender_cliente(int* socket_cliente)
 				tamanioAtruncar = atoi(porqueria[2]);
 				if(truncarArchivo(nombreArchivo, config_get_string_value(config,"PATH_FCB"), vectorDePathsPCBs, cantidadPaths, tamanioAtruncar))
 				{
-					enviar_operacion(*socket_cliente, YA_SE_TERMINO_LA_TRUNCACION);
+					enviar_instruccion(*socket_cliente, proceso , YA_SE_TERMINO_LA_TRUNCACION);
 				}
 				else
 				{
 					log_error(logger,"No se pudo truncar el archivo. CAGAAAAMOSSSSS");
 				}
+				free(proceso);
+				free(porqueria);
 				break;
 			case F_READ:
 				lista = recibir_paquete(*socket_cliente);
@@ -157,30 +161,67 @@ void atender_cliente(int* socket_cliente)
 				cantidadBytesALeer = atoi(porqueria[3]);
 				direccionFisica = atoi(porqueria[4]);
 				informacionLeidaOEscrita = leerArchivo(nombreArchivo,punteroAArchivo,cantidadBytesALeer,direccionFisica);
+				proceso->dato = informacionLeidaOEscrita;
+				proceso->tamanio_dato = cantidadBytesALeer;
+				
 				// Enviar mensaje a memoria y mandarle la merca
+				
+				enviar_instruccion(conexion_memoria,proceso,F_READ);
+				
 				//recibir el ok en memoria
-				enviar_operacion(*socket_cliente, MEMORIA_DIJO_QUE_PUDO_ESCRIBIR_JOYA);
+				if (recibir_operacion(conexion_memoria) == OK)
+				{
+					lista = recibir_paquete(conexion_memoria);
+					free(proceso);
+					proceso = malloc(sizeof(t_instruction));
+					recibir_instruccion(lista,proceso);
+				
+					//Envio el ok
+				
+					enviar_instruccion(*socket_cliente, proceso , MEMORIA_DIJO_QUE_PUDO_ESCRIBIR_JOYA);
+					free(proceso);
+					free(porqueria);
+					break;
+				}
+				log_error(logger,"CORRE PIBE, SE FUE TODO AL CARAJO MEMORIA NO PUDO ESCRIBIR");
+				free(proceso);
+				free(porqueria);
+				break;
 			case F_WRITE:
 				lista = recibir_paquete(*socket_cliente);
 				proceso = malloc(sizeof(t_instruction));
 				recibir_instruccion(lista,proceso);
-				instruccion = proceso->instruccion;
-				porqueria=string_split(instruccion, " ");
-				nombreArchivo = porqueria[1];
-				punteroAArchivo = atoi(porqueria[2]);
-				cantidadBytesALeer = atoi(porqueria[3]);
-				direccionFisica = atoi(porqueria[4]);
+				
 				//Le pido a memoria que me pase lo que hay en la direccion fisica
-				// Lo recibo
-				if (escribirArchivo(nombreArchivo,punteroAArchivo,cantidadBytesALeer,direccionFisica,informacionLeidaOEscrita))
+				enviar_instruccion(conexion_memoria,proceso,F_WRITE);
+				free(proceso);
+				if(recibir_operacion(conexion_memoria) == ACA_TENES_LA_INFO_GIIIIIIL)
 				{
-					enviar_operacion(*socket_cliente, SE_PUDO_ESCRIBIR_EL_ARCHIVO);
+					lista = recibir_paquete(conexion_memoria);
+					proceso = malloc(sizeof(t_instruction));
+					recibir_instruccion(lista,proceso);
+					instruccion = proceso->instruccion;
+					porqueria=string_split(instruccion, " ");
+					nombreArchivo = porqueria[1];
+					punteroAArchivo = atoi(porqueria[2]);
+					cantidadBytesALeer = atoi(porqueria[3]);
+					direccionFisica = atoi(porqueria[4]);
+					informacionLeidaOEscrita = proceso->dato;
+
+					//Lo escribo en el archivo
+					if (escribirArchivo(nombreArchivo,punteroAArchivo,cantidadBytesALeer,direccionFisica,informacionLeidaOEscrita))
+					{
+						enviar_instruccion(*socket_cliente, proceso , SE_PUDO_ESCRIBIR_EL_ARCHIVO);
+					}
+					else
+					{
+						log_error(logger,"No se pudo escribir el archivo. CAGAMOS MAL PAAAAAAAAAA");
+					}
+					free(proceso);
+					free(porqueria);
+					break;
 				}
-				else
-				{
-					log_error(logger,"No se pudo truncar el archivo. CAGAAAAMOSSSSS");
-				}
-				break;
+					break;
 			case -1:
 				log_warning(logger, "El cliente se desconecto. Terminando conexion");
 				free(socket_cliente);

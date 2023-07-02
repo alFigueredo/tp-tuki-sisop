@@ -32,9 +32,9 @@ typedef struct
 
 typedef struct
 {
-	unsigned int pid; //-1-> segmento 0 , -2-> hueco
-	//int id;
-	int tam_segmento; //BORRAR ???
+	unsigned int pid;
+	int id;
+	int tam_segmento; 
 	int direccion_base;
 	int direccion_limite;
 

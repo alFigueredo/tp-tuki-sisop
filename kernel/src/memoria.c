@@ -1,14 +1,11 @@
 #include "memoria.h"
 
-
-bool id_valido(int id, int tamanio){
-	return id == 0? false : true;
-}
-
 bool gestionar_creacion(int tamanio_solicitado, Segmento* segmento, t_paquete *paquete){
     if(segmento->tam_segmento == 0 && tamanio_solicitado <= (segmento->direccion_limite - segmento->direccion_base)){ //tamanio_maximo = LIMITE - BASE 
-        agregar_a_paquete(paquete,tamanio_solicitado, sizeof(tamanio_solicitado));
+        t_paquete* paquete = crear_paquete(CREATE_PROCESS);
+        agregar_a_paquete(paquete,&tamanio_solicitado, sizeof(tamanio_solicitado));
         enviar_paquete(paquete,conexion_memoria);
+        eliminar_paquete(paquete);
         return true;
     } 
 
@@ -37,8 +34,8 @@ void enviar_segmento(char* instruccion, t_list* tabla_segmentos){
     Segmento* segmento = buscar_segmento(tabla_segmentos,atoi(parsed[1]));
 
 	if(segmento != NULL){
-        t_paquete *paquete = crear_paquete(operacion);
-        agregar_a_paquete(paquete,segmento->id_segmento,sizeof(segmento->id_segmento));
+        t_paquete *paquete = crear_paquete((strcmp(operacion, "CREATE_SEGMENT")==0) ? CREATE_SEGMENT : DELETE_SEGMENT);
+        agregar_a_paquete(paquete,&(segmento->id_segmento),sizeof(segmento->id_segmento));
 
         if(strcmp(operacion, "CREATE_SEGMENT") == 0){
 
@@ -70,47 +67,43 @@ void evaluar_respuesta(int resultado,int tipo_resultado){
     }
 }
 
-bool actualizo_proceso(pcb* proceso,t_list* lista){
+bool actualizo_proceso(pcb* proceso, t_list* lista) {
     t_list_iterator* buscador = list_iterator_create(lista);
 
-    while(list_iterator_has_next(buscador)){
+    while (list_iterator_has_next(buscador)) {
         t_instruction* proceso_actualizado = list_iterator_next(buscador);
 
-        if(proceso_actualizado->pid == proceso->pid){
+        if (proceso_actualizado->pid == proceso->pid) {
             proceso->tabla_segmentos = proceso_actualizado->tabla_segmentos;
+            list_iterator_destroy(buscador);
             return true;
-        }   
+        }
     }
     list_iterator_destroy(buscador);
     return false;
 }
 
-
-void actualizar_cola(t_queue* cola,t_queue* cola_copia, t_list* tablas_actualizadas){
-    while(!queue_is_empty(cola)){
-        if(actualizo_proceso(((pcb*)queue_peek(cola)),tablas_actualizadas)){
-            log_info(logger, "El proceso PID=%d fue actualizado correctamente",((pcb*)queue_peek(cola))->pid);
+void actualizar_cola(t_queue* cola, t_queue* cola_copia, t_list* tablas_actualizadas) {
+    while (!queue_is_empty(cola)) {
+        if (actualizo_proceso((pcb*)queue_peek(cola), tablas_actualizadas)) {
+            log_info(logger, "El proceso PID=%d fue actualizado correctamente", ((pcb*)queue_peek(cola))->pid);
+        } else {
+            log_error(logger, "El proceso PID=%d no fue encontrado en la lista con las tablas actualizadas", ((pcb*)queue_peek(cola))->pid);
         }
-        else{
-            log_error(logger, "El proceso PID=%d no fue encontrado en la lista con las tablas actualizadas",((pcb*)queue_peek(cola))->pid);
-        }
-        queue_push(cola_copia,((pcb*)queue_peek(cola))); 
+        queue_push(cola_copia, ((pcb*)queue_peek(cola)));
         queue_pop(cola);
-            
     }
     cola = cola_copia;
     queue_destroy(cola_copia);
 }
 
-void actualizar_tablas(t_list* tablas_actualizadas){
-    t_queue* qready_copia = queue_create();  
-    t_queue* qblock_copia = queue_create();  
-    t_queue* qexec_copia = queue_create();  
 
-    actualizar_cola(qready,qready_copia, tablas_actualizadas);
-    actualizar_cola(qblock,qblock_copia, tablas_actualizadas);
-    actualizar_cola(qexec,qexec_copia, tablas_actualizadas);
+void actualizar_tablas(t_list* tablas_actualizadas) {
+    t_queue* qready_copia = queue_create();
+    t_queue* qblock_copia = queue_create();
+    t_queue* qexec_copia = queue_create();
 
-    list_destroy(tablas_actualizadas);
-
+    actualizar_cola(qready, qready_copia, tablas_actualizadas);
+    actualizar_cola(qblock, qblock_copia, tablas_actualizadas);
+    actualizar_cola(qexec, qexec_copia, tablas_actualizadas);
 }

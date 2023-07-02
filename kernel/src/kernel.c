@@ -22,15 +22,15 @@ int main(int argc, char** argv) {
     //Crear la lista de archivos abiertos global
 
     //Inicio el contador para luego
-    int contadorDeEscrituraOLectura = 0;
+    contadorDeEscrituraOLectura = 0;
 
 
 	char* ip_memoria = config_get_string_value(config, "IP_MEMORIA");
 	char* puerto_memoria = config_get_string_value(config, "PUERTO_MEMORIA");
 	char* ip_cpu = config_get_string_value(config, "IP_CPU");
 	char* puerto_cpu = config_get_string_value(config, "PUERTO_CPU");
-	// char* ip_filesystem = config_get_string_value(config, "IP_FILESYSTEM");
-	// char* puerto_filesystem = config_get_string_value(config, "PUERTO_FILESYSTEM");
+	char* ip_filesystem = config_get_string_value(config, "IP_FILESYSTEM");
+	char* puerto_filesystem = config_get_string_value(config, "PUERTO_FILESYSTEM");
 	char* puerto_escucha = config_get_string_value(config, "PUERTO_ESCUCHA");
 
 	
@@ -40,11 +40,11 @@ int main(int argc, char** argv) {
 	conexion_cpu = crear_conexion(ip_cpu, puerto_cpu);
 	enviar_mensaje("Intento de conexión del kernel al cpu", conexion_cpu, MENSAJE);
 	esperar_servidor(conexion_cpu);
-	/*
+	
 	conexion_filesystem = crear_conexion(ip_filesystem, puerto_filesystem);
 	enviar_mensaje("Intento de conexión del kernel al filesystem", conexion_filesystem, MENSAJE);
 	esperar_servidor(conexion_filesystem);
-	*/
+	
 
 	int socket_servidor = -1;
 	socket_servidor = iniciar_servidor(puerto_escucha);

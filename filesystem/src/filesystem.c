@@ -5,6 +5,7 @@ t_bitarray *bitmap;
 char **vectorDePathsPCBs;
 int cantidadPaths;
 void* memoriaMapeada;
+int conexion_memoria = -1;
 
 int main(int argc, char** argv)
 {
@@ -13,10 +14,10 @@ int main(int argc, char** argv)
 	{
 		return EXIT_FAILURE;
 	}
-	//int conexion_memoria = -1;
 	logger = iniciar_logger("./filesystem.log", "FileSystem");
 	log_info(logger, "logg iniciado");
 	config = iniciar_config(argv[1]);
+	int socket_servidor = -1;
 	/*
 	char* ip_memoria = config_get_string_value(config, "IP_MEMORIA");
 	char* puerto_memoria = config_get_string_value(config, "PUERTO_MEMORIA");
@@ -24,7 +25,7 @@ int main(int argc, char** argv)
 	conexion_memoria = crear_conexion(ip_memoria, puerto_memoria);
 	enviar_mensaje("Intento de conexión del filesystem a la memoria", conexion_memoria, MENSAJE);
 	*/
-
+	
 	//Una vez realizada la coneccion a memoria levanto el bitmap de bloques y recorro FCBs
 	// Trabajo sobre file System exclyuyendo conexiones
 
@@ -61,24 +62,26 @@ int main(int argc, char** argv)
 	bitmap = bitarray_create_with_mode(memoriaMapeada, tamanioBitmap, LSB_FIRST);
 
 	if (bitmap == NULL)
-		{
-			log_error(logger, "Error al crear el bitmap");
-			exit(EXIT_FAILURE);
-		}
+	{
+		log_error(logger, "Error al crear el bitmap");
+		exit(EXIT_FAILURE);
+	}
+
+
 
 	munmap(memoriaMapeada,tamanioBitmap);
 	close(fd_bitmap);
 
 
-	/*
+	
 	char* puerto_escucha = config_get_string_value(config, "PUERTO_ESCUCHA");
 	socket_servidor = iniciar_servidor(puerto_escucha);
 	esperar_cliente(socket_servidor);
 
 	liberar_conexion(conexion_memoria);
-	*/
-	terminar_programa(logger, config,fd_bitmap);
 
+	terminar_programa(logger, config,fd_bitmap);
+	log_debug(logger, "ACA TERMINA FILESYSTEM. O SALIO TODO JOYA O TODO PARA EL ORTOOOOOOOOO");
 	return EXIT_SUCCESS;
 }
 
@@ -562,7 +565,7 @@ int escribirArchivo(char *nombreArchivo,size_t punteroSeek,size_t bytesAEscribir
 			{
 				moverPunteroAbloqueDelArchivo(bloques,configArchivoActual,bloqueAEscribir + i);
 				fwrite(memoriaAEscribir + escritoAnteriormente,(bytesAEscribir - escritoAnteriormente)-((cantidadBloquesAEscribir - (i+1)) * tamanioBloque),1,bloques);
-				escritoAnteriormente = memoriaAEscribir + (bytesAEscribir - escritoAnteriormente)-((cantidadBloquesAEscribir - (i+1)) * tamanioBloque);	
+				escritoAnteriormente = (size_t)memoriaAEscribir + (bytesAEscribir - escritoAnteriormente)-((cantidadBloquesAEscribir - (i+1)) * tamanioBloque);	
 			}
 			fclose(bloques);
 			return 1;
@@ -593,7 +596,7 @@ int escribirArchivo(char *nombreArchivo,size_t punteroSeek,size_t bytesAEscribir
 			{
 				moverPunteroAbloqueDelArchivo(bloques,configArchivoActual,bloqueAEscribir + i);
 				fwrite(memoriaAEscribir + escritoAnteriormente,(bytesAEscribir - escritoAnteriormente)-((cantidadBloquesAEscribir - (i+1)) * tamanioBloque),1,bloques);
-				escritoAnteriormente = memoriaAEscribir + (bytesAEscribir - escritoAnteriormente)-((cantidadBloquesAEscribir - (i+1)) * tamanioBloque);
+				escritoAnteriormente = (size_t)memoriaAEscribir + (bytesAEscribir - escritoAnteriormente)-((cantidadBloquesAEscribir - (i+1)) * tamanioBloque);
 
 				
 			}
@@ -659,7 +662,7 @@ void *leerArchivo(char *nombreArchivo,size_t punteroSeek,size_t bytesALeer, int 
 			{
 				moverPunteroAbloqueDelArchivo(bloques,configArchivoActual,bloqueAleer + i);
 				fread(infoDelArchivo + leidoAnteriormente,(bytesALeer - leidoAnteriormente)-((cantidadBloquesALeer - (i+1)) * tamanioBloque),1,bloques);
-				leidoAnteriormente = infoDelArchivo + (bytesALeer - leidoAnteriormente)-((cantidadBloquesALeer - (i+1)) * tamanioBloque);
+				leidoAnteriormente = (size_t)infoDelArchivo + (bytesALeer - leidoAnteriormente)-((cantidadBloquesALeer - (i+1)) * tamanioBloque);
 			}
 			fclose(bloques);
 			return infoDelArchivo;
@@ -694,7 +697,7 @@ void *leerArchivo(char *nombreArchivo,size_t punteroSeek,size_t bytesALeer, int 
 			{
 				moverPunteroAbloqueDelArchivo(bloques,configArchivoActual,bloqueAleer + i);
 				fread(infoDelArchivo + leidoAnteriormente,(bytesALeer - leidoAnteriormente)-((cantidadBloquesALeer - (i+1)) * tamanioBloque),1,bloques);
-				leidoAnteriormente = infoDelArchivo + (bytesALeer - leidoAnteriormente)-((cantidadBloquesALeer - (i+1)) * tamanioBloque);
+				leidoAnteriormente = (size_t)infoDelArchivo + (bytesALeer - leidoAnteriormente)-((cantidadBloquesALeer - (i+1)) * tamanioBloque);
 			}
 			fclose(bloques);
 			return infoDelArchivo;
@@ -911,3 +914,53 @@ void pruebaArchivos()
 		log_warning(logger,"El archivo no se pudo escribir");
 	}
 }
+
+/*
+      __                                                      
+     /  l                                                     
+   .'   :               __.....__..._  ____                   
+  /  /   \          _.-"        "-.  ""    "-.                
+ (`-: .---:    .--.'          _....J.         "-.             
+  """y     \,.'    \  __..--""       `+""--.     `.           
+    :     .'/    .-"""-. _.            `.   "-.    `._.._     
+    ;  _.'.'  .-j       `.               \     "-.   "-._`.   
+    :    / .-" :          \  `-.          `-      "-.      \  
+     ;  /.'    ;          :;               ."        \      `,
+     :_:/      ::\        ;:     (        /   .-"   .')      ;
+       ;-"      ; "-.    /  ;           .^. .'    .' /    .-" 
+      /     .-  :    `. '.  : .- / __.-j.'.'   .-"  /.---'    
+     /  /      `,\.  .'   "":'  /-"   .'       \__.'          
+    :  :         ,\""       ; .'    .'      .-""              
+   _J  ;         ; `.      /.'    _/    \.-"                  
+  /  "-:        /"--.b-..-'     .'       ;                    
+ /     /  ""-..'            .--'.-'/  ,  :                    
+:`.   :     / : bug         `-i" ,',_:  _ \                   
+:  \  '._  :__;             .'.-"; ; ; j `.l                  
+ \  \          "-._         `"  :_/ :_/                       
+  `.;\             "-._                                       
+    :_"-._             "-.                                    
+      `.  l "-.     )     `.                                  
+        ""^--""^-. :        \                                 
+                  ";         \                                
+                  :           `._                             
+                  ; /    \ `._   ""---.                       
+                 / /   _      `.--.__.'                       
+                : :   / ;  :".  \                             
+                ; ;  :  :  ;  `. `.                           
+               /  ;  :   ; :    `. `.                         
+              /  /:  ;   :  ;     "-'                         
+             :_.' ;  ;    ; :                                 
+                 /  /     :_l                                 
+                 `-'
+
+    la golfeta
+		|
+		|
+		|
+	   \/                                     
+                    /\\      _____      
+     ,-----,       /  \\____/__|__\_   
+  ,--'---:---`--, /  |  _     |     `|
+ ==(o)-----(o)==J    `(o)-------(o)=    
+``````````````````````````````````````
+*/

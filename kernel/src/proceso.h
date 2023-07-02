@@ -50,6 +50,7 @@ void destruir_semaforos(void);
 sem_t* iniciar_semaforo(int, unsigned int);
 void destruir_semaforo(sem_t*);
 char* queue_iterator(t_queue*);
+pcb* queue_seek(t_queue*, unsigned int);
 void queue_extract(t_queue*, pcb*);
 void generar_proceso(t_list*, int*);
 void new_a_ready(void);

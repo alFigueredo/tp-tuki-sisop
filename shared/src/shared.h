@@ -39,7 +39,12 @@ typedef enum
 	F_SEEK,
 	CREATE_SEGMENT,
 	DELETE_SEGMENT,
+	CREATE_SEGMENT_OK,
+	DELETE_SEGMENT_OK,
+	CREATE_PROCESS,
+	CREATE_PROCESS_OK,
 	COMPACTACION,
+	SE_PUEDE_COMPACTAR,
 	MOV_IN,
 	MOV_OUT,
 	OK,
@@ -48,7 +53,8 @@ typedef enum
 	EXIT_SEG_FAULT,
 	EXIT_OUT_OF_MEMORY,
 	MEMORIA_DIJO_QUE_PUDO_ESCRIBIR_JOYA,
-	SE_PUDO_ESCRIBIR_EL_ARCHIVO
+	SE_PUDO_ESCRIBIR_EL_ARCHIVO,
+	ACA_TENES_LA_INFO_GIIIIIIL
 }op_code;
 
 typedef struct
@@ -93,6 +99,8 @@ typedef struct {
 typedef struct {
 	unsigned int pid;
 	char* instruccion;
+	int tamanio_dato;
+	void* dato;
 	t_list* tabla_segmentos;
 } t_instruction;
 

@@ -74,11 +74,12 @@ void esperar_cliente(int socket_servidor){
 void atender_cliente(int* socket_cliente){
 	t_list *lista;
 	t_instruction* proceso;
-	//char * instruccion;
-//	char** parsed;
-//	char** dir_fisica;
-	//int id_seg;
-	//int desp;
+	void *informacionALeerOEscribir;
+	char * instruccion;
+	char** parsed;
+	char** dir_fisica;
+	int id_seg;
+	int desp;
 	//char* valor_mem;
 //	char* nuevo_valor;
 
@@ -111,7 +112,39 @@ void atender_cliente(int* socket_cliente){
 			break;
 		case DELETE_SEGMENT:
 			break;*/
-
+		case F_READ:
+			lista = recibir_paquete(*socket_cliente);
+			proceso = malloc(sizeof(t_instruction));
+			recibir_instruccion(lista,proceso);
+			informacionALeerOEscribir = proceso->dato;
+			instruccion = proceso->instruccion;
+			parsed = string_split(instruccion," ");
+			dir_fisica = string_get_string_as_array(parsed[1]);
+			id_seg = atoi(dir_fisica[0]);
+			desp = atoi(dir_fisica[1]);
+			
+			escribir_memoria(id_seg,desp,informacionALeerOEscribir,proceso->tamanio_dato);
+			//Avisarle a filesystem que se escribio joya
+			enviar_instruccion(*socket_cliente,proceso,OK);
+			free(proceso);
+			list_destroy_and_destroy_elements(lista, free);
+			break;
+		case F_WRITE:
+			lista = recibir_paquete(*socket_cliente);
+			proceso = malloc(sizeof(t_instruction));
+			recibir_instruccion(lista,proceso);
+			informacionALeerOEscribir = proceso->dato;
+			instruccion = proceso->instruccion;
+			parsed = string_split(instruccion," ");
+			dir_fisica = string_get_string_as_array(parsed[1]);
+			id_seg = atoi(dir_fisica[0]);
+			desp = atoi(dir_fisica[1]);
+			informacionALeerOEscribir = leer_memoria(id_seg,desp,proceso->tamanio_dato);
+			proceso->dato=informacionALeerOEscribir;
+			enviar_instruccion(*socket_cliente,proceso,ACA_TENES_LA_INFO_GIIIIIIL);
+			free(proceso);
+			list_destroy_and_destroy_elements(lista, free);
+			break;
 			//cpu
 		case MOV_IN: //leer cpu
 			lista = recibir_paquete(*socket_cliente);
@@ -128,6 +161,9 @@ void atender_cliente(int* socket_cliente){
 			//valor_mem = leer_memoria(id_seg, desp);
 
 			//log_info(logger, "PID: %u - Accion: LEER - Direccion fisica: (%d - %d) - Tamanio: %d - Origen: CPU", proceso->pid, id_seg, desp);
+			
+			list_destroy_and_destroy_elements(lista, free);
+
 			break;
 		case MOV_OUT: //escribir
 			//parsed [1] -> dir fisica
@@ -149,6 +185,8 @@ void atender_cliente(int* socket_cliente){
 			enviar_operacion(*socket_cliente, OK);
 
 		//	log_info(logger, "PID: %u - Accion: ESCRIBIR - Direccion fisica: (%d - %d) - Tamanio: %d - Origen: CPU", proceso->pid, id_seg, desp);
+
+			list_destroy_and_destroy_elements(lista, free);
 
 			break;
 

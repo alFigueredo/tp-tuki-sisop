@@ -21,7 +21,7 @@ extern t_config* superBloque;
 extern t_bitarray *bitmap;
 extern int cantidadPaths;
 extern void* memoriaMapeada;
-
+extern int conexion_memoria;
 
 void terminar_programa(t_log* logger, t_config* config,int fd_bitmap);
 int recorrerFCBs();

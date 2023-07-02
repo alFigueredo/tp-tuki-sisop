@@ -16,13 +16,12 @@ typedef struct{
 }Segmento;
 
 
-bool gestionar_creacion(int tamanio_solicitado, Segmento* segmento, t_paquete *paquete);
-bool id_valido(int id, int tamanio);
-void enviar_segmento(char* instruccion, t_list* tabla_segmentos);
-void evaluar_respuesta(int resultado,int tipo_resultado);
-bool actualizo_proceso(pcb* proceso,t_list* tablas_actualizadas);
-void actualizar_cola(t_queue* cola,t_queue* cola_copia, t_list* tablas_actualizadas);
-void actualizar_tablas(t_list* tablas_actualizadas);
+bool gestionar_creacion(int, Segmento*, t_paquete*);
+void enviar_segmento(char*, t_list*);
+void evaluar_respuesta(int,int);
+bool actualizo_proceso(pcb* proceso, t_list* lista);
+void actualizar_cola(t_queue*,t_queue*, t_list*);
+void actualizar_tablas(t_list*);
 
 
 

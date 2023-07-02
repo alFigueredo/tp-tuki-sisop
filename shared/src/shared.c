@@ -222,6 +222,8 @@ void enviar_instruccion(int conexion, t_instruction* proceso, op_code codigo) {
 
 	agregar_a_paquete(paquete, &(proceso->pid), sizeof(unsigned int));
 	agregar_a_paquete(paquete, proceso->instruccion, strlen(proceso->instruccion)+1);
+	agregar_a_paquete(paquete, &(proceso->tamanio_dato), sizeof(int));
+	agregar_a_paquete(paquete, proceso->dato, proceso->tamanio_dato);
 
 	enviar_paquete(paquete, conexion);
 	eliminar_paquete(paquete);
@@ -232,7 +234,10 @@ void recibir_instruccion(t_list* lista, t_instruction* proceso) {
 	int i=0;
 
 	memcpy(&(proceso->pid), list_get(lista, i++), sizeof(unsigned int));
-	proceso->instruccion = list_remove(lista, i);
+	proceso->instruccion = (char*)list_remove(lista, i);
+	memcpy(&(proceso->tamanio_dato), list_get(lista, i++), sizeof(int));
+	proceso->dato = list_remove(lista, i);
+
 }
 
 void generar_instruccion(pcb* proceso, t_instruction* instruccion_proceso, char* instruccion) {
