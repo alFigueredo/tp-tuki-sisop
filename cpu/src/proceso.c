@@ -232,7 +232,6 @@ void instruccion_f_seek(char** parsed)
 	// Para probar la función hay que descomentar lo comentado y descomentar el return en el case correspondiente
 
 	log_info(logger, "PID: %d - Ejecutando: %s - %s %s", proceso->pid, parsed[0], parsed[1], parsed[2]);
-	log_warning(logger, "PID: %d - Advertencia: Instruccion sin realizar", proceso->pid);
 	proceso->program_counter++;
 	enviar_pcb(conexion_kernel, proceso, F_SEEK);
 	list_destroy_and_destroy_elements(proceso->instrucciones, free);
@@ -290,7 +289,6 @@ void instruccion_f_truncate(char** parsed)
 	// Para probar la función hay que descomentar lo comentado y descomentar el return en el case correspondiente
 
 	log_info(logger, "PID: %d - Ejecutando: %s - %s %s", proceso->pid, parsed[0], parsed[1], parsed[2]);
-	log_warning(logger, "PID: %d - Advertencia: Instruccion sin realizar", proceso->pid);
 	proceso->program_counter++;
 	enviar_pcb(conexion_kernel, proceso, F_TRUNCATE);
 	list_destroy_and_destroy_elements(proceso->instrucciones, free);
