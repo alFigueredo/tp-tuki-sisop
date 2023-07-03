@@ -30,7 +30,6 @@ int abrirArchivoKernel(pcb* proceso, char* instruccion)
 		list_add(archivosAbiertos, archivoActual);
 		//agregar el archivo a la lista de archivos abiertos del proceso
 		list_add(proceso->archivos_abiertos,archivoActual);
-		enviar_pcb(conexion_cpu, proceso, EXEC);
 		log_info(logger, "PID: %d - Abrir Archivo: %s", proceso->pid, parsed[1]);
 		return 1;
 	}
@@ -67,10 +66,9 @@ void cerrarArchivoKernel(pcb* proceso, char* instruccion)
 
 	for (int i = 0; i < list_size(proceso->archivos_abiertos); i++)
 	{
-		Archivo* archivoActual;
 	    archivoActual = (Archivo*)list_get(proceso->archivos_abiertos, i);
 	    if (strcmp(archivoActual->nombreDeArchivo, parsed[1]) == 0)
-	        list_remove_and_destroy_element(proceso->archivos_abiertos, i, free);
+	        list_remove(proceso->archivos_abiertos, i);
 	}
 	// list_remove_and_destroy_by_condition(proceso->archivos_abiertos,condicionParaBorrar(proceso->archivos_abiertos,parsed[1]),free);
 	if(queue_is_empty(archivoActual->procesosBloqueados))
@@ -79,7 +77,6 @@ void cerrarArchivoKernel(pcb* proceso, char* instruccion)
 
 		for (int i = 0; i < list_size(archivosAbiertos); i++)
 		{
-			Archivo* archivoActual;
 	    	archivoActual = (Archivo*)list_get(archivosAbiertos, i);
 	    	if (strcmp(archivoActual->nombreDeArchivo, parsed[1]) == 0)
 	        	list_remove_and_destroy_element(archivosAbiertos, i, free);
@@ -112,8 +109,8 @@ void buscarEnArchivo(pcb* proceso, char* instruccion)
 	    }
 	}
 	archivoActual->puntero = numero;
-	enviar_pcb(conexion_cpu, proceso, EXEC);
 	log_info(logger, "PID: %d - Actualizar puntero Archivo: %s - Puntero: %d", proceso->pid, parsed[1], numero);
+	enviar_pcb(conexion_cpu, proceso, EXEC);
 }
 
 

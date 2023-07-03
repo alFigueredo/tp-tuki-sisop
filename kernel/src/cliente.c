@@ -105,28 +105,43 @@ void atender_servidor(int* socket_servidor){
 				if(abrirArchivoKernel(((pcb*)queue_peek(qexec)), instruccion))
 				{
 
-				//PUEDO HACER ESTO?????
+					//PUEDO HACER ESTO?????
 					laCosaQueMando = malloc(sizeof(t_instruction));
 					laCosaQueMando->pid=((pcb*)queue_peek(qexec))->pid;
 					laCosaQueMando->instruccion=instruccion;
-					enviar_instruccion(*socket_servidor,laCosaQueMando,F_OPEN);
+					enviar_instruccion(conexion_filesystem,laCosaQueMando,F_OPEN);
 					free(laCosaQueMando);
+					// enviar_pcb(conexion_cpu, (pcb*)queue_peek(qexec), EXEC);
 				}
+				// list_destroy_and_destroy_elements(lista, free);
+				log_trace(logger, "TRACE: F_OPEN");
+				break;
+			case OK:
+				lista = recibir_paquete(*socket_servidor);
+				laCosaQueMando = malloc(sizeof(t_instruction));
+				recibir_instruccion(lista, laCosaQueMando);
+				enviar_pcb(conexion_cpu, (pcb*)queue_peek(qexec), EXEC);
 				list_destroy_and_destroy_elements(lista, free);
+				free(laCosaQueMando);
+				log_trace(logger, "TRACE: OK");
 				break;
 			case EL_ARCHIVO_NO_EXISTE_PAAAAAAA:
 				lista = recibir_paquete(*socket_servidor);
+				laCosaQueMando = malloc(sizeof(t_instruction));
 				recibir_instruccion(lista, laCosaQueMando);
 				//PUEDO HACER ESTO????? X2
 				enviar_instruccion(*socket_servidor,laCosaQueMando,F_CREATE);
 
 				list_destroy_and_destroy_elements(lista, free);
+				free(laCosaQueMando);
+				log_trace(logger, "TRACE: F_CREATE");
 				break;
 			case F_CLOSE:
 				lista = recibir_paquete(*socket_servidor);
 				recibir_pcb(lista, queue_peek(qexec));
 				instruccion = list_get(((pcb*)queue_peek(qexec))->instrucciones, ((pcb*)queue_peek(qexec))->program_counter-1);
 				cerrarArchivoKernel(((pcb*)queue_peek(qexec)), instruccion);
+				enviar_pcb(conexion_cpu, (pcb*)queue_peek(qexec), EXEC);
 				list_destroy_and_destroy_elements(lista, free);
 				break;
 			case F_SEEK:
@@ -146,18 +161,21 @@ void atender_servidor(int* socket_servidor){
 				laCosaQueMando->pid=((pcb*)queue_peek(qexec))->pid;
 				laCosaQueMando->instruccion=malloc(strlen(instruccion)+1);
 				strcpy(laCosaQueMando->instruccion,instruccion);
-				enviar_instruccion(*socket_servidor,laCosaQueMando,F_TRUNCATE);
-				free(laCosaQueMando);
+				enviar_instruccion(conexion_filesystem,laCosaQueMando,F_TRUNCATE);
 				parsed = string_split(instruccion, " ");
 				log_info(logger, "PID: %d - Archivo: %s - Tamaño: %s", laCosaQueMando->pid, parsed[1], parsed[2]);
 				exec_a_block();
+				free(laCosaQueMando);
 				list_destroy_and_destroy_elements(lista, free);
 				break;
 			case YA_SE_TERMINO_LA_TRUNCACION:
+				log_trace(logger, "TRACE: YA_SE_TERMINO_LA_TRUNCACION");
 				lista = recibir_paquete(*socket_servidor);
+				laCosaQueMando = malloc(sizeof(t_instruction));
 				recibir_instruccion(lista, laCosaQueMando);
 				block_a_ready(queue_seek(qblock, laCosaQueMando->pid));
 				list_destroy_and_destroy_elements(lista, free);
+				free(laCosaQueMando);
 				break;
 			case F_READ:
 				lista = recibir_paquete(*socket_servidor);
@@ -263,7 +281,7 @@ void atender_servidor(int* socket_servidor){
 				lista = recibir_paquete(*socket_servidor);
 				recibir_pcb(lista, (pcb*)queue_peek(qexec));
 				exec_a_exit();
-				enviar_pcb(conexion_memoria,(pcb*)queue_peek(qexec),EXIT);
+				// enviar_pcb(conexion_memoria,(pcb*)queue_peek(qexec),EXIT);
 				list_destroy_and_destroy_elements(lista, free);
 				break;
 			case CREATE_PROCESS_OK:

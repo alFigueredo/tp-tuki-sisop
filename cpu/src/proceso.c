@@ -74,16 +74,16 @@ void interpretar_instrucciones(void) {
 				return;
 			case I_F_OPEN:
 				instruccion_f_open(parsed);
-				// return;
-				break;
+				return;
+				// break;
 			case I_F_CLOSE:
 				instruccion_f_close(parsed);
-				// return;
-				break;
+				return;
+				// break;
 			case I_F_SEEK:
 				instruccion_f_seek(parsed);
-				// return;
-				break;
+				return;
+				// break;
 			case I_F_READ:
 				instruccion_f_read(parsed);
 				// return;
@@ -94,8 +94,8 @@ void interpretar_instrucciones(void) {
 				break;
 			case I_F_TRUNCATE:
 				instruccion_f_truncate(parsed);
-				// return;
-				break;
+				return;
+				// break;
 			case I_WAIT:
 				instruccion_wait(parsed);
 				destruir_diccionarios();
@@ -209,26 +209,22 @@ void instruccion_i_o(char** parsed)
 
 void instruccion_f_open(char** parsed)
 {
-	// Para probar la función hay que descomentar lo comentado y descomentar el return en el case correspondiente
 
 	log_info(logger, "PID: %d - Ejecutando: %s - %s", proceso->pid, parsed[0], parsed[1]);
-	log_warning(logger, "PID: %d - Advertencia: Instruccion sin realizar", proceso->pid);
 	proceso->program_counter++;
-	// enviar_pcb(conexion_kernel, proceso, F_OPEN);
-	// list_destroy_and_destroy_elements(proceso->instrucciones, free);
-	// free(proceso);
+	enviar_pcb(conexion_kernel, proceso, F_OPEN);
+	list_destroy_and_destroy_elements(proceso->instrucciones, free);
+	free(proceso);
 }
 
 void instruccion_f_close(char** parsed)
 {
-	// Para probar la función hay que descomentar lo comentado y descomentar el return en el case correspondiente
 
 	log_info(logger, "PID: %d - Ejecutando: %s - %s", proceso->pid, parsed[0], parsed[1]);
-	log_warning(logger, "PID: %d - Advertencia: Instruccion sin realizar", proceso->pid);
 	proceso->program_counter++;
-	// enviar_pcb(conexion_kernel, proceso, F_CLOSE);
-	// list_destroy_and_destroy_elements(proceso->instrucciones, free);
-	// free(proceso);
+	enviar_pcb(conexion_kernel, proceso, F_CLOSE);
+	list_destroy_and_destroy_elements(proceso->instrucciones, free);
+	free(proceso);
 }
 
 void instruccion_f_seek(char** parsed)
@@ -238,9 +234,9 @@ void instruccion_f_seek(char** parsed)
 	log_info(logger, "PID: %d - Ejecutando: %s - %s %s", proceso->pid, parsed[0], parsed[1], parsed[2]);
 	log_warning(logger, "PID: %d - Advertencia: Instruccion sin realizar", proceso->pid);
 	proceso->program_counter++;
-	// enviar_pcb(conexion_kernel, proceso, F_SEEK);
-	// list_destroy_and_destroy_elements(proceso->instrucciones, free);
-	// free(proceso);
+	enviar_pcb(conexion_kernel, proceso, F_SEEK);
+	list_destroy_and_destroy_elements(proceso->instrucciones, free);
+	free(proceso);
 }
 
 void instruccion_f_read(char** parsed)
@@ -296,9 +292,9 @@ void instruccion_f_truncate(char** parsed)
 	log_info(logger, "PID: %d - Ejecutando: %s - %s %s", proceso->pid, parsed[0], parsed[1], parsed[2]);
 	log_warning(logger, "PID: %d - Advertencia: Instruccion sin realizar", proceso->pid);
 	proceso->program_counter++;
-	// enviar_pcb(conexion_kernel, proceso, F_TRUNCATE);
-	// list_destroy_and_destroy_elements(proceso->instrucciones, free);
-	// free(proceso);
+	enviar_pcb(conexion_kernel, proceso, F_TRUNCATE);
+	list_destroy_and_destroy_elements(proceso->instrucciones, free);
+	free(proceso);
 }
 
 void instruccion_wait(char** parsed)

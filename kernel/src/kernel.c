@@ -36,6 +36,7 @@ int main(int argc, char** argv) {
 	
 	// conexion_memoria = crear_conexion(ip_memoria, puerto_memoria);
 	// enviar_mensaje("Intento de conexión del kernel a la memoria", conexion_memoria, MENSAJE);
+	// esperar_servidor(conexion_memoria);
 	
 	conexion_cpu = crear_conexion(ip_cpu, puerto_cpu);
 	enviar_mensaje("Intento de conexión del kernel al cpu", conexion_cpu, MENSAJE);

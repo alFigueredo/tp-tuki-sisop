@@ -114,6 +114,7 @@ void generar_proceso(t_list* lista, int* socket_cliente) {
 	proceso->instrucciones=list_duplicate(lista);
 	proceso->program_counter=0;
 	proceso->estimado_proxRafaga=config_get_int_value(config,"ESTIMACION_INICIAL");
+	proceso->archivos_abiertos=list_create();
 	sem_wait(sem_new);
 	queue_push(qnew, proceso);
 	sem_post(sem_new);
@@ -228,6 +229,7 @@ void exec_a_exit() {
 	sem_post(sem_cpu);
 	list_destroy_and_destroy_elements(proceso->instrucciones, free);
 	free(proceso->tiempo_llegada_ready);
+	list_destroy(proceso->archivos_abiertos);
 	free(queue_pop(qexit));
 }
 

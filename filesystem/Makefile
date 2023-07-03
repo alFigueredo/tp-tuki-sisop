@@ -11,7 +11,7 @@ CONFIG_FILE := ./filesystem.config
 
 ### Reglas ###
 
-build: makefolder makeshared $(MODULE_NAME)
+build: makefolder makeshared build_structs $(MODULE_NAME)
 
 debug: CFLAGS := $(CFLAGS) -g
 debug: makeshared_debug build
@@ -45,11 +45,25 @@ makeshared:
 makeshared_debug:
 	make debug -C ../shared
 
+makefcb:
+	if [ ! -d ./fcb ]; then mkdir fcb; fi
+
+./%.dat:
+	touch $@
+
+build_structs: makefcb bloques.dat bitmap.dat
+
+reset_structs: clean_structs build_structs
+
 # Clean
 
-clean:
+clean: clean_structs
 	rm -rf debug
 	rm -rf *.out
 	rm -rf *.log
 	make clean -C ../shared
-#	rm -f $(MODULE_NAME) $(OBJECT_FILES)
+
+clean_structs:
+	rm -rf fcb
+	rm -f bitmap.dat
+	rm -f bloques.dat
