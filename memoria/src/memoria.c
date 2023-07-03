@@ -736,6 +736,39 @@ void escribir_memoria(int id_buscado, int desp, void* nuevo_valor, size_t tamani
 	}*/
 }
 
+void compactar_segmentos() {
+    t_list* segmentos_compactados = list_create();
+    segmento* segm = malloc(sizeof(segmento));
+    segmento* seg;
+    int direccion_base_actual = 0;
+    int tam_segmento = 0;
+    int antigua_direccion_base = 0;
+
+    for (int i = 0; i < list_size(tabla_segmentos_total); i++) {
+        segmento* seg = list_get(tabla_segmentos_total, i);
+        memcpy(segm, seg, sizeof(segmento));
+        antigua_direccion_base = seg->direccion_base;
+
+        //Cambios segmento
+        tam_segmento = seg->direccion_limite - seg->direccion_base + 1;
+        seg->direccion_base = direccion_base_actual;
+        seg->direccion_limite = seg->direccion_base + tam_segmento - 1;
+        list_add(segmentos_compactados, segm);
+
+        //Cambios en memoria usuario
+        int desplazamiento = direccion_base_actual - antigua_direccion_base;
+        if(desplazamiento != 0){
+        	memmove(memoria_usuario + direccion_base_actual, memoria_usuario + antigua_direccion_base, tam_segmento);
+        }
+
+        direccion_base_actual = seg->direccion_limite + 1;
+    }
+
+    list_destroy_and_destroy_elements(tabla_segmentos_total, free);
+
+    // Actualizar la tabla de segmentos total con los segmentos compactados
+    tabla_segmentos_total = segmentos_compactados;
+}
 
 
 void terminar_memoria(t_log *logger, t_config *config, int socket)

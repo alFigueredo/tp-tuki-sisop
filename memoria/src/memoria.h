@@ -79,5 +79,6 @@ void terminar_memoria(t_log *logger, t_config *config, int socket);
 int comparar_segmentos(void* , void* );
 void obtener_huecos_libres ();
 int sumatoria_huecos();
+void compactar_segmentos();
 
 #endif /* MEMORIA_H_ */
