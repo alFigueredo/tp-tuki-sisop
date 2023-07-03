@@ -736,7 +736,7 @@ void escribir_memoria(int id_buscado, int desp, void* nuevo_valor, size_t tamani
 	}*/
 }
 
-void compactar_segmentos() {
+t_list* compactar_segmentos() {
     t_list* segmentos_compactados = list_create();
     segmento* segm = malloc(sizeof(segmento));
     segmento* seg;
@@ -754,6 +754,7 @@ void compactar_segmentos() {
         seg->direccion_base = direccion_base_actual;
         seg->direccion_limite = seg->direccion_base + tam_segmento - 1;
         list_add(segmentos_compactados, segm);
+        list_remove_and_destroy_element(tabla_segmentos_total, i,free);
 
         //Cambios en memoria usuario
         int desplazamiento = direccion_base_actual - antigua_direccion_base;
@@ -764,7 +765,7 @@ void compactar_segmentos() {
         direccion_base_actual = seg->direccion_limite + 1;
     }
 
-    list_destroy_and_destroy_elements(tabla_segmentos_total, free);
+   // list_destroy_and_destroy_elements(tabla_segmentos_total, free);
 
     // Actualizar la tabla de segmentos total con los segmentos compactados
     tabla_segmentos_total = segmentos_compactados;
