@@ -1,5 +1,8 @@
 #include"server.h"
-#include "memoria.h"
+
+int conexion_kernel = -1;
+int conexion_cpu = -1;
+int conexion_filesystem = -1;
 
 int iniciar_servidor(char* puerto)
 {
@@ -87,6 +90,15 @@ void atender_cliente(int* socket_cliente){
 		int cod_op = recibir_operacion(*socket_cliente);
 
 		switch (cod_op) {
+		case KERNEL:
+			conexion_kernel = *socket_cliente;
+			break;
+		case CPU:
+			conexion_cpu = *socket_cliente;
+			break;
+		case FILESYSTEM:
+			conexion_filesystem = *socket_cliente;
+			break;
 		case MENSAJE:
 			recibir_mensaje(*socket_cliente);
 			break;
