@@ -686,7 +686,7 @@ int worst_fit(unsigned int pid_proceso, int tam, int id_seg)
 }
 
 
-void* leer_memoria(int id_buscado, int desp, size_t tamanio)
+void* leer_memoria(int pid_buscado, int id_buscado, int desp, size_t tamanio)
 {
 	segmento *seg= list_get(tabla_segmentos_total, id_buscado);
 	void* valorLeido = NULL;
@@ -704,12 +704,14 @@ void* leer_memoria(int id_buscado, int desp, size_t tamanio)
 	{
 		seg = list_get(tabla_segmentos_total, i);
 
-		if (seg->id == id_buscado){
-			direccion = seg->direccion_base + desp;
-			valorLeido = malloc(tamanio);
-			delay (config_get_int_value(config, "RETARDO_COMPACTACION"));
-			memcpy(valorLeido, memoria_usuario + direccion, tamanio);
-			return valorLeido;
+		if (seg->pid == pid_buscado){
+			if (seg->id == id_buscado){
+				direccion = seg->direccion_base + desp;
+				valorLeido = malloc(tamanio);
+				delay (config_get_int_value(config, "RETARDO_COMPACTACION"));
+				memcpy(valorLeido, memoria_usuario + direccion, tamanio);
+				return valorLeido;
+			}
 		}
 	}
 	//free(seg);
@@ -720,7 +722,7 @@ void* leer_memoria(int id_buscado, int desp, size_t tamanio)
 	return valorLeido;
 }
 
-void escribir_memoria(int id_buscado, int desp, void* nuevo_valor, size_t tamanio)
+void escribir_memoria(int pid_buscado, int id_buscado, int desp, void* nuevo_valor, size_t tamanio)
 {
 	int direccion;
 
@@ -737,11 +739,12 @@ void escribir_memoria(int id_buscado, int desp, void* nuevo_valor, size_t tamani
 		{
 			seg = list_get(tabla_segmentos_total, i);
 
-			if (seg->id == id_buscado) {
-			
-			direccion = seg->direccion_base + desp;
-			delay (config_get_int_value(config, "RETARDO_COMPACTACION")); 
-				memcpy(memoria_usuario + direccion, nuevo_valor, tamanio);
+			if(seg->pid == pid_buscado){
+				if (seg->id == id_buscado) {
+					direccion = seg->direccion_base + desp;
+					delay (config_get_int_value(config, "RETARDO_COMPACTACION"));
+					memcpy(memoria_usuario + direccion, nuevo_valor, tamanio);
+				}
 			}
 //		free(seg);
 //				free(seg);		//	}
