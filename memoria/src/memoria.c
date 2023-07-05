@@ -29,25 +29,10 @@ int main(int argc, char **argv)
 	iniciar_memoria();
 
 	// SERIVIDOR
-	//int socket_servidor = iniciar_servidor(config_mem.puerto_escucha);
-	//esperar_cliente(socket_servidor);
-
-	//pruebas
-	  /*  char* nuevo_valor = "Hola";
-
-	    escribir_memoria(0, 1, nuevo_valor, strlen(nuevo_valor) + 1);
-
-	    printf("Memoria escrita correctamente\n");
+	int socket_servidor = iniciar_servidor(config_get_string_value(config, "PUERTO_ESCUCHA"));
+	esperar_cliente(socket_servidor);
 
 
-	    void* valorLeido = leer_memoria(0, 1, strlen(nuevo_valor) + 1);
-
-	    if (valorLeido != NULL) {
-	        printf("Valor leído: %s\n", (char*)valorLeido);
-	        free(valorLeido);
-	    } else {
-	        printf("No se encontró el segmento\n");
-	    }*/
 
 	list_destroy_and_destroy_elements(tabla_segmentos_total, free);
 	list_destroy_and_destroy_elements(huecos, free);
@@ -192,7 +177,7 @@ int crear_segmento(unsigned int pid, int tamanio_seg, int id_seg)
 	int dir_base;
 
 
-	if (hay_espacio_disponible(tamanio_seg) && hay_segmentos_disponibles(pid))															//Primero se fija si hay espacio disponible en memoria
+	if (hay_espacio_disponible(tamanio_seg) /*&& hay_segmentos_disponibles(pid)*/)															//Primero se fija si hay espacio disponible en memoria
 	{
 			// mutex
 			switch (algoritmo)
@@ -216,19 +201,22 @@ int crear_segmento(unsigned int pid, int tamanio_seg, int id_seg)
 		{
 			log_info(logger, "Solicitud de Compactacion");
 			// INFORMAR KERNEL COMPACTAR !!!
+			return -1;
 		}
 
 		else																							//porque no hay mas espacio (si se compactan los segmentos igual no hay espacio).
 		{
 			log_info(logger, "No hay mas memoria");
 			// FALTA DE ESPACIO LIBRE KERNEL !!!
+			return -2;
 		}
 	}
-	else if(!hay_segmentos_disponibles(pid))
+/*	else if(!hay_segmentos_disponibles(pid))
 	{
 		log_info(logger, "No hay mas memoria");
 		// FALTA DE ESPACIO LIBRE KERNEL !!!
-	}
+		return -3;
+	}*/
 
 	return dir_base;
 }
@@ -686,11 +674,14 @@ int worst_fit(unsigned int pid_proceso, int tam, int id_seg)
 }
 
 
-void* leer_memoria(int pid_buscado, int id_buscado, int desp, size_t tamanio)
+void* leer_memoria(int direccion, size_t tamanio)
 {
-	segmento *seg= list_get(tabla_segmentos_total, id_buscado);
 	void* valorLeido = NULL;
-	int direccion;
+	delay (config_get_int_value(config, "RETARDO_COMPACTACION"));
+	memcpy(valorLeido, memoria_usuario + direccion, tamanio);
+	return valorLeido;
+	//segmento *seg= list_get(tabla_segmentos_total, id_buscado);
+	//void* valorLeido = NULL;
 	/*if (seg != NULL) {
 		log_info(logger,"pid del segmento %u", seg->pid);
 		direccion = seg->direccion_base + desp;
@@ -699,7 +690,7 @@ void* leer_memoria(int pid_buscado, int id_buscado, int desp, size_t tamanio)
 		delay (config_get_int_value(config, "RETARDO_COMPACTACION"));
 		memcpy(valorLeido, memoria_usuario + direccion, tamanio);*/
 
-	
+	/*
 	for (int i = 0; i < list_size(tabla_segmentos_total); i++)
 	{
 		seg = list_get(tabla_segmentos_total, i);
@@ -713,7 +704,7 @@ void* leer_memoria(int pid_buscado, int id_buscado, int desp, size_t tamanio)
 				return valorLeido;
 			}
 		}
-	}
+	}*/
 	//free(seg);
 	//}
 	/*else {
@@ -722,11 +713,13 @@ void* leer_memoria(int pid_buscado, int id_buscado, int desp, size_t tamanio)
 	return valorLeido;
 }
 
-void escribir_memoria(int pid_buscado, int id_buscado, int desp, void* nuevo_valor, size_t tamanio)
+void escribir_memoria(int direccion, void* nuevo_valor, size_t tamanio)
 {
-	int direccion;
 
-	segmento* seg = list_get(tabla_segmentos_total, id_buscado);
+	//segmento* seg = list_get(tabla_segmentos_total, id_buscado);
+
+	delay (config_get_int_value(config, "RETARDO_COMPACTACION"));
+	memcpy(memoria_usuario + direccion, nuevo_valor, tamanio);
 
 	/*if (seg != NULL) {
 		log_info(logger,"pid del segmento buscado: %u", seg->pid);
@@ -735,7 +728,7 @@ void escribir_memoria(int pid_buscado, int id_buscado, int desp, void* nuevo_val
 		memcpy(memoria_usuario + direccion, nuevo_valor, tamanio);*/
 
 
-	for (int i = 0; i < list_size(tabla_segmentos_total); i++)
+/*	for (int i = 0; i < list_size(tabla_segmentos_total); i++)
 		{
 			seg = list_get(tabla_segmentos_total, i);
 
