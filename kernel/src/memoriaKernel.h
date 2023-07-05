@@ -1,5 +1,5 @@
-#ifndef MEMORIA_H_
-#define MEMORIA_H_
+#ifndef MEMORIA_KERNEL_H_
+#define MEMORIA_KERNEL_H_
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -16,7 +16,6 @@ typedef struct{
 }Segmento;
 
 
-bool gestionar_creacion(int, Segmento*, t_paquete*);
 void enviar_segmento(char*, t_list*);
 void evaluar_respuesta(int,int);
 bool actualizo_proceso(pcb* proceso, t_list* lista);
@@ -26,5 +25,5 @@ void actualizar_tablas(t_list*);
 
 
 
-#endif /* MEMORIA_H_ */
+#endif /* MEMORIA_KERNEL_H_ */
 
