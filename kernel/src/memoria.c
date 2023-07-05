@@ -2,7 +2,7 @@
 
 bool gestionar_creacion(int tamanio_solicitado, Segmento* segmento, t_paquete *paquete){
     if(segmento->tam_segmento == 0 && tamanio_solicitado <= (segmento->direccion_limite - segmento->direccion_base)){ //tamanio_maximo = LIMITE - BASE 
-        t_paquete* paquete = crear_paquete(CREATE_PROCESS);
+        t_paquete* paquete = crear_paquete(CREATE_SEGMENT);
         agregar_a_paquete(paquete,&tamanio_solicitado, sizeof(tamanio_solicitado));
         enviar_paquete(paquete,conexion_memoria);
         eliminar_paquete(paquete);

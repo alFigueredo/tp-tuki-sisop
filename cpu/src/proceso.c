@@ -361,10 +361,10 @@ void error_exit(op_code codigo) {
 
 char* traducir_dir_logica(char* direccion_logica) {
 	int tam_max_segmento = config_get_int_value(config, "TAM_MAX_SEGMENTO");
-	// int tam_max_segmento = 8;
 	int num_segmento = floor((double)atoi(direccion_logica)/tam_max_segmento);
 	int desplazamiento_segmento = atoi(direccion_logica)%tam_max_segmento;
+	// int segmento = obtener_segmento(num_segmento);
 	if (desplazamiento_segmento>tam_max_segmento)
 		return "SEG_FAULT";
-	return string_from_format("[%d,%d]", num_segmento, desplazamiento_segmento);
+	return string_from_format("%d", num_segmento);
 }

@@ -47,6 +47,7 @@ void iniciar_semaforos(void) {
 	sem_exit = iniciar_semaforo(0, 1);
 	sem_new_ready = iniciar_semaforo(0, 0);
 	sem_exec_exit = iniciar_semaforo(0, 0);
+	sem_escrituraLectura = iniciar_semaforo(0, 1);
 }
 
 void destruir_semaforos(void) {
@@ -122,13 +123,19 @@ void generar_proceso(t_list* lista, int* socket_cliente) {
 	log_info(logger, "Se crea el proceso %d en NEW", proceso->pid);
 }
 
-void new_a_ready(void) {
+void gestionar_multiprogramación(void) {
 	sem_wait(sem_largo_plazo);
 	// Si el ingreso del proceso coincide con la salida de otro
 	int sem_new_ready_value;
 	sem_getvalue(sem_new_ready, &sem_new_ready_value);
 	if (sem_new_ready_value==1)
 		sem_wait(sem_new_ready);
+	t_instruction* loQueSeManda = malloc(sizeof(t_instruction));
+	generar_instruccion(queue_peek(qnew), loQueSeManda, "");
+	enviar_instruccion(conexion_memoria, loQueSeManda, CREATE_PROCESS);
+}
+
+void new_a_ready(void) {
 	sem_wait(sem_new);
 	pcb* proceso = queue_pop(qnew);
 	sem_post(sem_new);
@@ -140,6 +147,8 @@ void new_a_ready(void) {
 	sem_wait(sem_ready);
 	log_info(logger, "Cola Ready %s: [%s]", config_get_string_value(config,"ALGORITMO_PLANIFICACION"), queue_iterator(qready));
 	sem_post(sem_ready);
+	int sem_new_ready_value;
+	sem_getvalue(sem_new_ready, &sem_new_ready_value);
 	if (sem_new_ready_value==1)
 		sem_post(sem_exec_exit);
 	ready_a_exec();
@@ -205,15 +214,20 @@ void block_a_ready(pcb* proceso) {
 	ready_a_exec();
 }
 
-void exec_a_exit() {
+void exec_a_exit(void) {
 	pcb* proceso = queue_pop(qexec);
 	queue_push(qexit, proceso);
 	log_info(logger, "PID: %d - Estado Anterior: EXEC - Estado Actual: EXIT", proceso->pid);
 	calcular_estimacion(proceso, temporal_gettime(tiempo_en_cpu));
 	temporal_destroy(tiempo_en_cpu);
-
+	t_instruction* loQueSeManda = malloc(sizeof(t_instruction));
+	generar_instruccion(queue_peek(qexit), loQueSeManda, "");
+	enviar_instruccion(conexion_memoria, loQueSeManda, DELETE_PROCESS);
 	// log_trace(logger, "Registro AX: %s", string_substring_until(proceso->registros.AX, 4));
+}
 
+void finalizar_proceso(void) {
+	pcb* proceso = queue_pop(qexit);
 	enviar_operacion(*(int*)dictionary_remove(conexiones, string_itoa(proceso->pid)), EXIT);
 	log_info(logger, "Finaliza el proceso %d - Motivo: SUCCESS", proceso->pid);
 	// Si hay procesos en NEW esperando
