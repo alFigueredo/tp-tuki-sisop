@@ -21,9 +21,10 @@ int main(int argc, char** argv)
 	/*
 	char* ip_memoria = config_get_string_value(config, "IP_MEMORIA");
 	char* puerto_memoria = config_get_string_value(config, "PUERTO_MEMORIA");
-	int socket_servidor = -1;
+	// int socket_servidor = -1;
 	conexion_memoria = crear_conexion(ip_memoria, puerto_memoria);
 	enviar_mensaje("Intento de conexión del filesystem a la memoria", conexion_memoria, MENSAJE);
+	enviar_operacion(conexion_memoria, FILESYSTEM);
 	*/
 	
 	//Una vez realizada la coneccion a memoria levanto el bitmap de bloques y recorro FCBs

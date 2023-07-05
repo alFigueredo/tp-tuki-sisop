@@ -13,6 +13,11 @@
 #include <assert.h>
 #include <pthread.h>
 #include <shared.h>
+#include "memoria.h"
+
+extern int conexion_kernel;
+extern int conexion_cpu;
+extern int conexion_filesystem;
 
 int iniciar_servidor(char*);
 void recv_handshake(int);

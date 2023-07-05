@@ -43,6 +43,7 @@ void esperar_servidor(int conexion){
 	pthread_t thread;
 	int *socket_servidor = malloc(sizeof(int));
 	*socket_servidor = conexion;
+	enviar_operacion(conexion, CPU);
 	pthread_create(&thread,
 	               NULL,
 	               (void*) atender_servidor,

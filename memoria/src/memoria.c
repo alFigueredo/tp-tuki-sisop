@@ -750,7 +750,7 @@ void escribir_memoria(int direccion, void* nuevo_valor, size_t tamanio)
 t_list* compactar_segmentos() {
     t_list* segmentos_compactados = list_create();
     segmento* segm = malloc(sizeof(segmento));
-    segmento* seg;
+    // segmento* seg;
     int direccion_base_actual = 0;
     int tam_segmento = 0;
     int antigua_direccion_base = 0;
