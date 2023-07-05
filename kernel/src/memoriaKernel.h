@@ -16,9 +16,9 @@ typedef struct{
 }Segmento;
 
 
-void enviar_segmento(char*, t_list*);
+void enviar_segmento(int, char*, t_list*);
 void evaluar_respuesta(int,int);
-bool actualizo_proceso(pcb* proceso, t_list* lista);
+bool actualizo_proceso(pcb*, t_list*);
 void actualizar_cola(t_queue*,t_queue*, t_list*);
 void actualizar_tablas(t_list*);
 
