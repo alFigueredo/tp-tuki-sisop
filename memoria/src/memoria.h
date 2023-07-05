@@ -59,7 +59,7 @@ void eliminar_hueco(int , int );
 algoritmo_asignacion cambiar_enum_algoritmo (char* );
 t_list* obtener_segmentos_PID(unsigned int );
 int hay_segmentos_disponibles(unsigned int );
-void crear_segmento(unsigned int , int );
+int crear_segmento(unsigned int , int, int);
 void eliminar_segmento(unsigned int,int );
 //void iniciar_proceso(unsigned int , int , int );
 void finalizar_proceso(pcb* , int );
@@ -69,9 +69,9 @@ void iniciar_memoria ();
 //void cargar_config (t_config* );
 void iniciar_estructuras(pcb*, int);
 int hay_espacio_disponible(int);
-void first_fit (unsigned int, int);
-void best_fit (unsigned int, int);
-void worst_fit (unsigned int, int);
+int first_fit (unsigned int, int, int);
+int best_fit (unsigned int, int, int);
+int worst_fit (unsigned int, int, int);
 //void manejo_instrucciones (t_list* , int* );
 void* leer_memoria(int , int, size_t);
 void escribir_memoria(int id_buscado, int desp, void* nuevo_valor, size_t tamanio);
@@ -80,5 +80,6 @@ int comparar_segmentos(void* , void* );
 void obtener_huecos_libres ();
 int sumatoria_huecos();
 t_list* compactar_segmentos();
+t_list* iniciar_proceso(unsigned int);
 
 #endif /* MEMORIA_H_ */
