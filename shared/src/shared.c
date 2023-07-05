@@ -222,8 +222,7 @@ void enviar_instruccion(int conexion, t_instruction* proceso, op_code codigo) {
 
 	agregar_a_paquete(paquete, &(proceso->pid), sizeof(unsigned int));
 	agregar_a_paquete(paquete, proceso->instruccion, strlen(proceso->instruccion)+1);
-	// agregar_a_paquete(paquete, &(proceso->tamanio_dato), sizeof(int));
-	// agregar_a_paquete(paquete, proceso->dato, proceso->tamanio_dato);
+	// enviar tabla_segmentos
 
 	enviar_paquete(paquete, conexion);
 	eliminar_paquete(paquete);
@@ -235,8 +234,32 @@ void recibir_instruccion(t_list* lista, t_instruction* proceso) {
 
 	memcpy(&(proceso->pid), list_get(lista, i++), sizeof(unsigned int));
 	proceso->instruccion = (char*)list_remove(lista, i);
-	// memcpy(&(proceso->tamanio_dato), list_get(lista, i++), sizeof(int));
-	// proceso->dato = list_remove(lista, i);
+	// recibir tabla_segmentos
+
+}
+
+void enviar_instruccion_dato(int conexion, t_instruction* proceso, op_code codigo) {
+	t_paquete *paquete = crear_paquete(codigo);
+
+	agregar_a_paquete(paquete, &(proceso->pid), sizeof(unsigned int));
+	agregar_a_paquete(paquete, proceso->instruccion, strlen(proceso->instruccion)+1);
+	agregar_a_paquete(paquete, &(proceso->tamanio_dato), sizeof(int));
+	agregar_a_paquete(paquete, proceso->dato, proceso->tamanio_dato);
+	// enviar tabla_segmentos
+
+	enviar_paquete(paquete, conexion);
+	eliminar_paquete(paquete);
+}
+
+void recibir_instruccion_dato(t_list* lista, t_instruction* proceso) {
+
+	int i=0;
+
+	memcpy(&(proceso->pid), list_get(lista, i++), sizeof(unsigned int));
+	proceso->instruccion = (char*)list_remove(lista, i);
+	memcpy(&(proceso->tamanio_dato), list_get(lista, i++), sizeof(int));
+	proceso->dato = list_remove(lista, i);
+	// recibir tabla_segmentos
 
 }
 
@@ -244,6 +267,7 @@ void generar_instruccion(pcb* proceso, t_instruction* instruccion_proceso, char*
 	instruccion_proceso->pid = proceso->pid;
 	instruccion_proceso->instruccion = instruccion;
 	instruccion_proceso->tabla_segmentos = proceso->tabla_segmentos;
+	// instruccion_proceso->dato = NULL;
 }
 
 void replace_r_with_0(char *line)

@@ -129,6 +129,8 @@ void enviar_pcb(int, pcb*, op_code);
 void recibir_pcb(t_list*, pcb*);
 void enviar_instruccion(int, t_instruction*, op_code);
 void recibir_instruccion(t_list*, t_instruction*);
+void enviar_instruccion_dato(int, t_instruction*, op_code);
+void recibir_instruccion_dato(t_list*, t_instruction*);
 void generar_instruccion(pcb*, t_instruction*, char*);
 void replace_r_with_0(char*);
 
