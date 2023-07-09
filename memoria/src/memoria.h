@@ -74,7 +74,7 @@ int best_fit (unsigned int, int, int);
 int worst_fit (unsigned int, int, int);
 //void manejo_instrucciones (t_list* , int* );
 void* leer_memoria(int , int, size_t);
-void escribir_memoria(int, int id_buscado, int desp, void* nuevo_valor, size_t tamanio);
+void escribir_memoria(int, void* nuevo_valor, size_t tamanio);
 void terminar_memoria(int, t_log *logger, t_config *config, int socket);
 int comparar_segmentos(void* , void* );
 void obtener_huecos_libres ();

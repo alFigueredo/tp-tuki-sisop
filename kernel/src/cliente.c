@@ -272,7 +272,7 @@ void atender_servidor(int* socket_servidor){
 				lista = recibir_paquete(*socket_servidor);
 				recibir_pcb(lista, queue_peek(qexec));
 				instruccion = list_get(((pcb*)queue_peek(qexec))->instrucciones, ((pcb*)queue_peek(qexec))->program_counter-1);
-				enviar_segmento(instruccion, ((pcb*)queue_peek(qexec))->tabla_segmentos);
+				enviar_segmento(((pcb*)queue_peek(qexec))->pid,instruccion, ((pcb*)queue_peek(qexec))->tabla_segmentos);
 				list_destroy_and_destroy_elements(lista, free);
 				break;
 			case DELETE_SEGMENT:
