@@ -149,7 +149,7 @@ void instruccion_mov_in(char** parsed)
 	char* dir_fisica = traducir_dir_logica(parsed[2]);
 	if (strcmp(dir_fisica, "SEG_FAULT")==0) {
 		log_error(logger, "Error: segmentation fault");
-		// error_exit(EXIT_SEG_FAULT);
+		error_exit(EXIT_SEG_FAULT);
 		return;
 	}
 	// int tamanio_dato = parsed[1][0]=='R' ? 16 : parsed[1][0]=='E' ? 8 : 4;
@@ -181,7 +181,7 @@ void instruccion_mov_out(char** parsed)
 	char* dir_fisica = traducir_dir_logica(parsed[1]);
 	if (strcmp(dir_fisica, "SEG_FAULT")==0) {
 		log_error(logger, "Error: segmentation fault");
-		// error_exit(EXIT_SEG_FAULT);
+		error_exit(EXIT_SEG_FAULT);
 		return;
 	}
 	// int tamanio_dato = parsed[1][0]=='R' ? 16 : parsed[1][0]=='E' ? 8 : 4;
@@ -247,7 +247,7 @@ void instruccion_f_read(char** parsed)
 	char* dir_fisica = traducir_dir_logica(parsed[2]);
 	if (strcmp(dir_fisica, "SEG_FAULT")==0) {
 		log_error(logger, "Error: segmentation fault");
-		// error_exit(EXIT_SEG_FAULT);
+		error_exit(EXIT_SEG_FAULT);
 		return;
 	}
 	char* instruccion = string_from_format("%s %s %s %s", parsed[0], parsed[1], dir_fisica, parsed[3]);
@@ -270,7 +270,7 @@ void instruccion_f_write(char** parsed)
 	char* dir_fisica = traducir_dir_logica(parsed[2]);
 	if (strcmp(dir_fisica, "SEG_FAULT")==0) {
 		log_error(logger, "Error: segmentation fault");
-		// error_exit(EXIT_SEG_FAULT);
+		error_exit(EXIT_SEG_FAULT);
 		return;
 	}
 	char* instruccion = string_from_format("%s %s %s %s", parsed[0], parsed[1], dir_fisica, parsed[3]);
@@ -367,6 +367,7 @@ char* traducir_dir_logica(char* direccion_logica) {
 	// int segmento = obtener_segmento(num_segmento);
 	int base_segmento;
 	int tamanio_segmento;
+	log_debug(logger, "Numero de segmento: %d - Desplazamiento: %d", num_segmento, desplazamiento_segmento);
 	for (int i=0; i<list_size(proceso->tabla_segmentos); i++) {
 		t_segmento* segmento_actual = list_get(proceso->tabla_segmentos, i);
 		if (segmento_actual->id_segmento==num_segmento) {
@@ -375,7 +376,9 @@ char* traducir_dir_logica(char* direccion_logica) {
 			break;
 		}
 	}
-	if (desplazamiento_segmento>tamanio_segmento)
+	log_trace(logger, "TRACE");
+	log_debug(logger, "Base: %d - Tamanio: %d", base_segmento, tamanio_segmento);
+	if (desplazamiento_segmento>=tamanio_segmento)
 		return "SEG_FAULT";
 	int dir_fisica = base_segmento+desplazamiento_segmento;
 	return string_from_format("%d", dir_fisica);

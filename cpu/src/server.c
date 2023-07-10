@@ -102,6 +102,10 @@ void atender_cliente(int* socket_cliente){
 			log_warning(logger, "El cliente se desconecto. Terminando conexion");
 			free(socket_cliente);
 			return;
+		case -2:
+			log_warning(logger, "Abortando sistema desde kernel.");
+			free(socket_cliente);
+			abort();
 		default:
 			log_warning(logger,"Operacion desconocida. No quieras meter la pata");
 			break;

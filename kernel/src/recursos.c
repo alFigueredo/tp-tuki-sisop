@@ -28,7 +28,9 @@ t_list* leerRecursos(t_config *config) {
 
 
 
-void manejo_recursos(pcb* proceso, char* instruccion) {
+void manejo_recursos(pcb* proceso) {
+
+    char* instruccion = list_get(proceso->instrucciones, proceso->program_counter-1);
 
     char** parsed = string_split(instruccion, " "); //Partes de la instruccion actual
 
@@ -37,7 +39,6 @@ void manejo_recursos(pcb* proceso, char* instruccion) {
     bool recursoExiste = false;
 
     Recurso* recursoActual = NULL;
-
     for (int i = 0; i < list_size(recursos); i++) {
         recursoActual = list_get(recursos, i);
         if (strcmp(recursoActual->nombre, parsed[1]) == 0) {

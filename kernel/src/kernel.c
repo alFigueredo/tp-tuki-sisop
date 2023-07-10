@@ -25,8 +25,8 @@ int main(int argc, char** argv) {
     contadorDeEscrituraOLectura = 0;
 
 
-	// char* ip_memoria = config_get_string_value(config, "IP_MEMORIA");
-	// char* puerto_memoria = config_get_string_value(config, "PUERTO_MEMORIA");
+	char* ip_memoria = config_get_string_value(config, "IP_MEMORIA");
+	char* puerto_memoria = config_get_string_value(config, "PUERTO_MEMORIA");
 	char* ip_cpu = config_get_string_value(config, "IP_CPU");
 	char* puerto_cpu = config_get_string_value(config, "PUERTO_CPU");
 	char* ip_filesystem = config_get_string_value(config, "IP_FILESYSTEM");
@@ -34,9 +34,10 @@ int main(int argc, char** argv) {
 	char* puerto_escucha = config_get_string_value(config, "PUERTO_ESCUCHA");
 
 	
-	// conexion_memoria = crear_conexion(ip_memoria, puerto_memoria);
-	// enviar_mensaje("Intento de conexión del kernel a la memoria", conexion_memoria, MENSAJE);
-	// esperar_servidor(conexion_memoria);
+	conexion_memoria = crear_conexion(ip_memoria, puerto_memoria);
+	enviar_mensaje("Intento de conexión del kernel a la memoria", conexion_memoria, MENSAJE);
+	esperar_servidor(conexion_memoria);
+	enviar_operacion(conexion_memoria, KERNEL);
 	
 	conexion_cpu = crear_conexion(ip_cpu, puerto_cpu);
 	enviar_mensaje("Intento de conexión del kernel al cpu", conexion_cpu, MENSAJE);

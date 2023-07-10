@@ -52,9 +52,15 @@ int main(int argc, char **argv)
 t_list* iniciar_proceso(unsigned int pid)
 {
 	t_list* segmentos = list_create();
-	segmento* seg = malloc(sizeof(segmento));
+	segmento* seg;
+	t_segmento* t_seg = malloc(sizeof(t_segmento));
 	seg = list_get(tabla_segmentos_total, 0);
-	list_add(segmentos, seg);
+	t_seg->id_segmento = seg->id;
+	t_seg->tam_segmento = seg->tam_segmento;
+	t_seg->direccion_base = seg->direccion_base;
+	t_seg->direccion_limite = seg->direccion_limite;
+
+	list_add(segmentos, t_seg);
 
 	/*for (int var = 0; var < (config_get_int_value(config, "CANT_SEGMENTOS")-1); ++var)
 	{
@@ -78,19 +84,22 @@ t_list* iniciar_proceso(unsigned int pid)
 //Elimina los segmentos del proceso. Filtra la lista de segmentos y los elimina de la lista de segmentos.
 void finalizar_proceso(t_instruccion* pcb_proceso)
 {
-	t_list* segmentos_proc = list_create();
-	segmentos_proc	= obtener_segmentos_PID (pcb_proceso->pid); 									//Lista filtrada
+	log_debug(logger, "Tamanio segmento 0: %d", ((segmento*)list_get(tabla_segmentos_total, 0))->tam_segmento);
+	// t_list* segmentos_proc = list_create();
+	t_list* segmentos_proc;
+	segmentos_proc	= obtener_segmentos_PID(pcb_proceso->pid); 									//Lista filtrada
 	segmento *seg_actual;
-
 	for (int var = 1; var < list_size(segmentos_proc); ++var)											//Recorrre la lista filtrada
 		{
 			seg_actual = list_get(segmentos_proc, var);														//Toma el segmento actual del for
 			eliminar_segmento (pcb_proceso->pid,seg_actual->id);												//Elimina el segmento de la lista de segmentos total.
+			free(seg_actual);
 		}
-
 	list_clean(pcb_proceso->tabla_segmentos);
-
-	list_destroy_and_destroy_elements(segmentos_proc, free);
+	// list_destroy_and_destroy_elements(segmentos_proc, free);
+	list_destroy(segmentos_proc);
+	log_debug(logger, "Total segmentos: %d", list_size(tabla_segmentos_total));
+	log_debug(logger, "Tamanio segmento 0: %d", ((segmento*)list_get(tabla_segmentos_total, 0))->tam_segmento);
 	log_info (logger, "Eliminacion de proceso PID: %u",pcb_proceso->pid);
 }
 
@@ -98,16 +107,17 @@ void finalizar_proceso(t_instruccion* pcb_proceso)
 t_list* obtener_segmentos_PID(unsigned int pid)
 {
     t_list* segmentosPorPID = list_create();
-    segmento* seg = malloc(sizeof(segmento));
+    // segmento* seg = malloc(sizeof(segmento));
+	segmento* seg;
 
     for (int i = 0; i < list_size(tabla_segmentos_total); i++)											//Recorre la lista de segmentos
     {
         seg = list_get(tabla_segmentos_total, i);														//Toma un segmento
         if ((seg->pid == 0) || (seg->pid == pid)) {																			//Ve si pertenece al proceso
-            list_add(segmentosPorPID,&i);																//Si pertenece, lo agrega a la lista de segmentos del proceso
+            list_add(segmentosPorPID,seg);																//Si pertenece, lo agrega a la lista de segmentos del proceso
         }
     }
-    free(seg);
+    // free(seg);
     return segmentosPorPID;
 }
 

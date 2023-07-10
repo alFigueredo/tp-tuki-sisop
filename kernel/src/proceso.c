@@ -135,6 +135,7 @@ void gestionar_multiprogramación(void) {
 	t_instruccion* loQueSeManda = malloc(sizeof(t_instruccion));
 	generar_instruccion(queue_peek(qnew), loQueSeManda, "");
 	enviar_instruccion(conexion_memoria, loQueSeManda, CREATE_PROCESS);
+	log_trace(logger, "TRACE: CREATE_PROCESS enviada");
 }
 
 void new_a_ready(void) {
@@ -213,7 +214,9 @@ void block_a_ready(pcb* proceso) {
 	sem_wait(sem_ready);
 	log_info(logger, "Cola Ready %s: [%s]", config_get_string_value(config,"ALGORITMO_PLANIFICACION"), queue_iterator(qready));
 	sem_post(sem_ready);
-	ready_a_exec();
+	pthread_t thread;
+	pthread_create(&thread, NULL, (void*) ready_a_exec, NULL);
+	pthread_detach(thread);
 }
 
 void exec_a_exit(char* motivo) {
@@ -225,7 +228,8 @@ void exec_a_exit(char* motivo) {
 	t_instruccion* loQueSeManda = malloc(sizeof(t_instruccion));
 	generar_instruccion(queue_peek(qexit), loQueSeManda, motivo);
 	enviar_instruccion(conexion_memoria, loQueSeManda, DELETE_PROCESS);
-	// log_trace(logger, "Registro AX: %s", string_substring_until(proceso->registros.AX, 4));
+	// log_debug(logger, "Cantidad de segmentos: %d", list_size(loQueSeManda->tabla_segmentos));
+	log_trace(logger, "Registro AX: %s", string_substring_until(proceso->registros.AX, 4));
 }
 
 void finalizar_proceso(char* motivo) {
@@ -246,8 +250,9 @@ void finalizar_proceso(char* motivo) {
 	list_destroy_and_destroy_elements(proceso->instrucciones, free);
 	free(proceso->tiempo_llegada_ready);
 	list_destroy(proceso->archivos_abiertos);
+	log_debug(logger, "DEBUG: DELETE_PROCESS_OK");
 	list_destroy(proceso->tabla_segmentos);
-	free(queue_pop(qexit));
+	free(proceso);
 }
 
 void planificador(t_queue* queue) {

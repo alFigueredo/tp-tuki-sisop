@@ -103,7 +103,7 @@ void atender_cliente(int* socket_cliente)
 
 				if(abrirArchivo(nombreArchivo,vectorDePathsPCBs,cantidadPaths))
 				{
-					enviar_instruccion(*socket_cliente,proceso,OK);
+					enviar_instruccion(*socket_cliente,proceso,F_OPEN_OK);
 				}
 				else
 				{
@@ -122,7 +122,7 @@ void atender_cliente(int* socket_cliente)
 				nombreArchivo= porqueria[1];
 				if(crearArchivo(nombreArchivo, config_get_string_value(config,"PATH_FCB"), &vectorDePathsPCBs, &cantidadPaths))
 				{
-					enviar_instruccion(*socket_cliente, proceso ,OK);
+					enviar_instruccion(*socket_cliente, proceso ,F_OPEN_OK);
 				}
 				else
 				{

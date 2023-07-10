@@ -31,6 +31,7 @@ typedef enum
 	WAIT,
 	SIGNAL,
 	F_OPEN,
+	F_OPEN_OK,
 	F_CLOSE,
 	F_CREATE,
 	F_TRUNCATE,

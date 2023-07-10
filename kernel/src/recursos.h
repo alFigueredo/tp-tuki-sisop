@@ -20,7 +20,7 @@ extern t_list* recursos;
 
 t_list* leerRecursos(t_config *config);
 
-void manejo_recursos(pcb* proceso, char* instruccion);
+void manejo_recursos(pcb* proceso);
 
 void destruir_recursos(t_list* recursos);
 

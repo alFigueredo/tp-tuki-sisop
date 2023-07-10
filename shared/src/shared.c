@@ -47,22 +47,26 @@ void *recibir_buffer(int *size, int socket_cliente)
 
 void enviar_operacion(int socket_cliente, op_code codigo)
 {
-	t_paquete *paquete = malloc(sizeof(t_paquete));
+	// t_paquete *paquete = malloc(sizeof(t_paquete));
+	int bytes = sizeof(int);
 
-	paquete->codigo_operacion = codigo;
+	void *a_enviar = malloc(bytes);
 
-	paquete->buffer = malloc(sizeof(t_buffer));
-	paquete->buffer->size = 0;
-	paquete->buffer->stream = malloc(paquete->buffer->size);
+	memcpy(a_enviar, &codigo, bytes);
+	// paquete->codigo_operacion = codigo;
 
-	int bytes = paquete->buffer->size + 2 * sizeof(int);
+	// paquete->buffer = malloc(sizeof(t_buffer));
+	// paquete->buffer->size = 0;
+	// paquete->buffer->stream = malloc(paquete->buffer->size);
 
-	void *a_enviar = serializar_paquete(paquete, bytes);
+	// int bytes = paquete->buffer->size + 2 * sizeof(int);
+
+	// void *a_enviar = serializar_paquete(paquete, bytes);
 
 	send(socket_cliente, a_enviar, bytes, 0);
 
 	free(a_enviar);
-	eliminar_paquete(paquete);
+	// eliminar_paquete(paquete);
 }
 
 void enviar_mensaje(char *mensaje, int socket_cliente, op_code codigo)
@@ -188,6 +192,16 @@ void enviar_pcb(int conexion, pcb *proceso, op_code codigo)
 	agregar_a_paquete(paquete, proceso->registros.RCX, 16);
 	agregar_a_paquete(paquete, proceso->registros.RDX, 16);
 	
+	int cantidad_segmentos = list_size(proceso->tabla_segmentos);
+	agregar_a_paquete(paquete, &(cantidad_segmentos), sizeof(int));
+	for (int i=0; i<cantidad_segmentos; i++) {
+		t_segmento* segmento_actual = list_get(proceso->tabla_segmentos, i);
+		agregar_a_paquete(paquete, &(segmento_actual->id_segmento), sizeof(int));
+		agregar_a_paquete(paquete, &(segmento_actual->tam_segmento), sizeof(int));
+		agregar_a_paquete(paquete, &(segmento_actual->direccion_base), sizeof(int));
+		agregar_a_paquete(paquete, &(segmento_actual->direccion_limite), sizeof(int));
+	}
+
 	enviar_paquete(paquete, conexion);
 	eliminar_paquete(paquete);
 }
@@ -215,6 +229,19 @@ void recibir_pcb(t_list *lista, pcb *proceso)
 	memcpy(proceso->registros.RBX, list_get(lista, i++), 16);
 	memcpy(proceso->registros.RCX, list_get(lista, i++), 16);
 	memcpy(proceso->registros.RDX, list_get(lista, i++), 16);
+
+	int cantidad_segmentos;
+	memcpy(&(cantidad_segmentos), list_get(lista, i++), sizeof(int));
+	proceso->tabla_segmentos = list_create();
+	for (int j=0; j<cantidad_segmentos; j++) {
+		t_segmento* segmento_actual = malloc(sizeof(t_segmento));
+		memcpy(&(segmento_actual->id_segmento), list_get(lista, i++), sizeof(int));
+		memcpy(&(segmento_actual->tam_segmento), list_get(lista, i++), sizeof(int));
+		memcpy(&(segmento_actual->direccion_base), list_get(lista, i++), sizeof(int));
+		memcpy(&(segmento_actual->direccion_limite), list_get(lista, i++), sizeof(int));
+		list_add(proceso->tabla_segmentos, segmento_actual);
+	}
+
 }
 
 void enviar_instruccion(int conexion, t_instruccion* proceso, op_code codigo) {
@@ -222,6 +249,7 @@ void enviar_instruccion(int conexion, t_instruccion* proceso, op_code codigo) {
 
 	agregar_a_paquete(paquete, &(proceso->pid), sizeof(unsigned int));
 	agregar_a_paquete(paquete, proceso->instruccion, strlen(proceso->instruccion)+1);
+
 	int cantidad_segmentos = list_size(proceso->tabla_segmentos);
 	agregar_a_paquete(paquete, &(cantidad_segmentos), sizeof(int));
 	for (int i=0; i<cantidad_segmentos; i++) {
@@ -234,6 +262,7 @@ void enviar_instruccion(int conexion, t_instruccion* proceso, op_code codigo) {
 
 	enviar_paquete(paquete, conexion);
 	eliminar_paquete(paquete);
+	log_trace(logger, "TRACE: %d enviada", codigo);
 }
 
 void recibir_instruccion(t_list* lista, t_instruccion* proceso) {
@@ -243,8 +272,10 @@ void recibir_instruccion(t_list* lista, t_instruccion* proceso) {
 	memcpy(&(proceso->pid), list_get(lista, i++), sizeof(unsigned int));
 	proceso->instruccion = (char*)list_remove(lista, i);
 	proceso->tabla_segmentos = list_create();
+
 	int cantidad_segmentos;
 	memcpy(&(cantidad_segmentos), list_get(lista, i++), sizeof(int));
+	proceso->tabla_segmentos = list_create();
 	for (int j=0; j<cantidad_segmentos; j++) {
 		t_segmento* segmento_actual = malloc(sizeof(t_segmento));
 		memcpy(&(segmento_actual->id_segmento), list_get(lista, i++), sizeof(int));
@@ -253,6 +284,7 @@ void recibir_instruccion(t_list* lista, t_instruccion* proceso) {
 		memcpy(&(segmento_actual->direccion_limite), list_get(lista, i++), sizeof(int));
 		list_add(proceso->tabla_segmentos, segmento_actual);
 	}
+	log_trace(logger, "TRACE: Instrucción recibida - %s", proceso->instruccion);
 
 }
 
@@ -287,6 +319,7 @@ void recibir_instruccion_con_dato(t_list* lista, t_instruccion* proceso) {
 	
 	int cantidad_segmentos;
 	memcpy(&(cantidad_segmentos), list_get(lista, i++), sizeof(int));
+	proceso->tabla_segmentos = list_create();
 	for (int j=0; j<cantidad_segmentos; j++) {
 		t_segmento* segmento_actual = malloc(sizeof(t_segmento));
 		memcpy(&(segmento_actual->id_segmento), list_get(lista, i++), sizeof(int));
