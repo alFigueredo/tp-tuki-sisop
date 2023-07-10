@@ -326,14 +326,14 @@ void atender_servidor(int* socket_servidor){
 				lista = recibir_paquete(*socket_servidor); //Debería enviar la base/id_segmento + el tipo de resultado que se obtuvo: 0-> Todo bien, 1->No hay espacio, 2->Requiere compactacion
 				recibir_pcb(lista, (pcb*)queue_peek(qexec));
 				evaluar_respuesta(*((int*)list_get(lista,1)), 1);
-				exec_a_exit("OUT_OF_MEMORY");
+				// exec_a_exit("OUT_OF_MEMORY");
 				list_destroy_and_destroy_elements(lista,free);
 				break;
 			case DELETE_PROCESS_OK:
 				lista = recibir_paquete(*socket_servidor);
 				log_debug(logger, "DEBUG: DELETE_PROCESS_OK");
 				laCosaQueMando = malloc(sizeof(t_instruccion));
-				recibir_instruccion(lista, instruccion);
+				recibir_instruccion(lista, laCosaQueMando);
 				list_destroy(((pcb*)queue_peek(qnew))->tabla_segmentos);
 				((pcb*)queue_peek(qexit))->tabla_segmentos = list_duplicate(laCosaQueMando->tabla_segmentos); //Actualiza la tabla de segmentos
 				finalizar_proceso(laCosaQueMando->instruccion); //Memoria dice que el proceso fue liberado
@@ -342,12 +342,14 @@ void atender_servidor(int* socket_servidor){
 			case DELETE_SEGMENT_OK:
 				lista = recibir_paquete(*socket_servidor);
 				list_clean_and_destroy_elements(((pcb*)queue_peek(qexec))->tabla_segmentos, free);
-				for (int i=3; i<list_get(lista, 2); i+=4) {
+				int tamanio_tabla_segmentos = *(int*)list_get(lista, 2);
+				for (int i=0; i<tamanio_tabla_segmentos; i++) {
+					int j = 3+4*i;
 					t_segmento* segmento_actual = malloc(sizeof(t_segmento));
-					segmento_actual->id_segmento = list_get(lista, i);
-					segmento_actual->tam_segmento = list_get(lista, i);
-					segmento_actual->direccion_base = list_get(lista, i);
-					segmento_actual->direccion_limite = list_get(lista, i);
+					segmento_actual->id_segmento = *(int*)list_get(lista, j);
+					segmento_actual->tam_segmento = *(int*)list_get(lista, j+1);
+					segmento_actual->direccion_base = *(int*)list_get(lista, j+2);
+					segmento_actual->direccion_limite = *(int*)list_get(lista, j+3);
 					list_add(((pcb*)queue_peek(qexec))->tabla_segmentos, segmento_actual);
 				}
 

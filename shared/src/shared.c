@@ -256,7 +256,7 @@ void recibir_instruccion(t_list* lista, t_instruccion* proceso) {
 
 }
 
-void enviar_instruccion_dato(int conexion, t_instruccion* proceso, op_code codigo) {
+void enviar_instruccion_con_dato(int conexion, t_instruccion* proceso, op_code codigo) {
 	t_paquete *paquete = crear_paquete(codigo);
 
 	agregar_a_paquete(paquete, &(proceso->pid), sizeof(unsigned int));
@@ -278,7 +278,7 @@ void enviar_instruccion_dato(int conexion, t_instruccion* proceso, op_code codig
 	eliminar_paquete(paquete);
 }
 
-void recibir_instruccion_dato(t_list* lista, t_instruccion* proceso) {
+void recibir_instruccion_con_dato(t_list* lista, t_instruccion* proceso) {
 
 	int i=0;
 

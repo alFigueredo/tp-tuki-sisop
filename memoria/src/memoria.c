@@ -76,7 +76,7 @@ t_list* iniciar_proceso(unsigned int pid)
 }
 
 //Elimina los segmentos del proceso. Filtra la lista de segmentos y los elimina de la lista de segmentos.
-void finalizar_proceso(pcb* pcb_proceso)
+void finalizar_proceso(t_instruccion* pcb_proceso)
 {
 	t_list* segmentos_proc = list_create();
 	segmentos_proc	= obtener_segmentos_PID (pcb_proceso->pid); 									//Lista filtrada
@@ -743,7 +743,7 @@ void escribir_memoria(int direccion, void* nuevo_valor, size_t tamanio)
 			}
 //		free(seg);
 //				free(seg);		//	}
-			}/*
+			}
 	else{
 		log_info(logger,"Segmento no encontrado.");
 	}*/

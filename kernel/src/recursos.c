@@ -48,7 +48,7 @@ void manejo_recursos(pcb* proceso, char* instruccion) {
 
     if (!recursoExiste) {
         log_error(logger, "PID: %d - %s de recurso no existente. Finalizando proceso", proceso->pid, parsed[0]);
-    	exec_a_exit();
+    	exec_a_exit("SUCCESS");
     } else {
         if (strcmp(operacion, "WAIT") == 0) {
             // Procesar operación WAIT

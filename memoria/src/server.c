@@ -78,12 +78,16 @@ void atender_cliente(int* socket_cliente){
 	t_list *lista;
 	t_instruccion* proceso;
 	void *informacionALeerOEscribir;
+	int tamanio_informacion;
 	char * instruccion;
 	char** parsed;
-	char** dir_fisica;
-	int id_seg;
-	int desp;
-	//char* valor_mem;
+	int dir_fisica;
+	t_paquete* paquete;
+	unsigned int pid;
+	int id_segmento;
+	// int id_seg;
+	// int desp;
+	// char* valor_mem;
 //	char* nuevo_valor;
 
 	while (1) {
@@ -121,7 +125,7 @@ void atender_cliente(int* socket_cliente){
 			proceso = malloc(sizeof(t_instruccion));
 			recibir_instruccion(lista,proceso);
 			proceso->tabla_segmentos = iniciar_proceso(proceso->pid);
-			enviar_instruccion(lista, proceso, CREATE_PROCESS_OK);
+			enviar_instruccion(conexion_kernel, proceso, CREATE_PROCESS_OK);
 			free(proceso);
 			list_destroy_and_destroy_elements(lista, free);
 			break;
@@ -130,35 +134,38 @@ void atender_cliente(int* socket_cliente){
 			proceso = malloc(sizeof(t_instruccion));
 			recibir_instruccion(lista,proceso);
 			finalizar_proceso(proceso);
-			enviar_instruccion(lista,proceso,DELETE_PROCESS_OK);
+			enviar_instruccion(conexion_kernel,proceso,DELETE_PROCESS_OK);
 			free(proceso);
 			list_destroy_and_destroy_elements(lista, free);
 			break;
 		case CREATE_SEGMENT:
 			lista = recibir_paquete(*socket_cliente);
-			int resultado = crear_segmento(*(unsigned int*)list_get(lista, 0), *(int*)list_get(lista, 2), *(int*)list_get(lista, 1));
+			pid = *(unsigned int*)list_get(lista, 0);
+			id_segmento = *(int*)list_get(lista, 1);
+			int tamanio_segmento = *(int*)list_get(lista, 2);
+			int resultado = crear_segmento(pid, tamanio_segmento, id_segmento);
 			switch (resultado) {
 				case -1:
 					// COMPACTACION, se usará EXIT_OUT_OF_MEMORY de momento
-					t_paquete *paquete = crear_paquete(EXIT_OUT_OF_MEMORY);
-					agregar_a_paquete(paquete, list_get(lista, 0), sizeof(unsigned int));
-					agregar_a_paquete(paquete, list_get(lista, 1), sizeof(int));
+					paquete = crear_paquete(EXIT_OUT_OF_MEMORY);
+					agregar_a_paquete(paquete, &pid, sizeof(unsigned int));
+					agregar_a_paquete(paquete, &id_segmento, sizeof(int));
 					enviar_paquete(paquete, conexion_kernel);
 					eliminar_paquete(paquete);
 					break;
 				case -2:
 					// OUT_OF_MEMORY
-					t_paquete *paquete = crear_paquete(EXIT_OUT_OF_MEMORY);
-					agregar_a_paquete(paquete, list_get(lista, 0), sizeof(unsigned int));
-					agregar_a_paquete(paquete, list_get(lista, 1), sizeof(int));
+					paquete = crear_paquete(EXIT_OUT_OF_MEMORY);
+					agregar_a_paquete(paquete, &pid, sizeof(unsigned int));
+					agregar_a_paquete(paquete, &id_segmento, sizeof(int));
 					enviar_paquete(paquete, conexion_kernel);
 					eliminar_paquete(paquete);
 					break;
 				default:
-					t_paquete *paquete = crear_paquete(CREATE_SEGMENT_OK);
-					agregar_a_paquete(paquete, list_get(lista, 0), sizeof(unsigned int));
-					agregar_a_paquete(paquete, list_get(lista, 1), sizeof(int));
-					agregar_a_paquete(paquete, list_get(lista, 2), sizeof(int));
+					paquete = crear_paquete(CREATE_SEGMENT_OK);
+					agregar_a_paquete(paquete, &pid, sizeof(unsigned int));
+					agregar_a_paquete(paquete, &id_segmento, sizeof(int));
+					agregar_a_paquete(paquete, &tamanio_segmento, sizeof(int));
 					agregar_a_paquete(paquete, &resultado, sizeof(int));
 					enviar_paquete(paquete, conexion_kernel);
 					eliminar_paquete(paquete);
@@ -168,29 +175,33 @@ void atender_cliente(int* socket_cliente){
 			break;
 		case DELETE_SEGMENT:
 			lista = recibir_paquete(*socket_cliente);
-			int post_tamanio_tabla_segmento = *(int*)list_get(lista, 2)-1;
+			pid = *(unsigned int*)list_get(lista, 0);
+			id_segmento = *(int*)list_get(lista, 1);
+			int tamanio_tabla_segmentos = *(int*)list_get(lista, 2);
+			int post_tamanio_tabla_segmentos = tamanio_tabla_segmentos-1;
 			eliminar_segmento(*(unsigned int*)list_get(lista, 0), *(int*)list_get(lista, 1));
 			for (int i = 0; i < *(int*)list_get(lista, 2); i++)
 			{
 				int j = 3+4*i;
-				if (*(int*)list_add(lista, i)==*(int*)list_get(lista, 1))
-					list_remove_and_destroy_element(lista, i, free);
-					list_remove_and_destroy_element(lista, i+1, free);
-					list_remove_and_destroy_element(lista, i+2, free);
-					list_remove_and_destroy_element(lista, i+3, free);
-					list_replace_and_destroy_element(lista, 2, post_tamanio_tabla_segmento, free);
+				if ((*(int*)list_get(lista, i))==id_segmento) {
+					list_remove_and_destroy_element(lista, j, free);
+					list_remove_and_destroy_element(lista, j+1, free);
+					list_remove_and_destroy_element(lista, j+2, free);
+					list_remove_and_destroy_element(lista, j+3, free);
+					list_replace_and_destroy_element(lista, 2, &post_tamanio_tabla_segmentos, free);
 					break;
+				}
 			}
-			t_paquete *paquete = crear_paquete(DELETE_SEGMENT_OK);
-			agregar_a_paquete(paquete, list_get(lista, 0), sizeof(unsigned int));
-			agregar_a_paquete(paquete, list_get(lista, 1), sizeof(int));
-			agregar_a_paquete(paquete, &post_tamanio_tabla_segmento, sizeof(int));
-			for (int i=0; i<post_tamanio_tabla_segmento; i++) {
+			paquete = crear_paquete(DELETE_SEGMENT_OK);
+			agregar_a_paquete(paquete, &pid, sizeof(unsigned int));
+			agregar_a_paquete(paquete, &id_segmento, sizeof(int));
+			agregar_a_paquete(paquete, &post_tamanio_tabla_segmentos, sizeof(int));
+			for (int i=0; i<post_tamanio_tabla_segmentos; i++) {
 				int j = 3+4*i;
-            	agregar_a_paquete(paquete, list_get(lista, i), sizeof(int));
-            	agregar_a_paquete(paquete, list_get(lista, i+1), sizeof(int));
-            	agregar_a_paquete(paquete, list_get(lista, i+2), sizeof(int));
-            	agregar_a_paquete(paquete, list_get(lista, i+3), sizeof(int));
+            	agregar_a_paquete(paquete, list_get(lista, j), sizeof(int));
+            	agregar_a_paquete(paquete, list_get(lista, j+1), sizeof(int));
+            	agregar_a_paquete(paquete, list_get(lista, j+2), sizeof(int));
+            	agregar_a_paquete(paquete, list_get(lista, j+3), sizeof(int));
 			}
 			enviar_paquete(paquete, conexion_kernel);
 			eliminar_paquete(paquete);
@@ -234,38 +245,39 @@ void atender_cliente(int* socket_cliente){
 			proceso = malloc(sizeof(t_instruccion));
 			recibir_instruccion(lista,proceso);
 
-		//	instruccion = proceso->instruccion;
-		//	parsed = string_split(instruccion," ");
-		//	dir_fisica = string_get_string_as_array(parsed[2]);
+			instruccion = proceso->instruccion;
+			parsed = string_split(instruccion," ");
+			dir_fisica = atoi(parsed[2]);
 			//----------------------------------------------------
-		//	id_seg = atoi(dir_fisica[0]);
-	//		desp = atoi(dir_fisica[1]);
+			tamanio_informacion = parsed[1][0]=='R' ? 16 : parsed[1][0]=='E' ? 8 : 4;
 
-			//valor_mem = leer_memoria(atoi(parsed[2]), atoi(parsed[3]));
-
+			informacionALeerOEscribir = leer_memoria(dir_fisica, tamanio_informacion);
 			//log_info(logger, "PID: %u - Accion: LEER - Direccion fisica: (%d - %d) - Tamanio: %d - Origen: CPU", proceso->pid, id_seg, desp);
+
+			proceso->dato = informacionALeerOEscribir;
+			proceso->tamanio_dato = tamanio_informacion;
+			enviar_instruccion_con_dato(conexion_cpu, proceso, MOV_IN);
 			
 			list_destroy_and_destroy_elements(lista, free);
 
 			break;
 		case MOV_OUT: //escribir
-			//parsed [1] -> dir fisica
-			// parsed [2 -> vslor
+			// parsed [1] -> dir fisica
+			// parsed [2] -> registro
 			lista = recibir_paquete(*socket_cliente);
 			proceso = malloc(sizeof(t_instruccion));
-			recibir_instruccion(lista,proceso);
+			recibir_instruccion_con_dato(lista,proceso);
 
-		//	instruccion = proceso->instruccion;
-		//	parsed = string_split(instruccion," ");
-	//		dir_fisica = string_get_string_as_array(parsed[1]);
-		//	id_seg = atoi(dir_fisica[0]);
-			//desp = atoi(dir_fisica[1]);
+			instruccion = proceso->instruccion;
+			parsed = string_split(instruccion," ");
+			dir_fisica = atoi(parsed[1]);
 
-		//	nuevo_valor = string_get_string_as_array(parsed[2]);	//warning: assignment to ‘char *’ from incompatible pointer type ‘char **’ [-Wincompatible-pointer-types]
+			informacionALeerOEscribir = proceso->dato;	//warning: assignment to ‘char *’ from incompatible pointer type ‘char **’ [-Wincompatible-pointer-types]
+			tamanio_informacion = proceso->tamanio_dato;
 
-			//escribir_memoria(atoi(parsed[1]), parsed[2], strcpy(parsed[2]));
+			escribir_memoria(dir_fisica, informacionALeerOEscribir, tamanio_informacion);
 
-			enviar_operacion(*socket_cliente, OK);
+			enviar_operacion(conexion_cpu, OK);
 
 		//	log_info(logger, "PID: %u - Accion: ESCRIBIR - Direccion fisica: (%d - %d) - Tamanio: %d - Origen: CPU", proceso->pid, id_seg, desp);
 
