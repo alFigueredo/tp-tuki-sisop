@@ -58,8 +58,9 @@ void atender_servidor(int* socket_servidor){
 	char* numero; //No se me ocurre otra forma de hacerlo
 	char* numero_din;
 	char** parsed;
-	t_instruction* laCosaQueMando;
+	t_instruccion* laCosaQueMando;
 	Archivo *archivoQueUso;
+	t_segmento* segmento;
 	while (1) {
 		int cod_op = recibir_operacion(*socket_servidor);
 		switch (cod_op) {
@@ -107,7 +108,7 @@ void atender_servidor(int* socket_servidor){
 				{
 
 					//PUEDO HACER ESTO?????
-					laCosaQueMando = malloc(sizeof(t_instruction));
+					laCosaQueMando = malloc(sizeof(t_instruccion));
 					// laCosaQueMando->pid=((pcb*)queue_peek(qexec))->pid;
 					// laCosaQueMando->instruccion=instruccion;
 					generar_instruccion(queue_peek(qexec), laCosaQueMando, instruccion);
@@ -120,7 +121,7 @@ void atender_servidor(int* socket_servidor){
 				break;
 			case OK:
 				lista = recibir_paquete(*socket_servidor);
-				laCosaQueMando = malloc(sizeof(t_instruction));
+				laCosaQueMando = malloc(sizeof(t_instruccion));
 				recibir_instruccion(lista, laCosaQueMando);
 				enviar_pcb(conexion_cpu, (pcb*)queue_peek(qexec), EXEC);
 				list_destroy_and_destroy_elements(lista, free);
@@ -129,7 +130,7 @@ void atender_servidor(int* socket_servidor){
 				break;
 			case EL_ARCHIVO_NO_EXISTE_PAAAAAAA:
 				lista = recibir_paquete(*socket_servidor);
-				laCosaQueMando = malloc(sizeof(t_instruction));
+				laCosaQueMando = malloc(sizeof(t_instruccion));
 				recibir_instruccion(lista, laCosaQueMando);
 				//PUEDO HACER ESTO????? X2
 				enviar_instruccion(*socket_servidor,laCosaQueMando,F_CREATE);
@@ -159,7 +160,7 @@ void atender_servidor(int* socket_servidor){
 				instruccion = list_get(((pcb*)queue_peek(qexec))->instrucciones, ((pcb*)queue_peek(qexec))->program_counter-1);
 
 				//PUEDO HACER ESTO????? X2
-				laCosaQueMando = malloc(sizeof(t_instruction));
+				laCosaQueMando = malloc(sizeof(t_instruccion));
 				// laCosaQueMando->pid=((pcb*)queue_peek(qexec))->pid;
 				// laCosaQueMando->instruccion=malloc(strlen(instruccion)+1);
 				// strcpy(laCosaQueMando->instruccion,instruccion);
@@ -174,7 +175,7 @@ void atender_servidor(int* socket_servidor){
 			case YA_SE_TERMINO_LA_TRUNCACION:
 				log_trace(logger, "TRACE: YA_SE_TERMINO_LA_TRUNCACION");
 				lista = recibir_paquete(*socket_servidor);
-				laCosaQueMando = malloc(sizeof(t_instruction));
+				laCosaQueMando = malloc(sizeof(t_instruccion));
 				recibir_instruccion(lista, laCosaQueMando);
 				block_a_ready(queue_seek(qblock, laCosaQueMando->pid));
 				list_destroy_and_destroy_elements(lista, free);
@@ -197,7 +198,7 @@ void atender_servidor(int* socket_servidor){
 				strcat(instruccion, numero_din);
 
 				//PUEDO HACER ESTO????? X2
-				laCosaQueMando = malloc(sizeof(t_instruction));
+				laCosaQueMando = malloc(sizeof(t_instruccion));
 				// laCosaQueMando->pid=((pcb*)queue_peek(qexec))->pid;
 				// laCosaQueMando->instruccion=malloc(strlen(instruccion)+1);
 				// strcpy(laCosaQueMando->instruccion,instruccion);
@@ -240,7 +241,7 @@ void atender_servidor(int* socket_servidor){
 				strcat(instruccion, numero);
 
 				//PUEDO HACER ESTO????? X2
-				laCosaQueMando = malloc(sizeof(t_instruction));
+				laCosaQueMando = malloc(sizeof(t_instruccion));
 				// laCosaQueMando->pid=((pcb*)queue_peek(qexec))->pid;
 				// laCosaQueMando->instruccion=malloc(strlen(instruccion)+1);
 				// strcpy(laCosaQueMando->instruccion,instruccion);
@@ -279,38 +280,77 @@ void atender_servidor(int* socket_servidor){
 				lista = recibir_paquete(*socket_servidor);
 				recibir_pcb(lista, queue_peek(qexec));
 				instruccion = list_get(((pcb*)queue_peek(qexec))->instrucciones, ((pcb*)queue_peek(qexec))->program_counter-1);
-				enviar_segmento(instruccion, ((pcb*)queue_peek(qexec))->tabla_segmentos);
-				list_destroy_and_destroy_elements(lista, free);
-				break;
-			case EXIT:
-				lista = recibir_paquete(*socket_servidor);
-				recibir_pcb(lista, (pcb*)queue_peek(qexec));
-				exec_a_exit();
-				// enviar_pcb(conexion_memoria,(pcb*)queue_peek(qexec),EXIT);
+				enviar_segmento(((pcb*)queue_peek(qexec))->pid,instruccion, ((pcb*)queue_peek(qexec))->tabla_segmentos);
 				list_destroy_and_destroy_elements(lista, free);
 				break;
 			case CREATE_PROCESS_OK:
 				lista = recibir_paquete(*socket_servidor);
 				log_debug(logger, "DEBUG: CREATE_PROCESS_OK");
-				((pcb*)queue_peek(qnew))->tabla_segmentos = list_get(lista,0); //Actualiza la tabla de segmentos
-				new_a_ready(); //Memoria dice que el proceso está listo
+				laCosaQueMando = malloc(sizeof(t_instruccion));
+				recibir_instruccion(lista, laCosaQueMando);
+				list_destroy(((pcb*)queue_peek(qnew))->tabla_segmentos);
+				((pcb*)queue_peek(qnew))->tabla_segmentos = list_duplicate(laCosaQueMando->tabla_segmentos); //Actualiza la tabla de segmentos
+				pthread_t thread;
+				pthread_create(&thread,
+	                  NULL,
+	                  (void*) new_a_ready,
+	                  NULL); //Memoria dice que el proceso está listo
+				// new_a_ready(); //Memoria dice que el proceso está listo
 				list_destroy_and_destroy_elements(lista,free);
 				break;
 			case CREATE_SEGMENT_OK:
 				lista = recibir_paquete(*socket_servidor); //Debería enviar la base/id_segmento + el tipo de resultado que se obtuvo: 0-> Todo bien, 1->No hay espacio, 2->Requiere compactacion
-				evaluar_respuesta(*((int*)list_get(lista,1)) ,*((int*)list_get(lista,2))); 
+				segmento = malloc(sizeof(t_segmento));
+				memcpy(&(segmento->id_segmento), list_get(lista,1), sizeof(int));
+				memcpy(&(segmento->tam_segmento), list_get(lista,2), sizeof(int));
+				memcpy(&(segmento->direccion_base), list_get(lista,3), sizeof(int));
+				segmento->direccion_limite = *(int*)list_get(lista,3)+*(int*)list_get(lista,2);
+				list_add(((pcb*)queue_peek(qexec))->tabla_segmentos, segmento);
+				evaluar_respuesta(*((int*)list_get(lista,2)) ,0);
+				enviar_pcb(conexion_cpu, (pcb*)queue_peek(qexec), EXEC);
+				list_destroy_and_destroy_elements(lista,free);
+				break;
+			case EXIT:
+				lista = recibir_paquete(*socket_servidor);
+				recibir_pcb(lista, (pcb*)queue_peek(qexec));
+				exec_a_exit("SUCCESS");
+				list_destroy_and_destroy_elements(lista, free);
+				break;
+			case EXIT_SEG_FAULT:
+				lista = recibir_paquete(*socket_servidor);
+				recibir_pcb(lista, (pcb*)queue_peek(qexec));
+				exec_a_exit("SEG_FAULT");
+				list_destroy_and_destroy_elements(lista,free);
+				break;
+			case EXIT_OUT_OF_MEMORY:
+				lista = recibir_paquete(*socket_servidor); //Debería enviar la base/id_segmento + el tipo de resultado que se obtuvo: 0-> Todo bien, 1->No hay espacio, 2->Requiere compactacion
+				recibir_pcb(lista, (pcb*)queue_peek(qexec));
+				evaluar_respuesta(*((int*)list_get(lista,1)), 1);
+				exec_a_exit("OUT_OF_MEMORY");
 				list_destroy_and_destroy_elements(lista,free);
 				break;
 			case DELETE_PROCESS_OK:
 				lista = recibir_paquete(*socket_servidor);
 				log_debug(logger, "DEBUG: DELETE_PROCESS_OK");
-				((pcb*)queue_peek(qexit))->tabla_segmentos = list_get(lista,0); //Actualiza la tabla de segmentos
-				finalizar_proceso(); //Memoria dice que el proceso fue liberado
+				laCosaQueMando = malloc(sizeof(t_instruccion));
+				recibir_instruccion(lista, instruccion);
+				list_destroy(((pcb*)queue_peek(qnew))->tabla_segmentos);
+				((pcb*)queue_peek(qexit))->tabla_segmentos = list_duplicate(laCosaQueMando->tabla_segmentos); //Actualiza la tabla de segmentos
+				finalizar_proceso(laCosaQueMando->instruccion); //Memoria dice que el proceso fue liberado
 				list_destroy_and_destroy_elements(lista,free);
 				break;
 			case DELETE_SEGMENT_OK:
 				lista = recibir_paquete(*socket_servidor);
-				((pcb*)queue_peek(qexec))->tabla_segmentos = list_get(lista,0); //Actualiza la tabla de segmentos
+				list_clean_and_destroy_elements(((pcb*)queue_peek(qexec))->tabla_segmentos, free);
+				for (int i=3; i<list_get(lista, 2); i+=4) {
+					t_segmento* segmento_actual = malloc(sizeof(t_segmento));
+					segmento_actual->id_segmento = list_get(lista, i);
+					segmento_actual->tam_segmento = list_get(lista, i);
+					segmento_actual->direccion_base = list_get(lista, i);
+					segmento_actual->direccion_limite = list_get(lista, i);
+					list_add(((pcb*)queue_peek(qexec))->tabla_segmentos, segmento_actual);
+				}
+
 				enviar_pcb(conexion_cpu,((pcb*)queue_peek(qexec)),EXEC);
 				list_destroy_and_destroy_elements(lista,free);
 				break;
@@ -318,7 +358,7 @@ void atender_servidor(int* socket_servidor){
 				lista = recibir_paquete(*socket_servidor);
 				actualizar_tablas(lista);
 				char* instruccion = list_get(((pcb*)queue_peek(qexec))->instrucciones, ((pcb*)queue_peek(qexec))->program_counter-1);
-				enviar_segmento(instruccion,((pcb*)queue_peek(qexec))->tabla_segmentos); //Volvemos a solicitar la creacion del segmento
+				enviar_segmento(((pcb*)queue_peek(qexec))->pid,instruccion,((pcb*)queue_peek(qexec))->tabla_segmentos); //Volvemos a solicitar la creacion del segmento
 				list_destroy_and_destroy_elements(lista,free);
 				break;
 			case -1:

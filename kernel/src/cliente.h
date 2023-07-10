@@ -14,7 +14,7 @@
 #include "recursos.h"
 #include "server.h"
 #include "fileSystemKernel.h"
-#include "memoria.h"
+#include "memoriaKernel.h"
 
 
 

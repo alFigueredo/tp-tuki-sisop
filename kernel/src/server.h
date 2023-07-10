@@ -15,7 +15,7 @@
 #include <pthread.h>
 #include "cliente.h"
 #include "shared.h"
-#include "memoria.h"
+#include "memoriaKernel.h"
 
 
 int iniciar_servidor(char*);

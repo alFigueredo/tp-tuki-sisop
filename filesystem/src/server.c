@@ -68,7 +68,7 @@ void esperar_cliente(int socket_servidor){
 void atender_cliente(int* socket_cliente)
 {
 	t_list *lista;
-	t_instruction* proceso;
+	t_instruccion* proceso;
 	char *instruccion;
 	char *nombreArchivo;
 	char **porqueria;
@@ -93,7 +93,7 @@ void atender_cliente(int* socket_cliente)
 				break;
 			case F_OPEN:
 				lista = recibir_paquete(*socket_cliente);
-				proceso = malloc(sizeof(t_instruction));
+				proceso = malloc(sizeof(t_instruccion));
 				recibir_instruccion(lista,proceso);
 				instruccion = proceso->instruccion;
 
@@ -114,7 +114,7 @@ void atender_cliente(int* socket_cliente)
 				break;
 			case F_CREATE:
 				lista = recibir_paquete(*socket_cliente);
-				proceso = malloc(sizeof(t_instruction));
+				proceso = malloc(sizeof(t_instruccion));
 				recibir_instruccion(lista,proceso);
 				instruccion = proceso->instruccion;
 
@@ -133,7 +133,7 @@ void atender_cliente(int* socket_cliente)
 				break;
 			case F_TRUNCATE:
 				lista = recibir_paquete(*socket_cliente);
-				proceso = malloc(sizeof(t_instruction));
+				proceso = malloc(sizeof(t_instruccion));
 				recibir_instruccion(lista,proceso);
 				instruccion = proceso->instruccion;
 				porqueria=string_split(instruccion, " ");
@@ -152,7 +152,7 @@ void atender_cliente(int* socket_cliente)
 				break;
 			case F_READ:
 				lista = recibir_paquete(*socket_cliente);
-				proceso = malloc(sizeof(t_instruction));
+				proceso = malloc(sizeof(t_instruccion));
 				recibir_instruccion(lista,proceso);
 				instruccion = proceso->instruccion;
 				porqueria=string_split(instruccion, " ");
@@ -166,14 +166,14 @@ void atender_cliente(int* socket_cliente)
 				
 				// Enviar mensaje a memoria y mandarle la merca
 				
-				enviar_instruccion(conexion_memoria,proceso,F_READ);
+				enviar_instruccion_con_dato(conexion_memoria,proceso,F_READ);
 				
 				//recibir el ok en memoria
 				if (recibir_operacion(conexion_memoria) == OK)
 				{
 					lista = recibir_paquete(conexion_memoria);
 					free(proceso);
-					proceso = malloc(sizeof(t_instruction));
+					proceso = malloc(sizeof(t_instruccion));
 					recibir_instruccion(lista,proceso);
 				
 					//Envio el ok
@@ -189,7 +189,7 @@ void atender_cliente(int* socket_cliente)
 				break;
 			case F_WRITE:
 				lista = recibir_paquete(*socket_cliente);
-				proceso = malloc(sizeof(t_instruction));
+				proceso = malloc(sizeof(t_instruccion));
 				recibir_instruccion(lista,proceso);
 				
 				//Le pido a memoria que me pase lo que hay en la direccion fisica
@@ -198,8 +198,8 @@ void atender_cliente(int* socket_cliente)
 				if(recibir_operacion(conexion_memoria) == ACA_TENES_LA_INFO_GIIIIIIL)
 				{
 					lista = recibir_paquete(conexion_memoria);
-					proceso = malloc(sizeof(t_instruction));
-					recibir_instruccion(lista,proceso);
+					proceso = malloc(sizeof(t_instruccion));
+					recibir_instruccion_con_dato(lista,proceso);
 					instruccion = proceso->instruccion;
 					porqueria=string_split(instruccion, " ");
 					nombreArchivo = porqueria[1];
@@ -226,6 +226,10 @@ void atender_cliente(int* socket_cliente)
 				log_warning(logger, "El cliente se desconecto. Terminando conexion");
 				free(socket_cliente);
 				return;
+			case -2:
+				log_warning(logger, "Abortando sistema desde kernel.");
+				free(socket_cliente);
+				abort();
 			default:
 				log_warning(logger,"Operacion desconocida. No quieras meter la pata");
 				break;

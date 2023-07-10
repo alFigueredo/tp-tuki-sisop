@@ -110,7 +110,14 @@ typedef struct {
 	int tamanio_dato;
 	void* dato;
 	t_list* tabla_segmentos;
-} t_instruction;
+} t_instruccion;
+
+typedef struct{
+    int id_segmento;
+    int tam_segmento;
+    int direccion_base;
+	int direccion_limite;
+} t_segmento;
 
 int recibir_operacion(int);
 void* serializar_paquete(t_paquete*, int);
@@ -127,11 +134,11 @@ t_list* recibir_paquete(int);
 void delay(int);
 void enviar_pcb(int, pcb*, op_code);
 void recibir_pcb(t_list*, pcb*);
-void enviar_instruccion(int, t_instruction*, op_code);
-void recibir_instruccion(t_list*, t_instruction*);
-void enviar_instruccion_dato(int, t_instruction*, op_code);
-void recibir_instruccion_dato(t_list*, t_instruction*);
-void generar_instruccion(pcb*, t_instruction*, char*);
+void enviar_instruccion(int, t_instruccion*, op_code);
+void recibir_instruccion(t_list*, t_instruccion*);
+void enviar_instruccion_dato(int, t_instruccion*, op_code);
+void recibir_instruccion_dato(t_list*, t_instruccion*);
+void generar_instruccion(pcb*, t_instruccion*, char*);
 void replace_r_with_0(char*);
 
 #endif /* SHARED_H_ */

@@ -54,7 +54,7 @@ t_list* iniciar_proceso(unsigned int pid)
 	t_list* segmentos = list_create();
 	segmento* seg = malloc(sizeof(segmento));
 	seg = list_get(tabla_segmentos_total, 0);
-	list_add(tabla_segmentos_total, seg);
+	list_add(segmentos, seg);
 
 	/*for (int var = 0; var < (config_get_int_value(config, "CANT_SEGMENTOS")-1); ++var)
 	{
@@ -68,7 +68,7 @@ t_list* iniciar_proceso(unsigned int pid)
 
 	}*/
 
-	segmentos = obtener_segmentos_PID(pid);
+	// segmentos = obtener_segmentos_PID(pid);
 
 	log_info (logger, "Creacion de proceso PID: %u",pid);
 
@@ -76,17 +76,19 @@ t_list* iniciar_proceso(unsigned int pid)
 }
 
 //Elimina los segmentos del proceso. Filtra la lista de segmentos y los elimina de la lista de segmentos.
-void finalizar_proceso(pcb* pcb_proceso, int tamanio)
+void finalizar_proceso(pcb* pcb_proceso)
 {
 	t_list* segmentos_proc = list_create();
 	segmentos_proc	= obtener_segmentos_PID (pcb_proceso->pid); 									//Lista filtrada
-	int *id_actual;
+	segmento *seg_actual;
 
-	for (int var = 0; var < list_size(segmentos_proc); ++var)											//Recorrre la lista filtrada
+	for (int var = 1; var < list_size(segmentos_proc); ++var)											//Recorrre la lista filtrada
 		{
-			id_actual = list_get(segmentos_proc, var);														//Toma el segmento actual del for
-			eliminar_segmento (pcb_proceso->pid,*id_actual);												//Elimina el segmento de la lista de segmentos total.
+			seg_actual = list_get(segmentos_proc, var);														//Toma el segmento actual del for
+			eliminar_segmento (pcb_proceso->pid,seg_actual->id);												//Elimina el segmento de la lista de segmentos total.
 		}
+
+	list_clean(pcb_proceso->tabla_segmentos);
 
 	list_destroy_and_destroy_elements(segmentos_proc, free);
 	log_info (logger, "Eliminacion de proceso PID: %u",pcb_proceso->pid);
@@ -101,7 +103,7 @@ t_list* obtener_segmentos_PID(unsigned int pid)
     for (int i = 0; i < list_size(tabla_segmentos_total); i++)											//Recorre la lista de segmentos
     {
         seg = list_get(tabla_segmentos_total, i);														//Toma un segmento
-        if (seg->pid == pid) {																			//Ve si pertenece al proceso
+        if ((seg->pid == 0) || (seg->pid == pid)) {																			//Ve si pertenece al proceso
             list_add(segmentosPorPID,&i);																//Si pertenece, lo agrega a la lista de segmentos del proceso
         }
     }
@@ -166,7 +168,7 @@ void iniciar_memoria()
 }
 
 //-------------------MANEJO DE SEGMENTOS-----------------------------------------------------------------------------------
-//Crea UN segmento segun el algoritmo de asignacion del config si hay espacio en memoria. Si no hay espacio en memoria, solicita una compactacion o le informa al kernel que no hay espacio disponible
+//Crea UN segmento segun el algoritmo de asignacion del config si hay espacio en memoria. Si no hay espacio en memoria, solicita una compactacion o le informa al kernel que no hay espacio disponible: int crear_segmento(unsigned int pid, int tamanio_seg, int id_seg)
 int crear_segmento(unsigned int pid, int tamanio_seg, int id_seg)
 {
 	int sumatoria;

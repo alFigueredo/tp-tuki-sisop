@@ -116,11 +116,13 @@ void generar_proceso(t_list* lista, int* socket_cliente) {
 	proceso->program_counter=0;
 	proceso->estimado_proxRafaga=config_get_int_value(config,"ESTIMACION_INICIAL");
 	proceso->archivos_abiertos=list_create();
+	proceso->tabla_segmentos=list_create();
 	sem_wait(sem_new);
 	queue_push(qnew, proceso);
 	sem_post(sem_new);
 	dictionary_put(conexiones, string_itoa(proceso->pid), socket_cliente);
 	log_info(logger, "Se crea el proceso %d en NEW", proceso->pid);
+	gestionar_multiprogramación();
 }
 
 void gestionar_multiprogramación(void) {
@@ -130,7 +132,7 @@ void gestionar_multiprogramación(void) {
 	sem_getvalue(sem_new_ready, &sem_new_ready_value);
 	if (sem_new_ready_value==1)
 		sem_wait(sem_new_ready);
-	t_instruction* loQueSeManda = malloc(sizeof(t_instruction));
+	t_instruccion* loQueSeManda = malloc(sizeof(t_instruccion));
 	generar_instruccion(queue_peek(qnew), loQueSeManda, "");
 	enviar_instruccion(conexion_memoria, loQueSeManda, CREATE_PROCESS);
 }
@@ -214,22 +216,22 @@ void block_a_ready(pcb* proceso) {
 	ready_a_exec();
 }
 
-void exec_a_exit(void) {
+void exec_a_exit(char* motivo) {
 	pcb* proceso = queue_pop(qexec);
 	queue_push(qexit, proceso);
 	log_info(logger, "PID: %d - Estado Anterior: EXEC - Estado Actual: EXIT", proceso->pid);
 	calcular_estimacion(proceso, temporal_gettime(tiempo_en_cpu));
 	temporal_destroy(tiempo_en_cpu);
-	t_instruction* loQueSeManda = malloc(sizeof(t_instruction));
-	generar_instruccion(queue_peek(qexit), loQueSeManda, "");
+	t_instruccion* loQueSeManda = malloc(sizeof(t_instruccion));
+	generar_instruccion(queue_peek(qexit), loQueSeManda, motivo);
 	enviar_instruccion(conexion_memoria, loQueSeManda, DELETE_PROCESS);
 	// log_trace(logger, "Registro AX: %s", string_substring_until(proceso->registros.AX, 4));
 }
 
-void finalizar_proceso(void) {
+void finalizar_proceso(char* motivo) {
 	pcb* proceso = queue_pop(qexit);
 	enviar_operacion(*(int*)dictionary_remove(conexiones, string_itoa(proceso->pid)), EXIT);
-	log_info(logger, "Finaliza el proceso %d - Motivo: SUCCESS", proceso->pid);
+	log_info(logger, "Finaliza el proceso %d - Motivo: %s", proceso->pid, motivo);
 	// Si hay procesos en NEW esperando
 	int sem_largo_plazo_value;
 	sem_getvalue(sem_largo_plazo, &sem_largo_plazo_value);
@@ -244,6 +246,7 @@ void finalizar_proceso(void) {
 	list_destroy_and_destroy_elements(proceso->instrucciones, free);
 	free(proceso->tiempo_llegada_ready);
 	list_destroy(proceso->archivos_abiertos);
+	list_destroy(proceso->tabla_segmentos);
 	free(queue_pop(qexit));
 }
 

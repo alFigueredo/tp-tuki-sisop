@@ -76,7 +76,7 @@ void esperar_cliente(int socket_servidor){
 
 void atender_cliente(int* socket_cliente){
 	t_list *lista;
-	t_instruction* proceso;
+	t_instruccion* proceso;
 	void *informacionALeerOEscribir;
 	char * instruccion;
 	char** parsed;
@@ -116,26 +116,97 @@ void atender_cliente(int* socket_cliente){
 			break;
 
 			//kernel
-		/*case CREATE_SEGMENT:
+		case CREATE_PROCESS:
 			lista = recibir_paquete(*socket_cliente);
-			proceso = malloc(sizeof(t_instruction));
+			proceso = malloc(sizeof(t_instruccion));
 			recibir_instruccion(lista,proceso);
+			proceso->tabla_segmentos = iniciar_proceso(proceso->pid);
+			enviar_instruccion(lista, proceso, CREATE_PROCESS_OK);
+			free(proceso);
+			list_destroy_and_destroy_elements(lista, free);
+			break;
+		case DELETE_PROCESS:
+			lista = recibir_paquete(*socket_cliente);
+			proceso = malloc(sizeof(t_instruccion));
+			recibir_instruccion(lista,proceso);
+			finalizar_proceso(proceso);
+			enviar_instruccion(lista,proceso,DELETE_PROCESS_OK);
+			free(proceso);
+			list_destroy_and_destroy_elements(lista, free);
+			break;
+		case CREATE_SEGMENT:
+			lista = recibir_paquete(*socket_cliente);
+			int resultado = crear_segmento(*(unsigned int*)list_get(lista, 0), *(int*)list_get(lista, 2), *(int*)list_get(lista, 1));
+			switch (resultado) {
+				case -1:
+					// COMPACTACION, se usará EXIT_OUT_OF_MEMORY de momento
+					t_paquete *paquete = crear_paquete(EXIT_OUT_OF_MEMORY);
+					agregar_a_paquete(paquete, list_get(lista, 0), sizeof(unsigned int));
+					agregar_a_paquete(paquete, list_get(lista, 1), sizeof(int));
+					enviar_paquete(paquete, conexion_kernel);
+					eliminar_paquete(paquete);
+					break;
+				case -2:
+					// OUT_OF_MEMORY
+					t_paquete *paquete = crear_paquete(EXIT_OUT_OF_MEMORY);
+					agregar_a_paquete(paquete, list_get(lista, 0), sizeof(unsigned int));
+					agregar_a_paquete(paquete, list_get(lista, 1), sizeof(int));
+					enviar_paquete(paquete, conexion_kernel);
+					eliminar_paquete(paquete);
+					break;
+				default:
+					t_paquete *paquete = crear_paquete(CREATE_SEGMENT_OK);
+					agregar_a_paquete(paquete, list_get(lista, 0), sizeof(unsigned int));
+					agregar_a_paquete(paquete, list_get(lista, 1), sizeof(int));
+					agregar_a_paquete(paquete, list_get(lista, 2), sizeof(int));
+					agregar_a_paquete(paquete, &resultado, sizeof(int));
+					enviar_paquete(paquete, conexion_kernel);
+					eliminar_paquete(paquete);
 
+			}
+			list_destroy_and_destroy_elements(lista, free);
 			break;
 		case DELETE_SEGMENT:
-			break;*/
+			lista = recibir_paquete(*socket_cliente);
+			int post_tamanio_tabla_segmento = *(int*)list_get(lista, 2)-1;
+			eliminar_segmento(*(unsigned int*)list_get(lista, 0), *(int*)list_get(lista, 1));
+			for (int i = 0; i < *(int*)list_get(lista, 2); i++)
+			{
+				int j = 3+4*i;
+				if (*(int*)list_add(lista, i)==*(int*)list_get(lista, 1))
+					list_remove_and_destroy_element(lista, i, free);
+					list_remove_and_destroy_element(lista, i+1, free);
+					list_remove_and_destroy_element(lista, i+2, free);
+					list_remove_and_destroy_element(lista, i+3, free);
+					list_replace_and_destroy_element(lista, 2, post_tamanio_tabla_segmento, free);
+					break;
+			}
+			t_paquete *paquete = crear_paquete(DELETE_SEGMENT_OK);
+			agregar_a_paquete(paquete, list_get(lista, 0), sizeof(unsigned int));
+			agregar_a_paquete(paquete, list_get(lista, 1), sizeof(int));
+			agregar_a_paquete(paquete, &post_tamanio_tabla_segmento, sizeof(int));
+			for (int i=0; i<post_tamanio_tabla_segmento; i++) {
+				int j = 3+4*i;
+            	agregar_a_paquete(paquete, list_get(lista, i), sizeof(int));
+            	agregar_a_paquete(paquete, list_get(lista, i+1), sizeof(int));
+            	agregar_a_paquete(paquete, list_get(lista, i+2), sizeof(int));
+            	agregar_a_paquete(paquete, list_get(lista, i+3), sizeof(int));
+			}
+			enviar_paquete(paquete, conexion_kernel);
+			eliminar_paquete(paquete);
+			break;
 		case F_READ:
 			lista = recibir_paquete(*socket_cliente);
-			proceso = malloc(sizeof(t_instruction));
-			recibir_instruccion(lista,proceso);
+			proceso = malloc(sizeof(t_instruccion));
+			recibir_instruccion_con_dato(lista,proceso);
 			informacionALeerOEscribir = proceso->dato;
 			instruccion = proceso->instruccion;
 			parsed = string_split(instruccion," ");
-			dir_fisica = string_get_string_as_array(parsed[1]);
-			id_seg = atoi(dir_fisica[0]);
-			desp = atoi(dir_fisica[1]);
+			// dir_fisica = string_get_string_as_array(parsed[1]);
+			// id_seg = atoi(dir_fisica[0]);
+			// desp = atoi(dir_fisica[1]);
 			
-			escribir_memoria(id_seg,desp,informacionALeerOEscribir,proceso->tamanio_dato);
+			escribir_memoria(atoi(parsed[1]),informacionALeerOEscribir,proceso->tamanio_dato);
 			//Avisarle a filesystem que se escribio joya
 			enviar_instruccion(*socket_cliente,proceso,OK);
 			free(proceso);
@@ -143,24 +214,24 @@ void atender_cliente(int* socket_cliente){
 			break;
 		case F_WRITE:
 			lista = recibir_paquete(*socket_cliente);
-			proceso = malloc(sizeof(t_instruction));
+			proceso = malloc(sizeof(t_instruccion));
 			recibir_instruccion(lista,proceso);
 			informacionALeerOEscribir = proceso->dato;
 			instruccion = proceso->instruccion;
 			parsed = string_split(instruccion," ");
-			dir_fisica = string_get_string_as_array(parsed[1]);
-			id_seg = atoi(dir_fisica[0]);
-			desp = atoi(dir_fisica[1]);
-			informacionALeerOEscribir = leer_memoria(id_seg,desp,proceso->tamanio_dato);
+			// dir_fisica = string_get_string_as_array(parsed[1]);
+			// id_seg = atoi(dir_fisica[0]);
+			// desp = atoi(dir_fisica[1]);
+			informacionALeerOEscribir = leer_memoria(atoi(parsed[1]),atoi(parsed[2]));
 			proceso->dato=informacionALeerOEscribir;
-			enviar_instruccion(*socket_cliente,proceso,ACA_TENES_LA_INFO_GIIIIIIL);
+			enviar_instruccion_con_dato(*socket_cliente,proceso,ACA_TENES_LA_INFO_GIIIIIIL);
 			free(proceso);
 			list_destroy_and_destroy_elements(lista, free);
 			break;
 			//cpu
 		case MOV_IN: //leer cpu
 			lista = recibir_paquete(*socket_cliente);
-			proceso = malloc(sizeof(t_instruction));
+			proceso = malloc(sizeof(t_instruccion));
 			recibir_instruccion(lista,proceso);
 
 		//	instruccion = proceso->instruccion;
@@ -170,7 +241,7 @@ void atender_cliente(int* socket_cliente){
 		//	id_seg = atoi(dir_fisica[0]);
 	//		desp = atoi(dir_fisica[1]);
 
-			//valor_mem = leer_memoria(id_seg, desp);
+			//valor_mem = leer_memoria(atoi(parsed[2]), atoi(parsed[3]));
 
 			//log_info(logger, "PID: %u - Accion: LEER - Direccion fisica: (%d - %d) - Tamanio: %d - Origen: CPU", proceso->pid, id_seg, desp);
 			
@@ -181,7 +252,7 @@ void atender_cliente(int* socket_cliente){
 			//parsed [1] -> dir fisica
 			// parsed [2 -> vslor
 			lista = recibir_paquete(*socket_cliente);
-			proceso = malloc(sizeof(t_instruction));
+			proceso = malloc(sizeof(t_instruccion));
 			recibir_instruccion(lista,proceso);
 
 		//	instruccion = proceso->instruccion;
@@ -192,7 +263,7 @@ void atender_cliente(int* socket_cliente){
 
 		//	nuevo_valor = string_get_string_as_array(parsed[2]);	//warning: assignment to ‘char *’ from incompatible pointer type ‘char **’ [-Wincompatible-pointer-types]
 
-			//escribir_memoria(id_seg, desp, nuevo_valor);
+			//escribir_memoria(atoi(parsed[1]), parsed[2], strcpy(parsed[2]));
 
 			enviar_operacion(*socket_cliente, OK);
 

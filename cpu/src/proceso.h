@@ -51,7 +51,7 @@ void destruir_diccionarios(void);
 void interpretar_instrucciones();
 void instruccion_set(char**);
 void instruccion_mov_in(char**);
-void mov_in(t_instruction*);
+void mov_in(t_instruccion*);
 void instruccion_mov_out(char**);
 void instruccion_i_o(char**);
 void instruccion_f_open(char**);

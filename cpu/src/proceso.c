@@ -158,7 +158,7 @@ void instruccion_mov_in(char** parsed)
 	strcpy(ins_alloc, instruccion);
 	list_replace_and_destroy_element(proceso->instrucciones, proceso->program_counter, ins_alloc, free);
 	log_trace(logger, "PID: %d - Instruccion traducida: %s", proceso->pid, (char*)list_get(proceso->instrucciones, proceso->program_counter));
-	// t_instruction* instruccion_proceso = malloc(sizeof(t_instruction));
+	// t_instruccion* instruccion_proceso = malloc(sizeof(t_instruccion));
 	// generar_instruccion(proceso, instruccion_proceso, list_get(proceso->instrucciones, proceso->program_counter));
 	// enviar_instruccion(conexion_memoria, instruccion_proceso, MOV_IN);
 	log_warning(logger, "PID: %d - Advertencia: Instruccion sin realizar", proceso->pid);
@@ -166,7 +166,7 @@ void instruccion_mov_in(char** parsed)
 }
 
 
-void mov_in(t_instruction* instruccion_proceso) {
+void mov_in(t_instruccion* instruccion_proceso) {
 	char** parsed = string_split((char*)list_get(proceso->instrucciones, proceso->program_counter), " ");
 	char** parsed_ins = string_split(instruccion_proceso->instruccion, " ");
 	memcpy(dictionary_get(registros, parsed[1]), parsed_ins[1], strlen(parsed_ins[1]));
@@ -187,13 +187,14 @@ void instruccion_mov_out(char** parsed)
 		return;
 	}
 	char* instruccion = string_from_format("%s %s %s", parsed[0], dir_fisica, parsed[2]);
+	// char* instruccion = string_from_format("%s %s %s", parsed[0], (char*)dictionary_get(registros, parsed[1]), dir_fisica);
 	char* ins_alloc = malloc(strlen(instruccion)+1);
 	strcpy(ins_alloc, instruccion);
 	list_replace_and_destroy_element(proceso->instrucciones, proceso->program_counter, ins_alloc, free);
 	log_trace(logger, "PID: %d - Instruccion traducida: %s", proceso->pid, (char*)list_get(proceso->instrucciones, proceso->program_counter));
-	// t_instruction* instruccion_proceso = malloc(sizeof(t_instruction));
+	// t_instruccion* instruccion_proceso = malloc(sizeof(t_instruccion));
 	// generar_instruccion(proceso, instruccion_proceso, list_get(proceso->instrucciones, proceso->program_counter));
-	// enviar_instruccion(conexion_memoria, instruccion_proceso, MOV_OUT);
+	// enviar_instruccion_con_dato(conexion_memoria, instruccion_proceso, MOV_OUT);
 	log_warning(logger, "PID: %d - Advertencia: Instruccion sin realizar", proceso->pid);
 	proceso->program_counter++;
 }
@@ -364,7 +365,17 @@ char* traducir_dir_logica(char* direccion_logica) {
 	int num_segmento = floor((double)atoi(direccion_logica)/tam_max_segmento);
 	int desplazamiento_segmento = atoi(direccion_logica)%tam_max_segmento;
 	// int segmento = obtener_segmento(num_segmento);
-	if (desplazamiento_segmento>tam_max_segmento)
+	int base_segmento;
+	int tamanio_segmento;
+	for (int i=0; i<list_size(proceso->tabla_segmentos); i++) {
+		t_segmento* segmento_actual = list_get(proceso->tabla_segmentos, i);
+		if (segmento_actual->id_segmento==num_segmento) {
+			base_segmento = segmento_actual->direccion_base;
+			tamanio_segmento = segmento_actual->tam_segmento;
+			break;
+		}
+	}
+	if (desplazamiento_segmento>tamanio_segmento)
 		return "SEG_FAULT";
-	return string_from_format("%d", num_segmento);
+	return string_from_format("%d", base_segmento+desplazamiento_segmento);
 }

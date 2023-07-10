@@ -217,53 +217,91 @@ void recibir_pcb(t_list *lista, pcb *proceso)
 	memcpy(proceso->registros.RDX, list_get(lista, i++), 16);
 }
 
-void enviar_instruccion(int conexion, t_instruction* proceso, op_code codigo) {
+void enviar_instruccion(int conexion, t_instruccion* proceso, op_code codigo) {
 	t_paquete *paquete = crear_paquete(codigo);
 
 	agregar_a_paquete(paquete, &(proceso->pid), sizeof(unsigned int));
 	agregar_a_paquete(paquete, proceso->instruccion, strlen(proceso->instruccion)+1);
-	// enviar tabla_segmentos
+	int cantidad_segmentos = list_size(proceso->tabla_segmentos);
+	agregar_a_paquete(paquete, &(cantidad_segmentos), sizeof(int));
+	for (int i=0; i<cantidad_segmentos; i++) {
+		t_segmento* segmento_actual = list_get(proceso->tabla_segmentos, i);
+		agregar_a_paquete(paquete, &(segmento_actual->id_segmento), sizeof(int));
+		agregar_a_paquete(paquete, &(segmento_actual->tam_segmento), sizeof(int));
+		agregar_a_paquete(paquete, &(segmento_actual->direccion_base), sizeof(int));
+		agregar_a_paquete(paquete, &(segmento_actual->direccion_limite), sizeof(int));
+	}
 
 	enviar_paquete(paquete, conexion);
 	eliminar_paquete(paquete);
 }
 
-void recibir_instruccion(t_list* lista, t_instruction* proceso) {
+void recibir_instruccion(t_list* lista, t_instruccion* proceso) {
 
 	int i=0;
 
 	memcpy(&(proceso->pid), list_get(lista, i++), sizeof(unsigned int));
 	proceso->instruccion = (char*)list_remove(lista, i);
-	// recibir tabla_segmentos
+	proceso->tabla_segmentos = list_create();
+	int cantidad_segmentos;
+	memcpy(&(cantidad_segmentos), list_get(lista, i++), sizeof(int));
+	for (int j=0; j<cantidad_segmentos; j++) {
+		t_segmento* segmento_actual = malloc(sizeof(t_segmento));
+		memcpy(&(segmento_actual->id_segmento), list_get(lista, i++), sizeof(int));
+		memcpy(&(segmento_actual->tam_segmento), list_get(lista, i++), sizeof(int));
+		memcpy(&(segmento_actual->direccion_base), list_get(lista, i++), sizeof(int));
+		memcpy(&(segmento_actual->direccion_limite), list_get(lista, i++), sizeof(int));
+		list_add(proceso->tabla_segmentos, segmento_actual);
+	}
 
 }
 
-void enviar_instruccion_dato(int conexion, t_instruction* proceso, op_code codigo) {
+void enviar_instruccion_dato(int conexion, t_instruccion* proceso, op_code codigo) {
 	t_paquete *paquete = crear_paquete(codigo);
 
 	agregar_a_paquete(paquete, &(proceso->pid), sizeof(unsigned int));
 	agregar_a_paquete(paquete, proceso->instruccion, strlen(proceso->instruccion)+1);
+	int cantidad_segmentos = list_size(proceso->tabla_segmentos);
+	agregar_a_paquete(paquete, &(cantidad_segmentos), sizeof(int));
+	for (int i=0; i<cantidad_segmentos; i++) {
+		t_segmento* segmento_actual = list_get(proceso->tabla_segmentos, i);
+		agregar_a_paquete(paquete, &(segmento_actual->id_segmento), sizeof(int));
+		agregar_a_paquete(paquete, &(segmento_actual->tam_segmento), sizeof(int));
+		agregar_a_paquete(paquete, &(segmento_actual->direccion_base), sizeof(int));
+		agregar_a_paquete(paquete, &(segmento_actual->direccion_limite), sizeof(int));
+	}
+
 	agregar_a_paquete(paquete, &(proceso->tamanio_dato), sizeof(int));
 	agregar_a_paquete(paquete, proceso->dato, proceso->tamanio_dato);
-	// enviar tabla_segmentos
 
 	enviar_paquete(paquete, conexion);
 	eliminar_paquete(paquete);
 }
 
-void recibir_instruccion_dato(t_list* lista, t_instruction* proceso) {
+void recibir_instruccion_dato(t_list* lista, t_instruccion* proceso) {
 
 	int i=0;
 
 	memcpy(&(proceso->pid), list_get(lista, i++), sizeof(unsigned int));
 	proceso->instruccion = (char*)list_remove(lista, i);
+	
+	int cantidad_segmentos;
+	memcpy(&(cantidad_segmentos), list_get(lista, i++), sizeof(int));
+	for (int j=0; j<cantidad_segmentos; j++) {
+		t_segmento* segmento_actual = malloc(sizeof(t_segmento));
+		memcpy(&(segmento_actual->id_segmento), list_get(lista, i++), sizeof(int));
+		memcpy(&(segmento_actual->tam_segmento), list_get(lista, i++), sizeof(int));
+		memcpy(&(segmento_actual->direccion_base), list_get(lista, i++), sizeof(int));
+		memcpy(&(segmento_actual->direccion_limite), list_get(lista, i++), sizeof(int));
+		list_add(proceso->tabla_segmentos, segmento_actual);
+	}
+
 	memcpy(&(proceso->tamanio_dato), list_get(lista, i++), sizeof(int));
 	proceso->dato = list_remove(lista, i);
-	// recibir tabla_segmentos
 
 }
 
-void generar_instruccion(pcb* proceso, t_instruction* instruccion_proceso, char* instruccion) {
+void generar_instruccion(pcb* proceso, t_instruccion* instruccion_proceso, char* instruccion) {
 	instruccion_proceso->pid = proceso->pid;
 	instruccion_proceso->instruccion = instruccion;
 	instruccion_proceso->tabla_segmentos = proceso->tabla_segmentos;

@@ -7,8 +7,8 @@ void enviar_segmento(int pid, char* instruccion, t_list* tabla_segmentos){
     int id_segmento = atoi(parsed[1]);
 
     t_paquete *paquete = crear_paquete((strcmp(operacion, "CREATE_SEGMENT")==0) ? CREATE_SEGMENT : DELETE_SEGMENT);
-    agregar_a_paquete(paquete,&(id_segmento),sizeof(id_segmento));
     agregar_a_paquete(paquete,&(pid),sizeof(pid));
+    agregar_a_paquete(paquete,&(id_segmento),sizeof(id_segmento));
     if(strcmp(operacion, "CREATE_SEGMENT") == 0){
 
         int tamanio_solicitado = atoi(parsed[2]); //El tamanio tambien se recibe de parametro
@@ -16,8 +16,18 @@ void enviar_segmento(int pid, char* instruccion, t_list* tabla_segmentos){
         enviar_paquete(paquete,conexion_memoria);
     }
     else{
+        int tabla_segmentos_size = list_size(tabla_segmentos);
+        agregar_a_paquete(paquete, &tabla_segmentos_size, sizeof(int));
+        for (int i=0; i<tabla_segmentos_size; i++) {
+            t_segmento* segmento_actual = (t_segmento*)list_get(tabla_segmentos, i);
+            agregar_a_paquete(paquete, &(segmento_actual->id_segmento), sizeof(int));
+            agregar_a_paquete(paquete, &(segmento_actual->tam_segmento), sizeof(int));
+            agregar_a_paquete(paquete, &(segmento_actual->direccion_base), sizeof(int));
+            agregar_a_paquete(paquete, &(segmento_actual->direccion_limite), sizeof(int));
+        }
         enviar_paquete(paquete,conexion_memoria);
     }
+    eliminar_paquete(paquete);
 }
 
 
@@ -37,7 +47,7 @@ bool actualizo_proceso(pcb* proceso, t_list* lista) {
     t_list_iterator* buscador = list_iterator_create(lista);
 
     while (list_iterator_has_next(buscador)) {
-        t_instruction* proceso_actualizado = list_iterator_next(buscador);
+        t_instruccion* proceso_actualizado = list_iterator_next(buscador);
 
         if (proceso_actualizado->pid == proceso->pid) {
             proceso->tabla_segmentos = proceso_actualizado->tabla_segmentos;

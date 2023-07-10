@@ -53,7 +53,7 @@ void esperar_servidor(int conexion){
 
 void atender_servidor(int* socket_servidor){
 	t_list *lista;
-	t_instruction* instruccion;
+	t_instruccion* instruccion;
 	while (1) {
 		int cod_op = recibir_operacion(*socket_servidor);
 		switch (cod_op) {
@@ -68,7 +68,7 @@ void atender_servidor(int* socket_servidor){
 				break;
 			case MOV_IN:
 				lista = recibir_paquete(*socket_servidor);
-				instruccion = malloc(sizeof(t_instruction));
+				instruccion = malloc(sizeof(t_instruccion));
 				recibir_instruccion(lista, instruccion);
 				mov_in(instruccion);
 				interpretar_instrucciones();

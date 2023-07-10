@@ -8,12 +8,6 @@
 #include "commons/collections/queue.h"
 #include "proceso.h"
 
-typedef struct{
-    int id_segmento;
-    int tam_segmento;
-    int direccion_base;
-	int direccion_limite;
-}Segmento;
 
 
 void enviar_segmento(int, char*, t_list*);

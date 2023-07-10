@@ -62,7 +62,7 @@ int hay_segmentos_disponibles(unsigned int );
 int crear_segmento(unsigned int , int, int);
 void eliminar_segmento(unsigned int,int );
 //void iniciar_proceso(unsigned int , int , int );
-void finalizar_proceso(pcb* , int );
+void finalizar_proceso(pcb* );
 int agrupar_huecos(int , int );
 
 void iniciar_memoria ();
