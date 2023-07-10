@@ -19,6 +19,7 @@ int main(int argc, char** argv) {
 	
 	conexion_memoria = crear_conexion(ip_memoria, puerto_memoria);
 	enviar_mensaje("Intento de conexión del cpu a la memoria", conexion_memoria, MENSAJE);
+	esperar_servidor(conexion_memoria);
 	enviar_operacion(conexion_memoria, CPU);
 	
 	socket_servidor = iniciar_servidor(puerto_escucha);

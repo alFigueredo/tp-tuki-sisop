@@ -688,8 +688,8 @@ int worst_fit(unsigned int pid_proceso, int tam, int id_seg)
 
 void* leer_memoria(int direccion, size_t tamanio)
 {
-	void* valorLeido = NULL;
-	delay (config_get_int_value(config, "RETARDO_COMPACTACION"));
+	void* valorLeido = malloc(tamanio);
+	delay (config_get_int_value(config, "RETARDO_MEMORIA"));
 	memcpy(valorLeido, memoria_usuario + direccion, tamanio);
 	return valorLeido;
 	//segmento *seg= list_get(tabla_segmentos_total, id_buscado);
@@ -730,7 +730,7 @@ void escribir_memoria(int direccion, void* nuevo_valor, size_t tamanio)
 
 	//segmento* seg = list_get(tabla_segmentos_total, id_buscado);
 
-	delay (config_get_int_value(config, "RETARDO_COMPACTACION"));
+	delay (config_get_int_value(config, "RETARDO_MEMORIA"));
 	memcpy(memoria_usuario + direccion, nuevo_valor, tamanio);
 
 	/*if (seg != NULL) {

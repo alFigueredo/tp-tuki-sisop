@@ -62,12 +62,12 @@ void interpretar_instrucciones(void) {
 				break;
 			case I_MOV_IN:
 				instruccion_mov_in(parsed);
-				// return;
-				break;
+				return;
+				// break;
 			case I_MOV_OUT:
 				instruccion_mov_out(parsed);
-				// return;
-				break;
+				return;
+				// break;
 			case I_IO:
 				instruccion_i_o(parsed);
 				destruir_diccionarios();
@@ -106,12 +106,12 @@ void interpretar_instrucciones(void) {
 				return;
 			case I_CREATE_SEGMENT:
 				instruccion_create_segment(parsed);
-				// return;
-				break;
+				return;
+				// break;
 			case I_DELETE_SEGMENT:
 				instruccion_delete_segment(parsed);
-				// return;
-				break;
+				return;
+				// break;
 			case I_YIELD:
 				instruccion_yield(parsed);
 				destruir_diccionarios();
@@ -158,11 +158,10 @@ void instruccion_mov_in(char** parsed)
 	strcpy(ins_alloc, instruccion);
 	list_replace_and_destroy_element(proceso->instrucciones, proceso->program_counter, ins_alloc, free);
 	log_trace(logger, "PID: %d - Instruccion traducida: %s", proceso->pid, (char*)list_get(proceso->instrucciones, proceso->program_counter));
-	// t_instruccion* instruccion_proceso = malloc(sizeof(t_instruccion));
-	// generar_instruccion(proceso, instruccion_proceso, (char*)list_get(proceso->instrucciones, proceso->program_counter));
-	// enviar_instruccion(conexion_memoria, instruccion_proceso, MOV_IN);
-	log_warning(logger, "PID: %d - Advertencia: Instruccion sin realizar", proceso->pid);
-	proceso->program_counter++;
+	t_instruccion* instruccion_proceso = malloc(sizeof(t_instruccion));
+	generar_instruccion(proceso, instruccion_proceso, (char*)list_get(proceso->instrucciones, proceso->program_counter));
+	enviar_instruccion(conexion_memoria, instruccion_proceso, MOV_IN);
+	// proceso->program_counter++;
 }
 
 
@@ -184,19 +183,18 @@ void instruccion_mov_out(char** parsed)
 		error_exit(EXIT_SEG_FAULT);
 		return;
 	}
-	// int tamanio_dato = parsed[1][0]=='R' ? 16 : parsed[1][0]=='E' ? 8 : 4;
+	int tamanio_dato = parsed[1][0]=='R' ? 16 : parsed[1][0]=='E' ? 8 : 4;
 	char* instruccion = string_from_format("%s %s %s", parsed[0], dir_fisica, parsed[2]);
 	char* ins_alloc = malloc(strlen(instruccion)+1);
 	strcpy(ins_alloc, instruccion);
 	list_replace_and_destroy_element(proceso->instrucciones, proceso->program_counter, ins_alloc, free);
 	log_trace(logger, "PID: %d - Instruccion traducida: %s", proceso->pid, (char*)list_get(proceso->instrucciones, proceso->program_counter));
-	// t_instruccion* instruccion_proceso = malloc(sizeof(t_instruccion));
-	// generar_instruccion(proceso, instruccion_proceso, (char*)list_get(proceso->instrucciones, proceso->program_counter));
-	// instruccion_proceso->tamanio_dato = tamanio_dato;
-	// instruccion_proceso->dato = dictionary_get(registros, parsed[2]);
-	// enviar_instruccion_con_dato(conexion_memoria, instruccion_proceso, MOV_OUT);
-	log_warning(logger, "PID: %d - Advertencia: Instruccion sin realizar", proceso->pid);
-	proceso->program_counter++;
+	t_instruccion* instruccion_proceso = malloc(sizeof(t_instruccion));
+	generar_instruccion(proceso, instruccion_proceso, (char*)list_get(proceso->instrucciones, proceso->program_counter));
+	instruccion_proceso->tamanio_dato = tamanio_dato;
+	instruccion_proceso->dato = dictionary_get(registros, parsed[2]);
+	enviar_instruccion_con_dato(conexion_memoria, instruccion_proceso, MOV_OUT);
+	// proceso->program_counter++;
 }
 
 void instruccion_i_o(char** parsed)
@@ -319,11 +317,10 @@ void instruccion_create_segment(char** parsed)
 	// Para probar la función hay que descomentar lo comentado y descomentar el return en el case correspondiente
 
 	log_info(logger, "PID: %d - Ejecutando: %s - %s %s", proceso->pid, parsed[0], parsed[1], parsed[2]);
-	log_warning(logger, "PID: %d - Advertencia: Instruccion sin realizar", proceso->pid);
 	proceso->program_counter++;
-	// enviar_pcb(conexion_kernel, proceso, CREATE_SEGMENT);
-	// list_destroy_and_destroy_elements(proceso->instrucciones, free);
-	// free(proceso);
+	enviar_pcb(conexion_kernel, proceso, CREATE_SEGMENT);
+	list_destroy_and_destroy_elements(proceso->instrucciones, free);
+	free(proceso);
 }
 
 void instruccion_delete_segment(char** parsed)
@@ -331,11 +328,10 @@ void instruccion_delete_segment(char** parsed)
 	// Para probar la función hay que descomentar lo comentado y descomentar el return en el case correspondiente
 
 	log_info(logger, "PID: %d - Ejecutando: %s - %s", proceso->pid, parsed[0], parsed[1]);
-	log_warning(logger, "PID: %d - Advertencia: Instruccion sin realizar", proceso->pid);
 	proceso->program_counter++;
-	// enviar_pcb(conexion_kernel, proceso, DELETE_SEGMENT);
-	// list_destroy_and_destroy_elements(proceso->instrucciones, free);
-	// free(proceso);
+	enviar_pcb(conexion_kernel, proceso, DELETE_SEGMENT);
+	list_destroy_and_destroy_elements(proceso->instrucciones, free);
+	free(proceso);
 }
 
 void instruccion_yield(char** parsed) {
@@ -376,7 +372,6 @@ char* traducir_dir_logica(char* direccion_logica) {
 			break;
 		}
 	}
-	log_trace(logger, "TRACE");
 	log_debug(logger, "Base: %d - Tamanio: %d", base_segmento, tamanio_segmento);
 	if (desplazamiento_segmento>=tamanio_segmento)
 		return "SEG_FAULT";

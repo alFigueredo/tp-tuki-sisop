@@ -34,12 +34,15 @@ void enviar_segmento(int pid, char* instruccion, t_list* tabla_segmentos){
 void evaluar_respuesta(int resultado,int tipo_resultado){
     switch(tipo_resultado){
         case 0:
-            log_info(logger, "Se ha creado exitosamente el segmento con base=%d en memoria", resultado);
+            log_info(logger, "Se ha creado exitosamente el segmento con base %d en memoria", resultado);
+            break;
         case 1:
-            log_error(logger,"Out of memory: No se encóntró espacio para el segmento id=%d en memoria, por lo que se finaliza el proceso en ejecucion", resultado);
+            log_error(logger,"Out of memory: No se encóntró espacio para el segmento id %d en memoria, por lo que se finaliza el proceso en ejecucion", resultado);
             exec_a_exit("OUT_OF_MEMORY");
+            break;
         case 2:
             // enviar_mensaje("Confirmame, si puedo solicitar compactacion",conexion_filesystem,SE_PUEDE_COMPACTAR);
+            break;
     }
 }
 

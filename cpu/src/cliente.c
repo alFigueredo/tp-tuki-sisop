@@ -68,16 +68,19 @@ void atender_servidor(int* socket_servidor){
 			case MOV_IN:
 				lista = recibir_paquete(*socket_servidor);
 				instruccion = malloc(sizeof(t_instruccion));
-				recibir_instruccion(lista, instruccion);
+				recibir_instruccion_con_dato(lista, instruccion);
 				mov_in(instruccion);
 				interpretar_instrucciones();
-				list_destroy_and_destroy_elements(lista, free);
 				free(instruccion);
+				list_destroy_and_destroy_elements(lista, free);
 				break;
 			case OK:
+				log_trace(logger, "TRACE: OK");
+				// lista = recibir_paquete(*socket_servidor);
 				proceso->program_counter++;
 				interpretar_instrucciones();
-				list_destroy_and_destroy_elements(lista, free);
+				// list_destroy_and_destroy_elements(lista, free);
+				log_trace(logger, "TRACE END: OK");
 				break;
 			case EXIT:
 				error_exit(EXIT);

@@ -184,19 +184,20 @@ void atender_cliente(int* socket_cliente){
 				id_segmento = *(int*)list_get(lista, 1);
 				int tamanio_tabla_segmentos = *(int*)list_get(lista, 2);
 				int post_tamanio_tabla_segmentos = tamanio_tabla_segmentos-1;
-				eliminar_segmento(*(unsigned int*)list_get(lista, 0), *(int*)list_get(lista, 1));
-				for (int i = 0; i < *(int*)list_get(lista, 2); i++)
+				eliminar_segmento(pid, id_segmento);
+				for (int i = 0; i < tamanio_tabla_segmentos; i++)
 				{
 					int j = 3+4*i;
-					if ((*(int*)list_get(lista, i))==id_segmento) {
+					if ((*(int*)list_get(lista, j))==id_segmento) {
 						list_remove_and_destroy_element(lista, j, free);
-						list_remove_and_destroy_element(lista, j+1, free);
-						list_remove_and_destroy_element(lista, j+2, free);
-						list_remove_and_destroy_element(lista, j+3, free);
+						list_remove_and_destroy_element(lista, j, free);
+						list_remove_and_destroy_element(lista, j, free);
+						list_remove_and_destroy_element(lista, j, free);
 						list_replace_and_destroy_element(lista, 2, &post_tamanio_tabla_segmentos, free);
 						break;
 					}
 				}
+				log_trace(logger, "TRACE END");
 				paquete = crear_paquete(DELETE_SEGMENT_OK);
 				agregar_a_paquete(paquete, &pid, sizeof(unsigned int));
 				agregar_a_paquete(paquete, &id_segmento, sizeof(int));
@@ -255,14 +256,13 @@ void atender_cliente(int* socket_cliente){
 				dir_fisica = atoi(parsed[2]);
 				//----------------------------------------------------
 				tamanio_informacion = parsed[1][0]=='R' ? 16 : parsed[1][0]=='E' ? 8 : 4;
-
 				informacionALeerOEscribir = leer_memoria(dir_fisica, tamanio_informacion);
-				//log_info(logger, "PID: %u - Accion: LEER - Direccion fisica: (%d - %d) - Tamanio: %d - Origen: CPU", proceso->pid, id_seg, desp);
+				log_info(logger, "PID: %u - Accion: LEER - Direccion fisica: %d - Tamanio: %d - Origen: CPU", proceso->pid, dir_fisica, tamanio_informacion);
 
 				proceso->dato = informacionALeerOEscribir;
 				proceso->tamanio_dato = tamanio_informacion;
 				enviar_instruccion_con_dato(conexion_cpu, proceso, MOV_IN);
-				
+				free(informacionALeerOEscribir);
 				list_destroy_and_destroy_elements(lista, free);
 
 				break;
@@ -279,14 +279,15 @@ void atender_cliente(int* socket_cliente){
 
 				informacionALeerOEscribir = proceso->dato;	//warning: assignment to ‘char *’ from incompatible pointer type ‘char **’ [-Wincompatible-pointer-types]
 				tamanio_informacion = proceso->tamanio_dato;
-
 				escribir_memoria(dir_fisica, informacionALeerOEscribir, tamanio_informacion);
+				log_info(logger, "PID: %u - Accion: ESCRIBIR - Direccion fisica: %d - Tamanio: %d bytes - Origen: CPU", proceso->pid, dir_fisica, tamanio_informacion);
 
+				// enviar_instruccion(conexion_cpu, proceso, OK);
 				enviar_operacion(conexion_cpu, OK);
 
-			//	log_info(logger, "PID: %u - Accion: ESCRIBIR - Direccion fisica: (%d - %d) - Tamanio: %d - Origen: CPU", proceso->pid, id_seg, desp);
 
 				list_destroy_and_destroy_elements(lista, free);
+				log_trace(logger, "TRACE END: MOV_OUT");
 
 				break;
 
