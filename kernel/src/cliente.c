@@ -177,6 +177,7 @@ void atender_servidor(int* socket_servidor){
 				break;
 			case YA_SE_TERMINO_LA_TRUNCACION:
 				log_trace(logger, "TRACE: YA_SE_TERMINO_LA_TRUNCACION");
+				log_debug(logger, "Cola block: [%s]", queue_iterator(qblock));
 				lista = recibir_paquete(*socket_servidor);
 				laCosaQueMando = malloc(sizeof(t_instruccion));
 				recibir_instruccion(lista, laCosaQueMando);
