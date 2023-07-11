@@ -36,11 +36,12 @@ int abrirArchivoKernel(pcb* proceso, char* instruccion)
 	else
 	{
 		//agregar el proceso a la lista de procesos bloqueados por este archivo
-		archivoActual->procesosBloqueados = queue_create();
+		// archivoActual->procesosBloqueados = queue_create();
 		punteroOriginal=archivoActual->puntero;
 		archivoActual->puntero=0;
 		//agregar el archivo a la lista de archivos abiertos del proceso
 		list_add(proceso->archivos_abiertos,archivoActual);
+		queue_push(archivoActual->procesosBloqueados, proceso);
 		archivoActual->puntero=punteroOriginal;
 		exec_a_block();
 		log_warning(logger, "PID: %d - Bloqueado porque archivo %s ya esta abierto", proceso->pid, archivoActual->nombreDeArchivo);
@@ -71,6 +72,7 @@ void cerrarArchivoKernel(pcb* proceso, char* instruccion)
 	        list_remove(proceso->archivos_abiertos, i);
 	}
 	// list_remove_and_destroy_by_condition(proceso->archivos_abiertos,condicionParaBorrar(proceso->archivos_abiertos,parsed[1]),free);
+	log_trace(logger, "TRACE: F_CLOSE");
 	if(queue_is_empty(archivoActual->procesosBloqueados))
 	{
 		//saca el archivo de la lista global

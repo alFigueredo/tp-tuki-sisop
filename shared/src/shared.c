@@ -285,7 +285,6 @@ void recibir_instruccion(t_list* lista, t_instruccion* proceso) {
 		list_add(proceso->tabla_segmentos, segmento_actual);
 	}
 	log_trace(logger, "TRACE: Instrucción recibida - %s", proceso->instruccion);
-
 }
 
 void enviar_instruccion_con_dato(int conexion, t_instruccion* proceso, op_code codigo) {
@@ -308,6 +307,7 @@ void enviar_instruccion_con_dato(int conexion, t_instruccion* proceso, op_code c
 
 	enviar_paquete(paquete, conexion);
 	eliminar_paquete(paquete);
+	log_trace(logger, "TRACE: %d enviada", codigo);
 }
 
 void recibir_instruccion_con_dato(t_list* lista, t_instruccion* proceso) {
@@ -331,7 +331,7 @@ void recibir_instruccion_con_dato(t_list* lista, t_instruccion* proceso) {
 
 	memcpy(&(proceso->tamanio_dato), list_get(lista, i++), sizeof(int));
 	proceso->dato = list_remove(lista, i);
-
+	log_trace(logger, "TRACE: Instrucción recibida - %s", proceso->instruccion);
 }
 
 void generar_instruccion(pcb* proceso, t_instruccion* instruccion_proceso, char* instruccion) {

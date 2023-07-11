@@ -219,29 +219,30 @@ void atender_cliente(int* socket_cliente){
 				informacionALeerOEscribir = proceso->dato;
 				instruccion = proceso->instruccion;
 				parsed = string_split(instruccion," ");
-				// dir_fisica = string_get_string_as_array(parsed[1]);
-				// id_seg = atoi(dir_fisica[0]);
-				// desp = atoi(dir_fisica[1]);
-				
-				escribir_memoria(atoi(parsed[1]),informacionALeerOEscribir,proceso->tamanio_dato);
+				dir_fisica = atoi(parsed[1]);
+				tamanio_informacion = proceso->tamanio_dato;
+				escribir_memoria(dir_fisica,informacionALeerOEscribir,tamanio_informacion);
+				log_info(logger, "PID: %u - Accion: ESCRIBIR - Direccion fisica: %d - Tamanio: %d - Origen: FS", proceso->pid, dir_fisica, tamanio_informacion);
 				//Avisarle a filesystem que se escribio joya
-				enviar_instruccion(*socket_cliente,proceso,OK);
+				enviar_instruccion(conexion_filesystem,proceso,OK);
 				free(proceso);
 				list_destroy_and_destroy_elements(lista, free);
 				break;
 			case F_WRITE:
+				log_trace(logger, "F_WRITE");
 				lista = recibir_paquete(*socket_cliente);
 				proceso = malloc(sizeof(t_instruccion));
 				recibir_instruccion(lista,proceso);
-				informacionALeerOEscribir = proceso->dato;
+				// informacionALeerOEscribir = proceso->dato;
 				instruccion = proceso->instruccion;
 				parsed = string_split(instruccion," ");
-				// dir_fisica = string_get_string_as_array(parsed[1]);
-				// id_seg = atoi(dir_fisica[0]);
-				// desp = atoi(dir_fisica[1]);
-				informacionALeerOEscribir = leer_memoria(atoi(parsed[1]),atoi(parsed[2]));
+				dir_fisica = atoi(parsed[1]);
+				tamanio_informacion = atoi(parsed[2]);
+				informacionALeerOEscribir = leer_memoria(dir_fisica,tamanio_informacion);
+				log_info(logger, "PID: %u - Accion: LEER - Direccion fisica: %d - Tamanio: %d - Origen: FS", proceso->pid, dir_fisica, tamanio_informacion);
+				proceso->tamanio_dato=tamanio_informacion;
 				proceso->dato=informacionALeerOEscribir;
-				enviar_instruccion_con_dato(*socket_cliente,proceso,ACA_TENES_LA_INFO_GIIIIIIL);
+				enviar_instruccion_con_dato(conexion_filesystem,proceso,ACA_TENES_LA_INFO_GIIIIIIL);
 				free(proceso);
 				list_destroy_and_destroy_elements(lista, free);
 				break;

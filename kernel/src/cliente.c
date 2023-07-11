@@ -55,7 +55,7 @@ void atender_servidor(int* socket_servidor){
 	pthread_t thread;
 	char* instruccion;
 	char* numero; //No se me ocurre otra forma de hacerlo
-	char* numero_din;
+	// char* numero_din;
 	char** parsed;
 	t_instruccion* laCosaQueMando;
 	Archivo *archivoQueUso;
@@ -180,9 +180,10 @@ void atender_servidor(int* socket_servidor){
 				lista = recibir_paquete(*socket_servidor);
 				laCosaQueMando = malloc(sizeof(t_instruccion));
 				recibir_instruccion(lista, laCosaQueMando);
+				log_debug(logger, "YA_SE_TERMINO_LA_TRUNCACION: PID %u", laCosaQueMando->pid);
 				block_a_ready(queue_seek(qblock, laCosaQueMando->pid));
-				list_destroy_and_destroy_elements(lista, free);
 				free(laCosaQueMando);
+				list_destroy_and_destroy_elements(lista, free);
 				break;
 			case F_READ:
 				lista = recibir_paquete(*socket_servidor);
@@ -193,12 +194,14 @@ void atender_servidor(int* socket_servidor){
 				//esto deberia devolver el archivo que voy a usar
 				archivoQueUso = estoDevuelveUnArchivo(((pcb*)queue_peek(qexec)), instruccion);
 
-				numero = string_from_format("%d", archivoQueUso->puntero);
-				numero_din = malloc(strlen(numero)+1);
-				strcpy(numero_din, numero);
+				numero = string_itoa(archivoQueUso->puntero);
+				// numero_din = malloc(strlen(numero)+1);
+				// strcpy(numero_din, numero);
 				//le meto el numero (como string) a la instruccion para mandarselo a file system
-				strcat(instruccion," ");
-				strcat(instruccion, numero_din);
+				// strcat(instruccion," ");
+				// strcat(instruccion, numero_din);
+				string_append_with_format(&instruccion, " %s", numero);
+				log_debug(logger, "DEBUG: F_READ - Instruccion %s - Numero %s", instruccion, numero);
 
 				//PUEDO HACER ESTO????? X2
 				laCosaQueMando = malloc(sizeof(t_instruccion));
@@ -206,26 +209,27 @@ void atender_servidor(int* socket_servidor){
 				// laCosaQueMando->instruccion=malloc(strlen(instruccion)+1);
 				// strcpy(laCosaQueMando->instruccion,instruccion);
 				generar_instruccion(queue_peek(qexec), laCosaQueMando, instruccion);
-				enviar_instruccion(*socket_servidor,laCosaQueMando,F_READ);
+				enviar_instruccion(conexion_filesystem,laCosaQueMando,F_READ);
 				free(laCosaQueMando);
 
 				sem_wait(sem_escrituraLectura);
 				contadorDeEscrituraOLectura ++;
 				sem_post(sem_escrituraLectura);
 
-				log_info(logger, "PID: %s - Leer Archivo: %s - Puntero: %s - Direccion Memoria %s - Tamanio %s", parsed[0], parsed[1], parsed[2], parsed[3], parsed[4]);
+				log_info(logger, "PID: %u - Leer Archivo: %s - Puntero: %s - Direccion Memoria %s - Tamanio %s", ((pcb*)queue_peek(qexec))->pid, parsed[1], numero, parsed[2], parsed[3]);
 				exec_a_block();
 				list_destroy_and_destroy_elements(lista, free);
 
 				break;
 			case MEMORIA_DIJO_QUE_PUDO_ESCRIBIR_JOYA:
 				lista = recibir_paquete(*socket_servidor);
+				laCosaQueMando = malloc(sizeof(t_instruccion));
 				recibir_instruccion(lista, laCosaQueMando);
 				block_a_ready(queue_seek(qblock, laCosaQueMando->pid));
 				sem_wait(sem_escrituraLectura);
 				contadorDeEscrituraOLectura --;
 				sem_post(sem_escrituraLectura);
-
+				free(laCosaQueMando);
 				list_destroy_and_destroy_elements(lista, free);
 				break;
 			case F_WRITE:
@@ -237,11 +241,11 @@ void atender_servidor(int* socket_servidor){
 				//esto deberia devolver el archivo que voy a usar
 				archivoQueUso = estoDevuelveUnArchivo(((pcb*)queue_peek(qexec)), instruccion);
 
-				sprintf(numero, "%d", archivoQueUso->puntero);
+				char* numero = string_itoa(archivoQueUso->puntero);
 
 				//le meto el numero (como string) a la instruccion para mandarselo a file system
-				strcat(instruccion," ");
-				strcat(instruccion, numero);
+				string_append_with_format(&instruccion, " %s", numero);
+				log_debug(logger, "DEBUG: F_WRITE - Instruccion %s - Numero %s", instruccion, numero);
 
 				//PUEDO HACER ESTO????? X2
 				laCosaQueMando = malloc(sizeof(t_instruccion));
@@ -249,20 +253,21 @@ void atender_servidor(int* socket_servidor){
 				// laCosaQueMando->instruccion=malloc(strlen(instruccion)+1);
 				// strcpy(laCosaQueMando->instruccion,instruccion);
 				generar_instruccion(queue_peek(qexec), laCosaQueMando, instruccion);
-				enviar_instruccion(*socket_servidor,laCosaQueMando,F_WRITE);
-				free(laCosaQueMando);
+				enviar_instruccion(conexion_filesystem,laCosaQueMando,F_WRITE);
 
 				sem_wait(sem_escrituraLectura);
 				contadorDeEscrituraOLectura ++;
 				sem_post(sem_escrituraLectura);
 
-				log_info(logger, "PID: %s - Escribir Archivo: %s - Puntero: %s - Direccion Memoria %s - Tamaño %s", parsed[0], parsed[1], parsed[2], parsed[3], parsed[4]);
+				log_info(logger, "PID: %u - Escribir Archivo: %s - Puntero: %s - Direccion Memoria %s - Tamaño %s", ((pcb*)queue_peek(qexec))->pid, parsed[1], numero, parsed[2], parsed[3]);
 				exec_a_block();
+				free(laCosaQueMando);
 				list_destroy_and_destroy_elements(lista, free);
 
 				break;
 			case SE_PUDO_ESCRIBIR_EL_ARCHIVO:
 				lista = recibir_paquete(*socket_servidor);
+				laCosaQueMando = malloc(sizeof(t_instruccion));
 				recibir_instruccion(lista, laCosaQueMando);
 				block_a_ready(queue_seek(qblock, laCosaQueMando->pid));
 
@@ -270,6 +275,7 @@ void atender_servidor(int* socket_servidor){
 				contadorDeEscrituraOLectura --;
 				sem_post(sem_escrituraLectura);
 
+				free(laCosaQueMando);
 				list_destroy_and_destroy_elements(lista, free);
 				break;
 			case CREATE_SEGMENT:

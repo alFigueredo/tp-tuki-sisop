@@ -100,7 +100,8 @@ pcb* queue_seek(t_queue* queue, unsigned int pid){
 void queue_extract(t_queue* queue, pcb* proceso) {
 	int size_queue = queue_size(queue);
 	for (int i=0; i<size_queue; i++) {
-		if (((pcb*)queue_peek(queue))->pid==proceso->pid) {
+		log_debug(logger, "COMPARE: %u %u", ((pcb*)queue_peek(queue))->pid, proceso->pid);
+		if ((((pcb*)queue_peek(queue))->pid)==(proceso->pid)) {
 			queue_pop(queue);
 		} else {
 			queue_push(queue, queue_pop(queue));
@@ -210,6 +211,7 @@ void block_a_ready(pcb* proceso) {
 	queue_push(qready, proceso);
 	sem_post(sem_ready);
 	log_info(logger, "PID: %d - Estado Anterior: BLOCK - Estado Actual: READY", proceso->pid);
+	log_debug(logger, "DEBUG: Ultimo tiempo de llegada a ready del proceso %u: %s", proceso->pid, proceso->tiempo_llegada_ready);
 	proceso->tiempo_llegada_ready = temporal_get_string_time("%y:%m:%d:%H:%M:%S:%MS");
 	sem_wait(sem_ready);
 	log_info(logger, "Cola Ready %s: [%s]", config_get_string_value(config,"ALGORITMO_PLANIFICACION"), queue_iterator(qready));
