@@ -43,6 +43,7 @@ extern sem_t* sem_escrituraLectura;
 extern t_temporal* tiempo_en_cpu;
 extern t_dictionary* conexiones;
 
+
 void iniciar_colas(void);
 void destruir_colas(void);
 void iniciar_semaforos(void);

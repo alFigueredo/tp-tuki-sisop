@@ -294,7 +294,7 @@ void atender_servidor(int* socket_servidor){
 				memcpy(&(segmento->direccion_base), list_get(lista,3), sizeof(int));
 				segmento->direccion_limite = *(int*)list_get(lista,3)+*(int*)list_get(lista,2);
 				list_add(((pcb*)queue_peek(qexec))->tabla_segmentos, segmento);
-				evaluar_respuesta(*((int*)list_get(lista,2)) ,0);
+				log_info(logger, "Se ha creado exitosamente el segmento con base %d en memoria", *((int*)list_get(lista,3)));
 				enviar_pcb(conexion_cpu, (pcb*)queue_peek(qexec), EXEC);
 				list_destroy_and_destroy_elements(lista,free);
 				break;
@@ -322,6 +322,18 @@ void atender_servidor(int* socket_servidor){
 				enviar_pcb(conexion_cpu,((pcb*)queue_peek(qexec)),EXEC);
 				list_destroy_and_destroy_elements(lista,free);
 				break;
+			case COMPACTACION:
+				log_info(logger,"Se solicita compactacion, esperaremos hasta que finalicen las operaciones entre memoria y file system");
+				while (1) {
+					sem_wait(sem_escrituraLectura);
+					if (contadorDeEscrituraOLectura == 0) {
+						break;
+					}
+					sem_post(sem_escrituraLectura);
+				}
+				enviar_operacion(conexion_memoria,COMPACTACION);
+				break;
+
 			case COMPACTACION_OK:
 				lista = recibir_paquete(*socket_servidor);
 				actualizar_tablas(lista);
@@ -360,8 +372,8 @@ void atender_servidor(int* socket_servidor){
 			case EXIT_OUT_OF_MEMORY:
 				lista = recibir_paquete(*socket_servidor); //Debería enviar la base/id_segmento + el tipo de resultado que se obtuvo: 0-> Todo bien, 1->No hay espacio, 2->Requiere compactacion
 				recibir_pcb(lista, (pcb*)queue_peek(qexec));
-				evaluar_respuesta(*((int*)list_get(lista,1)), 1);
-				// exec_a_exit("OUT_OF_MEMORY");
+				log_error(logger,"Out of memory: No se encóntró espacio para el segmento id %d en memoria, por lo que se finaliza el proceso en ejecucion", *((int*)list_get(lista,1)));
+            	exec_a_exit("OUT_OF_MEMORY");
 				list_destroy_and_destroy_elements(lista,free);
 				break;
 			case DELETE_PROCESS_OK:
