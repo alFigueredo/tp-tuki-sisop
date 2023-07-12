@@ -329,7 +329,6 @@ void atender_servidor(int* socket_servidor){
 				}
 				enviar_operacion(conexion_memoria,COMPACTACION);
 				break;
-
 			case COMPACTACION_OK:
 				lista = recibir_paquete(*socket_servidor);
 				t_list* lista_tablas = recibir_tablas_segmentos(lista);
