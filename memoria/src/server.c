@@ -151,12 +151,13 @@ void atender_cliente(int* socket_cliente){
 				int resultado = crear_segmento(pid, tamanio_segmento, id_segmento);
 				switch (resultado) {
 					case -1:
-						// COMPACTACION, se usará EXIT_OUT_OF_MEMORY de momento
-						paquete = crear_paquete(EXIT_OUT_OF_MEMORY);
-						agregar_a_paquete(paquete, &pid, sizeof(unsigned int));
-						agregar_a_paquete(paquete, &id_segmento, sizeof(int));
-						enviar_paquete(paquete, conexion_kernel);
-						eliminar_paquete(paquete);
+						// COMPACTACION
+						// paquete = crear_paquete(EXIT_OUT_OF_MEMORY);
+						// agregar_a_paquete(paquete, &pid, sizeof(unsigned int));
+						// agregar_a_paquete(paquete, &id_segmento, sizeof(int));
+						// enviar_paquete(paquete, conexion_kernel);
+						// eliminar_paquete(paquete);
+						enviar_operacion(conexion_kernel, COMPACTACION);
 						break;
 					case -2:
 						// OUT_OF_MEMORY
@@ -291,7 +292,37 @@ void atender_cliente(int* socket_cliente){
 				log_trace(logger, "TRACE END: MOV_OUT");
 
 				break;
-
+			case COMPACTACION:
+				// lista = recibir_paquete(*socket_cliente);
+				t_list* segmentos_compactados = compactar_segmentos();
+				t_list* lista_tablas = list_create();
+				for (int i=0; i<list_size(segmentos_compactados); i++) {
+					segmento* segmento_actual = (segmento*)list_get(segmentos_compactados, i);
+					t_instruccion* tabla = NULL;
+					for (int j=0; i<list_size(lista_tablas); i++) {
+						t_instruccion* tabla_actual = (t_instruccion*)list_get(lista_tablas, j);
+						if (tabla_actual->pid==segmento_actual->pid) {
+							tabla = tabla_actual;
+							break;
+						}
+					}
+					if (!tabla) {
+						tabla = malloc(sizeof(t_instruccion));
+						tabla->pid = segmento_actual->pid;
+						tabla->tabla_segmentos = list_create();
+						list_add(lista_tablas, tabla);
+					}
+					t_segmento* tsegmento = malloc(sizeof(t_segmento));
+					tsegmento->id_segmento = segmento_actual->id;
+					tsegmento->tam_segmento = segmento_actual->tam_segmento;
+					tsegmento->direccion_base = segmento_actual->direccion_base;
+					tsegmento->direccion_limite = segmento_actual->direccion_limite;
+					list_add(tabla->tabla_segmentos, tsegmento);
+				}
+				enviar_tablas_segmentos(conexion_kernel, lista_tablas, COMPACTACION_OK);
+				list_destroy_and_destroy_elements(lista_tablas,free);
+				// list_destroy_and_destroy_elements(lista, free);
+				break;
 			case -1:
 				log_warning(logger, "El cliente se desconecto. Terminando conexion \n");
 				free(socket_cliente);

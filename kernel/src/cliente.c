@@ -111,10 +111,9 @@ void atender_servidor(int* socket_servidor){
 				{
 
 					//PUEDO HACER ESTO?????
-					laCosaQueMando = malloc(sizeof(t_instruccion));
+					laCosaQueMando = generar_instruccion(queue_peek(qexec), instruccion);
 					// laCosaQueMando->pid=((pcb*)queue_peek(qexec))->pid;
 					// laCosaQueMando->instruccion=instruccion;
-					generar_instruccion(queue_peek(qexec), laCosaQueMando, instruccion);
 					enviar_instruccion(conexion_filesystem,laCosaQueMando,F_OPEN);
 					free(laCosaQueMando);
 					// enviar_pcb(conexion_cpu, (pcb*)queue_peek(qexec), EXEC);
@@ -163,11 +162,10 @@ void atender_servidor(int* socket_servidor){
 				instruccion = list_get(((pcb*)queue_peek(qexec))->instrucciones, ((pcb*)queue_peek(qexec))->program_counter-1);
 
 				//PUEDO HACER ESTO????? X2
-				laCosaQueMando = malloc(sizeof(t_instruccion));
+				laCosaQueMando = generar_instruccion(queue_peek(qexec), instruccion);
 				// laCosaQueMando->pid=((pcb*)queue_peek(qexec))->pid;
 				// laCosaQueMando->instruccion=malloc(strlen(instruccion)+1);
 				// strcpy(laCosaQueMando->instruccion,instruccion);
-				generar_instruccion(queue_peek(qexec), laCosaQueMando, instruccion);
 				enviar_instruccion(conexion_filesystem,laCosaQueMando,F_TRUNCATE);
 				parsed = string_split(instruccion, " ");
 				log_info(logger, "PID: %d - Archivo: %s - Tamaño: %s", laCosaQueMando->pid, parsed[1], parsed[2]);
@@ -205,11 +203,10 @@ void atender_servidor(int* socket_servidor){
 				log_debug(logger, "DEBUG: F_READ - Instruccion %s - Numero %s", instruccion, numero);
 
 				//PUEDO HACER ESTO????? X2
-				laCosaQueMando = malloc(sizeof(t_instruccion));
+				laCosaQueMando = generar_instruccion(queue_peek(qexec), instruccion);
 				// laCosaQueMando->pid=((pcb*)queue_peek(qexec))->pid;
 				// laCosaQueMando->instruccion=malloc(strlen(instruccion)+1);
 				// strcpy(laCosaQueMando->instruccion,instruccion);
-				generar_instruccion(queue_peek(qexec), laCosaQueMando, instruccion);
 				enviar_instruccion(conexion_filesystem,laCosaQueMando,F_READ);
 				free(laCosaQueMando);
 
@@ -249,11 +246,10 @@ void atender_servidor(int* socket_servidor){
 				log_debug(logger, "DEBUG: F_WRITE - Instruccion %s - Numero %s", instruccion, numero);
 
 				//PUEDO HACER ESTO????? X2
-				laCosaQueMando = malloc(sizeof(t_instruccion));
+				laCosaQueMando = generar_instruccion(queue_peek(qexec), instruccion);
 				// laCosaQueMando->pid=((pcb*)queue_peek(qexec))->pid;
 				// laCosaQueMando->instruccion=malloc(strlen(instruccion)+1);
 				// strcpy(laCosaQueMando->instruccion,instruccion);
-				generar_instruccion(queue_peek(qexec), laCosaQueMando, instruccion);
 				enviar_instruccion(conexion_filesystem,laCosaQueMando,F_WRITE);
 
 				sem_wait(sem_escrituraLectura);
@@ -336,10 +332,12 @@ void atender_servidor(int* socket_servidor){
 
 			case COMPACTACION_OK:
 				lista = recibir_paquete(*socket_servidor);
-				actualizar_tablas(lista);
+				t_list* lista_tablas = recibir_tablas_segmentos(lista);
+				actualizar_tablas(lista_tablas);
 				char* instruccion = list_get(((pcb*)queue_peek(qexec))->instrucciones, ((pcb*)queue_peek(qexec))->program_counter-1);
 				enviar_segmento(((pcb*)queue_peek(qexec))->pid,instruccion,((pcb*)queue_peek(qexec))->tabla_segmentos); //Volvemos a solicitar la creacion del segmento
 				list_destroy_and_destroy_elements(lista,free);
+				list_destroy_and_destroy_elements(lista_tablas,free);
 				break;
 			case CREATE_PROCESS_OK:
 				lista = recibir_paquete(*socket_servidor);

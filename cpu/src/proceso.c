@@ -158,8 +158,7 @@ void instruccion_mov_in(char** parsed)
 	strcpy(ins_alloc, instruccion);
 	list_replace_and_destroy_element(proceso->instrucciones, proceso->program_counter, ins_alloc, free);
 	log_trace(logger, "PID: %d - Instruccion traducida: %s", proceso->pid, (char*)list_get(proceso->instrucciones, proceso->program_counter));
-	t_instruccion* instruccion_proceso = malloc(sizeof(t_instruccion));
-	generar_instruccion(proceso, instruccion_proceso, (char*)list_get(proceso->instrucciones, proceso->program_counter));
+	t_instruccion* instruccion_proceso = generar_instruccion(proceso, (char*)list_get(proceso->instrucciones, proceso->program_counter));
 	enviar_instruccion(conexion_memoria, instruccion_proceso, MOV_IN);
 	// proceso->program_counter++;
 }
@@ -189,8 +188,7 @@ void instruccion_mov_out(char** parsed)
 	strcpy(ins_alloc, instruccion);
 	list_replace_and_destroy_element(proceso->instrucciones, proceso->program_counter, ins_alloc, free);
 	log_trace(logger, "PID: %d - Instruccion traducida: %s", proceso->pid, (char*)list_get(proceso->instrucciones, proceso->program_counter));
-	t_instruccion* instruccion_proceso = malloc(sizeof(t_instruccion));
-	generar_instruccion(proceso, instruccion_proceso, (char*)list_get(proceso->instrucciones, proceso->program_counter));
+	t_instruccion* instruccion_proceso = generar_instruccion(proceso, (char*)list_get(proceso->instrucciones, proceso->program_counter));
 	instruccion_proceso->tamanio_dato = tamanio_dato;
 	instruccion_proceso->dato = dictionary_get(registros, parsed[2]);
 	enviar_instruccion_con_dato(conexion_memoria, instruccion_proceso, MOV_OUT);

@@ -133,8 +133,7 @@ void gestionar_multiprogramación(void) {
 	sem_getvalue(sem_new_ready, &sem_new_ready_value);
 	if (sem_new_ready_value==1)
 		sem_wait(sem_new_ready);
-	t_instruccion* loQueSeManda = malloc(sizeof(t_instruccion));
-	generar_instruccion(queue_peek(qnew), loQueSeManda, "");
+	t_instruccion* loQueSeManda = generar_instruccion(queue_peek(qnew), "");
 	enviar_instruccion(conexion_memoria, loQueSeManda, CREATE_PROCESS);
 	log_trace(logger, "TRACE: CREATE_PROCESS enviada");
 }
@@ -227,8 +226,7 @@ void exec_a_exit(char* motivo) {
 	log_info(logger, "PID: %d - Estado Anterior: EXEC - Estado Actual: EXIT", proceso->pid);
 	calcular_estimacion(proceso, temporal_gettime(tiempo_en_cpu));
 	temporal_destroy(tiempo_en_cpu);
-	t_instruccion* loQueSeManda = malloc(sizeof(t_instruccion));
-	generar_instruccion(queue_peek(qexit), loQueSeManda, motivo);
+	t_instruccion* loQueSeManda = generar_instruccion(queue_peek(qexit), motivo);
 	enviar_instruccion(conexion_memoria, loQueSeManda, DELETE_PROCESS);
 	// log_debug(logger, "Cantidad de segmentos: %d", list_size(loQueSeManda->tabla_segmentos));
 	log_trace(logger, "Registro AX: %s", string_substring_until(proceso->registros.AX, 4));

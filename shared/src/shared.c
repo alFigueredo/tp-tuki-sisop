@@ -334,11 +334,70 @@ void recibir_instruccion_con_dato(t_list* lista, t_instruccion* proceso) {
 	log_trace(logger, "TRACE: Instrucción recibida - %s", proceso->instruccion);
 }
 
-void generar_instruccion(pcb* proceso, t_instruccion* instruccion_proceso, char* instruccion) {
+t_instruccion* generar_instruccion(pcb* proceso, char* instruccion) {
+	t_instruccion* instruccion_proceso = malloc(sizeof(t_instruccion));
 	instruccion_proceso->pid = proceso->pid;
 	instruccion_proceso->instruccion = instruccion;
 	instruccion_proceso->tabla_segmentos = proceso->tabla_segmentos;
 	// instruccion_proceso->dato = NULL;
+	return instruccion_proceso;
+}
+
+void enviar_tablas_segmentos(int conexion, t_list* tablas_segmentos, op_code codigo) {
+	t_paquete *paquete = crear_paquete(codigo);
+
+	int cantidad_tablas = list_size(tablas_segmentos);
+	agregar_a_paquete(paquete, &cantidad_tablas, sizeof(int));
+
+	t_list* cantidades = list_create();
+	for (int i=0; i<cantidad_tablas; i++) {
+		t_instruccion* tabla_actual = (t_instruccion*)list_get(tablas_segmentos, i);
+		agregar_a_paquete(paquete, &(tabla_actual->pid), sizeof(unsigned int));
+		int* cantidad_segmentos = malloc(sizeof(int));
+		*cantidad_segmentos = list_size(tabla_actual->tabla_segmentos);
+		list_add(cantidades, cantidad_segmentos);
+		agregar_a_paquete(paquete, cantidad_segmentos, sizeof(int));
+		for (int j=0; j<*cantidad_segmentos; j++) {
+			t_segmento* segmento_actual = (t_segmento*)list_get(tabla_actual->tabla_segmentos, j);
+			agregar_a_paquete(paquete, &(segmento_actual->id_segmento), sizeof(int));
+			agregar_a_paquete(paquete, &(segmento_actual->tam_segmento), sizeof(int));
+			agregar_a_paquete(paquete, &(segmento_actual->direccion_base), sizeof(int));
+			agregar_a_paquete(paquete, &(segmento_actual->direccion_limite), sizeof(int));
+		}
+	}
+	
+	enviar_paquete(paquete, conexion);
+	eliminar_paquete(paquete);
+	list_destroy_and_destroy_elements(cantidades, free);
+	log_trace(logger, "TRACE: %d enviada", codigo);
+}
+
+t_list* recibir_tablas_segmentos(t_list* lista) {
+
+	int i=0;
+	t_list* lista_tablas = list_create();
+
+	int cantidad_tablas;
+	memcpy(&(cantidad_tablas), list_get(lista, i++), sizeof(int));
+
+	for (int j=0; j<cantidad_tablas; j++) {
+		t_instruccion* tabla_actual = malloc(sizeof(t_instruccion));
+		memcpy(&(tabla_actual->pid), list_get(lista, i++), sizeof(unsigned int));
+		tabla_actual->tabla_segmentos = list_create();
+		int cantidad_segmentos;
+		memcpy(&(cantidad_segmentos), list_get(lista, i++), sizeof(int));
+		for (int k=0; k<cantidad_segmentos; k++) {
+			t_segmento* segmento_actual = malloc(sizeof(t_segmento));
+			memcpy(&(segmento_actual->id_segmento), list_get(lista, i++), sizeof(int));
+			memcpy(&(segmento_actual->tam_segmento), list_get(lista, i++), sizeof(int));
+			memcpy(&(segmento_actual->direccion_base), list_get(lista, i++), sizeof(int));
+			memcpy(&(segmento_actual->direccion_limite), list_get(lista, i++), sizeof(int));
+			list_add(tabla_actual->tabla_segmentos, segmento_actual);
+		}
+		list_add(lista_tablas, tabla_actual);
+	}
+	return lista_tablas;
+
 }
 
 void replace_r_with_0(char *line)

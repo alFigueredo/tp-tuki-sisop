@@ -139,7 +139,9 @@ void enviar_instruccion(int, t_instruccion*, op_code);
 void recibir_instruccion(t_list*, t_instruccion*);
 void enviar_instruccion_con_dato(int, t_instruccion*, op_code);
 void recibir_instruccion_con_dato(t_list*, t_instruccion*);
-void generar_instruccion(pcb*, t_instruccion*, char*);
+t_instruccion* generar_instruccion(pcb*, char*);
+void enviar_tablas_segmentos(int, t_list*, op_code);
+t_list* recibir_tablas_segmentos(t_list*);
 void replace_r_with_0(char*);
 
 #endif /* SHARED_H_ */
