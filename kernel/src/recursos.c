@@ -8,7 +8,6 @@ t_list* leerRecursos(t_config *config) {
     char** recursosConfig =  config_get_array_value(config, "RECURSOS");
     char** instanciasConfig = config_get_array_value(config, "INSTANCIAS_RECURSOS");
 
-    // int numRecursos = sizeof(recursosConfig) / sizeof(recursosConfig[0]);
     int numRecursos = 0;
     while (recursosConfig[numRecursos]) {
         numRecursos++;
@@ -23,6 +22,9 @@ t_list* leerRecursos(t_config *config) {
 		list_add(listaRecursos, nuevoRecurso);
 	}
 
+    free(recursosConfig);
+    free(instanciasConfig);
+
 	return listaRecursos;
 }
 
@@ -35,20 +37,22 @@ void manejo_recursos(pcb* proceso) {
     char** parsed = string_split(instruccion, " "); //Partes de la instruccion actual
 
     char* operacion = parsed[0];
+    char* recursoSolicitado = parsed[1];
+    free(parsed);
 
     bool recursoExiste = false;
 
     Recurso* recursoActual = NULL;
     for (int i = 0; i < list_size(recursos); i++) {
         recursoActual = list_get(recursos, i);
-        if (strcmp(recursoActual->nombre, parsed[1]) == 0) {
+        if (strcmp(recursoActual->nombre, recursoSolicitado) == 0) {
             recursoExiste = true;
             break;
         }
     }
 
     if (!recursoExiste) {
-        log_error(logger, "PID: %d - %s de recurso no existente. Finalizando proceso", proceso->pid, parsed[0]);
+        log_error(logger, "PID: %d - %s de recurso no existente. Finalizando proceso", proceso->pid, operacion);
     	exec_a_exit("SUCCESS");
     } else {
         if (strcmp(operacion, "WAIT") == 0) {

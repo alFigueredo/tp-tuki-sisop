@@ -229,7 +229,10 @@ void exec_a_exit(char* motivo) {
 	t_instruccion* loQueSeManda = generar_instruccion(queue_peek(qexit), motivo);
 	enviar_instruccion(conexion_memoria, loQueSeManda, DELETE_PROCESS);
 	// log_debug(logger, "Cantidad de segmentos: %d", list_size(loQueSeManda->tabla_segmentos));
-	log_trace(logger, "Registro AX: %s", string_substring_until(proceso->registros.AX, 4));
+	char* registroAX = string_substring_until(proceso->registros.AX, 4);
+	log_trace(logger, "Registro AX: %s", registroAX);
+	free(registroAX);
+	free(loQueSeManda);  
 }
 
 void finalizar_proceso(char* motivo) {

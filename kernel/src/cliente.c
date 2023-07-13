@@ -343,7 +343,7 @@ void atender_servidor(int* socket_servidor){
 				log_trace(logger, "TRACE: CREATE_PROCESS_OK");
 				laCosaQueMando = malloc(sizeof(t_instruccion));
 				recibir_instruccion(lista, laCosaQueMando);
-				list_destroy(((pcb*)queue_peek(qnew))->tabla_segmentos);
+				list_destroy_and_destroy_elements(((pcb*)queue_peek(qnew))->tabla_segmentos,free);
 				((pcb*)queue_peek(qnew))->tabla_segmentos = list_duplicate(laCosaQueMando->tabla_segmentos); //Actualiza la tabla de segmentos
 				log_debug(logger, "Tamanio de segmento: %d", ((t_segmento*)list_get(((pcb*)queue_peek(qnew))->tabla_segmentos, 0))->tam_segmento);
 				pthread_create(&thread,
@@ -353,6 +353,8 @@ void atender_servidor(int* socket_servidor){
 				pthread_detach(thread);
 				// new_a_ready(); //Memoria dice que el proceso está listo
 				list_destroy_and_destroy_elements(lista,free);
+				list_destroy_and_destroy_elements(laCosaQueMando->tabla_segmentos,free);
+				free(laCosaQueMando);
 				break;
 			case EXIT:
 				lista = recibir_paquete(*socket_servidor);
