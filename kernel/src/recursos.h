@@ -22,8 +22,8 @@ t_list* leerRecursos(t_config *config);
 
 void manejo_recursos(pcb*);
 
-void destruir_recursos(t_list* recursos);
+void destruir_recursos(t_list*);
 
-void destruir_colas_recursos(void* recurso);
+void destruir_colas_recursos(void*);
 
 #endif /* RECURSOS_H_ */
