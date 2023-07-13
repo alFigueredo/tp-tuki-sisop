@@ -135,6 +135,7 @@ void gestionar_multiprogramación(void) {
 		sem_wait(sem_new_ready);
 	t_instruccion* loQueSeManda = generar_instruccion(queue_peek(qnew), "");
 	enviar_instruccion(conexion_memoria, loQueSeManda, CREATE_PROCESS);
+	free(loQueSeManda);
 	log_trace(logger, "TRACE: CREATE_PROCESS enviada");
 }
 
