@@ -38,7 +38,6 @@ void manejo_recursos(pcb* proceso) {
 
     char* operacion = parsed[0];
     char* recursoSolicitado = parsed[1];
-    free(parsed);
 
     bool recursoExiste = false;
 
@@ -79,6 +78,7 @@ void manejo_recursos(pcb* proceso) {
             log_info(logger, "PID: %d - Signal: %s - Instancias: %d", proceso->pid, recursoActual->nombre, recursoActual->instancias);
         }
     }
+    string_array_destroy(parsed);
 }
 
 void destruir_recursos(t_list* recursos) {

@@ -58,7 +58,6 @@ t_list* iniciar_proceso(unsigned int pid)
 	t_seg->id_segmento = seg->id;
 	t_seg->tam_segmento = seg->tam_segmento;
 	t_seg->direccion_base = seg->direccion_base;
-	t_seg->direccion_limite = seg->direccion_limite;
 
 	list_add(segmentos, t_seg);
 

@@ -23,7 +23,6 @@ void enviar_segmento(int pid, char* instruccion, t_list* tabla_segmentos){
             agregar_a_paquete(paquete, &(segmento_actual->id_segmento), sizeof(int));
             agregar_a_paquete(paquete, &(segmento_actual->tam_segmento), sizeof(int));
             agregar_a_paquete(paquete, &(segmento_actual->direccion_base), sizeof(int));
-            agregar_a_paquete(paquete, &(segmento_actual->direccion_limite), sizeof(int));
         }
         enviar_paquete(paquete,conexion_memoria);
     }

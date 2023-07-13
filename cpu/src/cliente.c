@@ -70,6 +70,7 @@ void atender_servidor(int* socket_servidor){
 				instruccion = malloc(sizeof(t_instruccion));
 				recibir_instruccion_con_dato(lista, instruccion);
 				mov_in(instruccion);
+				destruir_diccionarios();
 				interpretar_instrucciones();
 				free(instruccion);
 				list_destroy_and_destroy_elements(lista, free);
@@ -78,6 +79,7 @@ void atender_servidor(int* socket_servidor){
 				log_trace(logger, "TRACE: OK");
 				// lista = recibir_paquete(*socket_servidor);
 				proceso->program_counter++;
+				destruir_diccionarios();
 				interpretar_instrucciones();
 				// list_destroy_and_destroy_elements(lista, free);
 				log_trace(logger, "TRACE END: OK");

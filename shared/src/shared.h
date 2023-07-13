@@ -117,7 +117,6 @@ typedef struct{
     int id_segmento;
     int tam_segmento;
     int direccion_base;
-	int direccion_limite;
 } t_segmento;
 
 int recibir_operacion(int);

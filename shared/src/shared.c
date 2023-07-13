@@ -199,7 +199,6 @@ void enviar_pcb(int conexion, pcb *proceso, op_code codigo)
 		agregar_a_paquete(paquete, &(segmento_actual->id_segmento), sizeof(int));
 		agregar_a_paquete(paquete, &(segmento_actual->tam_segmento), sizeof(int));
 		agregar_a_paquete(paquete, &(segmento_actual->direccion_base), sizeof(int));
-		agregar_a_paquete(paquete, &(segmento_actual->direccion_limite), sizeof(int));
 	}
 
 	enviar_paquete(paquete, conexion);
@@ -212,9 +211,9 @@ void recibir_pcb(t_list *lista, pcb *proceso)
 	memcpy(&(proceso->pid), list_get(lista, i++), sizeof(unsigned int));
 	int cantidad_instrucciones;
 	memcpy(&(cantidad_instrucciones), list_get(lista, i++), sizeof(int));
-	if (proceso->instrucciones) {
-		list_destroy_and_destroy_elements(proceso->instrucciones, free);
-	}
+	// if (proceso->instrucciones) {
+	// 	list_destroy_and_destroy_elements(proceso->instrucciones, free);
+	// }
 	proceso->instrucciones = list_slice_and_remove(lista, i, cantidad_instrucciones); //Aca hay una perdida grosa, de segmentation fault
 	memcpy(&(proceso->program_counter), list_get(lista, i++), sizeof(int));
 	memcpy(proceso->registros.AX, list_get(lista, i++), 4);
@@ -238,7 +237,6 @@ void recibir_pcb(t_list *lista, pcb *proceso)
 		memcpy(&(segmento_actual->id_segmento), list_get(lista, i++), sizeof(int));
 		memcpy(&(segmento_actual->tam_segmento), list_get(lista, i++), sizeof(int));
 		memcpy(&(segmento_actual->direccion_base), list_get(lista, i++), sizeof(int));
-		memcpy(&(segmento_actual->direccion_limite), list_get(lista, i++), sizeof(int));
 		list_add(proceso->tabla_segmentos, segmento_actual);
 	}
 
@@ -257,7 +255,6 @@ void enviar_instruccion(int conexion, t_instruccion* proceso, op_code codigo) {
 		agregar_a_paquete(paquete, &(segmento_actual->id_segmento), sizeof(int));
 		agregar_a_paquete(paquete, &(segmento_actual->tam_segmento), sizeof(int));
 		agregar_a_paquete(paquete, &(segmento_actual->direccion_base), sizeof(int));
-		agregar_a_paquete(paquete, &(segmento_actual->direccion_limite), sizeof(int));
 	}
 
 	enviar_paquete(paquete, conexion);
@@ -271,7 +268,6 @@ void recibir_instruccion(t_list* lista, t_instruccion* proceso) {
 
 	memcpy(&(proceso->pid), list_get(lista, i++), sizeof(unsigned int));
 	proceso->instruccion = (char*)list_remove(lista, i);
-	proceso->tabla_segmentos = list_create();
 
 	int cantidad_segmentos;
 	memcpy(&(cantidad_segmentos), list_get(lista, i++), sizeof(int));
@@ -281,7 +277,6 @@ void recibir_instruccion(t_list* lista, t_instruccion* proceso) {
 		memcpy(&(segmento_actual->id_segmento), list_get(lista, i++), sizeof(int));
 		memcpy(&(segmento_actual->tam_segmento), list_get(lista, i++), sizeof(int));
 		memcpy(&(segmento_actual->direccion_base), list_get(lista, i++), sizeof(int));
-		memcpy(&(segmento_actual->direccion_limite), list_get(lista, i++), sizeof(int));
 		list_add(proceso->tabla_segmentos, segmento_actual);
 	}
 	log_trace(logger, "TRACE: Instrucción recibida - %s", proceso->instruccion);
@@ -299,7 +294,6 @@ void enviar_instruccion_con_dato(int conexion, t_instruccion* proceso, op_code c
 		agregar_a_paquete(paquete, &(segmento_actual->id_segmento), sizeof(int));
 		agregar_a_paquete(paquete, &(segmento_actual->tam_segmento), sizeof(int));
 		agregar_a_paquete(paquete, &(segmento_actual->direccion_base), sizeof(int));
-		agregar_a_paquete(paquete, &(segmento_actual->direccion_limite), sizeof(int));
 	}
 
 	agregar_a_paquete(paquete, &(proceso->tamanio_dato), sizeof(int));
@@ -325,7 +319,6 @@ void recibir_instruccion_con_dato(t_list* lista, t_instruccion* proceso) {
 		memcpy(&(segmento_actual->id_segmento), list_get(lista, i++), sizeof(int));
 		memcpy(&(segmento_actual->tam_segmento), list_get(lista, i++), sizeof(int));
 		memcpy(&(segmento_actual->direccion_base), list_get(lista, i++), sizeof(int));
-		memcpy(&(segmento_actual->direccion_limite), list_get(lista, i++), sizeof(int));
 		list_add(proceso->tabla_segmentos, segmento_actual);
 	}
 
@@ -362,7 +355,6 @@ void enviar_tablas_segmentos(int conexion, t_list* tablas_segmentos, op_code cod
 			agregar_a_paquete(paquete, &(segmento_actual->id_segmento), sizeof(int));
 			agregar_a_paquete(paquete, &(segmento_actual->tam_segmento), sizeof(int));
 			agregar_a_paquete(paquete, &(segmento_actual->direccion_base), sizeof(int));
-			agregar_a_paquete(paquete, &(segmento_actual->direccion_limite), sizeof(int));
 		}
 	}
 	
@@ -391,7 +383,6 @@ t_list* recibir_tablas_segmentos(t_list* lista) {
 			memcpy(&(segmento_actual->id_segmento), list_get(lista, i++), sizeof(int));
 			memcpy(&(segmento_actual->tam_segmento), list_get(lista, i++), sizeof(int));
 			memcpy(&(segmento_actual->direccion_base), list_get(lista, i++), sizeof(int));
-			memcpy(&(segmento_actual->direccion_limite), list_get(lista, i++), sizeof(int));
 			list_add(tabla_actual->tabla_segmentos, segmento_actual);
 		}
 		list_add(lista_tablas, tabla_actual);

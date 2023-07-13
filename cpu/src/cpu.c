@@ -16,7 +16,7 @@ int main(int argc, char** argv) {
 	char* puerto_memoria = config_get_string_value(config, "PUERTO_MEMORIA");
 	char* puerto_escucha = config_get_string_value(config, "PUERTO_ESCUCHA");
 
-	
+	iniciar_diccionario_instrucciones();
 	conexion_memoria = crear_conexion(ip_memoria, puerto_memoria);
 	enviar_mensaje("Intento de conexión del cpu a la memoria", conexion_memoria, MENSAJE);
 	esperar_servidor(conexion_memoria);

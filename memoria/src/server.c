@@ -193,7 +193,6 @@ void atender_cliente(int* socket_cliente){
 						list_remove_and_destroy_element(lista, j, free);
 						list_remove_and_destroy_element(lista, j, free);
 						list_remove_and_destroy_element(lista, j, free);
-						list_remove_and_destroy_element(lista, j, free);
 						list_replace_and_destroy_element(lista, 2, &post_tamanio_tabla_segmentos, free);
 						break;
 					}
@@ -208,7 +207,6 @@ void atender_cliente(int* socket_cliente){
 					agregar_a_paquete(paquete, list_get(lista, j), sizeof(int));
 					agregar_a_paquete(paquete, list_get(lista, j+1), sizeof(int));
 					agregar_a_paquete(paquete, list_get(lista, j+2), sizeof(int));
-					agregar_a_paquete(paquete, list_get(lista, j+3), sizeof(int));
 				}
 				enviar_paquete(paquete, conexion_kernel);
 				eliminar_paquete(paquete);
@@ -316,7 +314,6 @@ void atender_cliente(int* socket_cliente){
 					tsegmento->id_segmento = segmento_actual->id;
 					tsegmento->tam_segmento = segmento_actual->tam_segmento;
 					tsegmento->direccion_base = segmento_actual->direccion_base;
-					tsegmento->direccion_limite = segmento_actual->direccion_limite;
 					list_add(tabla->tabla_segmentos, tsegmento);
 				}
 				enviar_tablas_segmentos(conexion_kernel, lista_tablas, COMPACTACION_OK);

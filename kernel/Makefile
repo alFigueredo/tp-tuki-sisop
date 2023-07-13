@@ -7,7 +7,7 @@ MODULE_NAME := ./debug/kernel.out
 SOURCE_FILES := $(shell find ./src -type f -iname "*.c" -exec basename {} \;)
 OBJECT_FILES := $(SOURCE_FILES:%.c=./debug/%.o)
 LINK = -lpthread -lcommons -lm
-CONFIG_FILE := ./tuki-pruebas/memoria.config
+CONFIG_FILE := ./kernel.config
 
 ### Reglas ###
 

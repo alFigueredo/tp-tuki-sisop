@@ -135,8 +135,8 @@ void gestionar_multiprogramación(void) {
 		sem_wait(sem_new_ready);
 	t_instruccion* loQueSeManda = generar_instruccion(queue_peek(qnew), "");
 	enviar_instruccion(conexion_memoria, loQueSeManda, CREATE_PROCESS);
-	//free(loQueSeManda);
 	log_trace(logger, "TRACE: CREATE_PROCESS enviada");
+	free(loQueSeManda);
 }
 
 void new_a_ready(void) {
@@ -231,7 +231,9 @@ void exec_a_exit(char* motivo) {
 	enviar_instruccion(conexion_memoria, loQueSeManda, DELETE_PROCESS);
 	// log_debug(logger, "Cantidad de segmentos: %d", list_size(loQueSeManda->tabla_segmentos));
 	char* registroAX = string_substring_until(proceso->registros.AX, 4);
-	log_trace(logger, "Registro AX: %s", registroAX);
+	char* registroBX = string_substring_until(proceso->registros.BX, 4);
+	log_debug(logger, "Registro AX: %s", registroAX);
+	log_debug(logger, "Registro BX: %s", registroBX);
 	free(registroAX);
 	free(loQueSeManda);  
 }
@@ -267,6 +269,7 @@ void planificador(t_queue* queue) {
 	while (list_size(list)!=0) {
 		queue_push(queue, list_remove(list, 0));
 	}
+	list_destroy(list);
 }
 
 void calcular_estimacion(pcb* proceso, int64_t tiempo_transcurrido) {
