@@ -146,13 +146,13 @@ void instruccion_mov_in(char** parsed)
 	// Para probar la función hay que descomentar lo comentado, descomentar el return en el case correspondiente, y comentar en donde se modifica el program_counter
 
 	log_info(logger, "PID: %d - Ejecutando: %s - %s %s", proceso->pid, parsed[0], parsed[1], parsed[2]);
-	char* dir_fisica = traducir_dir_logica(parsed[2]);
+	int tamanio_dato = parsed[1][0]=='R' ? 16 : parsed[1][0]=='E' ? 8 : 4;
+	char* dir_fisica = traducir_dir_logica(parsed[2], tamanio_dato);
 	if (strcmp(dir_fisica, "SEG_FAULT")==0) {
 		log_error(logger, "Error: segmentation fault");
 		error_exit(EXIT_SEG_FAULT);
 		return;
 	}
-	// int tamanio_dato = parsed[1][0]=='R' ? 16 : parsed[1][0]=='E' ? 8 : 4;
 	char* instruccion = string_from_format("%s %s %s", parsed[0], parsed[1], dir_fisica);
 	char* ins_alloc = malloc(strlen(instruccion)+1);
 	strcpy(ins_alloc, instruccion);
@@ -176,13 +176,13 @@ void instruccion_mov_out(char** parsed)
 	// Para probar la función hay que descomentar lo comentado, descomentar el return en el case correspondiente, y comentar en donde se modifica el program_counter
 
 	log_info(logger, "PID: %d - Ejecutando: %s - %s %s", proceso->pid, parsed[0], parsed[1], parsed[2]);
-	char* dir_fisica = traducir_dir_logica(parsed[1]);
+	int tamanio_dato = parsed[1][0]=='R' ? 16 : parsed[1][0]=='E' ? 8 : 4;
+	char* dir_fisica = traducir_dir_logica(parsed[1], tamanio_dato);
 	if (strcmp(dir_fisica, "SEG_FAULT")==0) {
 		log_error(logger, "Error: segmentation fault");
 		error_exit(EXIT_SEG_FAULT);
 		return;
 	}
-	int tamanio_dato = parsed[1][0]=='R' ? 16 : parsed[1][0]=='E' ? 8 : 4;
 	char* instruccion = string_from_format("%s %s %s", parsed[0], dir_fisica, parsed[2]);
 	char* ins_alloc = malloc(strlen(instruccion)+1);
 	strcpy(ins_alloc, instruccion);
@@ -240,7 +240,7 @@ void instruccion_f_read(char** parsed)
 	// Para probar la función hay que descomentar lo comentado y descomentar el return en el case correspondiente
 
 	log_info(logger, "PID: %d - Ejecutando: %s - %s %s %s", proceso->pid, parsed[0], parsed[1], parsed[2], parsed[3]);
-	char* dir_fisica = traducir_dir_logica(parsed[2]);
+	char* dir_fisica = traducir_dir_logica(parsed[2], atoi(parsed[3]));
 	if (strcmp(dir_fisica, "SEG_FAULT")==0) {
 		log_error(logger, "Error: segmentation fault");
 		error_exit(EXIT_SEG_FAULT);
@@ -263,7 +263,7 @@ void instruccion_f_write(char** parsed)
 	// Para probar la función hay que descomentar lo comentado y descomentar el return en el case correspondiente
 
 	log_info(logger, "PID: %d - Ejecutando: %s - %s %s %s", proceso->pid, parsed[0], parsed[1], parsed[2], parsed[3]);
-	char* dir_fisica = traducir_dir_logica(parsed[2]);
+	char* dir_fisica = traducir_dir_logica(parsed[2], atoi(parsed[3]));
 	if (strcmp(dir_fisica, "SEG_FAULT")==0) {
 		log_error(logger, "Error: segmentation fault");
 		error_exit(EXIT_SEG_FAULT);
@@ -354,7 +354,7 @@ void error_exit(op_code codigo) {
 	free(proceso);
 }
 
-char* traducir_dir_logica(char* direccion_logica) {
+char* traducir_dir_logica(char* direccion_logica, int tamanio_dato) {
 	int tam_max_segmento = config_get_int_value(config, "TAM_MAX_SEGMENTO");
 	int num_segmento = floor((double)atoi(direccion_logica)/tam_max_segmento);
 	int desplazamiento_segmento = atoi(direccion_logica)%tam_max_segmento;
@@ -371,7 +371,7 @@ char* traducir_dir_logica(char* direccion_logica) {
 		}
 	}
 	log_debug(logger, "Base: %d - Tamanio: %d", base_segmento, tamanio_segmento);
-	if (desplazamiento_segmento>=tamanio_segmento)
+	if (desplazamiento_segmento+tamanio_dato>=tamanio_segmento)
 		return "SEG_FAULT";
 	int dir_fisica = base_segmento+desplazamiento_segmento;
 	return string_from_format("%d", dir_fisica);

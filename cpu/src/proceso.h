@@ -67,6 +67,6 @@ void instruccion_delete_segment(char**);
 void instruccion_yield(char**);
 void instruccion_exit(char**);
 void error_exit(op_code);
-char* traducir_dir_logica(char*);
+char* traducir_dir_logica(char*, int);
 
 #endif /* PROCESO_H_ */
