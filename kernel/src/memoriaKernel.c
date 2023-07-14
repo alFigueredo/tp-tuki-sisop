@@ -13,6 +13,7 @@ void enviar_segmento(int pid, char* instruccion, t_list* tabla_segmentos){
         int tamanio_solicitado = atoi(parsed[2]); //El tamanio tambien se recibe de parametro
         agregar_a_paquete(paquete,&tamanio_solicitado,sizeof(tamanio_solicitado));
         enviar_paquete(paquete,conexion_memoria);
+        log_info(logger,"Se solicita para PID: %u - Crear Segmento - Id: %d - Tamaño: %d",pid,id_segmento,tamanio_solicitado);
     }
     else{
         int tabla_segmentos_size = list_size(tabla_segmentos);
@@ -23,8 +24,10 @@ void enviar_segmento(int pid, char* instruccion, t_list* tabla_segmentos){
             agregar_a_paquete(paquete, &(segmento_actual->tam_segmento), sizeof(int));
             agregar_a_paquete(paquete, &(segmento_actual->direccion_base), sizeof(int));
         }
+        log_info(logger,"Se solicita para PID: %u - Eliminar Segmento - Id: %d",pid,id_segmento);
         enviar_paquete(paquete,conexion_memoria);
     }
+    
     string_array_destroy(parsed);
     eliminar_paquete(paquete);
 }

@@ -330,7 +330,7 @@ void atender_servidor(int* socket_servidor){
 				memcpy(&(segmento->tam_segmento), list_get(lista,2), sizeof(int));
 				memcpy(&(segmento->direccion_base), list_get(lista,3), sizeof(int));
 				list_add(((pcb*)queue_peek(qexec))->tabla_segmentos, segmento);
-				log_info(logger, "Se ha creado exitosamente el segmento con base %d en memoria", *((int*)list_get(lista,3)));
+				log_info(logger, "Se ha creado exitosamente para PID: %u - Segmento - Id: %d con la base %d en memoria", ((pcb*)queue_peek(qexec))->pid,*((int*)list_get(lista,1)),*((int*)list_get(lista,3)));
 				enviar_pcb(conexion_cpu, (pcb*)queue_peek(qexec), EXEC);
 				list_destroy_and_destroy_elements(lista,free);
 				break;
@@ -356,11 +356,13 @@ void atender_servidor(int* socket_servidor){
 					list_add(((pcb*)queue_peek(qexec))->tabla_segmentos, segmento_actual);
 				}
 
+				log_info(logger, "Se ha creado exitosamente para PID: %u - Segmento - Id: %d",((pcb*)queue_peek(qexec))->pid,*(int*)list_get(lista, 1));
+
 				enviar_pcb(conexion_cpu,((pcb*)queue_peek(qexec)),EXEC);
 				list_destroy_and_destroy_elements(lista,free);
 				break;
 			case COMPACTACION:
-				log_info(logger,"Se solicita compactacion, esperaremos hasta que finalicen las operaciones entre memoria y file system");
+				log_info(logger,"Compactación: <Se solicitó compactación / Esperando Fin de Operaciones de FS>");
 				while (1) {
 					sem_wait(sem_escrituraLectura);
 					if (contadorDeEscrituraOLectura == 0) {
@@ -375,6 +377,7 @@ void atender_servidor(int* socket_servidor){
 				t_list* lista_tablas = recibir_tablas_segmentos(lista);
 				actualizar_tablas(lista_tablas);
 				char* instruccion = list_get(((pcb*)queue_peek(qexec))->instrucciones, ((pcb*)queue_peek(qexec))->program_counter-1);
+				log_info(logger,"Se finalizó el proceso de compactación, por lo que realizamos nuevamente la solicitud de creación del segmento");
 				enviar_segmento(((pcb*)queue_peek(qexec))->pid,instruccion,((pcb*)queue_peek(qexec))->tabla_segmentos); //Volvemos a solicitar la creacion del segmento
 				list_destroy_and_destroy_elements(lista,free);
 				list_destroy_and_destroy_elements(lista_tablas,free);
@@ -394,6 +397,7 @@ void atender_servidor(int* socket_servidor){
 				pthread_detach(thread);
 				list_destroy(laCosaQueMando->tabla_segmentos);
 				list_destroy_and_destroy_elements(lista,free);
+				// list_clean_and_destroy_elements(laCosaQueMando->tabla_segmentos,free);
 				free(laCosaQueMando);
 				break;
 			case EXIT:
