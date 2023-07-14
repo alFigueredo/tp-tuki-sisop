@@ -57,6 +57,7 @@ void atender_servidor(int* socket_servidor){
 	char* numero; //No se me ocurre otra forma de hacerlo
 	// char* numero_din;
 	char** parsed;
+	char* instruccionQueMando;
 	t_instruccion* laCosaQueMando;
 	Archivo *archivoQueUso;
 	t_segmento* segmento;
@@ -137,9 +138,10 @@ void atender_servidor(int* socket_servidor){
 				recibir_instruccion(lista, laCosaQueMando);
 				enviar_pcb(conexion_cpu, (pcb*)queue_peek(qexec), EXEC);
 				
+				free(laCosaQueMando->instruccion);
 				list_destroy_and_destroy_elements(laCosaQueMando->tabla_segmentos,free);
-				free(laCosaQueMando);
 				list_destroy_and_destroy_elements(lista, free);
+				free(laCosaQueMando);
 				log_trace(logger, "TRACE: OK");
 				break;
 			case EL_ARCHIVO_NO_EXISTE_PAAAAAAA:
@@ -149,6 +151,7 @@ void atender_servidor(int* socket_servidor){
 				//PUEDO HACER ESTO????? X2
 				enviar_instruccion(conexion_filesystem,laCosaQueMando,F_CREATE);
 
+				free(laCosaQueMando->instruccion);
 				list_destroy_and_destroy_elements(lista, free);
 				list_destroy_and_destroy_elements(laCosaQueMando->tabla_segmentos,free);
 				free(laCosaQueMando);
@@ -195,7 +198,9 @@ void atender_servidor(int* socket_servidor){
 				break;
 			case YA_SE_TERMINO_LA_TRUNCACION:
 				log_trace(logger, "TRACE: YA_SE_TERMINO_LA_TRUNCACION");
-				log_debug(logger, "Cola block: [%s]", queue_iterator(qblock));
+				char* cola_block_str = queue_iterator(qblock);
+				log_debug(logger, "Cola block: [%s]", cola_block_str);
+				free(cola_block_str);
 				lista = recibir_paquete(*socket_servidor);
 				laCosaQueMando = malloc(sizeof(t_instruccion));
 				recibir_instruccion(lista, laCosaQueMando);
@@ -223,16 +228,15 @@ void atender_servidor(int* socket_servidor){
 				//le meto el numero (como string) a la instruccion para mandarselo a file system
 				// strcat(instruccion," ");
 				// strcat(instruccion, numero_din);
-				string_append_with_format(&instruccion, " %s", numero);
-				log_debug(logger, "DEBUG: F_READ - Instruccion %s - Numero %s", instruccion, numero);
+				instruccionQueMando = string_from_format("%s %s", instruccion, numero);
+				log_debug(logger, "DEBUG: F_READ - Instruccion %s - Numero %s", instruccionQueMando, numero);
 
 				//PUEDO HACER ESTO????? X2
-				laCosaQueMando = generar_instruccion(queue_peek(qexec), instruccion);
+				laCosaQueMando = generar_instruccion(queue_peek(qexec), instruccionQueMando);
 				// laCosaQueMando->pid=((pcb*)queue_peek(qexec))->pid;
 				// laCosaQueMando->instruccion=malloc(strlen(instruccion)+1);
 				// strcpy(laCosaQueMando->instruccion,instruccion);
 				enviar_instruccion(conexion_filesystem,laCosaQueMando,F_READ);
-				free(laCosaQueMando);
 
 				sem_wait(sem_escrituraLectura);
 				contadorDeEscrituraOLectura ++;
@@ -242,10 +246,12 @@ void atender_servidor(int* socket_servidor){
 				
 
 
-				free(instruccion);
-				string_array_destroy(parsed);
 				exec_a_block();
+				string_array_destroy(parsed);
+				free(numero);
+				free(instruccionQueMando);
 				list_destroy_and_destroy_elements(lista, free);
+				free(laCosaQueMando);
 
 				break;
 			case MEMORIA_DIJO_QUE_PUDO_ESCRIBIR_JOYA:
@@ -275,11 +281,11 @@ void atender_servidor(int* socket_servidor){
 				char* numero = string_itoa(archivoQueUso->puntero);
 
 				//le meto el numero (como string) a la instruccion para mandarselo a file system
-				string_append_with_format(&instruccion, " %s", numero);
-				log_debug(logger, "DEBUG: F_WRITE - Instruccion %s - Numero %s", instruccion, numero);
-				log_debug(logger, "Instrucción de la lista: %s", (char*)list_get(((pcb*)queue_peek(qexec))->instrucciones, ((pcb*)queue_peek(qexec))->program_counter-1));
+				instruccionQueMando = string_from_format("%s %s", instruccion, numero);
+				log_debug(logger, "DEBUG: F_WRITE - Instruccion %s - Numero %s", instruccionQueMando, numero);
+				// log_debug(logger, "Instrucción de la lista: %s", (char*)list_get(((pcb*)queue_peek(qexec))->instrucciones, ((pcb*)queue_peek(qexec))->program_counter-1));
 				//PUEDO HACER ESTO????? X2
-				laCosaQueMando = generar_instruccion(queue_peek(qexec), instruccion);
+				laCosaQueMando = generar_instruccion(queue_peek(qexec), instruccionQueMando);
 				// laCosaQueMando->pid=((pcb*)queue_peek(qexec))->pid;
 				// laCosaQueMando->instruccion=malloc(strlen(instruccion)+1);
 				// strcpy(laCosaQueMando->instruccion,instruccion);
@@ -292,9 +298,9 @@ void atender_servidor(int* socket_servidor){
 				log_info(logger, "PID: %u - Escribir Archivo: %s - Puntero: %s - Direccion Memoria %s - Tamaño %s", ((pcb*)queue_peek(qexec))->pid, parsed[1], numero, parsed[2], parsed[3]);
 				exec_a_block();
 
-				free(numero);
-				// free(instruccion);
 				string_array_destroy(parsed);
+				free(numero);
+				free(instruccionQueMando);
 				list_destroy_and_destroy_elements(lista, free);
 				free(laCosaQueMando);
 
@@ -387,7 +393,8 @@ void atender_servidor(int* socket_servidor){
 				log_trace(logger, "TRACE: CREATE_PROCESS_OK");
 				laCosaQueMando = malloc(sizeof(t_instruccion));
 				recibir_instruccion(lista, laCosaQueMando);
-				// list_destroy(((pcb*)queue_peek(qnew))->tabla_segmentos);
+				// Esto rompia?
+				list_destroy(((pcb*)queue_peek(qnew))->tabla_segmentos);
 				((pcb*)queue_peek(qnew))->tabla_segmentos = list_duplicate(laCosaQueMando->tabla_segmentos); //Actualiza la tabla de segmentos
 				log_debug(logger, "Tamanio de segmento: %d", ((t_segmento*)list_get(((pcb*)queue_peek(qnew))->tabla_segmentos, 0))->tam_segmento);
 				pthread_create(&thread,
@@ -395,6 +402,7 @@ void atender_servidor(int* socket_servidor){
 	                  (void*) new_a_ready,
 	                  NULL); //Memoria dice que el proceso está listo
 				pthread_detach(thread);
+				free(laCosaQueMando->instruccion);
 				list_destroy(laCosaQueMando->tabla_segmentos);
 				list_destroy_and_destroy_elements(lista,free);
 				// list_clean_and_destroy_elements(laCosaQueMando->tabla_segmentos,free);
@@ -429,11 +437,13 @@ void atender_servidor(int* socket_servidor){
 				lista = recibir_paquete(*socket_servidor);
 				laCosaQueMando = malloc(sizeof(t_instruccion));
 				recibir_instruccion(lista, laCosaQueMando);
-				list_destroy(((pcb*)queue_peek(qexit))->tabla_segmentos);
+				list_destroy_and_destroy_elements(((pcb*)queue_peek(qexit))->tabla_segmentos, free);
 				((pcb*)queue_peek(qexit))->tabla_segmentos = list_duplicate(laCosaQueMando->tabla_segmentos); //Actualiza la tabla de segmentos
 				finalizar_proceso(laCosaQueMando->instruccion); //Memoria dice que el proceso fue liberado
-				free(laCosaQueMando);
+				free(laCosaQueMando->instruccion);
+				list_destroy(laCosaQueMando->tabla_segmentos);
 				list_destroy_and_destroy_elements(lista,free);
+				free(laCosaQueMando);
 				break;
 			case -1:
 				log_warning(logger, "El servidor se desconecto. Terminando conexion. Abortando sistema.");

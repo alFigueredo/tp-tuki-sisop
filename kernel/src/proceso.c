@@ -78,7 +78,9 @@ char* queue_iterator(t_queue* queue) {
 	char* list = string_new();
 	for (int i=0; i<queue_size(queue); i++) {
 		pcb* proceso = queue_pop(queue);
-		string_append(&list, string_itoa(proceso->pid));
+		char* pid_proceso = string_itoa(proceso->pid);
+		string_append(&list, pid_proceso);
+		free(pid_proceso);
 		if (i!=queue_size(queue)){
 			string_append(&list, ",");
 		}
@@ -123,7 +125,9 @@ void generar_proceso(t_list* lista, int* socket_cliente) {
 	sem_wait(sem_new);
 	queue_push(qnew, proceso);
 	sem_post(sem_new);
-	dictionary_put(conexiones, string_itoa(proceso->pid), socket_cliente);
+	char* pid_proceso = string_itoa(proceso->pid);
+	dictionary_put(conexiones, pid_proceso, socket_cliente);
+	free(pid_proceso);
 	log_info(logger, "Se crea el proceso %d en NEW", proceso->pid);
 	gestionar_multiprogramación();
 }
@@ -247,7 +251,9 @@ void exec_a_exit(char* motivo) {
 
 void finalizar_proceso(char* motivo) {
 	pcb* proceso = queue_pop(qexit);
-	enviar_operacion(*(int*)dictionary_remove(conexiones, string_itoa(proceso->pid)), EXIT);
+	char* pid_proceso = string_itoa(proceso->pid);
+	enviar_operacion(*(int*)dictionary_remove(conexiones, pid_proceso), EXIT);
+	free(pid_proceso);
 	log_info(logger, "Finaliza el proceso %d - Motivo: %s", proceso->pid, motivo);
 	// Si hay procesos en NEW esperando
 	int sem_largo_plazo_value;
@@ -293,10 +299,13 @@ bool HRRN_comparator(void* proceso1, void* proceso2) {
 
 double HRRN_R(pcb* proceso) {
 	int arrival_time = seconds_from_string_time(proceso->tiempo_llegada_ready);
-	int current_time = seconds_from_string_time(temporal_get_string_time("%y:%m:%d:%H:%M:%S:%MS"));
+	char* current_time_str = temporal_get_string_time("%y:%m:%d:%H:%M:%S:%MS");
+	int current_time = seconds_from_string_time(current_time_str);
 	// log_trace(logger, "HRRN: %d; Estimación: %f", proceso->pid, (double)(current_time-arrival_time+proceso->estimado_proxRafaga)/proceso->estimado_proxRafaga);
 	// log_trace(logger, "PID: %d; HRRN: %d %d", proceso->pid, current_time-arrival_time, proceso->estimado_proxRafaga);
-	return (double)(current_time-arrival_time+proceso->estimado_proxRafaga)/proceso->estimado_proxRafaga;
+	double estimacion = (double)(current_time-arrival_time+proceso->estimado_proxRafaga)/proceso->estimado_proxRafaga;
+	free(current_time_str);
+	return estimacion;
 }
 
 int seconds_from_string_time(char* timestamp) {
