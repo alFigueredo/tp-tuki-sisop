@@ -201,9 +201,7 @@ void mov_in(t_instruccion *instruccion_proceso)
 	memcpy(dictionary_get(registros, parsed[1]), instruccion_proceso->dato, instruccion_proceso->tamanio_dato);
 	int id_segmento = floor((double)atoi(parsed[1]) / config_get_int_value(config, "TAM_MAX_SEGMENTO"));
 	log_info(logger, "PID: %u  Acción: LEER - Segmento: %d - Dirección Física: %s - Valor: %s", proceso->pid, id_segmento, parsed[2], string_substring_until(instruccion_proceso->dato, instruccion_proceso->tamanio_dato));
-	string_array_destroy(parsed);
 	proceso->program_counter++;
-
 	string_array_destroy(parsed);
 }
 
