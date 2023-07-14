@@ -136,8 +136,10 @@ void atender_servidor(int* socket_servidor){
 				laCosaQueMando = malloc(sizeof(t_instruccion));
 				recibir_instruccion(lista, laCosaQueMando);
 				enviar_pcb(conexion_cpu, (pcb*)queue_peek(qexec), EXEC);
-				list_destroy_and_destroy_elements(lista, free);
+				
+				list_destroy_and_destroy_elements(laCosaQueMando->tabla_segmentos,free);
 				free(laCosaQueMando);
+				list_destroy_and_destroy_elements(lista, free);
 				log_trace(logger, "TRACE: OK");
 				break;
 			case EL_ARCHIVO_NO_EXISTE_PAAAAAAA:
@@ -148,6 +150,7 @@ void atender_servidor(int* socket_servidor){
 				enviar_instruccion(conexion_filesystem,laCosaQueMando,F_CREATE);
 
 				list_destroy_and_destroy_elements(lista, free);
+				list_destroy_and_destroy_elements(laCosaQueMando->tabla_segmentos,free);
 				free(laCosaQueMando);
 				log_trace(logger, "TRACE: F_CREATE");
 				break;
@@ -237,6 +240,9 @@ void atender_servidor(int* socket_servidor){
 
 				log_info(logger, "PID: %u - Leer Archivo: %s - Puntero: %s - Direccion Memoria %s - Tamanio %s", ((pcb*)queue_peek(qexec))->pid, parsed[1], numero, parsed[2], parsed[3]);
 				
+
+
+				free(instruccion);
 				string_array_destroy(parsed);
 				exec_a_block();
 				list_destroy_and_destroy_elements(lista, free);
@@ -285,6 +291,9 @@ void atender_servidor(int* socket_servidor){
 
 				log_info(logger, "PID: %u - Escribir Archivo: %s - Puntero: %s - Direccion Memoria %s - Tamaño %s", ((pcb*)queue_peek(qexec))->pid, parsed[1], numero, parsed[2], parsed[3]);
 				exec_a_block();
+
+				free(numero);
+				// free(instruccion);
 				string_array_destroy(parsed);
 				free(laCosaQueMando);
 				list_destroy_and_destroy_elements(lista, free);

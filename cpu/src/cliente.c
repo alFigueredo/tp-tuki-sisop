@@ -72,6 +72,7 @@ void atender_servidor(int* socket_servidor){
 				mov_in(instruccion);
 				destruir_diccionarios();
 				interpretar_instrucciones();
+				list_destroy_and_destroy_elements(instruccion->tabla_segmentos,free);
 				free(instruccion);
 				list_destroy_and_destroy_elements(lista, free);
 				break;
