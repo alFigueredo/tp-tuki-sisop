@@ -203,6 +203,8 @@ void mov_in(t_instruccion *instruccion_proceso)
 	log_info(logger, "PID: %u  Acción: LEER - Segmento: %d - Dirección Física: %s - Valor: %s", proceso->pid, id_segmento, parsed[2], string_substring_until(instruccion_proceso->dato, instruccion_proceso->tamanio_dato));
 	string_array_destroy(parsed);
 	proceso->program_counter++;
+
+	string_array_destroy(parsed);
 }
 
 void instruccion_mov_out(char **parsed)

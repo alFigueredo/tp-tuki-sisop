@@ -79,8 +79,10 @@ char* queue_iterator(t_queue* queue) {
 	for (int i=0; i<queue_size(queue); i++) {
 		pcb* proceso = queue_pop(queue);
 		string_append(&list, string_itoa(proceso->pid));
-		if (i!=queue_size(queue))
+		if (i!=queue_size(queue)){
 			string_append(&list, ",");
+		}
+		
 		queue_push(queue, proceso);
 	}
 	return list;

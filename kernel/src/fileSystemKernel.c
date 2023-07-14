@@ -71,7 +71,6 @@ void cerrarArchivoKernel(pcb* proceso, char* instruccion)
 	    archivoActual = (Archivo*)list_get(proceso->archivos_abiertos, i);
 	    if (strcmp(archivoActual->nombreDeArchivo, parsed[1]) == 0)
          {
-         free(archivoActual->nombreDeArchivo);
 	        list_remove(proceso->archivos_abiertos, i);
          }
 	}
@@ -84,8 +83,12 @@ void cerrarArchivoKernel(pcb* proceso, char* instruccion)
 		for (int i = 0; i < list_size(archivosAbiertos); i++)
 		{
 	    	archivoActual = (Archivo*)list_get(archivosAbiertos, i);
-	    	if (strcmp(archivoActual->nombreDeArchivo, parsed[1]) == 0)
+	    	if (strcmp(archivoActual->nombreDeArchivo, parsed[1]) == 0){
+				free(archivoActual->nombreDeArchivo);
+				queue_destroy(archivoActual->procesosBloqueados);
 	        	list_remove_and_destroy_element(archivosAbiertos, i, free);
+			}
+
 		}
 		// list_remove_and_destroy_by_condition(archivosAbiertos, condicionParaBorrar, free);
 	}
@@ -106,7 +109,7 @@ void buscarEnArchivo(pcb* proceso, char* instruccion)
 {
 	char** parsed = string_split(instruccion, " "); //Partes de la instruccion actual
 	int numero = atoi(parsed[2]);
-	Archivo* archivoActual = malloc(sizeof(Archivo));
+	Archivo* archivoActual;
 	for (int i = 0; i < list_size(archivosAbiertos); i++)
 	{
 	    archivoActual = (Archivo*)list_get(archivosAbiertos, i);
@@ -125,7 +128,7 @@ void buscarEnArchivo(pcb* proceso, char* instruccion)
 Archivo *estoDevuelveUnArchivo(pcb* proceso, char* instruccion)
 {
 	char** parsed = string_split(instruccion, " "); //Partes de la instruccion actual
-	Archivo* archivoActual = malloc(sizeof(Archivo));
+	Archivo* archivoActual;
 	for (int i = 0; i < list_size(archivosAbiertos); i++)
 	{
 	    archivoActual = (Archivo*)list_get(archivosAbiertos, i);
