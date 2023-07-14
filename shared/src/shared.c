@@ -211,9 +211,7 @@ void recibir_pcb(t_list *lista, pcb *proceso)
 	memcpy(&(proceso->pid), list_get(lista, i++), sizeof(unsigned int));
 	int cantidad_instrucciones;
 	memcpy(&(cantidad_instrucciones), list_get(lista, i++), sizeof(int));
-	// if (proceso->instrucciones) {
-	// 	list_destroy_and_destroy_elements(proceso->instrucciones, free);
-	// }
+	
 	proceso->instrucciones = list_slice_and_remove(lista, i, cantidad_instrucciones); //Aca hay una perdida grosa, de segmentation fault
 	memcpy(&(proceso->program_counter), list_get(lista, i++), sizeof(int));
 	memcpy(proceso->registros.AX, list_get(lista, i++), 4);

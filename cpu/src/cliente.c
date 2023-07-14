@@ -70,8 +70,10 @@ void atender_servidor(int* socket_servidor){
 				instruccion = malloc(sizeof(t_instruccion));
 				recibir_instruccion_con_dato(lista, instruccion);
 				mov_in(instruccion);
-				destruir_diccionarios();
+				// destruir_diccionarios();
 				interpretar_instrucciones();
+				free(instruccion->instruccion);
+				free(instruccion->dato);
 				list_destroy_and_destroy_elements(instruccion->tabla_segmentos, free);
 				list_destroy_and_destroy_elements(lista, free);
 				free(instruccion);
@@ -80,14 +82,13 @@ void atender_servidor(int* socket_servidor){
 				log_trace(logger, "TRACE: OK");
 				// lista = recibir_paquete(*socket_servidor);
 				proceso->program_counter++;
-				destruir_diccionarios();
 				interpretar_instrucciones();
 				// list_destroy_and_destroy_elements(lista, free);
 				log_trace(logger, "TRACE END: OK");
 				break;
 			case EXIT:
 				error_exit(EXIT);
-				list_destroy_and_destroy_elements(lista, free);
+				// list_destroy_and_destroy_elements(lista, free);
 				break;
 			case -1:
 				log_warning(logger, "El servidor se desconecto. Terminando conexion. Abortando sistema.");
