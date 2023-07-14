@@ -72,8 +72,9 @@ void atender_servidor(int* socket_servidor){
 				mov_in(instruccion);
 				destruir_diccionarios();
 				interpretar_instrucciones();
-				free(instruccion);
+				list_destroy_and_destroy_elements(instruccion->tabla_segmentos, free);
 				list_destroy_and_destroy_elements(lista, free);
+				free(instruccion);
 				break;
 			case OK:
 				log_trace(logger, "TRACE: OK");
