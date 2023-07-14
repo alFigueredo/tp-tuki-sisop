@@ -70,7 +70,10 @@ void cerrarArchivoKernel(pcb* proceso, char* instruccion)
 	{
 	    archivoActual = (Archivo*)list_get(proceso->archivos_abiertos, i);
 	    if (strcmp(archivoActual->nombreDeArchivo, parsed[1]) == 0)
+         {
+         free(archivoActual->nombreDeArchivo);
 	        list_remove(proceso->archivos_abiertos, i);
+         }
 	}
 	// list_remove_and_destroy_by_condition(proceso->archivos_abiertos,condicionParaBorrar(proceso->archivos_abiertos,parsed[1]),free);
 	log_trace(logger, "TRACE: F_CLOSE");
