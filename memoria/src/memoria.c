@@ -279,14 +279,14 @@ void eliminar_segmento(unsigned int pid, int id)
 //Si tiene huecos aledanios los agrupa y devuelve 1, sino devuelve 0
 int agrupar_huecos(int base, int limite)
 {
-	printf("entre a la funcion \n");
+
 	segmento *hueco_izquierdo = NULL;
 	int index_izq;
 	segmento *hueco_derecho = NULL ;
 	int index_der;
 
 	segmento *hueco ;
-	// segmento *hueco_agrupado;
+	 segmento *hueco_agrupado;
 
 	/*for (int i = 0; i < list_size(huecos); i++)
 	{
@@ -361,6 +361,10 @@ int agrupar_huecos(int base, int limite)
         {
             // Restamos 1 al índice si se eliminó un elemento antes
             index_der--;
+            hueco_agrupado = malloc(sizeof(segmento));
+            hueco_agrupado->direccion_base = hueco_derecho->direccion_limite;
+            hueco_agrupado->direccion_limite = hueco_izquierdo->direccion_limite;
+            list_add(huecos, hueco_agrupado);
         }
         list_remove_and_destroy_element(huecos, index_der,free);
         return 1;
