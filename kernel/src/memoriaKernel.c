@@ -1,6 +1,5 @@
 #include "memoriaKernel.h"
 
-
 void enviar_segmento(int pid, char* instruccion, t_list* tabla_segmentos){
 	char** parsed = string_split(instruccion, " "); //Partes de la instruccion actual
 	char* operacion = parsed[0];
@@ -26,6 +25,7 @@ void enviar_segmento(int pid, char* instruccion, t_list* tabla_segmentos){
         }
         enviar_paquete(paquete,conexion_memoria);
     }
+    string_array_destroy(parsed);
     eliminar_paquete(paquete);
 }
 

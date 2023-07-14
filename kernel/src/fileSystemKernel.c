@@ -47,6 +47,7 @@ int abrirArchivoKernel(pcb* proceso, char* instruccion)
 		log_warning(logger, "PID: %d - Bloqueado porque archivo %s ya esta abierto", proceso->pid, archivoActual->nombreDeArchivo);
 		return 0;
 	}
+	string_array_destroy(parsed);
 }
 
 void cerrarArchivoKernel(pcb* proceso, char* instruccion)
@@ -94,6 +95,7 @@ void cerrarArchivoKernel(pcb* proceso, char* instruccion)
 
 	}
 	log_info(logger,"PID: %d - Cerrar Archivo: %s", proceso->pid, parsed[1]);
+	string_array_destroy(parsed);
 
 }
 
@@ -113,6 +115,7 @@ void buscarEnArchivo(pcb* proceso, char* instruccion)
 	archivoActual->puntero = numero;
 	log_info(logger, "PID: %d - Actualizar puntero Archivo: %s - Puntero: %d", proceso->pid, parsed[1], numero);
 	enviar_pcb(conexion_cpu, proceso, EXEC);
+	string_array_destroy(parsed);
 }
 
 
@@ -128,6 +131,7 @@ Archivo *estoDevuelveUnArchivo(pcb* proceso, char* instruccion)
 	        break;
 	    }
 	}
+	string_array_destroy(parsed);
 	return archivoActual;
 }
 

@@ -163,7 +163,9 @@ void ready_a_exec(void) {
 	sem_wait(sem_ready);
 	if (strcmp(config_get_string_value(config,"ALGORITMO_PLANIFICACION"), "HRRN")==0) {
 		planificador(qready);
-		log_info(logger, "Cola Ready %s: [%s]", config_get_string_value(config,"ALGORITMO_PLANIFICACION"), queue_iterator(qready));
+		char* colaDeListos = queue_iterator(qready);
+		log_info(logger, "Cola Ready %s: [%s]", config_get_string_value(config,"ALGORITMO_PLANIFICACION"), colaDeListos);
+		free(colaDeListos);
 	}
 	pcb* proceso = queue_pop(qready);
 	sem_post(sem_ready);
@@ -255,18 +257,18 @@ void finalizar_proceso(char* motivo) {
 	sem_post(sem_cpu);
 	list_destroy_and_destroy_elements(proceso->instrucciones, free);
 	free(proceso->tiempo_llegada_ready);
-	list_destroy(proceso->archivos_abiertos);
+	list_destroy_and_destroy_elements(proceso->archivos_abiertos, free);
 	log_debug(logger, "DEBUG: DELETE_PROCESS_OK");
-	list_destroy(proceso->tabla_segmentos);
+	list_destroy_and_destroy_elements(proceso->tabla_segmentos, free);
 	free(proceso);
 }
 
 void planificador(t_queue* queue) {
 	t_list* list = list_create();
-	while (queue_size(queue)!=0) {
+	while (queue_size(queue)>0) {
 		list_add_sorted(list, queue_pop(queue), HRRN_comparator);
 	}
-	while (list_size(list)!=0) {
+	while (list_size(list)>0) {
 		queue_push(queue, list_remove(list, 0));
 	}
 	list_destroy(list);
@@ -318,4 +320,5 @@ void io_block(void) {
 	log_info(logger, "PID: %d - Ejecuta IO: %d", proceso->pid, delay_in_seconds);
 	delay(delay_in_seconds*1000);
 	block_a_ready(proceso);
+	string_array_destroy(parsed);
 }
