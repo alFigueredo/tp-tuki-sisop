@@ -239,6 +239,7 @@ void exec_a_exit(char* motivo) {
 	log_debug(logger, "Registro AX: %s", registroAX);
 	log_debug(logger, "Registro BX: %s", registroBX);
 	free(registroAX);
+	free(registroBX);
 	free(loQueSeManda);  
 }
 
