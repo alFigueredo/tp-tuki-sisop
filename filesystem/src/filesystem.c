@@ -565,6 +565,7 @@ int escribirArchivo(char *nombreArchivo,size_t punteroSeek,size_t bytesAEscribir
 				escritoAnteriormente = (size_t)memoriaAEscribir + (bytesAEscribir - escritoAnteriormente)-((cantidadBloquesAEscribir - (i+1)) * tamanioBloque);	
 			}
 			fclose(bloques);
+			config_destroy(configArchivoActual);
 			return 1;
 		}
 		//escribo todo en el bloque 0
@@ -574,6 +575,7 @@ int escribirArchivo(char *nombreArchivo,size_t punteroSeek,size_t bytesAEscribir
 			fseek(bloques,punteroSeek,SEEK_CUR);
 			fwrite(memoriaAEscribir,bytesAEscribir,1,bloques);
 			fclose(bloques);
+			config_destroy(configArchivoActual);
 			return 1;
 		}
 	}
@@ -598,6 +600,7 @@ int escribirArchivo(char *nombreArchivo,size_t punteroSeek,size_t bytesAEscribir
 				
 			}
 			fclose(bloques);
+			config_destroy(configArchivoActual);
 			return 1;
 		}
 		//Hay solo un bloque que leer
@@ -608,10 +611,12 @@ int escribirArchivo(char *nombreArchivo,size_t punteroSeek,size_t bytesAEscribir
 			fseek(bloques,punteroSeek-(tamanioBloque * bloqueAEscribir),SEEK_CUR);
 			fwrite(memoriaAEscribir,bytesAEscribir,1,bloques);
 			fclose(bloques);
+			config_destroy(configArchivoActual);
 			return 1;
 		}
 	}
 	fclose(bloques);
+	config_destroy(configArchivoActual);
 	return 0;
 
 }
@@ -662,6 +667,7 @@ void *leerArchivo(char *nombreArchivo,size_t punteroSeek,size_t bytesALeer, int 
 				leidoAnteriormente = (size_t)infoDelArchivo + (bytesALeer - leidoAnteriormente)-((cantidadBloquesALeer - (i+1)) * tamanioBloque);
 			}
 			fclose(bloques);
+			config_destroy(configArchivoActual);
 			return infoDelArchivo;
 		}
 		//leo todo del primer bloque
@@ -672,6 +678,7 @@ void *leerArchivo(char *nombreArchivo,size_t punteroSeek,size_t bytesALeer, int 
 			fseek(bloques,punteroSeek,SEEK_CUR);
 			fread(infoDelArchivo,bytesALeer,1,bloques);
 			fclose(bloques);
+			config_destroy(configArchivoActual);
 			return infoDelArchivo;
 
 		}
@@ -697,6 +704,7 @@ void *leerArchivo(char *nombreArchivo,size_t punteroSeek,size_t bytesALeer, int 
 				leidoAnteriormente = (size_t)infoDelArchivo + (bytesALeer - leidoAnteriormente)-((cantidadBloquesALeer - (i+1)) * tamanioBloque);
 			}
 			fclose(bloques);
+			config_destroy(configArchivoActual);
 			return infoDelArchivo;
 		}
 		//Hay solo un bloque que leer
@@ -706,9 +714,11 @@ void *leerArchivo(char *nombreArchivo,size_t punteroSeek,size_t bytesALeer, int 
 			fseek(bloques,punteroSeek-(tamanioBloque * bloqueAleer),SEEK_CUR);
 			fread(infoDelArchivo,bytesALeer,1,bloques);
 			fclose(bloques);
+			config_destroy(configArchivoActual);
 			return infoDelArchivo;
 		}
 	}
+	config_destroy(configArchivoActual);
 	fclose(bloques);
 	return punteroFinal;
 }
