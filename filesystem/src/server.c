@@ -109,8 +109,11 @@ void atender_cliente(int* socket_cliente)
 				{
 					enviar_instruccion(*socket_cliente,proceso,EL_ARCHIVO_NO_EXISTE_PAAAAAAA);
 				}
+
+				list_destroy_and_destroy_elements(proceso->tabla_segmentos,free);
 				free(proceso);
 				free(porqueria);
+				list_destroy_and_destroy_elements(lista,free);
 				break;
 			case F_CREATE:
 				lista = recibir_paquete(*socket_cliente);
@@ -128,6 +131,7 @@ void atender_cliente(int* socket_cliente)
 				{
 					log_error(logger,"No se pudo crear el archivo pibe. Algo se rompio zarpado");
 				}
+				 
 				list_destroy_and_destroy_elements(proceso->tabla_segmentos,free);
 				free(proceso);
 				free(porqueria);
