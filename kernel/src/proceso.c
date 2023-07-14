@@ -317,9 +317,12 @@ void io_block(void) {
 	pcb* proceso = exec_a_block();
 	log_info(logger, "PID: %d - Bloqueado por: IO", proceso->pid);
 	char* instruccion = list_get(proceso->instrucciones, proceso->program_counter-1);
+	log_trace(logger, "TRACE IO 1");
 	char** parsed = string_split(instruccion, " ");
+	log_trace(logger, "TRACE IO 2");
 	// Supuse que el parámetro está en segundos
 	int delay_in_seconds = atoi(parsed[1]);
+	log_trace(logger, "TRACE IO 3");
 	log_info(logger, "PID: %d - Ejecuta IO: %d", proceso->pid, delay_in_seconds);
 	delay(delay_in_seconds*1000);
 	block_a_ready(proceso);
