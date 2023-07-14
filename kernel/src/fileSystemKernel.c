@@ -31,6 +31,7 @@ int abrirArchivoKernel(pcb* proceso, char* instruccion)
 		//agregar el archivo a la lista de archivos abiertos del proceso
 		list_add(proceso->archivos_abiertos,archivoActual);
 		log_info(logger, "PID: %d - Abrir Archivo: %s", proceso->pid, parsed[1]);
+		string_array_destroy(parsed);
 		return 1;
 	}
 	else
@@ -45,9 +46,9 @@ int abrirArchivoKernel(pcb* proceso, char* instruccion)
 		archivoActual->puntero=punteroOriginal;
 		exec_a_block();
 		log_warning(logger, "PID: %d - Bloqueado porque archivo %s ya esta abierto", proceso->pid, archivoActual->nombreDeArchivo);
+		string_array_destroy(parsed);
 		return 0;
 	}
-	string_array_destroy(parsed);
 }
 
 void cerrarArchivoKernel(pcb* proceso, char* instruccion)

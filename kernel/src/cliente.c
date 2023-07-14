@@ -201,10 +201,10 @@ void atender_servidor(int* socket_servidor){
 				recibir_instruccion(lista, laCosaQueMando);
 				log_debug(logger, "YA_SE_TERMINO_LA_TRUNCACION: PID %u", laCosaQueMando->pid);
 				block_a_ready(queue_seek(qblock, laCosaQueMando->pid));
-
+				free(laCosaQueMando->instruccion);
 				list_destroy_and_destroy_elements(laCosaQueMando->tabla_segmentos,free);
-				free(laCosaQueMando);
 				list_destroy_and_destroy_elements(lista, free);
+				free(laCosaQueMando);
 				break;
 			case F_READ:
 				lista = recibir_paquete(*socket_servidor);
@@ -256,10 +256,10 @@ void atender_servidor(int* socket_servidor){
 				sem_wait(sem_escrituraLectura);
 				contadorDeEscrituraOLectura --;
 				sem_post(sem_escrituraLectura);
-
+				free(laCosaQueMando->instruccion);
 				list_destroy_and_destroy_elements(laCosaQueMando->tabla_segmentos,free);
-				free(laCosaQueMando);
 				list_destroy_and_destroy_elements(lista, free);
+				free(laCosaQueMando);
 				break;
 			case F_WRITE:
 				lista = recibir_paquete(*socket_servidor);
@@ -277,7 +277,7 @@ void atender_servidor(int* socket_servidor){
 				//le meto el numero (como string) a la instruccion para mandarselo a file system
 				string_append_with_format(&instruccion, " %s", numero);
 				log_debug(logger, "DEBUG: F_WRITE - Instruccion %s - Numero %s", instruccion, numero);
-
+				log_debug(logger, "Instrucción de la lista: %s", (char*)list_get(((pcb*)queue_peek(qexec))->instrucciones, ((pcb*)queue_peek(qexec))->program_counter-1));
 				//PUEDO HACER ESTO????? X2
 				laCosaQueMando = generar_instruccion(queue_peek(qexec), instruccion);
 				// laCosaQueMando->pid=((pcb*)queue_peek(qexec))->pid;
@@ -295,8 +295,8 @@ void atender_servidor(int* socket_servidor){
 				free(numero);
 				// free(instruccion);
 				string_array_destroy(parsed);
-				free(laCosaQueMando);
 				list_destroy_and_destroy_elements(lista, free);
+				free(laCosaQueMando);
 
 				break;
 			case SE_PUDO_ESCRIBIR_EL_ARCHIVO:
@@ -309,9 +309,10 @@ void atender_servidor(int* socket_servidor){
 				contadorDeEscrituraOLectura --;
 				sem_post(sem_escrituraLectura);
 
+				free(laCosaQueMando->instruccion);
 				list_destroy_and_destroy_elements(laCosaQueMando->tabla_segmentos,free);
-				free(laCosaQueMando);
 				list_destroy_and_destroy_elements(lista, free);
+				free(laCosaQueMando);
 				break;
 			case CREATE_SEGMENT:
 				lista = recibir_paquete(*socket_servidor);
@@ -391,9 +392,8 @@ void atender_servidor(int* socket_servidor){
 	                  (void*) new_a_ready,
 	                  NULL); //Memoria dice que el proceso está listo
 				pthread_detach(thread);
-				// new_a_ready(); //Memoria dice que el proceso está listo
+				list_destroy(laCosaQueMando->tabla_segmentos);
 				list_destroy_and_destroy_elements(lista,free);
-				// list_destroy_and_destroy_elements(laCosaQueMando->tabla_segmentos,free);
 				free(laCosaQueMando);
 				break;
 			case EXIT:

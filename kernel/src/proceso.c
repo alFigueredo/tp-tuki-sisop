@@ -150,9 +150,9 @@ void new_a_ready(void) {
 	sem_post(sem_ready);
 	log_info(logger, "PID: %d - Estado Anterior: NEW - Estado Actual: READY", proceso->pid);
 	proceso->tiempo_llegada_ready = temporal_get_string_time("%y:%m:%d:%H:%M:%S:%MS");
-	sem_wait(sem_ready);
-	log_info(logger, "Cola Ready %s: [%s]", config_get_string_value(config,"ALGORITMO_PLANIFICACION"), queue_iterator(qready));
-	sem_post(sem_ready);
+	// sem_wait(sem_ready);
+	// log_info(logger, "Cola Ready %s: [%s]", config_get_string_value(config,"ALGORITMO_PLANIFICACION"), queue_iterator(qready));
+	// sem_post(sem_ready);
 	int sem_new_ready_value;
 	sem_getvalue(sem_new_ready, &sem_new_ready_value);
 	if (sem_new_ready_value==1)
@@ -185,10 +185,11 @@ void exec_a_ready(void) {
 	log_info(logger, "PID: %d - Estado Anterior: EXEC - Estado Actual: READY", proceso->pid);
 	calcular_estimacion(proceso, temporal_gettime(tiempo_en_cpu));
 	temporal_destroy(tiempo_en_cpu);
+	free(proceso->tiempo_llegada_ready);
 	proceso->tiempo_llegada_ready = temporal_get_string_time("%y:%m:%d:%H:%M:%S:%MS");
-	sem_wait(sem_ready);
-	log_info(logger, "Cola Ready %s: [%s]", config_get_string_value(config,"ALGORITMO_PLANIFICACION"), queue_iterator(qready));
-	sem_post(sem_ready);
+	// sem_wait(sem_ready);
+	// log_info(logger, "Cola Ready %s: [%s]", config_get_string_value(config,"ALGORITMO_PLANIFICACION"), queue_iterator(qready));
+	// sem_post(sem_ready);
 	sem_post(sem_cpu);
 	pthread_t thread;
 	pthread_create(&thread, NULL, (void*) ready_a_exec, NULL);
@@ -216,10 +217,11 @@ void block_a_ready(pcb* proceso) {
 	sem_post(sem_ready);
 	log_info(logger, "PID: %d - Estado Anterior: BLOCK - Estado Actual: READY", proceso->pid);
 	log_debug(logger, "DEBUG: Ultimo tiempo de llegada a ready del proceso %u: %s", proceso->pid, proceso->tiempo_llegada_ready);
+	free(proceso->tiempo_llegada_ready);
 	proceso->tiempo_llegada_ready = temporal_get_string_time("%y:%m:%d:%H:%M:%S:%MS");
-	sem_wait(sem_ready);
-	log_info(logger, "Cola Ready %s: [%s]", config_get_string_value(config,"ALGORITMO_PLANIFICACION"), queue_iterator(qready));
-	sem_post(sem_ready);
+	// sem_wait(sem_ready);
+	// log_info(logger, "Cola Ready %s: [%s]", config_get_string_value(config,"ALGORITMO_PLANIFICACION"), queue_iterator(qready));
+	// sem_post(sem_ready);
 	pthread_t thread;
 	pthread_create(&thread, NULL, (void*) ready_a_exec, NULL);
 	pthread_detach(thread);
@@ -301,7 +303,9 @@ int seconds_from_string_time(char* timestamp) {
 	// Estimado
 	int datetime = atoi(ts_sorted[0])/4+(atoi(ts_sorted[0])-21)*365+month_days(atoi(ts_sorted[1])-1)+atoi(ts_sorted[2]-1);
 	// log_trace(logger, "Timestamp: %s, Datetime: %d", timestamp, ((datetime*24+atoi(ts_sorted[3])*60+atoi(ts_sorted[4]))*60+atoi(ts_sorted[5]))*1000+atoi(ts_sorted[6]));
-	return ((datetime*24+atoi(ts_sorted[3])*60+atoi(ts_sorted[4]))*60+atoi(ts_sorted[5]))*1000+atoi(ts_sorted[6]);
+	int time = ((datetime*24+atoi(ts_sorted[3])*60+atoi(ts_sorted[4]))*60+atoi(ts_sorted[5]))*1000+atoi(ts_sorted[6]);
+	string_array_destroy(ts_sorted);
+	return time;
 }
 
 int month_days(int month) {
