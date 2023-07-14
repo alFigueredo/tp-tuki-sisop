@@ -245,6 +245,7 @@ void instruccion_i_o(char **parsed)
 	enviar_pcb(conexion_kernel, proceso, IO_BLOCK);
 	list_destroy_and_destroy_elements(proceso->instrucciones, free);
 	list_destroy_and_destroy_elements(proceso->tabla_segmentos, free);
+	free(proceso->tiempo_llegada_ready);
 	free(proceso);
 }
 
@@ -256,6 +257,7 @@ void instruccion_f_open(char **parsed)
 	enviar_pcb(conexion_kernel, proceso, F_OPEN);
 	list_destroy_and_destroy_elements(proceso->instrucciones, free);
 	list_destroy_and_destroy_elements(proceso->tabla_segmentos, free);
+	free(proceso->tiempo_llegada_ready);
 	free(proceso);
 }
 
@@ -267,6 +269,7 @@ void instruccion_f_close(char **parsed)
 	enviar_pcb(conexion_kernel, proceso, F_CLOSE);
 	list_destroy_and_destroy_elements(proceso->instrucciones, free);
 	list_destroy_and_destroy_elements(proceso->tabla_segmentos, free);
+	free(proceso->tiempo_llegada_ready);
 	free(proceso);
 }
 
@@ -279,6 +282,7 @@ void instruccion_f_seek(char **parsed)
 	enviar_pcb(conexion_kernel, proceso, F_SEEK);
 	list_destroy_and_destroy_elements(proceso->instrucciones, free);
 	list_destroy_and_destroy_elements(proceso->tabla_segmentos, free);
+	free(proceso->tiempo_llegada_ready);
 	free(proceso);
 }
 
@@ -304,6 +308,7 @@ void instruccion_f_read(char **parsed)
 	enviar_pcb(conexion_kernel, proceso, F_READ);
 	list_destroy_and_destroy_elements(proceso->instrucciones, free);
 	list_destroy_and_destroy_elements(proceso->tabla_segmentos, free);
+	free(proceso->tiempo_llegada_ready);
 	free(proceso);
 }
 
@@ -329,6 +334,7 @@ void instruccion_f_write(char **parsed)
 	enviar_pcb(conexion_kernel, proceso, F_WRITE);
 	list_destroy_and_destroy_elements(proceso->instrucciones, free);
 	list_destroy_and_destroy_elements(proceso->tabla_segmentos, free);
+	free(proceso->tiempo_llegada_ready);
 	free(proceso);
 }
 
@@ -341,6 +347,7 @@ void instruccion_f_truncate(char **parsed)
 	enviar_pcb(conexion_kernel, proceso, F_TRUNCATE);
 	list_destroy_and_destroy_elements(proceso->instrucciones, free);
 	list_destroy_and_destroy_elements(proceso->tabla_segmentos, free);
+	free(proceso->tiempo_llegada_ready);
 	free(proceso);
 }
 
@@ -351,6 +358,7 @@ void instruccion_wait(char **parsed)
 	enviar_pcb(conexion_kernel, proceso, WAIT);
 	list_destroy_and_destroy_elements(proceso->instrucciones, free);
 	list_destroy_and_destroy_elements(proceso->tabla_segmentos, free);
+	free(proceso->tiempo_llegada_ready);
 	free(proceso);
 }
 
@@ -361,6 +369,7 @@ void instruccion_signal(char **parsed)
 	enviar_pcb(conexion_kernel, proceso, SIGNAL);
 	list_destroy_and_destroy_elements(proceso->instrucciones, free);
 	list_destroy_and_destroy_elements(proceso->tabla_segmentos, free);
+	free(proceso->tiempo_llegada_ready);
 	free(proceso);
 }
 
@@ -373,6 +382,7 @@ void instruccion_create_segment(char **parsed)
 	enviar_pcb(conexion_kernel, proceso, CREATE_SEGMENT);
 	list_destroy_and_destroy_elements(proceso->instrucciones, free);
 	list_destroy_and_destroy_elements(proceso->tabla_segmentos, free);
+	free(proceso->tiempo_llegada_ready);
 	free(proceso);
 }
 
@@ -385,6 +395,7 @@ void instruccion_delete_segment(char **parsed)
 	enviar_pcb(conexion_kernel, proceso, DELETE_SEGMENT);
 	list_destroy_and_destroy_elements(proceso->instrucciones, free);
 	list_destroy_and_destroy_elements(proceso->tabla_segmentos, free);
+	free(proceso->tiempo_llegada_ready);
 	free(proceso);
 }
 
@@ -394,6 +405,8 @@ void instruccion_yield(char **parsed)
 	proceso->program_counter++;
 	enviar_pcb(conexion_kernel, proceso, READY);
 	list_destroy_and_destroy_elements(proceso->instrucciones, free);
+	list_destroy_and_destroy_elements(proceso->tabla_segmentos, free);
+	free(proceso->tiempo_llegada_ready);
 	free(proceso);
 }
 
@@ -404,6 +417,7 @@ void instruccion_exit(char **parsed)
 	enviar_pcb(conexion_kernel, proceso, EXIT);
 	list_destroy_and_destroy_elements(proceso->instrucciones, free);
 	list_destroy_and_destroy_elements(proceso->tabla_segmentos, free);
+	free(proceso->tiempo_llegada_ready);
 	free(proceso);
 }
 
@@ -412,6 +426,7 @@ void error_exit(op_code codigo)
 	enviar_pcb(conexion_kernel, proceso, codigo);
 	list_destroy_and_destroy_elements(proceso->instrucciones, free);
 	list_destroy_and_destroy_elements(proceso->tabla_segmentos, free);
+	free(proceso->tiempo_llegada_ready);
 	free(proceso);
 }
 
