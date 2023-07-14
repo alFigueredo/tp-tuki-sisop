@@ -22,8 +22,8 @@ t_list* leerRecursos(t_config *config) {
 		list_add(listaRecursos, nuevoRecurso);
 	}
 
-    free(recursosConfig);
-    free(instanciasConfig);
+    string_array_destroy(recursosConfig);
+    string_array_destroy(instanciasConfig);
 
 	return listaRecursos;
 }
@@ -87,7 +87,7 @@ void destruir_recursos(t_list* recursos) {
 }
 
 void destruir_colas_recursos(void* recurso) {
-    queue_destroy(((Recurso*)recurso)->procesosBloqueados);
+    queue_destroy_and_destroy_elements(((Recurso*)recurso)->procesosBloqueados,free);
 }
 
 

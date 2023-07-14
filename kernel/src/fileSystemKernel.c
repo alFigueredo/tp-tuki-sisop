@@ -47,7 +47,6 @@ int abrirArchivoKernel(pcb* proceso, char* instruccion)
 		log_warning(logger, "PID: %d - Bloqueado porque archivo %s ya esta abierto", proceso->pid, archivoActual->nombreDeArchivo);
 		return 0;
 	}
-	string_array_destroy(parsed);
 }
 
 void cerrarArchivoKernel(pcb* proceso, char* instruccion)

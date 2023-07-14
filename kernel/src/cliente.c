@@ -361,7 +361,7 @@ void atender_servidor(int* socket_servidor){
 				list_destroy_and_destroy_elements(lista,free);
 				break;
 			case COMPACTACION:
-				log_info(logger,"Se solicita compactacion, esperaremos hasta que finalicen las operaciones entre memoria y file system");
+				log_info(logger,"Compactación: <Se solicitó compactación / Esperando Fin de Operaciones de FS>");
 				while (1) {
 					sem_wait(sem_escrituraLectura);
 					if (contadorDeEscrituraOLectura == 0) {
@@ -376,6 +376,7 @@ void atender_servidor(int* socket_servidor){
 				t_list* lista_tablas = recibir_tablas_segmentos(lista);
 				actualizar_tablas(lista_tablas);
 				char* instruccion = list_get(((pcb*)queue_peek(qexec))->instrucciones, ((pcb*)queue_peek(qexec))->program_counter-1);
+				log_info(logger,"Se finalizó el proceso de compactación, por lo que realizamos nuevamente la solicitud de creación del segmento");
 				enviar_segmento(((pcb*)queue_peek(qexec))->pid,instruccion,((pcb*)queue_peek(qexec))->tabla_segmentos); //Volvemos a solicitar la creacion del segmento
 				list_destroy_and_destroy_elements(lista,free);
 				list_destroy_and_destroy_elements(lista_tablas,free);
@@ -395,7 +396,7 @@ void atender_servidor(int* socket_servidor){
 				pthread_detach(thread);
 				// new_a_ready(); //Memoria dice que el proceso está listo
 				list_destroy_and_destroy_elements(lista,free);
-				// list_destroy_and_destroy_elements(laCosaQueMando->tabla_segmentos,free);
+				// list_clean_and_destroy_elements(laCosaQueMando->tabla_segmentos,free);
 				free(laCosaQueMando);
 				break;
 			case EXIT:
