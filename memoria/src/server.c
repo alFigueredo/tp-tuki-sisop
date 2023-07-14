@@ -125,12 +125,15 @@ void atender_cliente(int* socket_cliente){
 				lista = recibir_paquete(*socket_cliente);
 				proceso = malloc(sizeof(t_instruccion));
 				recibir_instruccion(lista,proceso);
+				list_destroy_and_destroy_elements(proceso->tabla_segmentos, free);
 				proceso->tabla_segmentos = iniciar_proceso(proceso->pid);
 				log_debug(logger, "Cantidad de segmentos: %d", list_size(proceso->tabla_segmentos));
 				log_debug(logger, "tamanio segmento 0: %d", ((t_segmento*)list_get(proceso->tabla_segmentos, 0))->tam_segmento);
 				enviar_instruccion(conexion_kernel, proceso, CREATE_PROCESS_OK);
-				free(proceso);
+				free(proceso->instruccion);
 				list_destroy_and_destroy_elements(lista, free);
+				list_destroy_and_destroy_elements(proceso->tabla_segmentos, free);
+				free(proceso);
 				log_trace(logger, "TRACE: CREATE_PROCESS_OK enviado");
 				break;
 			case DELETE_PROCESS:
@@ -140,8 +143,10 @@ void atender_cliente(int* socket_cliente){
 				recibir_instruccion(lista,proceso);
 				finalizar_proceso(proceso);
 				enviar_instruccion(conexion_kernel,proceso,DELETE_PROCESS_OK);
-				free(proceso);
+				free(proceso->instruccion);
 				list_destroy_and_destroy_elements(lista, free);
+				list_destroy_and_destroy_elements(proceso->tabla_segmentos, free);
+				free(proceso);
 				break;
 			case CREATE_SEGMENT:
 				lista = recibir_paquete(*socket_cliente);
@@ -210,6 +215,7 @@ void atender_cliente(int* socket_cliente){
 				}
 				enviar_paquete(paquete, conexion_kernel);
 				eliminar_paquete(paquete);
+				list_destroy_and_destroy_elements(lista, free);
 				break;
 			case F_READ:
 				lista = recibir_paquete(*socket_cliente);
@@ -224,8 +230,12 @@ void atender_cliente(int* socket_cliente){
 				log_info(logger, "PID: %u - Accion: ESCRIBIR - Direccion fisica: %d - Tamanio: %d - Origen: FS", proceso->pid, dir_fisica, tamanio_informacion);
 				//Avisarle a filesystem que se escribio joya
 				enviar_instruccion(conexion_filesystem,proceso,OK);
-				free(proceso);
+				free(informacionALeerOEscribir);
+				string_array_destroy(parsed);
+				free(instruccion);
 				list_destroy_and_destroy_elements(lista, free);
+				list_destroy_and_destroy_elements(proceso->tabla_segmentos, free);
+				free(proceso);
 				break;
 			case F_WRITE:
 				log_trace(logger, "F_WRITE");
@@ -242,8 +252,12 @@ void atender_cliente(int* socket_cliente){
 				proceso->tamanio_dato=tamanio_informacion;
 				proceso->dato=informacionALeerOEscribir;
 				enviar_instruccion_con_dato(conexion_filesystem,proceso,ACA_TENES_LA_INFO_GIIIIIIL);
-				free(proceso);
+				free(informacionALeerOEscribir);
+				string_array_destroy(parsed);
+				free(instruccion);
 				list_destroy_and_destroy_elements(lista, free);
+				list_destroy_and_destroy_elements(proceso->tabla_segmentos, free);
+				free(proceso);
 				break;
 				//cpu
 			case MOV_IN: //leer cpu
@@ -263,8 +277,11 @@ void atender_cliente(int* socket_cliente){
 				proceso->tamanio_dato = tamanio_informacion;
 				enviar_instruccion_con_dato(conexion_cpu, proceso, MOV_IN);
 				free(informacionALeerOEscribir);
+				string_array_destroy(parsed);
+				free(instruccion);
 				list_destroy_and_destroy_elements(lista, free);
-
+				list_destroy_and_destroy_elements(proceso->tabla_segmentos, free);
+				free(proceso);
 				break;
 			case MOV_OUT: //escribir
 				// parsed [1] -> dir fisica
@@ -285,8 +302,12 @@ void atender_cliente(int* socket_cliente){
 				// enviar_instruccion(conexion_cpu, proceso, OK);
 				enviar_operacion(conexion_cpu, OK);
 
-
+				string_array_destroy(parsed);
+				free(informacionALeerOEscribir);
+				free(instruccion);
 				list_destroy_and_destroy_elements(lista, free);
+				list_destroy_and_destroy_elements(proceso->tabla_segmentos, free);
+				free(proceso);
 				log_trace(logger, "TRACE END: MOV_OUT");
 
 				break;

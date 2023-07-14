@@ -94,7 +94,7 @@ void finalizar_proceso(t_instruccion* pcb_proceso)
 			eliminar_segmento (pcb_proceso->pid,seg_actual->id);												//Elimina el segmento de la lista de segmentos total.
 			free(seg_actual);
 		}
-	list_clean(pcb_proceso->tabla_segmentos);
+	list_clean_and_destroy_elements(pcb_proceso->tabla_segmentos, free);
 	// list_destroy_and_destroy_elements(segmentos_proc, free);
 	list_destroy(segmentos_proc);
 	log_debug(logger, "Total segmentos: %d", list_size(tabla_segmentos_total));
@@ -182,9 +182,11 @@ int crear_segmento(unsigned int pid, int tamanio_seg, int id_seg)
 {
 	int sumatoria;
 
-	char* primera_letra = malloc(2* sizeof(char));
+	// char* primera_letra = malloc(2* sizeof(char));
+	char* primera_letra;
 	primera_letra = string_substring_until(config_get_string_value(config, "ALGORITMO_ASIGNACION"), 1);
 	algoritmo_asignacion algoritmo = cambiar_enum_algoritmo (primera_letra);
+	free(primera_letra);
 	int dir_base;
 
 
@@ -783,7 +785,7 @@ t_list* compactar_segmentos() {
         if(desplazamiento != 0){
         	memmove(memoria_usuario + direccion_base_actual, memoria_usuario + antigua_direccion_base, tam_segmento);
         }
-
+		log_info(logger, "PID: %u - Segmento: %d - Base: %d - Tamanio: %d", segm->pid, segm->id, segm->direccion_base, segm->tam_segmento);
         direccion_base_actual = seg->direccion_limite + 1;
     }
 
