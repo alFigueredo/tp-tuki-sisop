@@ -178,7 +178,7 @@ int crearArchivo(char *nombre,char *carpeta, char ***vectoreRutas, int *cantidad
 	t_config* configArchivo;
 	char **vectorPruebas;
 	char *mediaRutaAbsoluta = concatenarCadenas(carpeta,"/");
-	char *rutaArchivo = malloc ((strlen(nombre) + 1) * sizeof(char) +(strlen(mediaRutaAbsoluta) + 1) * sizeof(char));
+	char *rutaArchivo;
 	rutaArchivo = concatenarCadenas(mediaRutaAbsoluta, nombre);
 
 	archivo = fopen(rutaArchivo , "w+");
@@ -235,6 +235,7 @@ int truncarArchivo(char *nombre,char *carpeta, char **vectoreRutas, int cantidad
 	tamanioOriginal = config_get_int_value(configArchivoActual,"TAMANIO_ARCHIVO");
 	tamanioBloques = config_get_int_value(superBloque,"BLOCK_SIZE");
 	config_set_value(configArchivoActual,"TAMANIO_ARCHIVO",tamanioNuevoChar = string_itoa(tamanioNuevo));
+	free(tamanioNuevoChar);
 	cantidadBloquesOriginal = dividirRedondeando(tamanioOriginal, tamanioBloques);
 	cantidadBloquesNueva = dividirRedondeando(tamanioNuevo, tamanioBloques);
 	config_save(configArchivoActual);
@@ -332,6 +333,7 @@ void agregarBloques(int cantidadBloquesOriginal ,int cantidadBloquesNueva,t_conf
 				//Encontre un bloque vacio lo marco como ocupado
 				setearBitmap(bitmap,i);
 				config_set_value(configArchivoActual,"PUNTERO_DIRECTO",valorIChar = string_itoa(i));
+				free(valorIChar);
 				config_save(configArchivoActual);
 				sincronizarBitmap();
 				break;
