@@ -7,7 +7,7 @@ MODULE_NAME := ./debug/memoria.out
 SOURCE_FILES := $(shell find ./src -type f -iname "*.c" -exec basename {} \;)
 OBJECT_FILES := $(SOURCE_FILES:%.c=./debug/%.o)
 LINK = -lpthread -lcommons -lm
-CONFIG_FILE := ./memoria.config
+CONFIG_FILE := ./tuki-pruebas/error.config
 
 ### Reglas ###
 

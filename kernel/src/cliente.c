@@ -426,10 +426,7 @@ void atender_servidor(int* socket_servidor){
 				break;
 			case EXIT_OUT_OF_MEMORY:
 				lista = recibir_paquete(*socket_servidor); //Debería enviar la base/id_segmento + el tipo de resultado que se obtuvo: 0-> Todo bien, 1->No hay espacio, 2->Requiere compactacion
-				list_destroy_and_destroy_elements(((pcb*)queue_peek(qexec))->instrucciones, free);
-				list_destroy_and_destroy_elements(((pcb*)queue_peek(qexec))->tabla_segmentos, free);
-				recibir_pcb(lista, (pcb*)queue_peek(qexec));
-				log_error(logger,"Out of memory: No se encóntró espacio para el segmento id %d en memoria, por lo que se finaliza el proceso en ejecucion", *((int*)list_get(lista,1)));
+				log_error(logger,"Out of memory: No se encontró espacio para el segmento id %d en memoria, por lo que se finaliza el proceso en ejecucion", *((int*)list_get(lista,1)));
             	exec_a_exit("OUT_OF_MEMORY");
 				list_destroy_and_destroy_elements(lista,free);
 				break;

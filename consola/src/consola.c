@@ -80,6 +80,7 @@ void paquete_texto(int conexion, char* pseudocodigo)
 		abort();
 	}
 	unsigned int pid = process_getpid();
+	log_info(logger, "Proceso %u iniciado.", pid);
 	agregar_a_paquete(paquete, &pid, sizeof(unsigned int));
 	while(NULL !=fgets(leido, 64, fptr)) {
 		parsed = strtok(leido, "\n");

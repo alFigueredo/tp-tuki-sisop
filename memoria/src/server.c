@@ -122,6 +122,7 @@ void atender_cliente(int* socket_cliente){
 				//kernel
 			case CREATE_PROCESS:
 				log_trace(logger, "TRACE: CREATE_PROCESS");
+				log_trace(logger, "TRACE: DELETE_PROCESS");
 				lista = recibir_paquete(*socket_cliente);
 				proceso = malloc(sizeof(t_instruccion));
 				recibir_instruccion(lista,proceso);
@@ -339,6 +340,7 @@ void atender_cliente(int* socket_cliente){
 				}
 				enviar_tablas_segmentos(conexion_kernel, lista_tablas, COMPACTACION_OK);
 				list_destroy_and_destroy_elements(lista_tablas,free);
+				// Falta limpiar
 				// list_destroy_and_destroy_elements(lista, free);
 				break;
 			case -1:

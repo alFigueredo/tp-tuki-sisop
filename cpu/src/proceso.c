@@ -181,7 +181,7 @@ void instruccion_mov_in(char **parsed)
 	char *dir_fisica = traducir_dir_logica(parsed[2], tamanio_dato);
 	if (strcmp(dir_fisica, "SEG_FAULT") == 0)
 	{
-		log_error(logger, "PID:  - Error SEG_FAULT - Segmento:  - Offset:  - Tamanio: ");
+		// log_error(logger, "PID:  - Error SEG_FAULT - Segmento:  - Offset:  - Tamanio: ");
 		error_exit(EXIT_SEG_FAULT);
 		return;
 	}
@@ -218,7 +218,7 @@ void instruccion_mov_out(char **parsed)
 	char *dir_fisica = traducir_dir_logica(parsed[1], tamanio_dato);
 	if (strcmp(dir_fisica, "SEG_FAULT") == 0)
 	{
-		log_error(logger, "Error: segmentation fault");
+		// log_error(logger, "Error: segmentation fault");
 		error_exit(EXIT_SEG_FAULT);
 		return;
 	}
@@ -293,7 +293,7 @@ void instruccion_f_read(char **parsed)
 	char *dir_fisica = traducir_dir_logica(parsed[2], atoi(parsed[3]));
 	if (strcmp(dir_fisica, "SEG_FAULT") == 0)
 	{
-		log_error(logger, "Error: segmentation fault");
+		// log_error(logger, "Error: segmentation fault");
 		error_exit(EXIT_SEG_FAULT);
 		return;
 	}
@@ -316,7 +316,7 @@ void instruccion_f_write(char **parsed)
 	char *dir_fisica = traducir_dir_logica(parsed[2], atoi(parsed[3]));
 	if (strcmp(dir_fisica, "SEG_FAULT") == 0)
 	{
-		log_error(logger, "Error: segmentation fault");
+		// log_error(logger, "Error: segmentation fault");
 		error_exit(EXIT_SEG_FAULT);
 		return;
 	}
