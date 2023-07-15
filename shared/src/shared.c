@@ -156,10 +156,7 @@ t_list *recibir_paquete(int socket_cliente)
 
 void delay(int milliseconds)
 {
-	t_temporal *clock = temporal_create();
-	while (temporal_gettime(clock) < milliseconds)
-		;
-	temporal_destroy(clock);
+	sleep(milliseconds/1000);
 }
 
 void enviar_pcb(int conexion, pcb *proceso, op_code codigo)
