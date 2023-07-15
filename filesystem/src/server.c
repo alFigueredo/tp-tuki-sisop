@@ -168,9 +168,9 @@ void atender_cliente(int* socket_cliente)
 				instruccion = proceso->instruccion;
 				porqueria=string_split(instruccion, " ");
 				nombreArchivo = porqueria[1];
-				punteroAArchivo = atoi(porqueria[2]);
+				direccionFisica = atoi(porqueria[2]);
 				cantidadBytesALeer = atoi(porqueria[3]);
-				direccionFisica = atoi(porqueria[4]);
+				punteroAArchivo = atoi(porqueria[4]);
 				informacionLeidaOEscrita = leerArchivo(nombreArchivo,punteroAArchivo,cantidadBytesALeer,direccionFisica);
 				proceso->dato = informacionLeidaOEscrita;
 				proceso->tamanio_dato = cantidadBytesALeer;
@@ -229,9 +229,9 @@ void atender_cliente(int* socket_cliente)
 					instruccion = proceso->instruccion;
 					porqueria=string_split(instruccion, " ");
 					nombreArchivo = porqueria[1];
-					punteroAArchivo = atoi(porqueria[2]);
+					direccionFisica = atoi(porqueria[2]);
 					cantidadBytesALeer = atoi(porqueria[3]);
-					direccionFisica = atoi(porqueria[4]);
+					punteroAArchivo = atoi(porqueria[4]);
 					informacionLeidaOEscrita = proceso->dato;
 
 					//Lo escribo en el archivo

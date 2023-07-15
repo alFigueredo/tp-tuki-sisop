@@ -11,9 +11,9 @@ void enviar_segmento(int pid, char* instruccion, t_list* tabla_segmentos){
     if(strcmp(operacion, "CREATE_SEGMENT") == 0){
 
         int tamanio_solicitado = atoi(parsed[2]); //El tamanio tambien se recibe de parametro
+        log_info(logger,"Se solicita para PID: %u - Crear Segmento - Id: %d - Tamaño: %d",pid,id_segmento,tamanio_solicitado);
         agregar_a_paquete(paquete,&tamanio_solicitado,sizeof(tamanio_solicitado));
         enviar_paquete(paquete,conexion_memoria);
-        log_info(logger,"Se solicita para PID: %u - Crear Segmento - Id: %d - Tamaño: %d",pid,id_segmento,tamanio_solicitado);
     }
     else{
         int tabla_segmentos_size = list_size(tabla_segmentos);
@@ -38,8 +38,8 @@ bool actualizo_proceso(pcb* proceso, t_list* lista) {
 
     while (list_iterator_has_next(buscador)) {
         t_instruccion* proceso_actualizado = list_iterator_next(buscador);
-
         if (proceso_actualizado->pid == proceso->pid) {
+            list_destroy_and_destroy_elements(proceso->tabla_segmentos, free);
             proceso->tabla_segmentos = proceso_actualizado->tabla_segmentos;
             list_iterator_destroy(buscador);
             return true;
@@ -59,7 +59,8 @@ void actualizar_cola(t_queue* cola, t_queue* cola_copia, t_list* tablas_actualiz
         queue_push(cola_copia, ((pcb*)queue_peek(cola)));
         queue_pop(cola);
     }
-    cola = cola_copia;
+    while (!queue_is_empty(cola_copia))
+        queue_push(cola, queue_pop(cola_copia));
     queue_destroy(cola_copia);
 }
 

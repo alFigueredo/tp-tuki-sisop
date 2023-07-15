@@ -85,6 +85,7 @@ void atender_cliente(int* socket_cliente){
 	t_paquete* paquete;
 	unsigned int pid;
 	int id_segmento;
+	char* dato_str;
 	// int id_seg;
 	// int desp;
 	// char* valor_mem;
@@ -194,12 +195,12 @@ void atender_cliente(int* socket_cliente){
 				eliminar_segmento(pid, id_segmento);
 				for (int i = 0; i < tamanio_tabla_segmentos; i++)
 				{
-					int j = 3+4*i;
+					int j = 3+3*i;
 					if ((*(int*)list_get(lista, j))==id_segmento) {
 						list_remove_and_destroy_element(lista, j, free);
 						list_remove_and_destroy_element(lista, j, free);
 						list_remove_and_destroy_element(lista, j, free);
-						list_replace_and_destroy_element(lista, 2, &post_tamanio_tabla_segmentos, free);
+						// list_replace_and_destroy_element(lista, 2, &post_tamanio_tabla_segmentos, free);
 						break;
 					}
 				}
@@ -209,7 +210,7 @@ void atender_cliente(int* socket_cliente){
 				agregar_a_paquete(paquete, &id_segmento, sizeof(int));
 				agregar_a_paquete(paquete, &post_tamanio_tabla_segmentos, sizeof(int));
 				for (int i=0; i<post_tamanio_tabla_segmentos; i++) {
-					int j = 3+4*i;
+					int j = 3+3*i;
 					agregar_a_paquete(paquete, list_get(lista, j), sizeof(int));
 					agregar_a_paquete(paquete, list_get(lista, j+1), sizeof(int));
 					agregar_a_paquete(paquete, list_get(lista, j+2), sizeof(int));
@@ -223,9 +224,12 @@ void atender_cliente(int* socket_cliente){
 				proceso = malloc(sizeof(t_instruccion));
 				recibir_instruccion_con_dato(lista,proceso);
 				informacionALeerOEscribir = proceso->dato;
+				dato_str = string_substring_until(proceso->dato, proceso->tamanio_dato);
+				log_warning(logger, "Dato: %s", dato_str);
+				free(dato_str);
 				instruccion = proceso->instruccion;
 				parsed = string_split(instruccion," ");
-				dir_fisica = atoi(parsed[1]);
+				dir_fisica = atoi(parsed[2]);
 				tamanio_informacion = proceso->tamanio_dato;
 				escribir_memoria(dir_fisica,informacionALeerOEscribir,tamanio_informacion);
 				log_info(logger, "PID: %u - Accion: ESCRIBIR - Direccion fisica: %d - Tamanio: %d - Origen: FS", proceso->pid, dir_fisica, tamanio_informacion);
@@ -246,12 +250,15 @@ void atender_cliente(int* socket_cliente){
 				// informacionALeerOEscribir = proceso->dato;
 				instruccion = proceso->instruccion;
 				parsed = string_split(instruccion," ");
-				dir_fisica = atoi(parsed[1]);
-				tamanio_informacion = atoi(parsed[2]);
+				dir_fisica = atoi(parsed[2]);
+				tamanio_informacion = atoi(parsed[3]);
 				informacionALeerOEscribir = leer_memoria(dir_fisica,tamanio_informacion);
 				log_info(logger, "PID: %u - Accion: LEER - Direccion fisica: %d - Tamanio: %d - Origen: FS", proceso->pid, dir_fisica, tamanio_informacion);
 				proceso->tamanio_dato=tamanio_informacion;
 				proceso->dato=informacionALeerOEscribir;
+				dato_str = string_substring_until(proceso->dato, proceso->tamanio_dato);
+				log_warning(logger, "Dato: %s", dato_str);
+				free(dato_str);
 				enviar_instruccion_con_dato(conexion_filesystem,proceso,ACA_TENES_LA_INFO_GIIIIIIL);
 				free(informacionALeerOEscribir);
 				string_array_destroy(parsed);
@@ -276,6 +283,9 @@ void atender_cliente(int* socket_cliente){
 
 				proceso->dato = informacionALeerOEscribir;
 				proceso->tamanio_dato = tamanio_informacion;
+				dato_str = string_substring_until(proceso->dato, proceso->tamanio_dato);
+				log_warning(logger, "Dato: %s", dato_str);
+				free(dato_str);
 				enviar_instruccion_con_dato(conexion_cpu, proceso, MOV_IN);
 				free(informacionALeerOEscribir);
 				string_array_destroy(parsed);
@@ -294,7 +304,9 @@ void atender_cliente(int* socket_cliente){
 				instruccion = proceso->instruccion;
 				parsed = string_split(instruccion," ");
 				dir_fisica = atoi(parsed[1]);
-
+				dato_str = string_substring_until(proceso->dato, proceso->tamanio_dato);
+				log_warning(logger, "Dato: %s", dato_str);
+				free(dato_str);
 				informacionALeerOEscribir = proceso->dato;	//warning: assignment to ‘char *’ from incompatible pointer type ‘char **’ [-Wincompatible-pointer-types]
 				tamanio_informacion = proceso->tamanio_dato;
 				escribir_memoria(dir_fisica, informacionALeerOEscribir, tamanio_informacion);

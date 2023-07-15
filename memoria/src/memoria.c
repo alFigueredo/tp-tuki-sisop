@@ -209,7 +209,7 @@ int crear_segmento(unsigned int pid, int tamanio_seg, int id_seg)
 	else if (!hay_espacio_disponible(tamanio_seg))																								//No hay espacio disponible en memoria,
 	{
 		sumatoria = sumatoria_huecos();																			//suma el espacio de los huecos
-
+		log_warning(logger, "Sumatoria de huecos: %d - Tamanio: %d", sumatoria, tamanio_seg);
 		if (sumatoria >= tamanio_seg)																	//porque los segmentos no estan compactados (hay espacio pero disperso).
 		{
 			log_info(logger, "Solicitud de Compactacion");
@@ -259,13 +259,13 @@ void eliminar_segmento(unsigned int pid, int id)
 			{
 				//seg = list_get(tabla_segmentos_total, id);
 				log_info(logger, "PID: %u - Eliminar Segmento: %d - Base: %d - Tamanio: %d", pid, id, seg->direccion_base, seg->tam_segmento);
-				list_remove_and_destroy_element(tabla_segmentos_total, i,free);														//Lo borra de la tabla de segmentos.
 				ady = agrupar_huecos(seg->direccion_base, seg->direccion_limite);							//Si tiene huecos aledanios, los agrupa.
 				if (!ady)																				//Si no los tiene,
 				{
 					memcpy(hueco, seg, sizeof(segmento));
 					list_add(huecos, hueco);													//crea el hueco.
 				}
+				list_remove_and_destroy_element(tabla_segmentos_total, i,free);														//Lo borra de la tabla de segmentos.
 				break;
 			}
 		}
@@ -383,6 +383,7 @@ int sumatoria_huecos()
 	for (int i = 0; i < list_size(huecos); i++)
 	{
 		seg = list_get(huecos, i);
+		log_warning(logger, "Tamanio hueco: %d", seg->tam_segmento);
 		sumatoria += seg->tam_segmento;
 	}
 	return sumatoria;
@@ -502,7 +503,7 @@ int first_fit(unsigned int pid_proceso, int tam, int id_seg)
 					nuevo_segmento->pid = pid_proceso;
 					nuevo_segmento->id = id_seg;
 					nuevo_segmento->tam_segmento = tam;
-					nuevo_segmento->direccion_base = segmento_actual->direccion_limite + 1;
+					nuevo_segmento->direccion_base = segmento_actual->direccion_limite+1;
 					nuevo_segmento->direccion_limite = nuevo_segmento->direccion_base + tam - 1 ;
 					list_add_in_index(tabla_segmentos_total, i + 1, nuevo_segmento);
 					log_info(logger, "PID: %u - Crear Segmento: %d - Base: %d - Tamanio: %d", pid_proceso, nuevo_segmento->id, nuevo_segmento->direccion_base, tam);
@@ -520,14 +521,14 @@ int first_fit(unsigned int pid_proceso, int tam, int id_seg)
 			//log_info(logger,"limite seg actual: %d",segmento_actual->direccion_limite);
 			nuevo_segmento->tam_segmento = tam;
 			nuevo_segmento->direccion_base = nueva_dir_base;
-			nuevo_segmento->direccion_limite = nuevo_segmento->direccion_base + tam ;
+			nuevo_segmento->direccion_limite = nuevo_segmento->direccion_base + tam - 1;
 			nuevo_segmento->pid= pid_proceso;
 
 			nuevo_segmento->id = id_seg;
 
 			list_add(tabla_segmentos_total,nuevo_segmento);
 			
-			log_info(logger, "PID: %u - Crear Segmento: %d - Base: %d - Tamanio: %d", pid_proceso, segmento_actual->id, nuevo_segmento->direccion_base, tam);
+			log_info(logger, "PID: %u - Crear Segmento: %d - Base: %d - Tamanio: %d", pid_proceso, nuevo_segmento->id, nuevo_segmento->direccion_base, tam);
 		}
 	}
 	return nuevo_segmento->direccion_base;
@@ -602,7 +603,7 @@ int best_fit(unsigned int pid_proceso, int tam, int id_seg)
 			nuevo_segmento->pid = pid_proceso;
 			nuevo_segmento->tam_segmento = tam;
 			nuevo_segmento->direccion_base = nueva_dir_base;
-			nuevo_segmento->direccion_limite = nuevo_segmento->direccion_base + tam ;
+			nuevo_segmento->direccion_limite = nuevo_segmento->direccion_base + tam - 1 ;
 			//int id_seg_nuevo = list_size(tabla_segmentos_total) - 1;
 			nuevo_segmento->id= id_seg;
 
@@ -667,7 +668,7 @@ int worst_fit(unsigned int pid_proceso, int tam, int id_seg)
 				nuevo_segmento->id = id_seg;
 				nuevo_segmento->tam_segmento = tam;
 				nuevo_segmento->direccion_base = nueva_dir_base; // list_get(memoria_usuario, segmento_asignado - 1)->direccion_limite + 1;
-				nuevo_segmento->direccion_limite = nuevo_segmento->direccion_base + tam ;
+				nuevo_segmento->direccion_limite = nuevo_segmento->direccion_base + tam - 1;
 
 				// Insertar el nuevo segmento en la lista de memoria después del segmento anterior al segmento asignado
 				list_add_in_index(tabla_segmentos_total, segmento_asignado, nuevo_segmento);
@@ -767,23 +768,24 @@ void escribir_memoria(int direccion, void* nuevo_valor, size_t tamanio)
 
 t_list* compactar_segmentos() {
     t_list* segmentos_compactados = list_create();
-    segmento* segm = malloc(sizeof(segmento));
+   
     // segmento* seg;
     int direccion_base_actual = 0;
     int tam_segmento = 0;
     int antigua_direccion_base = 0;
 
-    for (int i = 0; i < list_size(tabla_segmentos_total); i++) {
-        segmento* seg = list_get(tabla_segmentos_total, i);
+    while (0 < list_size(tabla_segmentos_total)) {
+        segmento* seg = list_get(tabla_segmentos_total, 0);
+		segmento* segm = malloc(sizeof(segmento));
         memcpy(segm, seg, sizeof(segmento));
         antigua_direccion_base = seg->direccion_base;
 
         //Cambios segmento
         tam_segmento = seg->direccion_limite - seg->direccion_base + 1;
-        seg->direccion_base = direccion_base_actual;
-        seg->direccion_limite = seg->direccion_base + tam_segmento - 1;
+        segm->direccion_base = direccion_base_actual;
+        segm->direccion_limite = segm->direccion_base + tam_segmento - 1;
         list_add(segmentos_compactados, segm);
-        list_remove_and_destroy_element(tabla_segmentos_total, i,free);
+        list_remove_and_destroy_element(tabla_segmentos_total, 0,free);
 
         //Cambios en memoria usuario
         int desplazamiento = direccion_base_actual - antigua_direccion_base;
@@ -791,7 +793,7 @@ t_list* compactar_segmentos() {
         	memmove(memoria_usuario + direccion_base_actual, memoria_usuario + antigua_direccion_base, tam_segmento);
         }
 		log_info(logger, "PID: %u - Segmento: %d - Base: %d - Tamanio: %d", segm->pid, segm->id, segm->direccion_base, segm->tam_segmento);
-        direccion_base_actual = seg->direccion_limite + 1;
+        direccion_base_actual = segm->direccion_limite + 1;
     }
 
    list_destroy_and_destroy_elements(tabla_segmentos_total, free);

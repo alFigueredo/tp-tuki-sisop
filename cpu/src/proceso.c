@@ -213,8 +213,7 @@ void instruccion_mov_out(char **parsed)
 	// Para probar la función hay que descomentar lo comentado, descomentar el return en el case correspondiente, y comentar en donde se modifica el program_counter
 	iniciar_diccionario_registros(&proceso->registros);
 	log_info(logger, "PID: %d - Ejecutando: %s - %s %s", proceso->pid, parsed[0], parsed[1], parsed[2]);
-	int tamanio_dato = parsed[1][0] == 'R' ? 16 : parsed[1][0] == 'E' ? 8
-																	  : 4;
+	int tamanio_dato = parsed[2][0] == 'R' ? 16 : parsed[2][0] == 'E' ? 8 : 4;
 	char *dir_fisica = traducir_dir_logica(parsed[1], tamanio_dato);
 	if (strcmp(dir_fisica, "SEG_FAULT") == 0)
 	{
