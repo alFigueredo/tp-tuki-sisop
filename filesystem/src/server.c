@@ -110,10 +110,11 @@ void atender_cliente(int* socket_cliente)
 					enviar_instruccion(*socket_cliente,proceso,EL_ARCHIVO_NO_EXISTE_PAAAAAAA);
 				}
 
-				list_destroy_and_destroy_elements(proceso->tabla_segmentos,free);
-				free(proceso);
 				string_array_destroy(porqueria);
+				free(proceso->instruccion);
+				list_destroy_and_destroy_elements(proceso->tabla_segmentos,free);
 				list_destroy_and_destroy_elements(lista,free);
+				free(proceso);
 				break;
 			case F_CREATE:
 				lista = recibir_paquete(*socket_cliente);
@@ -132,10 +133,11 @@ void atender_cliente(int* socket_cliente)
 					log_error(logger,"No se pudo crear el archivo pibe. Algo se rompio zarpado");
 				}
 				 
-				list_destroy_and_destroy_elements(proceso->tabla_segmentos,free);
-				free(proceso);
 				string_array_destroy(porqueria);
+				free(proceso->instruccion);
+				list_destroy_and_destroy_elements(proceso->tabla_segmentos,free);
 				list_destroy_and_destroy_elements(lista,free);
+				free(proceso);
 				break;
 			case F_TRUNCATE:
 				lista = recibir_paquete(*socket_cliente);
@@ -153,10 +155,11 @@ void atender_cliente(int* socket_cliente)
 				{
 					log_error(logger,"No se pudo truncar el archivo. CAGAAAAMOSSSSS");
 				}
-				list_destroy_and_destroy_elements(proceso->tabla_segmentos,free);
-				free(proceso);
 				string_array_destroy(porqueria);
+				free(proceso->instruccion);
+				list_destroy_and_destroy_elements(proceso->tabla_segmentos,free);
 				list_destroy_and_destroy_elements(lista,free);
+				free(proceso);
 				break;
 			case F_READ:
 				lista = recibir_paquete(*socket_cliente);
@@ -175,29 +178,36 @@ void atender_cliente(int* socket_cliente)
 				// Enviar mensaje a memoria y mandarle la merca
 				
 				enviar_instruccion_con_dato(conexion_memoria,proceso,F_READ);
-				
+
 				//recibir el ok en memoria
 				if (recibir_operacion(conexion_memoria) == OK)
 				{
-					lista = recibir_paquete(conexion_memoria);
+					free(proceso->instruccion);
+					free(proceso->dato);
+					list_destroy_and_destroy_elements(proceso->tabla_segmentos,free);
+					list_destroy_and_destroy_elements(lista,free);
 					free(proceso);
+					lista = recibir_paquete(conexion_memoria);
 					proceso = malloc(sizeof(t_instruccion));
 					recibir_instruccion(lista,proceso);
 				
 					//Envio el ok
 				
 					enviar_instruccion(*socket_cliente, proceso , MEMORIA_DIJO_QUE_PUDO_ESCRIBIR_JOYA);
-					list_destroy_and_destroy_elements(proceso->tabla_segmentos,free);
-					free(proceso);
 					string_array_destroy(porqueria);
+					free(proceso->instruccion);
+					list_destroy_and_destroy_elements(proceso->tabla_segmentos,free);
 					list_destroy_and_destroy_elements(lista,free);
+					free(proceso);
 					break;
 				}
 				log_error(logger,"CORRE PIBE, SE FUE TODO AL CARAJO MEMORIA NO PUDO ESCRIBIR");
-				list_destroy_and_destroy_elements(proceso->tabla_segmentos,free);
-				free(proceso);
 				string_array_destroy(porqueria);
+				free(proceso->instruccion);
+				free(proceso->dato);
+				list_destroy_and_destroy_elements(proceso->tabla_segmentos,free);
 				list_destroy_and_destroy_elements(lista,free);
+				free(proceso);
 				break;
 			case F_WRITE:
 				lista = recibir_paquete(*socket_cliente);
@@ -206,11 +216,13 @@ void atender_cliente(int* socket_cliente)
 				
 				//Le pido a memoria que me pase lo que hay en la direccion fisica
 				enviar_instruccion(conexion_memoria,proceso,F_WRITE);
-				list_destroy_and_destroy_elements(proceso->tabla_segmentos,free);
-				free(proceso);
-				list_destroy_and_destroy_elements(lista,free);
+				
 				if(recibir_operacion(conexion_memoria) == ACA_TENES_LA_INFO_GIIIIIIL)
 				{
+					free(proceso->instruccion);
+					list_destroy_and_destroy_elements(proceso->tabla_segmentos,free);
+					list_destroy_and_destroy_elements(lista,free);
+					free(proceso);
 					lista = recibir_paquete(conexion_memoria);
 					proceso = malloc(sizeof(t_instruccion));
 					recibir_instruccion_con_dato(lista,proceso);
@@ -231,13 +243,19 @@ void atender_cliente(int* socket_cliente)
 					{
 						log_error(logger,"No se pudo escribir el archivo. CAGAMOS MAL PAAAAAAAAAA");
 					}
-					list_destroy_and_destroy_elements(proceso->tabla_segmentos,free);
-					free(proceso);
 					string_array_destroy(porqueria);
+					free(proceso->instruccion);
+					free(proceso->dato);
+					list_destroy_and_destroy_elements(proceso->tabla_segmentos,free);
 					list_destroy_and_destroy_elements(lista,free);
+					free(proceso);
 					break;
 				}
-					break;
+				free(proceso->instruccion);
+				list_destroy_and_destroy_elements(proceso->tabla_segmentos,free);
+				list_destroy_and_destroy_elements(lista,free);
+				free(proceso);
+				break;
 			case -1:
 				log_warning(logger, "El cliente se desconecto. Terminando conexion");
 				free(socket_cliente);
