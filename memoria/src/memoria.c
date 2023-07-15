@@ -775,7 +775,7 @@ t_list* compactar_segmentos() {
     int tam_segmento = 0;
     int antigua_direccion_base = 0;
 
-	// delay (config_get_int_value(config, "RETARDO_COMPACTACION"));
+	delay (config_get_int_value(config, "RETARDO_COMPACTACION"));
 
     while (0 < list_size(tabla_segmentos_total)) {
         segmento* seg = list_get(tabla_segmentos_total, 0);
