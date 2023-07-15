@@ -209,7 +209,6 @@ int crear_segmento(unsigned int pid, int tamanio_seg, int id_seg)
 	else if (!hay_espacio_disponible(tamanio_seg))																								//No hay espacio disponible en memoria,
 	{
 		sumatoria = sumatoria_huecos();																			//suma el espacio de los huecos
-		log_warning(logger, "Sumatoria de huecos: %d - Tamanio: %d", sumatoria, tamanio_seg);
 		if (sumatoria >= tamanio_seg)																	//porque los segmentos no estan compactados (hay espacio pero disperso).
 		{
 			log_info(logger, "Solicitud de Compactacion");
@@ -348,7 +347,7 @@ int agrupar_huecos(int base, int limite)
         {
             hueco_derecho = hueco;
             index_der = j;
-            printf("index der: %d\n", index_der);
+            // printf("index der: %d\n", index_der);
             break;
         }
         j++;
@@ -383,7 +382,6 @@ int sumatoria_huecos()
 	for (int i = 0; i < list_size(huecos); i++)
 	{
 		seg = list_get(huecos, i);
-		log_warning(logger, "Tamanio hueco: %d", seg->tam_segmento);
 		sumatoria += seg->tam_segmento;
 	}
 	return sumatoria;
@@ -585,10 +583,10 @@ int best_fit(unsigned int pid_proceso, int tam, int id_seg)
 		if (segmento_asignado != -1)
 		{
 			nuevo_segmento->pid = pid_proceso;
+			nuevo_segmento->id = id_seg;
 			nuevo_segmento->tam_segmento = tam;
 			nuevo_segmento->direccion_base = nueva_dir_base;
 			nuevo_segmento->direccion_limite = nuevo_segmento->direccion_base + tam - 1;
-			nuevo_segmento->id = id_seg;
 			// Insertar el nuevo segmento en la lista de memoria después del segmento anterior al segmento asignado
 			list_add_in_index(tabla_segmentos_total, segmento_asignado, nuevo_segmento);
 			log_info(logger, "PID: %u - Crear Segmento: %d - Base: %d - Tamanio: %d", pid_proceso, nuevo_segmento->id, nuevo_segmento->direccion_base, tam);
@@ -598,7 +596,7 @@ int best_fit(unsigned int pid_proceso, int tam, int id_seg)
 		else
 		{
 			//si no hay espacio entre segmentos o es el segundo segmento
-			nueva_dir_base = (segmento_actual->direccion_limite);
+			nueva_dir_base = (segmento_actual->direccion_limite) + 1;
 			log_info(logger,"limite seg actual: %d",segmento_actual->direccion_limite);
 			nuevo_segmento->pid = pid_proceso;
 			nuevo_segmento->tam_segmento = tam;
@@ -665,6 +663,7 @@ int worst_fit(unsigned int pid_proceso, int tam, int id_seg)
 			if (segmento_asignado != -1)
 			{
 				// Crear el nuevo segmento y establecer sus direcciones
+				nuevo_segmento->pid = pid_proceso;
 				nuevo_segmento->id = id_seg;
 				nuevo_segmento->tam_segmento = tam;
 				nuevo_segmento->direccion_base = nueva_dir_base; // list_get(memoria_usuario, segmento_asignado - 1)->direccion_limite + 1;
@@ -680,9 +679,11 @@ int worst_fit(unsigned int pid_proceso, int tam, int id_seg)
 			{
 				//si no hay espacio entre segmentos o es el segundo segmento
 				nueva_dir_base = (segmento_actual->direccion_limite) + 1;
+
+				nuevo_segmento->pid = pid_proceso;
 				nuevo_segmento->tam_segmento = tam;
 				nuevo_segmento->direccion_base = nueva_dir_base;
-				nuevo_segmento->direccion_limite = nuevo_segmento->direccion_base + tam ;
+				nuevo_segmento->direccion_limite = nuevo_segmento->direccion_base + tam - 1;
 				nuevo_segmento->id=id_seg;
 				list_add(tabla_segmentos_total,nuevo_segmento);
 				
@@ -773,6 +774,8 @@ t_list* compactar_segmentos() {
     int direccion_base_actual = 0;
     int tam_segmento = 0;
     int antigua_direccion_base = 0;
+
+	// delay (config_get_int_value(config, "RETARDO_COMPACTACION"));
 
     while (0 < list_size(tabla_segmentos_total)) {
         segmento* seg = list_get(tabla_segmentos_total, 0);

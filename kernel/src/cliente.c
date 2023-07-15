@@ -212,7 +212,6 @@ void atender_servidor(int* socket_servidor){
 				free(laCosaQueMando);
 				break;
 			case F_READ:
-				log_warning(logger, "TRACE: F_READ");
 				lista = recibir_paquete(*socket_servidor);
 				list_destroy_and_destroy_elements(((pcb*)queue_peek(qexec))->instrucciones, free);
 				list_destroy_and_destroy_elements(((pcb*)queue_peek(qexec))->tabla_segmentos, free);
@@ -269,7 +268,6 @@ void atender_servidor(int* socket_servidor){
 				free(laCosaQueMando);
 				break;
 			case F_WRITE:
-				log_warning(logger, "TRACE: F_WRITE 0");
 				lista = recibir_paquete(*socket_servidor);
 				list_destroy_and_destroy_elements(((pcb*)queue_peek(qexec))->instrucciones, free);
 				list_destroy_and_destroy_elements(((pcb*)queue_peek(qexec))->tabla_segmentos, free);
@@ -388,13 +386,6 @@ void atender_servidor(int* socket_servidor){
 			case COMPACTACION_OK:
 				lista = recibir_paquete(*socket_servidor);
 				t_list* lista_tablas = recibir_tablas_segmentos(lista);
-				for (int i=0; list_size(lista_tablas)>i; i++) {
-					t_instruccion* tabla_actual = list_get(lista_tablas, i);
-					for (int i=0; list_size(tabla_actual->tabla_segmentos)>i; i++) {
-            			t_segmento* segmento_actual = list_get(tabla_actual->tabla_segmentos, i);
-            			log_warning(logger, "PID: %u - Segmento: %d - Base: %d - Tamanio: %d", tabla_actual->pid, segmento_actual->id_segmento, segmento_actual->direccion_base, segmento_actual->tam_segmento);
-					}
-        		}
 				actualizar_tablas(lista_tablas);
 				char* instruccion = list_get(((pcb*)queue_peek(qexec))->instrucciones, ((pcb*)queue_peek(qexec))->program_counter-1);
 				log_info(logger,"Se finalizó el proceso de compactación, por lo que realizamos nuevamente la solicitud de creación del segmento");

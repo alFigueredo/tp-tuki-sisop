@@ -45,7 +45,8 @@ int abrirArchivoKernel(pcb* proceso, char* instruccion)
 		queue_push(archivoActual->procesosBloqueados, proceso);
 		archivoActual->puntero=punteroOriginal;
 		exec_a_block();
-		log_warning(logger, "PID: %d - Bloqueado porque archivo %s ya esta abierto", proceso->pid, archivoActual->nombreDeArchivo);
+		log_info(logger, "PID: %d - Bloqueado por: %s", proceso->pid, archivoActual->nombreDeArchivo);
+		log_info(logger, "PID: %d - Bloqueado porque archivo %s ya esta abierto", proceso->pid, archivoActual->nombreDeArchivo);
 		string_array_destroy(parsed);
 		return 0;
 	}

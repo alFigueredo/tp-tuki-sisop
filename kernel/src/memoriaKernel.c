@@ -51,11 +51,14 @@ bool actualizo_proceso(pcb* proceso, t_list* lista) {
 
 void actualizar_cola(t_queue* cola, t_queue* cola_copia, t_list* tablas_actualizadas) {
     while (!queue_is_empty(cola)) {
-        if (actualizo_proceso((pcb*)queue_peek(cola), tablas_actualizadas)) {
-            log_info(logger, "El proceso PID=%d fue actualizado correctamente", ((pcb*)queue_peek(cola))->pid);
-        } else {
-            log_error(logger, "El proceso PID=%d no fue encontrado en la lista con las tablas actualizadas", ((pcb*)queue_peek(cola))->pid);
-        }
+        // if (actualizo_proceso((pcb*)queue_peek(cola), tablas_actualizadas)) {
+        //     log_info(logger, "El proceso PID=%d fue actualizado correctamente", ((pcb*)queue_peek(cola))->pid);
+        // } 
+        // else {
+        //     log_error(logger, "El proceso PID=%d no fue encontrado en la lista con las tablas actualizadas", ((pcb*)queue_peek(cola))->pid);
+        // }
+        actualizo_proceso((pcb*)queue_peek(cola), tablas_actualizadas);
+        log_info(logger, "El proceso PID=%d fue actualizado correctamente", ((pcb*)queue_peek(cola))->pid);
         queue_push(cola_copia, ((pcb*)queue_peek(cola)));
         queue_pop(cola);
     }
