@@ -112,7 +112,7 @@ void atender_cliente(int* socket_cliente)
 
 				list_destroy_and_destroy_elements(proceso->tabla_segmentos,free);
 				free(proceso);
-				free(porqueria);
+				string_array_destroy(porqueria);
 				list_destroy_and_destroy_elements(lista,free);
 				break;
 			case F_CREATE:
@@ -134,7 +134,7 @@ void atender_cliente(int* socket_cliente)
 				 
 				list_destroy_and_destroy_elements(proceso->tabla_segmentos,free);
 				free(proceso);
-				free(porqueria);
+				string_array_destroy(porqueria);
 				list_destroy_and_destroy_elements(lista,free);
 				break;
 			case F_TRUNCATE:
@@ -155,7 +155,7 @@ void atender_cliente(int* socket_cliente)
 				}
 				list_destroy_and_destroy_elements(proceso->tabla_segmentos,free);
 				free(proceso);
-				free(porqueria);
+				string_array_destroy(porqueria);
 				list_destroy_and_destroy_elements(lista,free);
 				break;
 			case F_READ:
@@ -189,14 +189,14 @@ void atender_cliente(int* socket_cliente)
 					enviar_instruccion(*socket_cliente, proceso , MEMORIA_DIJO_QUE_PUDO_ESCRIBIR_JOYA);
 					list_destroy_and_destroy_elements(proceso->tabla_segmentos,free);
 					free(proceso);
-					free(porqueria);
+					string_array_destroy(porqueria);
 					list_destroy_and_destroy_elements(lista,free);
 					break;
 				}
 				log_error(logger,"CORRE PIBE, SE FUE TODO AL CARAJO MEMORIA NO PUDO ESCRIBIR");
 				list_destroy_and_destroy_elements(proceso->tabla_segmentos,free);
 				free(proceso);
-				free(porqueria);
+				string_array_destroy(porqueria);
 				list_destroy_and_destroy_elements(lista,free);
 				break;
 			case F_WRITE:
@@ -233,7 +233,7 @@ void atender_cliente(int* socket_cliente)
 					}
 					list_destroy_and_destroy_elements(proceso->tabla_segmentos,free);
 					free(proceso);
-					free(porqueria);
+					string_array_destroy(porqueria);
 					list_destroy_and_destroy_elements(lista,free);
 					break;
 				}

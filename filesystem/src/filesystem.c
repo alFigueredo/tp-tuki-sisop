@@ -218,6 +218,7 @@ int truncarArchivo(char *nombre,char *carpeta, char **vectoreRutas, int cantidad
 	int tamanioOriginal;
 	int cantidadBloquesOriginal;
 	int cantidadBloquesNueva;
+	char *tamanioNuevoChar;
 
 	while (i<cantidadPaths)
 	{
@@ -232,8 +233,8 @@ int truncarArchivo(char *nombre,char *carpeta, char **vectoreRutas, int cantidad
 	}
 
 	tamanioOriginal = config_get_int_value(configArchivoActual,"TAMANIO_ARCHIVO");
-	tamanioBloques = config_get_int_value(superBloque,"BLOCK_SIZE");;
-	config_set_value(configArchivoActual,"TAMANIO_ARCHIVO",string_itoa(tamanioNuevo));
+	tamanioBloques = config_get_int_value(superBloque,"BLOCK_SIZE");
+	config_set_value(configArchivoActual,"TAMANIO_ARCHIVO",tamanioNuevoChar = string_itoa(tamanioNuevo));
 	cantidadBloquesOriginal = dividirRedondeando(tamanioOriginal, tamanioBloques);
 	cantidadBloquesNueva = dividirRedondeando(tamanioNuevo, tamanioBloques);
 	config_save(configArchivoActual);
@@ -319,6 +320,7 @@ void agregarBloques(int cantidadBloquesOriginal ,int cantidadBloquesNueva,t_conf
 	FILE *bloques = fopen(config_get_string_value(config,"PATH_BLOQUES"),"r+");
 	int punteroABloquePunteros=0;
 	uint32_t punteroACadaBloque;
+	char *valorIChar;
 	if(cantidadBloquesOriginal == 0 && cantidadBloquesNueva == 1)
 	{
 		//Busco un bloque libre para agregar el primer bloque de datos
@@ -329,7 +331,7 @@ void agregarBloques(int cantidadBloquesOriginal ,int cantidadBloquesNueva,t_conf
 			{
 				//Encontre un bloque vacio lo marco como ocupado
 				setearBitmap(bitmap,i);
-				config_set_value(configArchivoActual,"PUNTERO_DIRECTO",string_itoa(i));
+				config_set_value(configArchivoActual,"PUNTERO_DIRECTO",valorIChar = string_itoa(i));
 				config_save(configArchivoActual);
 				sincronizarBitmap();
 				break;
