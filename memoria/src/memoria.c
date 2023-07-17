@@ -263,7 +263,8 @@ void eliminar_segmento(unsigned int pid, int id)
 				{
 					memcpy(hueco, seg, sizeof(segmento));
 					list_add(huecos, hueco);													//crea el hueco.
-				}
+				} else
+					free(hueco);
 				list_remove_and_destroy_element(tabla_segmentos_total, i,free);														//Lo borra de la tabla de segmentos.
 				break;
 			}

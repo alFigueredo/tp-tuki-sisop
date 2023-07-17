@@ -54,12 +54,9 @@ void atender_servidor(int* socket_servidor){
 	t_list *lista;
 	pthread_t thread;
 	char* instruccion;
-	char* numero; //No se me ocurre otra forma de hacerlo
-	// char* numero_din;
+	// pcb* proceso;
 	char** parsed;
-	char* instruccionQueMando;
 	t_instruccion* laCosaQueMando;
-	Archivo *archivoQueUso;
 	t_segmento* segmento;
 	while (1) {
 		int cod_op = recibir_operacion(*socket_servidor);
@@ -216,52 +213,20 @@ void atender_servidor(int* socket_servidor){
 				list_destroy_and_destroy_elements(((pcb*)queue_peek(qexec))->instrucciones, free);
 				list_destroy_and_destroy_elements(((pcb*)queue_peek(qexec))->tabla_segmentos, free);
 				recibir_pcb(lista, queue_peek(qexec));
-				instruccion = list_get(((pcb*)queue_peek(qexec))->instrucciones, ((pcb*)queue_peek(qexec))->program_counter-1);
-				parsed = string_split(instruccion, " ");
 
-				//esto deberia devolver el archivo que voy a usar
-				archivoQueUso = estoDevuelveUnArchivo(((pcb*)queue_peek(qexec)), instruccion);
+				pthread_create(&thread, NULL, (void*) leer_archivo, queue_peek(qexec));
+				pthread_detach(thread);
 
-				numero = string_itoa(archivoQueUso->puntero);
-				// numero_din = malloc(strlen(numero)+1);
-				// strcpy(numero_din, numero);
-				//le meto el numero (como string) a la instruccion para mandarselo a file system
-				// strcat(instruccion," ");
-				// strcat(instruccion, numero_din);
-				instruccionQueMando = string_from_format("%s %s", instruccion, numero);
-				log_debug(logger, "DEBUG: F_READ - Instruccion %s - Numero %s", instruccionQueMando, numero);
-
-				//PUEDO HACER ESTO????? X2
-				laCosaQueMando = generar_instruccion(queue_peek(qexec), instruccionQueMando);
-				// laCosaQueMando->pid=((pcb*)queue_peek(qexec))->pid;
-				// laCosaQueMando->instruccion=malloc(strlen(instruccion)+1);
-				// strcpy(laCosaQueMando->instruccion,instruccion);
-
-				sem_wait(sem_escrituraLectura);
-				contadorDeEscrituraOLectura ++;
-				sem_post(sem_escrituraLectura);
-
-				
-
-				log_info(logger, "PID: %u - Leer Archivo: %s - Puntero: %s - Direccion Memoria %s - Tamanio %s", ((pcb*)queue_peek(qexec))->pid, parsed[1], numero, parsed[2], parsed[3]);
-				exec_a_block();
-				enviar_instruccion(conexion_filesystem,laCosaQueMando,F_READ);
-
-				string_array_destroy(parsed);
-				free(numero);
-				free(instruccionQueMando);
 				list_destroy_and_destroy_elements(lista, free);
-				free(laCosaQueMando);
-
 				break;
 			case MEMORIA_DIJO_QUE_PUDO_ESCRIBIR_JOYA:
 				lista = recibir_paquete(*socket_servidor);
 				laCosaQueMando = malloc(sizeof(t_instruccion));
 				recibir_instruccion(lista, laCosaQueMando);
 				block_a_ready(queue_seek(qblock, laCosaQueMando->pid));
-				sem_wait(sem_escrituraLectura);
-				contadorDeEscrituraOLectura --;
+
 				sem_post(sem_escrituraLectura);
+
 				free(laCosaQueMando->instruccion);
 				list_destroy_and_destroy_elements(laCosaQueMando->tabla_segmentos,free);
 				list_destroy_and_destroy_elements(lista, free);
@@ -272,38 +237,11 @@ void atender_servidor(int* socket_servidor){
 				list_destroy_and_destroy_elements(((pcb*)queue_peek(qexec))->instrucciones, free);
 				list_destroy_and_destroy_elements(((pcb*)queue_peek(qexec))->tabla_segmentos, free);
 				recibir_pcb(lista, queue_peek(qexec));
-				instruccion = list_get(((pcb*)queue_peek(qexec))->instrucciones, ((pcb*)queue_peek(qexec))->program_counter-1);
-				parsed = string_split(instruccion, " ");
-				log_warning(logger, "TRACE: F_WRITE 1");
-				//esto deberia devolver el archivo que voy a usar
-				archivoQueUso = estoDevuelveUnArchivo(((pcb*)queue_peek(qexec)), instruccion);
-				log_warning(logger, "TRACE: F_WRITE 2");
-				char* numero = string_itoa(archivoQueUso->puntero);
-				log_warning(logger, "TRACE: F_WRITE 3");
-				//le meto el numero (como string) a la instruccion para mandarselo a file system
-				instruccionQueMando = string_from_format("%s %s", instruccion, numero);
-				log_debug(logger, "DEBUG: F_WRITE - Instruccion %s - Numero %s", instruccionQueMando, numero);
-				// log_debug(logger, "Instrucción de la lista: %s", (char*)list_get(((pcb*)queue_peek(qexec))->instrucciones, ((pcb*)queue_peek(qexec))->program_counter-1));
-				//PUEDO HACER ESTO????? X2
-				laCosaQueMando = generar_instruccion(queue_peek(qexec), instruccionQueMando);
-				// laCosaQueMando->pid=((pcb*)queue_peek(qexec))->pid;
-				// laCosaQueMando->instruccion=malloc(strlen(instruccion)+1);
-				// strcpy(laCosaQueMando->instruccion,instruccion);
-				log_warning(logger, "TRACE: F_WRITE 4");
-				sem_wait(sem_escrituraLectura);
-				contadorDeEscrituraOLectura ++;
-				sem_post(sem_escrituraLectura);
 
-				log_info(logger, "PID: %u - Escribir Archivo: %s - Puntero: %s - Direccion Memoria %s - Tamaño %s", ((pcb*)queue_peek(qexec))->pid, parsed[1], numero, parsed[2], parsed[3]);
-				exec_a_block();
-				enviar_instruccion(conexion_filesystem,laCosaQueMando,F_WRITE);
-
-				string_array_destroy(parsed);
-				free(numero);
-				free(instruccionQueMando);
+				pthread_create(&thread, NULL, (void*) escribir_archivo, queue_peek(qexec));
+				pthread_detach(thread);
+				
 				list_destroy_and_destroy_elements(lista, free);
-				free(laCosaQueMando);
-
 				break;
 			case SE_PUDO_ESCRIBIR_EL_ARCHIVO:
 				lista = recibir_paquete(*socket_servidor);
@@ -311,8 +249,6 @@ void atender_servidor(int* socket_servidor){
 				recibir_instruccion(lista, laCosaQueMando);
 				block_a_ready(queue_seek(qblock, laCosaQueMando->pid));
 
-				sem_wait(sem_escrituraLectura);
-				contadorDeEscrituraOLectura --;
 				sem_post(sem_escrituraLectura);
 
 				free(laCosaQueMando->instruccion);
@@ -368,28 +304,22 @@ void atender_servidor(int* socket_servidor){
 				list_destroy_and_destroy_elements(lista,free);
 				break;
 			case COMPACTACION:
-				log_info(logger,"Compactación: Se solicitó compactación");
-				sem_wait(sem_escrituraLectura);
-				if (contadorDeEscrituraOLectura != 0)
+				int sem_escrituraLectura_value;
+				sem_getvalue(sem_escrituraLectura, &sem_escrituraLectura_value);
+				if (sem_escrituraLectura_value!=1)
 					log_info(logger,"Compactación: Esperando Fin de Operaciones de FS");
-				sem_post(sem_escrituraLectura);
-				while (1) {
-					sem_wait(sem_escrituraLectura);
-					if (contadorDeEscrituraOLectura == 0) {
-						break;
-					}
-					sem_post(sem_escrituraLectura);
-				}
-				sem_post(sem_escrituraLectura);
+				sem_wait(sem_escrituraLectura);
 				enviar_operacion(conexion_memoria,COMPACTACION);
+				log_info(logger,"Compactación: Se solicitó compactación");
 				break;
 			case COMPACTACION_OK:
 				lista = recibir_paquete(*socket_servidor);
 				t_list* lista_tablas = recibir_tablas_segmentos(lista);
 				actualizar_tablas(lista_tablas);
-				char* instruccion = list_get(((pcb*)queue_peek(qexec))->instrucciones, ((pcb*)queue_peek(qexec))->program_counter-1);
 				log_info(logger,"Se finalizó el proceso de compactación, por lo que realizamos nuevamente la solicitud de creación del segmento");
-				enviar_segmento(((pcb*)queue_peek(qexec))->pid,instruccion,((pcb*)queue_peek(qexec))->tabla_segmentos); //Volvemos a solicitar la creacion del segmento
+				sem_post(sem_escrituraLectura);
+				char* instruccion = list_get(((pcb*)queue_peek(qexec))->instrucciones, ((pcb*)queue_peek(qexec))->program_counter-1);
+				enviar_segmento(((pcb*)queue_peek(qexec))->pid,instruccion,((pcb*)queue_peek(qexec))->tabla_segmentos); // Volvemos a solicitar la creacion del segmento
 				list_destroy_and_destroy_elements(lista_tablas,free);
 				list_destroy_and_destroy_elements(lista,free);
 				break;

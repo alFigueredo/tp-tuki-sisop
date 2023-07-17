@@ -225,7 +225,7 @@ void atender_cliente(int* socket_cliente){
 				recibir_instruccion_con_dato(lista,proceso);
 				informacionALeerOEscribir = proceso->dato;
 				dato_str = string_substring_until(proceso->dato, proceso->tamanio_dato);
-				log_warning(logger, "Dato: %s", dato_str);
+				log_debug(logger, "Dato: %s", dato_str);
 				free(dato_str);
 				instruccion = proceso->instruccion;
 				parsed = string_split(instruccion," ");
@@ -257,7 +257,7 @@ void atender_cliente(int* socket_cliente){
 				proceso->tamanio_dato=tamanio_informacion;
 				proceso->dato=informacionALeerOEscribir;
 				dato_str = string_substring_until(proceso->dato, proceso->tamanio_dato);
-				log_warning(logger, "Dato: %s", dato_str);
+				log_debug(logger, "Dato: %s", dato_str);
 				free(dato_str);
 				enviar_instruccion_con_dato(conexion_filesystem,proceso,ACA_TENES_LA_INFO_GIIIIIIL);
 				free(informacionALeerOEscribir);
@@ -284,7 +284,7 @@ void atender_cliente(int* socket_cliente){
 				proceso->dato = informacionALeerOEscribir;
 				proceso->tamanio_dato = tamanio_informacion;
 				dato_str = string_substring_until(proceso->dato, proceso->tamanio_dato);
-				log_warning(logger, "Dato: %s", dato_str);
+				log_debug(logger, "Dato: %s", dato_str);
 				free(dato_str);
 				enviar_instruccion_con_dato(conexion_cpu, proceso, MOV_IN);
 				free(informacionALeerOEscribir);
@@ -305,7 +305,7 @@ void atender_cliente(int* socket_cliente){
 				parsed = string_split(instruccion," ");
 				dir_fisica = atoi(parsed[1]);
 				dato_str = string_substring_until(proceso->dato, proceso->tamanio_dato);
-				log_warning(logger, "Dato: %s", dato_str);
+				log_debug(logger, "Dato: %s", dato_str);
 				free(dato_str);
 				informacionALeerOEscribir = proceso->dato;	//warning: assignment to ‘char *’ from incompatible pointer type ‘char **’ [-Wincompatible-pointer-types]
 				tamanio_informacion = proceso->tamanio_dato;
@@ -328,10 +328,10 @@ void atender_cliente(int* socket_cliente){
 				// lista = recibir_paquete(*socket_cliente);
 				t_list* segmentos_compactados = compactar_segmentos();
 				t_list* lista_tablas = list_create();
-				for (int i=0; i<list_size(segmentos_compactados); i++) {
+				for (int i=1; i<list_size(segmentos_compactados); i++) {
 					segmento* segmento_actual = (segmento*)list_get(segmentos_compactados, i);
 					t_instruccion* tabla = NULL;
-					for (int j=0; i<list_size(lista_tablas); i++) {
+					for (int j=0; j<list_size(lista_tablas); j++) {
 						t_instruccion* tabla_actual = (t_instruccion*)list_get(lista_tablas, j);
 						if (tabla_actual->pid==segmento_actual->pid) {
 							tabla = tabla_actual;
@@ -351,6 +351,10 @@ void atender_cliente(int* socket_cliente){
 					list_add(tabla->tabla_segmentos, tsegmento);
 				}
 				enviar_tablas_segmentos(conexion_kernel, lista_tablas, COMPACTACION_OK);
+				for (int i=0; i<list_size(lista_tablas); i++) {
+					t_instruccion* tabla_actual = (t_instruccion*)list_get(lista_tablas, i);
+					list_destroy_and_destroy_elements(tabla_actual->tabla_segmentos,free);
+				}
 				list_destroy_and_destroy_elements(lista_tablas,free);
 				// Falta limpiar
 				// list_destroy_and_destroy_elements(lista, free);

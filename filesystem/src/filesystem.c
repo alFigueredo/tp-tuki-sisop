@@ -351,7 +351,9 @@ void agregarBloques(int cantidadBloquesOriginal ,int cantidadBloquesNueva,t_conf
 				{
 					//Encontre un bloque vacio lo marco como ocupado
 					setearBitmap(bitmap,i);
-					config_set_value(configArchivoActual,"PUNTERO_DIRECTO",string_itoa(i));
+					char* i_str = string_itoa(i);
+					config_set_value(configArchivoActual,"PUNTERO_DIRECTO",i_str);
+					free(i_str);
 					config_save(configArchivoActual);
 					sincronizarBitmap();
 					break;
@@ -366,7 +368,9 @@ void agregarBloques(int cantidadBloquesOriginal ,int cantidadBloquesNueva,t_conf
 				{
 					//Encontre un bloque vacio lo marco como ocupado
 					setearBitmap(bitmap,i);
-					config_set_value(configArchivoActual,"PUNTERO_INDIRECTO",string_itoa(i));
+					char* i_str = string_itoa(i);
+					config_set_value(configArchivoActual,"PUNTERO_INDIRECTO",i_str);
+					free(i_str);
 					config_save(configArchivoActual);
 					punteroABloquePunteros = i;
 					sincronizarBitmap();

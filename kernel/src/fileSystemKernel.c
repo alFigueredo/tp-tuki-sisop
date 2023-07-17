@@ -1,7 +1,7 @@
 #include "fileSystemKernel.h"
 
 t_list* archivosAbiertos;
-int contadorDeEscrituraOLectura;
+// int contadorDeEscrituraOLectura;
 
 int abrirArchivoKernel(pcb* proceso, char* instruccion)
 {
@@ -157,8 +157,53 @@ bool condicionParaBorrar(t_list* lista, char* nombre)
 	return false;
 }
 
+void leer_archivo(pcb* proceso) {
+	char* instruccion = list_get(proceso->instrucciones, proceso->program_counter-1);
+	char** parsed = string_split(instruccion, " ");
 
+	//esto deberia devolver el archivo que voy a usar
+	Archivo* archivoQueUso = estoDevuelveUnArchivo(proceso, instruccion);
 
+	char* numero = string_itoa(archivoQueUso->puntero);
+	char* instruccionQueMando = string_from_format("%s %s", instruccion, numero);
 
+	//PUEDO HACER ESTO????? X2
+	t_instruccion* laCosaQueMando = generar_instruccion(proceso, instruccionQueMando);
 
+	exec_a_block();
+	sem_wait(sem_escrituraLectura);
 
+	log_info(logger, "PID: %u - Leer Archivo: %s - Puntero: %s - Direccion Memoria %s - Tamanio %s", proceso->pid, parsed[1], numero, parsed[2], parsed[3]);
+	enviar_instruccion(conexion_filesystem,laCosaQueMando,F_READ);
+
+	string_array_destroy(parsed);
+	free(numero);
+	free(instruccionQueMando);
+	free(laCosaQueMando);
+}
+
+void escribir_archivo(pcb* proceso) {
+	char* instruccion = list_get(proceso->instrucciones, proceso->program_counter-1);
+	char** parsed = string_split(instruccion, " ");
+
+	//esto deberia devolver el archivo que voy a usar
+	Archivo* archivoQueUso = estoDevuelveUnArchivo(proceso, instruccion);
+
+	char* numero = string_itoa(archivoQueUso->puntero);
+
+	//le meto el numero (como string) a la instruccion para mandarselo a file system
+	char* instruccionQueMando = string_from_format("%s %s", instruccion, numero);
+
+	t_instruccion* laCosaQueMando = generar_instruccion(proceso, instruccionQueMando);
+
+	exec_a_block();
+	sem_wait(sem_escrituraLectura);
+
+	log_info(logger, "PID: %u - Escribir Archivo: %s - Puntero: %s - Direccion Memoria %s - Tamaño %s", proceso->pid, parsed[1], numero, parsed[2], parsed[3]);
+	enviar_instruccion(conexion_filesystem,laCosaQueMando,F_WRITE);
+
+	string_array_destroy(parsed);
+	free(numero);
+	free(instruccionQueMando);
+	free(laCosaQueMando);
+}

@@ -19,7 +19,7 @@ typedef struct
 
 extern t_list* archivosAbiertos;
 
-extern int contadorDeEscrituraOLectura;
+// extern int contadorDeEscrituraOLectura;
 
 int abrirArchivoKernel(pcb*, char*);
 void cerrarArchivoKernel(pcb*, char*);
@@ -27,6 +27,7 @@ void buscarEnArchivo(pcb*, char*);
 void truncarArchivo(pcb*, char*);
 Archivo *estoDevuelveUnArchivo(pcb*, char*);
 bool condicionParaBorrar(t_list*, char*);
-
+void leer_archivo(pcb*);
+void escribir_archivo(pcb*);
 
 #endif /* FILESYSTEMKERNEL_H_ */
