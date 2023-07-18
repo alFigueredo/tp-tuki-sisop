@@ -580,6 +580,10 @@ int best_fit(unsigned int pid_proceso, int tam, int id_seg)
 				}
 			}
 		}
+		int espacioFMem = config_get_int_value(config, "TAM_MEMORIA") - segmento_actual->direccion_limite;
+		if(espacioFMem < mejor_ajuste) {
+			segmento_asignado = -1;
+		}
 
 		if (segmento_asignado != -1)
 		{
@@ -660,7 +664,10 @@ int worst_fit(unsigned int pid_proceso, int tam, int id_seg)
 					}
 				}
 			}
-
+			int espacioFMem = config_get_int_value(config, "TAM_MEMORIA") - segmento_actual->direccion_limite;
+			if(espacioFMem > mejor_ajuste) {
+				segmento_asignado = -1;
+			}
 			if (segmento_asignado != -1)
 			{
 				// Crear el nuevo segmento y establecer sus direcciones
