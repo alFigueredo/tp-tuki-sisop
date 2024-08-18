@@ -31,7 +31,7 @@ helgrind: debug
 	valgrind --tool=helgrind --log-file=valgrind.log $(MODULE_NAME) $(CONFIG_FILE)
 
 $(MODULE_NAME): $(OBJECT_FILES)
-	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) -I$(INCLUDE_PATH) $(LINK)
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(LINK)
 
 ./debug/%.o: ./src/%.c
 	$(CC) $(CFLAGS) -c $< -o $@ -I$(INCLUDE_PATH) $(LINK)
