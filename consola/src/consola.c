@@ -3,7 +3,7 @@
 int main(int argc, char** argv)
 {
 	if (argc < 3) {
-        return EXIT_FAILURE;
+		return EXIT_FAILURE;
 	}
 	int conexion_kernel = -1;
 
@@ -27,47 +27,6 @@ int main(int argc, char** argv)
 	terminar_programa(logger, config);
 	return EXIT_SUCCESS;
 }
-
-/*
-void leer_consola(t_log* logger)
-{
-	char* leido;
-
-	// La primera te la dejo de yapa
-	while(1) {
-		leido = readline("> ");
-	// El resto, las vamos leyendo y logueando hasta recibir un string vacío
-		if (leido[0]=='\0') {
-			break;
-		}
-		log_info(logger, "%s", leido);
-	// ¡No te olvides de liberar las lineas antes de regresar!
-		free(leido);
-	}
-}
-
-void paquete(int conexion)
-{
-	// Ahora toca lo divertido!
-	char* leido;
-	t_paquete* paquete = crear_paquete(PAQUETE);
-
-	// Leemos y esta vez agregamos las lineas al paquete
-	while(1) {
-		leido = readline("> ");
-		if (leido[0]=='\0') {
-			break;
-		}
-		agregar_a_paquete(paquete, leido, strlen(leido)+1);
-		free(leido);
-	}
-	enviar_paquete(paquete, conexion);
-
-	// ¡No te olvides de liberar las líneas y el paquete antes de regresar!
-	eliminar_paquete(paquete);
-
-}
-*/
 
 void paquete_texto(int conexion, char* pseudocodigo)
 {
@@ -95,10 +54,8 @@ void paquete_texto(int conexion, char* pseudocodigo)
 
 void terminar_programa(t_log* logger, t_config* config)
 {
-	if (logger != NULL) {
+	if (logger != NULL)
 		log_destroy(logger);
-	}
-	if (config != NULL) {
+	if (config != NULL)
 		config_destroy(config);
-	}
 }

@@ -69,7 +69,7 @@ void atender_kernel(int conexion_kernel){
 void liberar_conexion(int conexion_kernel)
 {
 	if (conexion_kernel != -1) {
-	log_warning(logger, "Liberando conexion");
-	close(conexion_kernel);
+		log_warning(logger, "Liberando conexion");
+		close(conexion_kernel);
 	}
 }

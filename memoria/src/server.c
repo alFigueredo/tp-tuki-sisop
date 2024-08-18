@@ -310,7 +310,7 @@ void atender_cliente(int* socket_cliente){
 				informacionALeerOEscribir = proceso->dato;	//warning: assignment to ‘char *’ from incompatible pointer type ‘char **’ [-Wincompatible-pointer-types]
 				tamanio_informacion = proceso->tamanio_dato;
 				escribir_memoria(dir_fisica, informacionALeerOEscribir, tamanio_informacion);
-				log_info(logger, "PID: %u - Accion: ESCRIBIR - Direccion fisica: %d - Tamanio: %d bytes - Origen: CPU", proceso->pid, dir_fisica, tamanio_informacion);
+				log_info(logger, "PID: %u - Accion: ESCRIBIR - Direccion fisica: %d - Tamanio: %d - Origen: CPU", proceso->pid, dir_fisica, tamanio_informacion);
 
 				// enviar_instruccion(conexion_cpu, proceso, OK);
 				enviar_operacion(conexion_cpu, OK);
