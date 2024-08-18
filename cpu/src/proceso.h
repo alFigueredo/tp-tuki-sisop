@@ -47,7 +47,7 @@ typedef enum
 
 void iniciar_diccionario_instrucciones(void);
 void iniciar_diccionario_registros(registros_cpu*);
-void destruir_diccionarios(void);
+// void destruir_diccionarios(void);
 void interpretar_instrucciones();
 void instruccion_set(char**);
 void instruccion_mov_in(char**);

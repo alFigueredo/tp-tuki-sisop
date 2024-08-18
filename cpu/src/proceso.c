@@ -1,4 +1,5 @@
 #include "proceso.h"
+#include <commons/string.h>
 
 int conexion_kernel;
 int conexion_memoria;
@@ -9,23 +10,24 @@ t_dictionary *registros;
 void iniciar_diccionario_instrucciones(void)
 {
 	instrucciones = dictionary_create();
-	dictionary_put(instrucciones, "SET", (void *)(intptr_t)I_SET);
-	dictionary_put(instrucciones, "MOV_IN", (void *)(intptr_t)I_MOV_IN);
-	dictionary_put(instrucciones, "MOV_OUT", (void *)(intptr_t)I_MOV_OUT);
-	dictionary_put(instrucciones, "I/O", (void *)(intptr_t)I_IO);
-	dictionary_put(instrucciones, "F_OPEN", (void *)(intptr_t)I_F_OPEN);
-	dictionary_put(instrucciones, "F_CLOSE", (void *)(intptr_t)I_F_CLOSE);
-	dictionary_put(instrucciones, "F_SEEK", (void *)(intptr_t)I_F_SEEK);
-	dictionary_put(instrucciones, "F_READ", (void *)(intptr_t)I_F_READ);
-	dictionary_put(instrucciones, "F_WRITE", (void *)(intptr_t)I_F_WRITE);
-	dictionary_put(instrucciones, "F_TRUNCATE", (void *)(intptr_t)I_F_TRUNCATE);
-	dictionary_put(instrucciones, "WAIT", (void *)(intptr_t)I_WAIT);
-	dictionary_put(instrucciones, "SIGNAL", (void *)(intptr_t)I_SIGNAL);
-	dictionary_put(instrucciones, "CREATE_SEGMENT", (void *)(intptr_t)I_CREATE_SEGMENT);
-	dictionary_put(instrucciones, "DELETE_SEGMENT", (void *)(intptr_t)I_DELETE_SEGMENT);
-	dictionary_put(instrucciones, "YIELD", (void *)(intptr_t)I_YIELD);
-	dictionary_put(instrucciones, "EXIT", (void *)(intptr_t)I_EXIT);
+	dictionary_put(instrucciones, "SET", (void *)instruccion_set);
+	dictionary_put(instrucciones, "MOV_IN", (void *)instruccion_mov_in);
+	dictionary_put(instrucciones, "MOV_OUT", (void *)instruccion_mov_out);
+	dictionary_put(instrucciones, "I/O", (void *)instruccion_i_o);
+	dictionary_put(instrucciones, "F_OPEN", (void *)instruccion_f_open);
+	dictionary_put(instrucciones, "F_CLOSE", (void *)instruccion_f_close);
+	dictionary_put(instrucciones, "F_SEEK", (void *)instruccion_f_seek);
+	dictionary_put(instrucciones, "F_READ", (void *)instruccion_f_read);
+	dictionary_put(instrucciones, "F_WRITE", (void *)instruccion_f_write);
+	dictionary_put(instrucciones, "F_TRUNCATE", (void *)instruccion_f_truncate);
+	dictionary_put(instrucciones, "WAIT", (void *)instruccion_wait);
+	dictionary_put(instrucciones, "SIGNAL", (void *)instruccion_signal);
+	dictionary_put(instrucciones, "CREATE_SEGMENT", (void *)instruccion_create_segment);
+	dictionary_put(instrucciones, "DELETE_SEGMENT", (void *)instruccion_delete_segment);
+	dictionary_put(instrucciones, "YIELD", (void *)instruccion_yield);
+	dictionary_put(instrucciones, "EXIT", (void *)instruccion_exit);
 }
+
 
 void iniciar_diccionario_registros(registros_cpu *registro)
 {
@@ -44,122 +46,37 @@ void iniciar_diccionario_registros(registros_cpu *registro)
 	dictionary_put(registros, "RDX", (void *)registro->RDX);
 }
 
-void destruir_diccionarios(void)
-{
-	// dictionary_destroy(instrucciones);
-	dictionary_destroy(registros);
-}
+// void destruir_diccionarios(void)
+// {
+// 	// dictionary_destroy(instrucciones);
+// 	dictionary_destroy(registros);
+// }
 
 void interpretar_instrucciones(void)
 {
-	// iniciar_diccionario_registros(&proceso->registros);
-	while (proceso->program_counter < list_size(proceso->instrucciones))
-	{
-		// char* instruccion = list_get(proceso->instrucciones, proceso->program_counter);
-		// log_debug(logger, "Instrucción: %s0", instruccion);
-		char **parsed = string_split((char *)list_get(proceso->instrucciones, proceso->program_counter), " "); // Partes de la instruccion actual
-		int instruccion_enum = (int)(intptr_t)dictionary_get(instrucciones, parsed[0]);
-		switch (instruccion_enum)
-		{
-		case I_SET:
-			instruccion_set(parsed);
-			string_array_destroy(parsed);
-			break;
-		case I_MOV_IN:
-			instruccion_mov_in(parsed);
-			string_array_destroy(parsed);
-			return;
-			// break;
-		case I_MOV_OUT:
-			instruccion_mov_out(parsed);
-			string_array_destroy(parsed);
-			return;
-			// break;
-		case I_IO:
-			instruccion_i_o(parsed);
-			// destruir_diccionarios();
-			string_array_destroy(parsed);
-			return;
-		case I_F_OPEN:
-			instruccion_f_open(parsed);
-			// destruir_diccionarios();
-			string_array_destroy(parsed);
-			return;
-			// break;
-		case I_F_CLOSE:
-			instruccion_f_close(parsed);
-			// destruir_diccionarios();
-			string_array_destroy(parsed);
-			return;
-			// break;
-		case I_F_SEEK:
-			instruccion_f_seek(parsed);
-			// destruir_diccionarios();
-			string_array_destroy(parsed);
-			return;
-			// break;
-		case I_F_READ:
-			instruccion_f_read(parsed);
-			// destruir_diccionarios();
-			string_array_destroy(parsed);
-			return;
-			// break;
-		case I_F_WRITE:
-			instruccion_f_write(parsed);
-			// destruir_diccionarios();
-			string_array_destroy(parsed);
-			return;
-			// break;
-		case I_F_TRUNCATE:
-			instruccion_f_truncate(parsed);
-			// destruir_diccionarios();
-			string_array_destroy(parsed);
-			return;
-			// break;
-		case I_WAIT:
-			instruccion_wait(parsed);
-			// destruir_diccionarios();
-			string_array_destroy(parsed);
-			return;
-		case I_SIGNAL:
-			instruccion_signal(parsed);
-			// destruir_diccionarios();
-			string_array_destroy(parsed);
-			return;
-		case I_CREATE_SEGMENT:
-			instruccion_create_segment(parsed);
-			// destruir_diccionarios();
-			string_array_destroy(parsed);
-			return;
-			// break;
-		case I_DELETE_SEGMENT:
-			instruccion_delete_segment(parsed);
-			// destruir_diccionarios();
-			string_array_destroy(parsed);
-			return;
-			// break;
-		case I_YIELD:
-			instruccion_yield(parsed);
-			// destruir_diccionarios();
-			string_array_destroy(parsed);
-			return;
-		case I_EXIT:
-			instruccion_exit(parsed);
-			// destruir_diccionarios();
-			string_array_destroy(parsed);
-			return;
-		case -1:
-			log_warning(logger, "PID: %d - Advertencia: No se pudo interpretar la instrucción - Ejecutando: EXIT", proceso->pid);
-			error_exit(EXIT);
-			// destruir_diccionarios();
-			string_array_destroy(parsed);
-			return;
-		}
+	if (proceso->program_counter >= list_size(proceso->instrucciones)) {
+		log_warning(logger, "PID: %d - Advertencia: Sin instrucciones por ejecutar - Ejecutando: EXIT", proceso->pid);
+		error_exit(EXIT);
+		// destruir_diccionarios();
+		return;
 	}
-	log_warning(logger, "PID: %d - Advertencia: Sin instrucciones por ejecutar - Ejecutando: EXIT", proceso->pid);
-	error_exit(EXIT);
-	// destruir_diccionarios();
+
+	char **parsed = string_split((char *)list_get(proceso->instrucciones, proceso->program_counter), " "); // Partes de la instruccion actual
+
+	if (!dictionary_has_key(instrucciones, parsed[0]))
+	{
+		log_warning(logger, "PID: %d - Advertencia: No se pudo interpretar la instrucción - Ejecutando: EXIT", proceso->pid);
+		error_exit(EXIT);
+		// destruir_diccionarios();
+		string_array_destroy(parsed);
+		return;
+	}
+
+	void* functionptr = dictionary_get(instrucciones, parsed[0]);
+	((void (*)(char**))functionptr)(parsed);
+	string_array_destroy(parsed);
 	return;
+
 }
 
 void instruccion_set(char **parsed)
@@ -170,6 +87,7 @@ void instruccion_set(char **parsed)
 	delay(config_get_int_value(config, "RETARDO_INSTRUCCION"));
 	proceso->program_counter++;
 	dictionary_destroy(registros);
+	interpretar_instrucciones();
 }
 
 void instruccion_mov_in(char **parsed)
