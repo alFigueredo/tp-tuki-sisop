@@ -127,15 +127,15 @@ void atender_cliente(int* socket_cliente){
 				lista = recibir_paquete(*socket_cliente);
 				proceso = malloc(sizeof(t_instruccion));
 				recibir_instruccion(lista,proceso);
-				list_destroy_and_destroy_elements(proceso->tabla_segmentos, free);
+				instruccion = proceso->instruccion;
+				destruir_tabla_segmentos(proceso->tabla_segmentos);
 				proceso->tabla_segmentos = iniciar_proceso(proceso->pid);
 				log_debug(logger, "Cantidad de segmentos: %d", list_size(proceso->tabla_segmentos));
 				log_debug(logger, "tamanio segmento 0: %d", ((t_segmento*)list_get(proceso->tabla_segmentos, 0))->tam_segmento);
 				enviar_instruccion(conexion_kernel, proceso, CREATE_PROCESS_OK);
-				free(proceso->instruccion);
+				free(instruccion);
 				list_destroy_and_destroy_elements(lista, free);
-				list_destroy_and_destroy_elements(proceso->tabla_segmentos, free);
-				free(proceso);
+				destruir_instruccion(proceso, 1);
 				log_trace(logger, "TRACE: CREATE_PROCESS_OK enviado");
 				break;
 			case DELETE_PROCESS:
@@ -143,12 +143,12 @@ void atender_cliente(int* socket_cliente){
 				lista = recibir_paquete(*socket_cliente);
 				proceso = malloc(sizeof(t_instruccion));
 				recibir_instruccion(lista,proceso);
+				instruccion = proceso->instruccion;
 				finalizar_proceso(proceso);
 				enviar_instruccion(conexion_kernel,proceso,DELETE_PROCESS_OK);
-				free(proceso->instruccion);
+				free(instruccion);
 				list_destroy_and_destroy_elements(lista, free);
-				list_destroy_and_destroy_elements(proceso->tabla_segmentos, free);
-				free(proceso);
+				destruir_instruccion(proceso, 1);
 				break;
 			case CREATE_SEGMENT:
 				lista = recibir_paquete(*socket_cliente);
@@ -239,8 +239,7 @@ void atender_cliente(int* socket_cliente){
 				string_array_destroy(parsed);
 				free(instruccion);
 				list_destroy_and_destroy_elements(lista, free);
-				list_destroy_and_destroy_elements(proceso->tabla_segmentos, free);
-				free(proceso);
+				destruir_instruccion(proceso, 1);
 				break;
 			case F_WRITE:
 				log_trace(logger, "F_WRITE");
@@ -254,18 +253,15 @@ void atender_cliente(int* socket_cliente){
 				tamanio_informacion = atoi(parsed[3]);
 				informacionALeerOEscribir = leer_memoria(dir_fisica,tamanio_informacion);
 				log_info(logger, "PID: %u - Accion: LEER - Direccion fisica: %d - Tamanio: %d - Origen: FS", proceso->pid, dir_fisica, tamanio_informacion);
-				proceso->tamanio_dato=tamanio_informacion;
-				proceso->dato=informacionALeerOEscribir;
-				dato_str = string_substring_until(proceso->dato, proceso->tamanio_dato);
+				dato_str = string_substring_until(informacionALeerOEscribir, tamanio_informacion);
 				log_debug(logger, "Dato: %s", dato_str);
 				free(dato_str);
-				enviar_instruccion_con_dato(conexion_filesystem,proceso,ACA_TENES_LA_INFO_GIIIIIIL);
+				enviar_instruccion_con_dato(conexion_filesystem,proceso,ACA_TENES_LA_INFO_GIIIIIIL,informacionALeerOEscribir,tamanio_informacion);
 				free(informacionALeerOEscribir);
 				string_array_destroy(parsed);
 				free(instruccion);
 				list_destroy_and_destroy_elements(lista, free);
-				list_destroy_and_destroy_elements(proceso->tabla_segmentos, free);
-				free(proceso);
+				destruir_instruccion(proceso, 1);
 				break;
 				//cpu
 			case MOV_IN: //leer cpu
@@ -281,18 +277,15 @@ void atender_cliente(int* socket_cliente){
 				informacionALeerOEscribir = leer_memoria(dir_fisica, tamanio_informacion);
 				log_info(logger, "PID: %u - Accion: LEER - Direccion fisica: %d - Tamanio: %d - Origen: CPU", proceso->pid, dir_fisica, tamanio_informacion);
 
-				proceso->dato = informacionALeerOEscribir;
-				proceso->tamanio_dato = tamanio_informacion;
-				dato_str = string_substring_until(proceso->dato, proceso->tamanio_dato);
+				dato_str = string_substring_until(informacionALeerOEscribir, tamanio_informacion);
 				log_debug(logger, "Dato: %s", dato_str);
 				free(dato_str);
-				enviar_instruccion_con_dato(conexion_cpu, proceso, MOV_IN);
+				enviar_instruccion_con_dato(conexion_cpu, proceso, MOV_IN, informacionALeerOEscribir, tamanio_informacion);
 				free(informacionALeerOEscribir);
 				string_array_destroy(parsed);
 				free(instruccion);
 				list_destroy_and_destroy_elements(lista, free);
-				list_destroy_and_destroy_elements(proceso->tabla_segmentos, free);
-				free(proceso);
+				destruir_instruccion(proceso, 1);
 				break;
 			case MOV_OUT: //escribir
 				// parsed [1] -> dir fisica
@@ -319,8 +312,7 @@ void atender_cliente(int* socket_cliente){
 				free(informacionALeerOEscribir);
 				free(instruccion);
 				list_destroy_and_destroy_elements(lista, free);
-				list_destroy_and_destroy_elements(proceso->tabla_segmentos, free);
-				free(proceso);
+				destruir_instruccion(proceso, 1);
 				log_trace(logger, "TRACE END: MOV_OUT");
 
 				break;

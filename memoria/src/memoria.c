@@ -610,7 +610,7 @@ int best_fit(unsigned int pid_proceso, int tam, int id_seg)
 			//si no hay espacio entre segmentos o es el segundo segmento
 			nueva_dir_base = (segmento_actual->direccion_limite) + 1;
 			// log_info(logger,"limite seg actual: %d",segmento_actual->direccion_limite);
-			// nuevo_segmento->pid = pid_proceso;
+			nuevo_segmento->pid = pid_proceso;
 			nuevo_segmento->tam_segmento = tam;
 			nuevo_segmento->direccion_base = nueva_dir_base;
 			nuevo_segmento->direccion_limite = nuevo_segmento->direccion_base + tam - 1 ;

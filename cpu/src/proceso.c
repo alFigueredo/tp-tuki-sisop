@@ -109,7 +109,7 @@ void instruccion_mov_in(char **parsed)
 	t_instruccion *instruccion_proceso = generar_instruccion(proceso, (char *)list_get(proceso->instrucciones, proceso->program_counter));
 	enviar_instruccion(conexion_memoria, instruccion_proceso, MOV_IN);
 	free(dir_fisica);
-	free(instruccion_proceso);
+	destruir_instruccion(instruccion_proceso, 0);
 	// proceso->program_counter++;
 }
 
@@ -145,15 +145,13 @@ void instruccion_mov_out(char **parsed)
 	t_instruccion *instruccion_proceso = generar_instruccion(proceso, (char *)list_get(proceso->instrucciones, proceso->program_counter));
 	// log_debug(logger, "1. Registro AX: %s", string_substring_until(proceso->registros.AX, 4));
 	// log_debug(logger, "2. Registro AX: %s", string_substring_until(dictionary_get(registros, parsed[2]), 4));
-	instruccion_proceso->tamanio_dato = tamanio_dato;
-	instruccion_proceso->dato = dictionary_get(registros, parsed[2]);
-	enviar_instruccion_con_dato(conexion_memoria, instruccion_proceso, MOV_OUT);
+	enviar_instruccion_con_dato(conexion_memoria, instruccion_proceso, MOV_OUT, dictionary_get(registros, parsed[2]), tamanio_dato);
 	int id_segmento = floor((double)atoi(parsed[1]) / config_get_int_value(config, "TAM_MAX_SEGMENTO"));
 	char* valor = string_substring_until((char *)dictionary_get(registros, parsed[2]), tamanio_dato);
 	log_info(logger, "PID: %u  Acción: ESCRIBIR - Segmento: %d - Dirección Física: %s - Valor: %s", proceso->pid, id_segmento, dir_fisica, valor);
 	free(valor);
 	free(dir_fisica);
-	free(instruccion_proceso);
+	destruir_instruccion(instruccion_proceso, 0);
 	dictionary_destroy(registros);
 	// proceso->program_counter++;
 }

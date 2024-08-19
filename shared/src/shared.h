@@ -132,15 +132,19 @@ void enviar_paquete(t_paquete*, int);
 void eliminar_paquete(t_paquete*);
 t_list* recibir_paquete(int);
 void delay(int);
+pcb* generar_pcb(t_list*);
 void enviar_pcb(int, pcb*, op_code);
 void recibir_pcb(t_list*, pcb*);
+void destruir_pcb(pcb*);
+t_instruccion* generar_instruccion(pcb*, char*);
 void enviar_instruccion(int, t_instruccion*, op_code);
 void recibir_instruccion(t_list*, t_instruccion*);
-void enviar_instruccion_con_dato(int, t_instruccion*, op_code);
+void enviar_instruccion_con_dato(int, t_instruccion*, op_code, void*, int);
 void recibir_instruccion_con_dato(t_list*, t_instruccion*);
-t_instruccion* generar_instruccion(pcb*, char*);
+void destruir_instruccion(t_instruccion*, int);
 void enviar_tablas_segmentos(int, t_list*, op_code);
 t_list* recibir_tablas_segmentos(t_list*);
+void destruir_tabla_segmentos(t_list*);
 void replace_r_with_0(char*);
 
 #endif /* SHARED_H_ */

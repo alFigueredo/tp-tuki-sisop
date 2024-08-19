@@ -114,14 +114,7 @@ void queue_extract(t_queue* queue, pcb* proceso) {
 }
 
 void generar_proceso(t_list* lista, int* socket_cliente) {
-	pcb* proceso = malloc(sizeof(pcb));
-	memcpy(&(proceso->pid), list_get(lista, 0), sizeof(unsigned int));
-	free(list_remove(lista,0));
-	proceso->instrucciones=list_duplicate(lista);
-	proceso->program_counter=0;
-	proceso->estimado_proxRafaga=config_get_int_value(config,"ESTIMACION_INICIAL");
-	proceso->archivos_abiertos=list_create();
-	proceso->tabla_segmentos=list_create();
+	pcb* proceso = generar_pcb(lista);
 	sem_wait(sem_new);
 	queue_push(qnew, proceso);
 	sem_post(sem_new);
@@ -142,7 +135,7 @@ void gestionar_multiprogramación(void) {
 	t_instruccion* loQueSeManda = generar_instruccion(queue_peek(qnew), "");
 	enviar_instruccion(conexion_memoria, loQueSeManda, CREATE_PROCESS);
 	log_trace(logger, "TRACE: CREATE_PROCESS enviada");
-	free(loQueSeManda);
+	destruir_instruccion(loQueSeManda, 0);
 }
 
 void new_a_ready(void) {
@@ -246,7 +239,7 @@ void exec_a_exit(char* motivo) {
 	log_debug(logger, "Registro BX: %s", registroBX);
 	free(registroAX);
 	free(registroBX);
-	free(loQueSeManda);  
+	destruir_instruccion(loQueSeManda, 0);
 }
 
 void finalizar_proceso(char* motivo) {
@@ -266,12 +259,7 @@ void finalizar_proceso(char* motivo) {
 		sem_post(sem_largo_plazo);
 	}
 	sem_post(sem_cpu);
-	list_destroy_and_destroy_elements(proceso->instrucciones, free);
-	free(proceso->tiempo_llegada_ready);
-	list_destroy_and_destroy_elements(proceso->archivos_abiertos, free);
-	log_debug(logger, "DEBUG: DELETE_PROCESS_OK");
-	list_destroy_and_destroy_elements(proceso->tabla_segmentos, free);
-	free(proceso);
+	destruir_pcb(proceso);
 }
 
 void planificador(t_queue* queue) {

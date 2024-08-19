@@ -179,7 +179,7 @@ void leer_archivo(pcb* proceso) {
 	string_array_destroy(parsed);
 	free(numero);
 	free(instruccionQueMando);
-	free(laCosaQueMando);
+	destruir_instruccion(laCosaQueMando, 0);
 }
 
 void escribir_archivo(pcb* proceso) {
@@ -205,5 +205,5 @@ void escribir_archivo(pcb* proceso) {
 	string_array_destroy(parsed);
 	free(numero);
 	free(instruccionQueMando);
-	free(laCosaQueMando);
+	destruir_instruccion(laCosaQueMando, 0);
 }

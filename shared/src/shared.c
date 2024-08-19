@@ -1,4 +1,5 @@
 #include "shared.h"
+#include <commons/collections/list.h>
 
 int recibir_operacion(int socket_cliente)
 {
@@ -148,6 +149,18 @@ void delay(int milliseconds)
 	sleep(milliseconds/1000);
 }
 
+pcb* generar_pcb(t_list* lista) {
+	pcb* proceso = malloc(sizeof(pcb));
+	memcpy(&(proceso->pid), list_get(lista, 0), sizeof(unsigned int));
+	free(list_remove(lista,0));
+	proceso->instrucciones=list_duplicate(lista);
+	proceso->program_counter=0;
+	proceso->estimado_proxRafaga=config_get_int_value(config,"ESTIMACION_INICIAL");
+	proceso->archivos_abiertos=list_create();
+	proceso->tabla_segmentos=list_create();
+	return proceso;
+}
+
 void enviar_pcb(int conexion, pcb *proceso, op_code codigo)
 {
 	t_paquete *paquete = crear_paquete(codigo);
@@ -193,6 +206,8 @@ void enviar_pcb(int conexion, pcb *proceso, op_code codigo)
 
 void recibir_pcb(t_list *lista, pcb *proceso)
 {
+	list_destroy_and_destroy_elements(proceso->instrucciones, free);
+	list_destroy_and_destroy_elements(proceso->tabla_segmentos, free);
 	int i = 0;
 	memcpy(&(proceso->pid), list_get(lista, i++), sizeof(unsigned int));
 	int cantidad_instrucciones;
@@ -224,6 +239,24 @@ void recibir_pcb(t_list *lista, pcb *proceso)
 		list_add(proceso->tabla_segmentos, segmento_actual);
 	}
 
+}
+
+void destruir_pcb(pcb* proceso) {
+	list_destroy_and_destroy_elements(proceso->instrucciones, free);
+	free(proceso->tiempo_llegada_ready);
+	list_destroy_and_destroy_elements(proceso->archivos_abiertos, free);
+	log_debug(logger, "DEBUG: DELETE_PROCESS_OK");
+	list_destroy_and_destroy_elements(proceso->tabla_segmentos, free);
+	free(proceso);
+}
+
+t_instruccion* generar_instruccion(pcb* proceso, char* instruccion) {
+	t_instruccion* instruccion_proceso = malloc(sizeof(t_instruccion));
+	instruccion_proceso->pid = proceso->pid;
+	instruccion_proceso->instruccion = instruccion;
+	instruccion_proceso->tabla_segmentos = proceso->tabla_segmentos;
+	// instruccion_proceso->dato = NULL;
+	return instruccion_proceso;
 }
 
 void enviar_instruccion(int conexion, t_instruccion* proceso, op_code codigo) {
@@ -266,7 +299,9 @@ void recibir_instruccion(t_list* lista, t_instruccion* proceso) {
 	log_trace(logger, "TRACE: Instrucción recibida - %s", proceso->instruccion);
 }
 
-void enviar_instruccion_con_dato(int conexion, t_instruccion* proceso, op_code codigo) {
+void enviar_instruccion_con_dato(int conexion, t_instruccion* proceso, op_code codigo, void* dato, int tamanio_dato) {
+	proceso->dato = dato;
+	proceso->tamanio_dato = tamanio_dato;
 	t_paquete *paquete = crear_paquete(codigo);
 
 	agregar_a_paquete(paquete, &(proceso->pid), sizeof(unsigned int));
@@ -311,13 +346,10 @@ void recibir_instruccion_con_dato(t_list* lista, t_instruccion* proceso) {
 	log_trace(logger, "TRACE: Instrucción recibida - %s", proceso->instruccion);
 }
 
-t_instruccion* generar_instruccion(pcb* proceso, char* instruccion) {
-	t_instruccion* instruccion_proceso = malloc(sizeof(t_instruccion));
-	instruccion_proceso->pid = proceso->pid;
-	instruccion_proceso->instruccion = instruccion;
-	instruccion_proceso->tabla_segmentos = proceso->tabla_segmentos;
-	// instruccion_proceso->dato = NULL;
-	return instruccion_proceso;
+void destruir_instruccion(t_instruccion* proceso, int destruir_tabla) {
+	if (destruir_tabla)
+		destruir_tabla_segmentos(proceso->tabla_segmentos);
+	free(proceso);
 }
 
 void enviar_tablas_segmentos(int conexion, t_list* tablas_segmentos, op_code codigo) {
@@ -373,6 +405,10 @@ t_list* recibir_tablas_segmentos(t_list* lista) {
 	}
 	return lista_tablas;
 
+}
+
+void destruir_tabla_segmentos(t_list* lista) {
+	list_destroy_and_destroy_elements(lista, free);
 }
 
 void replace_r_with_0(char *line)

@@ -1,5 +1,6 @@
 #include "memoriaKernel.h"
 
+
 void enviar_segmento(int pid, char* instruccion, t_list* tabla_segmentos){
 	char** parsed = string_split(instruccion, " "); //Partes de la instruccion actual
 	char* operacion = parsed[0];

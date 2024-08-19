@@ -111,10 +111,9 @@ void atender_cliente(int* socket_cliente)
 				}
 
 				string_array_destroy(porqueria);
-				free(proceso->instruccion);
-				list_destroy_and_destroy_elements(proceso->tabla_segmentos,free);
+				free(instruccion);
 				list_destroy_and_destroy_elements(lista,free);
-				free(proceso);
+				destruir_instruccion(proceso, 1);
 				break;
 			case F_CREATE:
 				lista = recibir_paquete(*socket_cliente);
@@ -134,10 +133,9 @@ void atender_cliente(int* socket_cliente)
 				}
 				 
 				string_array_destroy(porqueria);
-				free(proceso->instruccion);
-				list_destroy_and_destroy_elements(proceso->tabla_segmentos,free);
+				free(instruccion);
 				list_destroy_and_destroy_elements(lista,free);
-				free(proceso);
+				destruir_instruccion(proceso, 1);
 				break;
 			case F_TRUNCATE:
 				lista = recibir_paquete(*socket_cliente);
@@ -156,10 +154,9 @@ void atender_cliente(int* socket_cliente)
 					log_error(logger,"No se pudo truncar el archivo. CAGAAAAMOSSSSS");
 				}
 				string_array_destroy(porqueria);
-				free(proceso->instruccion);
-				list_destroy_and_destroy_elements(proceso->tabla_segmentos,free);
+				free(instruccion);
 				list_destroy_and_destroy_elements(lista,free);
-				free(proceso);
+				destruir_instruccion(proceso, 1);
 				break;
 			case F_READ:
 				lista = recibir_paquete(*socket_cliente);
@@ -172,57 +169,53 @@ void atender_cliente(int* socket_cliente)
 				cantidadBytesALeer = atoi(porqueria[3]);
 				punteroAArchivo = atoi(porqueria[4]);
 				informacionLeidaOEscrita = leerArchivo(nombreArchivo,punteroAArchivo,cantidadBytesALeer,direccionFisica);
-				proceso->dato = informacionLeidaOEscrita;
-				proceso->tamanio_dato = cantidadBytesALeer;
 				
 				// Enviar mensaje a memoria y mandarle la merca
 				
-				enviar_instruccion_con_dato(conexion_memoria,proceso,F_READ);
+				enviar_instruccion_con_dato(conexion_memoria,proceso,F_READ,informacionLeidaOEscrita,cantidadBytesALeer);
 
 				//recibir el ok en memoria
 				if (recibir_operacion(conexion_memoria) == OK)
 				{
-					free(proceso->instruccion);
-					free(proceso->dato);
-					list_destroy_and_destroy_elements(proceso->tabla_segmentos,free);
+					free(instruccion);
+					free(informacionLeidaOEscrita);
 					list_destroy_and_destroy_elements(lista,free);
-					free(proceso);
+					destruir_instruccion(proceso, 1);
 					lista = recibir_paquete(conexion_memoria);
 					proceso = malloc(sizeof(t_instruccion));
 					recibir_instruccion(lista,proceso);
-				
+					instruccion = proceso->instruccion;
+
 					//Envio el ok
 				
 					enviar_instruccion(*socket_cliente, proceso , MEMORIA_DIJO_QUE_PUDO_ESCRIBIR_JOYA);
 					string_array_destroy(porqueria);
-					free(proceso->instruccion);
-					list_destroy_and_destroy_elements(proceso->tabla_segmentos,free);
+					free(instruccion);
 					list_destroy_and_destroy_elements(lista,free);
-					free(proceso);
+					destruir_instruccion(proceso, 1);
 					break;
 				}
 				log_error(logger,"CORRE PIBE, SE FUE TODO AL CARAJO MEMORIA NO PUDO ESCRIBIR");
 				string_array_destroy(porqueria);
-				free(proceso->instruccion);
-				free(proceso->dato);
-				list_destroy_and_destroy_elements(proceso->tabla_segmentos,free);
+				free(instruccion);
+				free(informacionLeidaOEscrita);
 				list_destroy_and_destroy_elements(lista,free);
-				free(proceso);
+				destruir_instruccion(proceso, 1);
 				break;
 			case F_WRITE:
 				lista = recibir_paquete(*socket_cliente);
 				proceso = malloc(sizeof(t_instruccion));
 				recibir_instruccion(lista,proceso);
+				instruccion = proceso->instruccion;
 				
 				//Le pido a memoria que me pase lo que hay en la direccion fisica
 				enviar_instruccion(conexion_memoria,proceso,F_WRITE);
 				
 				if(recibir_operacion(conexion_memoria) == ACA_TENES_LA_INFO_GIIIIIIL)
 				{
-					free(proceso->instruccion);
-					list_destroy_and_destroy_elements(proceso->tabla_segmentos,free);
+					free(instruccion);
 					list_destroy_and_destroy_elements(lista,free);
-					free(proceso);
+					destruir_instruccion(proceso, 1);
 					lista = recibir_paquete(conexion_memoria);
 					proceso = malloc(sizeof(t_instruccion));
 					recibir_instruccion_con_dato(lista,proceso);
@@ -244,17 +237,15 @@ void atender_cliente(int* socket_cliente)
 						log_error(logger,"No se pudo escribir el archivo. CAGAMOS MAL PAAAAAAAAAA");
 					}
 					string_array_destroy(porqueria);
-					free(proceso->instruccion);
-					free(proceso->dato);
-					list_destroy_and_destroy_elements(proceso->tabla_segmentos,free);
+					free(instruccion);
+					free(informacionLeidaOEscrita);
 					list_destroy_and_destroy_elements(lista,free);
-					free(proceso);
+					destruir_instruccion(proceso, 1);
 					break;
 				}
-				free(proceso->instruccion);
-				list_destroy_and_destroy_elements(proceso->tabla_segmentos,free);
+				free(instruccion);
+				destruir_instruccion(proceso, 1);
 				list_destroy_and_destroy_elements(lista,free);
-				free(proceso);
 				break;
 			case -1:
 				log_warning(logger, "El cliente se desconecto. Terminando conexion");
