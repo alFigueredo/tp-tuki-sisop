@@ -3,7 +3,7 @@
 int main(int argc, char** argv) {
 
 	if (argc < 2) {
-	    return EXIT_FAILURE;
+		return EXIT_FAILURE;
 	}
 	conexion_cpu = -1;
 	// conexion_memoria = -1;
@@ -15,14 +15,14 @@ int main(int argc, char** argv) {
 	iniciar_semaforos();
 	conexiones = dictionary_create();
 
-    recursos = leerRecursos(config);
-    // Recorrer la lista de recursos y realizar las operaciones necesarias
+	recursos = leerRecursos(config);
+	// Recorrer la lista de recursos y realizar las operaciones necesarias
 
-    archivosAbiertos=list_create();
-    //Crear la lista de archivos abiertos global
+	archivosAbiertos=list_create();
+	//Crear la lista de archivos abiertos global
 
-    //Inicio el contador para luego
-    // contadorDeEscrituraOLectura = 0;
+	//Inicio el contador para luego
+	// contadorDeEscrituraOLectura = 0;
 
 
 	char* ip_memoria = config_get_string_value(config, "IP_MEMORIA");
@@ -33,20 +33,20 @@ int main(int argc, char** argv) {
 	char* puerto_filesystem = config_get_string_value(config, "PUERTO_FILESYSTEM");
 	char* puerto_escucha = config_get_string_value(config, "PUERTO_ESCUCHA");
 
-	
+
 	conexion_memoria = crear_conexion(ip_memoria, puerto_memoria);
 	enviar_mensaje("Intento de conexión del kernel a la memoria", conexion_memoria, MENSAJE);
 	esperar_servidor(conexion_memoria);
 	enviar_operacion(conexion_memoria, KERNEL);
-	
+
 	conexion_cpu = crear_conexion(ip_cpu, puerto_cpu);
 	enviar_mensaje("Intento de conexión del kernel al cpu", conexion_cpu, MENSAJE);
 	esperar_servidor(conexion_cpu);
-	
+
 	conexion_filesystem = crear_conexion(ip_filesystem, puerto_filesystem);
 	enviar_mensaje("Intento de conexión del kernel al filesystem", conexion_filesystem, MENSAJE);
 	esperar_servidor(conexion_filesystem);
-	
+
 
 	int socket_servidor = -1;
 	socket_servidor = iniciar_servidor(puerto_escucha);

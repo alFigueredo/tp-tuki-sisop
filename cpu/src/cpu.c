@@ -25,7 +25,7 @@ int main(int argc, char** argv) {
 	enviar_mensaje("Intento de conexión del cpu a la memoria", conexion_memoria, MENSAJE);
 	esperar_servidor(conexion_memoria);
 	enviar_operacion(conexion_memoria, CPU);
-	
+
 	socket_servidor = iniciar_servidor(puerto_escucha);
 	esperar_cliente(socket_servidor);
 

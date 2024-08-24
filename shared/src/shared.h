@@ -79,18 +79,18 @@ typedef struct
 } t_paquete;
 
 typedef struct{
-	 char AX[4];
-	 char BX[4];
-	 char CX[4];
-	 char DX[4];
-	 char EAX[8];
-	 char EBX[8];
-	 char ECX[8];
-	 char EDX[8];
-	 char RAX[16];
-	 char RBX[16];
-	 char RCX[16];
-	 char RDX[16];
+	char AX[4];
+	char BX[4];
+	char CX[4];
+	char DX[4];
+	char EAX[8];
+	char EBX[8];
+	char ECX[8];
+	char EDX[8];
+	char RAX[16];
+	char RBX[16];
+	char RCX[16];
+	char RDX[16];
 
 }registros_cpu;
 
@@ -114,9 +114,9 @@ typedef struct {
 } t_instruccion;
 
 typedef struct{
-    int id_segmento;
-    int tam_segmento;
-    int direccion_base;
+	int id_segmento;
+	int tam_segmento;
+	int direccion_base;
 } t_segmento;
 
 int recibir_operacion(int);

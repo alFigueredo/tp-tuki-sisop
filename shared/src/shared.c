@@ -109,7 +109,7 @@ void enviar_paquete(t_paquete *paquete, int socket_cliente)
 {
 	int bytes = paquete->buffer->size + 2 * sizeof(int);
 	void *a_enviar = serializar_paquete(paquete, bytes);
-	
+
 	send(socket_cliente, a_enviar, bytes, 0);
 
 	free(a_enviar);
@@ -190,7 +190,7 @@ void enviar_pcb(int conexion, pcb *proceso, op_code codigo)
 	agregar_a_paquete(paquete, proceso->registros.RBX, 16);
 	agregar_a_paquete(paquete, proceso->registros.RCX, 16);
 	agregar_a_paquete(paquete, proceso->registros.RDX, 16);
-	
+
 	int cantidad_segmentos = list_size(proceso->tabla_segmentos);
 	agregar_a_paquete(paquete, &(cantidad_segmentos), sizeof(int));
 	for (int i=0; i<cantidad_segmentos; i++) {
@@ -212,7 +212,7 @@ void recibir_pcb(t_list *lista, pcb *proceso)
 	memcpy(&(proceso->pid), list_get(lista, i++), sizeof(unsigned int));
 	int cantidad_instrucciones;
 	memcpy(&(cantidad_instrucciones), list_get(lista, i++), sizeof(int));
-	
+
 	proceso->instrucciones = list_slice_and_remove(lista, i, cantidad_instrucciones); //Aca hay una perdida grosa, de segmentation fault
 	memcpy(&(proceso->program_counter), list_get(lista, i++), sizeof(int));
 	memcpy(proceso->registros.AX, list_get(lista, i++), 4);
@@ -329,7 +329,7 @@ void recibir_instruccion_con_dato(t_list* lista, t_instruccion* proceso) {
 
 	memcpy(&(proceso->pid), list_get(lista, i++), sizeof(unsigned int));
 	proceso->instruccion = (char*)list_remove(lista, i);
-	
+
 	int cantidad_segmentos;
 	memcpy(&(cantidad_segmentos), list_get(lista, i++), sizeof(int));
 	proceso->tabla_segmentos = list_create();
@@ -373,7 +373,7 @@ void enviar_tablas_segmentos(int conexion, t_list* tablas_segmentos, op_code cod
 			agregar_a_paquete(paquete, &(segmento_actual->direccion_base), sizeof(int));
 		}
 	}
-	
+
 	enviar_paquete(paquete, conexion);
 	eliminar_paquete(paquete);
 	list_destroy_and_destroy_elements(cantidades, free);

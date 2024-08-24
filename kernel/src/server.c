@@ -17,8 +17,8 @@ int iniciar_servidor(char* puerto)
 	// Creamos el socket de escucha del servidor
 
 	socket_servidor = socket(servinfo->ai_family,
-	                         servinfo->ai_socktype,
-	                         servinfo->ai_protocol);
+						  servinfo->ai_socktype,
+						  servinfo->ai_protocol);
 
 	int reuse = 1;
 	if (setsockopt(socket_servidor, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse)) < 0) {
@@ -50,24 +50,24 @@ void recv_handshake(int socket_cliente)
 	uint32_t resultError = -1;
 	recv(socket_cliente, &handshake, sizeof(uint32_t), MSG_WAITALL);
 	if(handshake == 1)
-	   send(socket_cliente, &resultOk, sizeof(uint32_t), 0);
+		send(socket_cliente, &resultOk, sizeof(uint32_t), 0);
 	else {
-	   send(socket_cliente, &resultError, sizeof(uint32_t), 0);
+		send(socket_cliente, &resultError, sizeof(uint32_t), 0);
 	}
 }
 
 void esperar_cliente(int socket_servidor){
 	while (1) {
-	   pthread_t thread;
-	   int *socket_cliente = malloc(sizeof(int));
-	   *socket_cliente = accept(socket_servidor, NULL, NULL);
-	   log_info(logger, "¡Se conecto un cliente!");
-	   recv_handshake(*socket_cliente);
-	   pthread_create(&thread,
-	                  NULL,
-	                  (void*) atender_cliente,
-	                  socket_cliente);
-	   pthread_detach(thread);
+		pthread_t thread;
+		int *socket_cliente = malloc(sizeof(int));
+		*socket_cliente = accept(socket_servidor, NULL, NULL);
+		log_info(logger, "¡Se conecto un cliente!");
+		recv_handshake(*socket_cliente);
+		pthread_create(&thread,
+				 NULL,
+				 (void*) atender_cliente,
+				 socket_cliente);
+		pthread_detach(thread);
 	}
 }
 
@@ -100,7 +100,7 @@ void atender_cliente(int* socket_cliente){
 			default:
 				log_warning(logger,"Operacion desconocida. No quieras meter la pata");
 				break;
-			}
+		}
 	}
 }
 

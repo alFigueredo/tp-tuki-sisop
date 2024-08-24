@@ -17,8 +17,8 @@ int iniciar_servidor(char* puerto)
 	// Creamos el socket de escucha del servidor
 
 	socket_servidor = socket(servinfo->ai_family,
-	                         servinfo->ai_socktype,
-	                         servinfo->ai_protocol);
+						  servinfo->ai_socktype,
+						  servinfo->ai_protocol);
 
 	int reuse = 1;
 	if (setsockopt(socket_servidor, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse)) < 0) {
@@ -50,18 +50,18 @@ void recv_handshake(int socket_cliente)
 	uint32_t resultError = -1;
 	recv(socket_cliente, &handshake, sizeof(uint32_t), MSG_WAITALL);
 	if(handshake == 1)
-	   send(socket_cliente, &resultOk, sizeof(uint32_t), 0);
+		send(socket_cliente, &resultOk, sizeof(uint32_t), 0);
 	else {
-	   send(socket_cliente, &resultError, sizeof(uint32_t), 0);
+		send(socket_cliente, &resultError, sizeof(uint32_t), 0);
 	}
 }
 
 void esperar_cliente(int socket_servidor){
 	while (1) {
-	   int *socket_cliente = malloc(sizeof(int));
-	   *socket_cliente = accept(socket_servidor, NULL, NULL);
-	   recv_handshake(*socket_cliente);
-	   atender_cliente(socket_cliente);
+		int *socket_cliente = malloc(sizeof(int));
+		*socket_cliente = accept(socket_servidor, NULL, NULL);
+		recv_handshake(*socket_cliente);
+		atender_cliente(socket_cliente);
 	}
 }
 
@@ -106,7 +106,7 @@ void atender_cliente(int* socket_cliente)
 					enviar_instruccion(*socket_cliente,proceso,F_OPEN_OK);
 				}
 				else
-				{
+			{
 					enviar_instruccion(*socket_cliente,proceso,EL_ARCHIVO_NO_EXISTE_PAAAAAAA);
 				}
 
@@ -128,10 +128,10 @@ void atender_cliente(int* socket_cliente)
 					enviar_instruccion(*socket_cliente, proceso ,F_OPEN_OK);
 				}
 				else
-				{
+			{
 					log_error(logger,"No se pudo crear el archivo pibe. Algo se rompio zarpado");
 				}
-				 
+
 				string_array_destroy(porqueria);
 				free(instruccion);
 				list_destroy_and_destroy_elements(lista,free);
@@ -150,7 +150,7 @@ void atender_cliente(int* socket_cliente)
 					enviar_instruccion(*socket_cliente, proceso , YA_SE_TERMINO_LA_TRUNCACION);
 				}
 				else
-				{
+			{
 					log_error(logger,"No se pudo truncar el archivo. CAGAAAAMOSSSSS");
 				}
 				string_array_destroy(porqueria);
@@ -169,9 +169,9 @@ void atender_cliente(int* socket_cliente)
 				cantidadBytesALeer = atoi(porqueria[3]);
 				punteroAArchivo = atoi(porqueria[4]);
 				informacionLeidaOEscrita = leerArchivo(nombreArchivo,punteroAArchivo,cantidadBytesALeer,direccionFisica);
-				
+
 				// Enviar mensaje a memoria y mandarle la merca
-				
+
 				enviar_instruccion_con_dato(conexion_memoria,proceso,F_READ,informacionLeidaOEscrita,cantidadBytesALeer);
 
 				//recibir el ok en memoria
@@ -187,7 +187,7 @@ void atender_cliente(int* socket_cliente)
 					instruccion = proceso->instruccion;
 
 					//Envio el ok
-				
+
 					enviar_instruccion(*socket_cliente, proceso , MEMORIA_DIJO_QUE_PUDO_ESCRIBIR_JOYA);
 					string_array_destroy(porqueria);
 					free(instruccion);
@@ -207,10 +207,10 @@ void atender_cliente(int* socket_cliente)
 				proceso = malloc(sizeof(t_instruccion));
 				recibir_instruccion(lista,proceso);
 				instruccion = proceso->instruccion;
-				
+
 				//Le pido a memoria que me pase lo que hay en la direccion fisica
 				enviar_instruccion(conexion_memoria,proceso,F_WRITE);
-				
+
 				if(recibir_operacion(conexion_memoria) == ACA_TENES_LA_INFO_GIIIIIIL)
 				{
 					free(instruccion);
@@ -233,7 +233,7 @@ void atender_cliente(int* socket_cliente)
 						enviar_instruccion(*socket_cliente, proceso , SE_PUDO_ESCRIBIR_EL_ARCHIVO);
 					}
 					else
-					{
+				{
 						log_error(logger,"No se pudo escribir el archivo. CAGAMOS MAL PAAAAAAAAAA");
 					}
 					string_array_destroy(porqueria);

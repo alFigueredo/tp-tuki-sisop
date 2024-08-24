@@ -10,10 +10,10 @@
 #include "proceso.h"
 
 typedef struct {
-    char nombre[20];
-    int instancias;
-    t_queue* procesosBloqueados;
-    struct Recurso *siguiente;
+	char nombre[20];
+	int instancias;
+	t_queue* procesosBloqueados;
+	struct Recurso *siguiente;
 } Recurso;
 
 extern t_list* recursos;

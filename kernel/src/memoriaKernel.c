@@ -2,8 +2,8 @@
 
 
 void enviar_segmento(int pid, char* instruccion, t_list* tabla_segmentos){
-	char** parsed = string_split(instruccion, " "); //Partes de la instruccion actual
-	char* operacion = parsed[0];
+    char** parsed = string_split(instruccion, " "); //Partes de la instruccion actual
+    char* operacion = parsed[0];
     int id_segmento = atoi(parsed[1]);
 
     t_paquete *paquete = crear_paquete((strcmp(operacion, "CREATE_SEGMENT")==0) ? CREATE_SEGMENT : DELETE_SEGMENT);
@@ -28,7 +28,7 @@ void enviar_segmento(int pid, char* instruccion, t_list* tabla_segmentos){
         log_info(logger,"Se solicita para PID: %u - Eliminar Segmento - Id: %d",pid,id_segmento);
         enviar_paquete(paquete,conexion_memoria);
     }
-    
+
     string_array_destroy(parsed);
     eliminar_paquete(paquete);
 }

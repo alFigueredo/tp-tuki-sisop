@@ -37,8 +37,8 @@ int main(int argc, char **argv)
 
 	list_destroy_and_destroy_elements(tabla_segmentos_total, free);
 	list_destroy_and_destroy_elements(huecos, free);
-		free(memoria_usuario);
-		//list_destroy(huecos);
+	free(memoria_usuario);
+	//list_destroy(huecos);
 	//terminar_memoria(logger, config, socket_servidor);
 	log_trace(logger, "Aquí termina");
 	log_debug(logger, "Aquí termina");
@@ -90,11 +90,11 @@ void finalizar_proceso(t_instruccion* pcb_proceso)
 	segmentos_proc	= obtener_segmentos_PID(pcb_proceso->pid); 									//Lista filtrada
 	segmento *seg_actual;
 	for (int var = 1; var < list_size(segmentos_proc); ++var)											//Recorrre la lista filtrada
-		{
-			seg_actual = list_get(segmentos_proc, var);														//Toma el segmento actual del for
-			eliminar_segmento (pcb_proceso->pid,seg_actual->id);												//Elimina el segmento de la lista de segmentos total.
-			// free(seg_actual);
-		}
+	{
+		seg_actual = list_get(segmentos_proc, var);														//Toma el segmento actual del for
+		eliminar_segmento (pcb_proceso->pid,seg_actual->id);												//Elimina el segmento de la lista de segmentos total.
+		// free(seg_actual);
+	}
 	list_clean_and_destroy_elements(pcb_proceso->tabla_segmentos, free);
 	// list_destroy_and_destroy_elements(segmentos_proc, free);
 	list_destroy(segmentos_proc);
@@ -106,19 +106,19 @@ void finalizar_proceso(t_instruccion* pcb_proceso)
 //Funcion que recorre la lista y retorna los id de los segmentos de un proceso
 t_list* obtener_segmentos_PID(unsigned int pid)
 {
-    t_list* segmentosPorPID = list_create();
-    // segmento* seg = malloc(sizeof(segmento));
+	t_list* segmentosPorPID = list_create();
+	// segmento* seg = malloc(sizeof(segmento));
 	segmento* seg;
 
-    for (int i = 0; i < list_size(tabla_segmentos_total); i++)											//Recorre la lista de segmentos
-    {
-        seg = (segmento*)list_get(tabla_segmentos_total, i);														//Toma un segmento
-        if ((seg->pid == 0) || (seg->pid == pid)) {																			//Ve si pertenece al proceso
-            list_add(segmentosPorPID,seg);																//Si pertenece, lo agrega a la lista de segmentos del proceso
-        }
-    }
-    // free(seg);
-    return segmentosPorPID;
+	for (int i = 0; i < list_size(tabla_segmentos_total); i++)											//Recorre la lista de segmentos
+	{
+		seg = (segmento*)list_get(tabla_segmentos_total, i);														//Toma un segmento
+		if ((seg->pid == 0) || (seg->pid == pid)) {																			//Ve si pertenece al proceso
+			list_add(segmentosPorPID,seg);																//Si pertenece, lo agrega a la lista de segmentos del proceso
+		}
+	}
+	// free(seg);
+	return segmentosPorPID;
 }
 
 //-------------------INICIALIZACION DE MEMORIA------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -147,17 +147,17 @@ algoritmo_asignacion cambiar_enum_algoritmo (char* letra)
 {
 	algoritmo_asignacion algoritmo;
 
-    if (string_equals_ignore_case(letra, "F")) {
-    	algoritmo = FIRST;
-    }
-    else if (string_equals_ignore_case(letra, "B")) {
-    	algoritmo = BEST;
-    }
-    else if (string_equals_ignore_case(letra, "W")) {
-    	algoritmo = WORST;
-    }
+	if (string_equals_ignore_case(letra, "F")) {
+		algoritmo = FIRST;
+	}
+	else if (string_equals_ignore_case(letra, "B")) {
+		algoritmo = BEST;
+	}
+	else if (string_equals_ignore_case(letra, "W")) {
+		algoritmo = WORST;
+	}
 
-    return algoritmo;
+	return algoritmo;
 }
 
 void iniciar_memoria()
@@ -193,20 +193,20 @@ int crear_segmento(unsigned int pid, int tamanio_seg, int id_seg)
 
 	if (hay_espacio_disponible(tamanio_seg) /*&& hay_segmentos_disponibles(pid)*/)															//Primero se fija si hay espacio disponible en memoria
 	{
-			// mutex
-			switch (algoritmo)
-			{
-				case FIRST:
-					dir_base = first_fit(pid, tamanio_seg, id_seg);
-					break;
-				case BEST:
-					dir_base = best_fit(pid, tamanio_seg, id_seg);
-					break;
-				case WORST:
-					dir_base = worst_fit(pid, tamanio_seg, id_seg);
-					break;
-			}
+		// mutex
+		switch (algoritmo)
+		{
+			case FIRST:
+				dir_base = first_fit(pid, tamanio_seg, id_seg);
+				break;
+			case BEST:
+				dir_base = best_fit(pid, tamanio_seg, id_seg);
+				break;
+			case WORST:
+				dir_base = worst_fit(pid, tamanio_seg, id_seg);
+				break;
 		}
+	}
 	else if (!hay_espacio_disponible(tamanio_seg))																								//No hay espacio disponible en memoria,
 	{
 		sumatoria = sumatoria_huecos();																			//suma el espacio de los huecos
@@ -218,13 +218,13 @@ int crear_segmento(unsigned int pid, int tamanio_seg, int id_seg)
 		}
 
 		else																							//porque no hay mas espacio (si se compactan los segmentos igual no hay espacio).
-		{
+	{
 			log_info(logger, "No hay mas memoria");
 			// FALTA DE ESPACIO LIBRE KERNEL !!!
 			return -2;
 		}
 	}
-/*	else if(!hay_segmentos_disponibles(pid))
+	/*	else if(!hay_segmentos_disponibles(pid))
 	{
 		log_info(logger, "No hay mas memoria");
 		// FALTA DE ESPACIO LIBRE KERNEL !!!
@@ -265,14 +265,14 @@ void eliminar_segmento(unsigned int pid, int id)
 					memcpy(hueco, seg, sizeof(segmento));
 					list_add(huecos, hueco);													//crea el hueco.
 				} else
-					free(hueco);
+				free(hueco);
 				list_remove_and_destroy_element(tabla_segmentos_total, i,free);														//Lo borra de la tabla de segmentos.
 				break;
 			}
 		}
 	}
-			//free(hueco);
-			/*break;
+	//free(hueco);
+	/*break;
 		}
 	}*/
 }
@@ -287,7 +287,7 @@ int agrupar_huecos(int base, int limite)
 	int index_der;
 
 	segmento *hueco ;
-	 segmento *hueco_agrupado;
+	segmento *hueco_agrupado;
 
 	/*for (int i = 0; i < list_size(huecos); i++)
 	{
@@ -329,47 +329,47 @@ int agrupar_huecos(int base, int limite)
 		return 1;
 	}*/
 	int i = 0;
-    while (i < list_size(huecos))
-    {
-        hueco = list_get(huecos, i);
-        if ((hueco->direccion_limite + 1) == base)
-        {
-            hueco_izquierdo = hueco;
-            index_izq = i;
-            break;
-        }
-        i++;
-    }
+	while (i < list_size(huecos))
+	{
+		hueco = list_get(huecos, i);
+		if ((hueco->direccion_limite + 1) == base)
+		{
+			hueco_izquierdo = hueco;
+			index_izq = i;
+			break;
+		}
+		i++;
+	}
 
-    int j = 0;
-    while (j < list_size(huecos))
-    {
-        hueco = list_get(huecos, j);
-        if ((hueco->direccion_base - 1) == limite)
-        {
-            hueco_derecho = hueco;
-            index_der = j;
-            // printf("index der: %d\n", index_der);
-            break;
-        }
-        j++;
-    }
+	int j = 0;
+	while (j < list_size(huecos))
+	{
+		hueco = list_get(huecos, j);
+		if ((hueco->direccion_base - 1) == limite)
+		{
+			hueco_derecho = hueco;
+			index_der = j;
+			// printf("index der: %d\n", index_der);
+			break;
+		}
+		j++;
+	}
 
-    if (hueco_izquierdo != NULL && hueco_derecho != NULL)
-    {
-        if (index_der > index_izq)
-        {
-            // Restamos 1 al índice si se eliminó un elemento antes
-            hueco_agrupado = malloc(sizeof(segmento));
-            hueco_agrupado->direccion_base = hueco_izquierdo->direccion_base;
-            hueco_agrupado->direccion_limite = hueco_derecho->direccion_limite;
-		hueco_agrupado->tam_segmento = hueco_agrupado->direccion_limite + 1 - hueco_agrupado->direccion_base;
-		list_remove_and_destroy_element(huecos, index_izq,free);
-		list_add_in_index(huecos, index_izq, hueco_agrupado);
-		list_remove_and_destroy_element(huecos, index_der,free);
-        }
-        return 1;
-    }
+	if (hueco_izquierdo != NULL && hueco_derecho != NULL)
+	{
+		if (index_der > index_izq)
+		{
+			// Restamos 1 al índice si se eliminó un elemento antes
+			hueco_agrupado = malloc(sizeof(segmento));
+			hueco_agrupado->direccion_base = hueco_izquierdo->direccion_base;
+			hueco_agrupado->direccion_limite = hueco_derecho->direccion_limite;
+			hueco_agrupado->tam_segmento = hueco_agrupado->direccion_limite + 1 - hueco_agrupado->direccion_base;
+			list_remove_and_destroy_element(huecos, index_izq,free);
+			list_add_in_index(huecos, index_izq, hueco_agrupado);
+			list_remove_and_destroy_element(huecos, index_der,free);
+		}
+		return 1;
+	}
 
 	return 0;
 }
@@ -381,8 +381,8 @@ int sumatoria_huecos()
 	int sumatoria = 0;
 	segmento *segmento_actual;
 	if (list_size(tabla_segmentos_total) > 0) {
-	        segmento_actual = list_get(tabla_segmentos_total, list_size(tabla_segmentos_total) - 1);
-	        sumatoria = config_get_int_value(config, "TAM_MEMORIA")-(segmento_actual->direccion_limite+1);
+		segmento_actual = list_get(tabla_segmentos_total, list_size(tabla_segmentos_total) - 1);
+		sumatoria = config_get_int_value(config, "TAM_MEMORIA")-(segmento_actual->direccion_limite+1);
 	}
 	segmento *seg;
 
@@ -401,9 +401,9 @@ int hay_espacio_disponible(int tam_segmento)
 	segmento *segmento_actual;
 
 	if (list_size(tabla_segmentos_total) > 0) {
-	        segmento_actual = list_get(tabla_segmentos_total, list_size(tabla_segmentos_total) - 1);
-	        espacio = segmento_actual->direccion_limite;
-	    }
+		segmento_actual = list_get(tabla_segmentos_total, list_size(tabla_segmentos_total) - 1);
+		espacio = segmento_actual->direccion_limite;
+	}
 
 	if(espacio+tam_segmento<config_get_int_value(config, "TAM_MEMORIA") ){
 		return 1;
@@ -449,14 +449,14 @@ void eliminar_hueco(int base, int limite)
 	segmento* hueco;
 
 	for (int i = 0; i < list_size(huecos); i++)
+	{
+		hueco = list_get(huecos, i);
+		if (hueco->direccion_limite == base && hueco->direccion_limite == limite)
 		{
-			hueco = list_get(huecos, i);
-			if (hueco->direccion_limite == base && hueco->direccion_limite == limite)
-			{
-				list_remove_and_destroy_element(huecos, i, free);
-				break;
-			}
+			list_remove_and_destroy_element(huecos, i, free);
+			break;
 		}
+	}
 }
 
 
@@ -469,7 +469,7 @@ int first_fit(unsigned int pid_proceso, int tam, int id_seg)
 	segmento *nuevo_segmento= malloc(sizeof(segmento));
 	int nueva_dir_base;
 	int tamSeg0 = config_get_int_value(config, "TAM_SEGMENTO_0");
-		//nueva_dir_base = tamSeg0 + 1;
+	//nueva_dir_base = tamSeg0 + 1;
 	int noHayHuecos = -1;
 
 
@@ -485,11 +485,11 @@ int first_fit(unsigned int pid_proceso, int tam, int id_seg)
 	}
 
 	else
-	{
+{
 		for (int i = 0; i < list_size(tabla_segmentos_total); i++)
 		{
 			segmento_actual = list_get(tabla_segmentos_total, i);
-	//		//printf ("%u", segmento_actual->pid);// Recorre todos los segmentos
+			//		//printf ("%u", segmento_actual->pid);// Recorre todos los segmentos
 
 			if (i + 1 < list_size(tabla_segmentos_total))																	// Ve si existe otro segmento
 			{
@@ -533,7 +533,7 @@ int first_fit(unsigned int pid_proceso, int tam, int id_seg)
 			nuevo_segmento->id = id_seg;
 
 			list_add(tabla_segmentos_total,nuevo_segmento);
-			
+
 			log_info(logger, "PID: %u - Crear Segmento: %d - Base: %d - Tamanio: %d", pid_proceso, nuevo_segmento->id, nuevo_segmento->direccion_base, tam);
 		}
 	}
@@ -566,7 +566,7 @@ int best_fit(unsigned int pid_proceso, int tam, int id_seg)
 	}
 
 	else
-	{
+{
 		for (int i = 0; i < list_size(tabla_segmentos_total); i++)
 		{
 
@@ -606,7 +606,7 @@ int best_fit(unsigned int pid_proceso, int tam, int id_seg)
 			//eliminar_hueco(nuevo_segmento->direccion_base, nuevo_segmento->direccion_limite);
 		}
 		else
-		{
+	{
 			//si no hay espacio entre segmentos o es el segundo segmento
 			nueva_dir_base = (segmento_actual->direccion_limite) + 1;
 			// log_info(logger,"limite seg actual: %d",segmento_actual->direccion_limite);
@@ -618,7 +618,7 @@ int best_fit(unsigned int pid_proceso, int tam, int id_seg)
 			nuevo_segmento->id= id_seg;
 
 			list_add(tabla_segmentos_total,nuevo_segmento);
-			
+
 			log_info(logger, "PID: %u - Crear Segmento: %d - Base: %d - Tamanio: %d", pid_proceso, nuevo_segmento->id, nuevo_segmento->direccion_base, tam);
 		}
 
@@ -639,73 +639,73 @@ int worst_fit(unsigned int pid_proceso, int tam, int id_seg)
 	int tamSeg0 = config_get_int_value(config, "TAM_SEGMENTO_0");
 
 	if(list_size(tabla_segmentos_total) == 1)
-		{
-			nuevo_segmento->direccion_base= tamSeg0 ;
-			nuevo_segmento->direccion_limite= nuevo_segmento->direccion_base + tam - 1;
-			nuevo_segmento->pid = pid_proceso;
-			nuevo_segmento->tam_segmento = tam;
-			nuevo_segmento->id = id_seg;
+	{
+		nuevo_segmento->direccion_base= tamSeg0 ;
+		nuevo_segmento->direccion_limite= nuevo_segmento->direccion_base + tam - 1;
+		nuevo_segmento->pid = pid_proceso;
+		nuevo_segmento->tam_segmento = tam;
+		nuevo_segmento->id = id_seg;
 
-			list_add(tabla_segmentos_total, nuevo_segmento);
+		list_add(tabla_segmentos_total, nuevo_segmento);
+		log_info(logger, "PID: %u - Crear Segmento: %d - Base: %d - Tamanio: %d", pid_proceso, nuevo_segmento->id, nuevo_segmento->direccion_base, tam);
+	}
+
+	else
+{
+		for (int i = 0; i < list_size(tabla_segmentos_total); i++)
+		{
+			segmento_actual = list_get(tabla_segmentos_total, i);
+
+			if (i + 1 < list_size(tabla_segmentos_total))
+			{
+				segmento_siguiente = list_get(tabla_segmentos_total, i + 1);
+				espacio_libre = segmento_siguiente->direccion_base - (segmento_actual->direccion_limite + 1);
+
+				if (espacio_libre >= tam && espacio_libre > mejor_ajuste)								//Si entra el segmento y si el espacio es mayor al mayor espacio, lo agrega.
+				{
+
+					// segmento_asignado =  1;
+					segmento_asignado = segmento_actual->id + 1;
+					mejor_ajuste = espacio_libre;
+					nueva_dir_base = 1 + segmento_actual->direccion_limite ;
+					//segmento_asignado = i + 1;
+				}
+			}
+		}
+		int espacioFMem = config_get_int_value(config, "TAM_MEMORIA") - segmento_actual->direccion_limite - 1;
+		if(espacioFMem > mejor_ajuste) {
+			segmento_asignado = -1;
+		}
+		if (segmento_asignado != -1)
+		{
+			// Crear el nuevo segmento y establecer sus direcciones
+			nuevo_segmento->pid = pid_proceso;
+			nuevo_segmento->id = id_seg;
+			nuevo_segmento->tam_segmento = tam;
+			nuevo_segmento->direccion_base = nueva_dir_base; // list_get(memoria_usuario, segmento_asignado - 1)->direccion_limite + 1;
+			nuevo_segmento->direccion_limite = nuevo_segmento->direccion_base + tam - 1;
+
+			// Insertar el nuevo segmento en la lista de memoria después del segmento anterior al segmento asignado
+			list_add_in_index(tabla_segmentos_total, segmento_asignado, nuevo_segmento);
 			log_info(logger, "PID: %u - Crear Segmento: %d - Base: %d - Tamanio: %d", pid_proceso, nuevo_segmento->id, nuevo_segmento->direccion_base, tam);
+			modificar_hueco(nuevo_segmento->direccion_base, nuevo_segmento->direccion_limite);
 		}
 
 		else
-		{
-			for (int i = 0; i < list_size(tabla_segmentos_total); i++)
-			{
-				segmento_actual = list_get(tabla_segmentos_total, i);
+	{
+			//si no hay espacio entre segmentos o es el segundo segmento
+			nueva_dir_base = (segmento_actual->direccion_limite) + 1;
 
-				if (i + 1 < list_size(tabla_segmentos_total))
-				{
-					segmento_siguiente = list_get(tabla_segmentos_total, i + 1);
-					espacio_libre = segmento_siguiente->direccion_base - (segmento_actual->direccion_limite + 1);
+			nuevo_segmento->pid = pid_proceso;
+			nuevo_segmento->tam_segmento = tam;
+			nuevo_segmento->direccion_base = nueva_dir_base;
+			nuevo_segmento->direccion_limite = nuevo_segmento->direccion_base + tam - 1;
+			nuevo_segmento->id=id_seg;
+			list_add(tabla_segmentos_total,nuevo_segmento);
 
-					if (espacio_libre >= tam && espacio_libre > mejor_ajuste)								//Si entra el segmento y si el espacio es mayor al mayor espacio, lo agrega.
-					{
-
-						// segmento_asignado =  1;
-						segmento_asignado = segmento_actual->id + 1;
-						mejor_ajuste = espacio_libre;
-						nueva_dir_base = 1 + segmento_actual->direccion_limite ;
-						//segmento_asignado = i + 1;
-					}
-				}
-			}
-			int espacioFMem = config_get_int_value(config, "TAM_MEMORIA") - segmento_actual->direccion_limite - 1;
-			if(espacioFMem > mejor_ajuste) {
-				segmento_asignado = -1;
-			}
-			if (segmento_asignado != -1)
-			{
-				// Crear el nuevo segmento y establecer sus direcciones
-				nuevo_segmento->pid = pid_proceso;
-				nuevo_segmento->id = id_seg;
-				nuevo_segmento->tam_segmento = tam;
-				nuevo_segmento->direccion_base = nueva_dir_base; // list_get(memoria_usuario, segmento_asignado - 1)->direccion_limite + 1;
-				nuevo_segmento->direccion_limite = nuevo_segmento->direccion_base + tam - 1;
-
-				// Insertar el nuevo segmento en la lista de memoria después del segmento anterior al segmento asignado
-				list_add_in_index(tabla_segmentos_total, segmento_asignado, nuevo_segmento);
-				log_info(logger, "PID: %u - Crear Segmento: %d - Base: %d - Tamanio: %d", pid_proceso, nuevo_segmento->id, nuevo_segmento->direccion_base, tam);
-				modificar_hueco(nuevo_segmento->direccion_base, nuevo_segmento->direccion_limite);
-			}
-
-			else
-			{
-				//si no hay espacio entre segmentos o es el segundo segmento
-				nueva_dir_base = (segmento_actual->direccion_limite) + 1;
-
-				nuevo_segmento->pid = pid_proceso;
-				nuevo_segmento->tam_segmento = tam;
-				nuevo_segmento->direccion_base = nueva_dir_base;
-				nuevo_segmento->direccion_limite = nuevo_segmento->direccion_base + tam - 1;
-				nuevo_segmento->id=id_seg;
-				list_add(tabla_segmentos_total,nuevo_segmento);
-				
-				log_info(logger, "PID: %u - Crear Segmento: %d - Base: %d - Tamanio: %d", pid_proceso, nuevo_segmento->id, nuevo_segmento->direccion_base, tam);
-			}
+			log_info(logger, "PID: %u - Crear Segmento: %d - Base: %d - Tamanio: %d", pid_proceso, nuevo_segmento->id, nuevo_segmento->direccion_base, tam);
 		}
+	}
 	return nuevo_segmento->direccion_base;
 }
 
@@ -764,7 +764,7 @@ void escribir_memoria(int direccion, void* nuevo_valor, size_t tamanio)
 		memcpy(memoria_usuario + direccion, nuevo_valor, tamanio);*/
 
 
-/*	for (int i = 0; i < list_size(tabla_segmentos_total); i++)
+	/*	for (int i = 0; i < list_size(tabla_segmentos_total); i++)
 		{
 			seg = list_get(tabla_segmentos_total, i);
 
@@ -784,42 +784,42 @@ void escribir_memoria(int direccion, void* nuevo_valor, size_t tamanio)
 }
 
 t_list* compactar_segmentos() {
-    t_list* segmentos_compactados = list_create();
-   
-    // segmento* seg;
-    int direccion_base_actual = 0;
-    int tam_segmento = 0;
-    int antigua_direccion_base = 0;
+	t_list* segmentos_compactados = list_create();
+
+	// segmento* seg;
+	int direccion_base_actual = 0;
+	int tam_segmento = 0;
+	int antigua_direccion_base = 0;
 
 	delay (config_get_int_value(config, "RETARDO_COMPACTACION"));
 
-    while (0 < list_size(tabla_segmentos_total)) {
-        segmento* seg = list_get(tabla_segmentos_total, 0);
+	while (0 < list_size(tabla_segmentos_total)) {
+		segmento* seg = list_get(tabla_segmentos_total, 0);
 		segmento* segm = malloc(sizeof(segmento));
-        memcpy(segm, seg, sizeof(segmento));
-        antigua_direccion_base = seg->direccion_base;
+		memcpy(segm, seg, sizeof(segmento));
+		antigua_direccion_base = seg->direccion_base;
 
-        //Cambios segmento
-        tam_segmento = seg->direccion_limite - seg->direccion_base + 1;
-        segm->direccion_base = direccion_base_actual;
-        segm->direccion_limite = segm->direccion_base + tam_segmento - 1;
-        list_add(segmentos_compactados, segm);
-        list_remove_and_destroy_element(tabla_segmentos_total, 0,free);
+		//Cambios segmento
+		tam_segmento = seg->direccion_limite - seg->direccion_base + 1;
+		segm->direccion_base = direccion_base_actual;
+		segm->direccion_limite = segm->direccion_base + tam_segmento - 1;
+		list_add(segmentos_compactados, segm);
+		list_remove_and_destroy_element(tabla_segmentos_total, 0,free);
 
-        //Cambios en memoria usuario
-        int desplazamiento = direccion_base_actual - antigua_direccion_base;
-        if(desplazamiento != 0){
-        	memmove(memoria_usuario + direccion_base_actual, memoria_usuario + antigua_direccion_base, tam_segmento);
-        }
+		//Cambios en memoria usuario
+		int desplazamiento = direccion_base_actual - antigua_direccion_base;
+		if(desplazamiento != 0){
+			memmove(memoria_usuario + direccion_base_actual, memoria_usuario + antigua_direccion_base, tam_segmento);
+		}
 		log_info(logger, "PID: %u - Segmento: %d - Base: %d - Tamanio: %d", segm->pid, segm->id, segm->direccion_base, segm->tam_segmento);
-        direccion_base_actual = segm->direccion_limite + 1;
-    }
+		direccion_base_actual = segm->direccion_limite + 1;
+	}
 
-   list_destroy_and_destroy_elements(tabla_segmentos_total, free);
+	list_destroy_and_destroy_elements(tabla_segmentos_total, free);
 
-    // Actualizar la tabla de segmentos total con los segmentos compactados
-    tabla_segmentos_total = segmentos_compactados;
-    return tabla_segmentos_total;
+	// Actualizar la tabla de segmentos total con los segmentos compactados
+	tabla_segmentos_total = segmentos_compactados;
+	return tabla_segmentos_total;
 }
 
 
@@ -870,11 +870,11 @@ void terminar_memoria(t_log *logger, t_config *config, int socket)
   ((((.-''  ((((.'  (((.-' 
 
 
-                      /^--^\     /^--^\     /^--^\
-                      \____/     \____/     \____/
-                     /      \   /      \   /      \
+		      /^--^\     /^--^\     /^--^\
+		      \____/     \____/     \____/
+		     /      \   /      \   /      \
 KAT                 |        | |        | |        |
-                     \__  __/   \__  __/   \__  __/
+		     \__  __/   \__  __/   \__  __/
 |^|^|^|^|^|^|^|^|^|^|^|^\ \^|^|^|^/ /^|^|^|^|^\ \^|^|^|^|^|^|^|^|^|^|^|^|
 | | | | | | | | | | | | |\ \| | |/ /| | | | | | \ \ | | | | | | | | | | |
 ########################/ /######\ \###########/ /#######################
@@ -909,14 +909,14 @@ KAT                 |        | |        | |        |
     `\|||/  `--'\|||/'
 
 
-                                               .--.
-                                               `.  \
-                                                 \  \
-                                                  .  \
-                                                  :   .
-                                                  |    .
-                                                  |    :
-                                                  |    |
+					       .--.
+					       `.  \
+						 \  \
+						  .  \
+						  :   .
+						  |    .
+						  |    :
+						  |    |
   ..._  ___                                       |    |
  `."".`''''""--..___                              |    |
  ,-\  \             ""-...__         _____________/    |
@@ -926,15 +926,15 @@ KAT                 |        | |        | |        |
 /                                                         \
 \_    ___..---.                                            L
   `--'         '.                                           \
-                 .                                           \_
-                _/`.                                           `.._
-             .'     -.                                             `.
-            /     __.-Y     /''''''-...___,...--------.._            |
-           /   _."    |    /                ' .      \   '---..._    |
-          /   /      /    /                _,. '    ,/           |   |
-          \_,'     _.'   /              /''     _,-'            _|   |
-                  '     /               `-----''               /     |
-                  `...-'     dp                                `...-'
+		 .                                           \_
+		_/`.                                           `.._
+	     .'     -.                                             `.
+	    /     __.-Y     /''''''-...___,...--------.._            |
+	   /   _."    |    /                ' .      \   '---..._    |
+	  /   /      /    /                _,. '    ,/           |   |
+	  \_,'     _.'   /              /''     _,-'            _|   |
+		  '     /               `-----''               /     |
+		  `...-'     dp                                `...-'
 
 
 */

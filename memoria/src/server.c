@@ -21,8 +21,8 @@ int iniciar_servidor(char* puerto)
 	// Creamos el socket de escucha del servidor
 
 	socket_servidor = socket(servinfo->ai_family,
-	                         servinfo->ai_socktype,
-	                         servinfo->ai_protocol);
+						  servinfo->ai_socktype,
+						  servinfo->ai_protocol);
 
 	int reuse = 1;
 	if (setsockopt(socket_servidor, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse)) < 0) {
@@ -54,23 +54,23 @@ void recv_handshake(int socket_cliente)
 	uint32_t resultError = -1;
 	recv(socket_cliente, &handshake, sizeof(uint32_t), MSG_WAITALL);
 	if(handshake == 1)
-	   send(socket_cliente, &resultOk, sizeof(uint32_t), 0);
+		send(socket_cliente, &resultOk, sizeof(uint32_t), 0);
 	else {
-	   send(socket_cliente, &resultError, sizeof(uint32_t), 0);
+		send(socket_cliente, &resultError, sizeof(uint32_t), 0);
 	}
 }
 
 void esperar_cliente(int socket_servidor){
 	while (1) {
-	   pthread_t thread;
-	   int *socket_cliente = malloc(sizeof(int));
-	   *socket_cliente = accept(socket_servidor, NULL, NULL);
-	   recv_handshake(*socket_cliente);
-	   pthread_create(&thread,
-	                  NULL,
-	                  (void*) atender_cliente,
-	                  socket_cliente);
-	   pthread_detach(thread);
+		pthread_t thread;
+		int *socket_cliente = malloc(sizeof(int));
+		*socket_cliente = accept(socket_servidor, NULL, NULL);
+		recv_handshake(*socket_cliente);
+		pthread_create(&thread,
+				 NULL,
+				 (void*) atender_cliente,
+				 socket_cliente);
+		pthread_detach(thread);
 	}
 }
 
@@ -89,7 +89,7 @@ void atender_cliente(int* socket_cliente){
 	// int id_seg;
 	// int desp;
 	// char* valor_mem;
-//	char* nuevo_valor;
+	//	char* nuevo_valor;
 
 	while (1) {
 		int cod_op = recibir_operacion(*socket_cliente);
@@ -120,7 +120,7 @@ void atender_cliente(int* socket_cliente){
 
 				break;
 
-				//kernel
+			//kernel
 			case CREATE_PROCESS:
 				log_trace(logger, "TRACE: CREATE_PROCESS");
 				log_trace(logger, "TRACE: DELETE_PROCESS");
@@ -263,7 +263,7 @@ void atender_cliente(int* socket_cliente){
 				list_destroy_and_destroy_elements(lista, free);
 				destruir_instruccion(proceso, 1);
 				break;
-				//cpu
+			//cpu
 			case MOV_IN: //leer cpu
 				lista = recibir_paquete(*socket_cliente);
 				proceso = malloc(sizeof(t_instruccion));

@@ -14,18 +14,18 @@ t_list* leerRecursos(t_config *config) {
     }
 
     for(int i = 0; i<numRecursos ;i++) {
-		Recurso* nuevoRecurso = malloc(sizeof(Recurso));
-		strcpy(nuevoRecurso->nombre, recursosConfig[i]);
-		nuevoRecurso->instancias = atoi(instanciasConfig[i]);
-		nuevoRecurso->siguiente = NULL;
-		nuevoRecurso->procesosBloqueados = queue_create();
-		list_add(listaRecursos, nuevoRecurso);
-	}
+        Recurso* nuevoRecurso = malloc(sizeof(Recurso));
+        strcpy(nuevoRecurso->nombre, recursosConfig[i]);
+        nuevoRecurso->instancias = atoi(instanciasConfig[i]);
+        nuevoRecurso->siguiente = NULL;
+        nuevoRecurso->procesosBloqueados = queue_create();
+        list_add(listaRecursos, nuevoRecurso);
+    }
 
     string_array_destroy(recursosConfig);
     string_array_destroy(instanciasConfig);
 
-	return listaRecursos;
+    return listaRecursos;
 }
 
 
@@ -52,14 +52,14 @@ void manejo_recursos(pcb* proceso) {
 
     if (!recursoExiste) {
         log_error(logger, "PID: %d - %s de recurso no existente. Finalizando proceso", proceso->pid, operacion);
-    	exec_a_exit("SUCCESS");
+        exec_a_exit("SUCCESS");
     } else {
         if (strcmp(operacion, "WAIT") == 0) {
             // Procesar operación WAIT
             recursoActual->instancias--;
             if (recursoActual->instancias < 0) {
-            	queue_push(recursoActual->procesosBloqueados, proceso);
-            	exec_a_block();
+                queue_push(recursoActual->procesosBloqueados, proceso);
+                exec_a_block();
                 log_info(logger, "PID: %d - Bloqueado por: %s", proceso->pid, recursoActual->nombre);
             }
             else{
@@ -83,7 +83,7 @@ void manejo_recursos(pcb* proceso) {
 
 void destruir_recursos(t_list* recursos) {
     list_iterate(recursos, destruir_colas_recursos);
-	list_destroy_and_destroy_elements(recursos, free);
+    list_destroy_and_destroy_elements(recursos, free);
 }
 
 void destruir_colas_recursos(void* recurso) {
