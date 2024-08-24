@@ -14,8 +14,8 @@ int crear_conexion(char *ip, char* puerto)
 
 	// Ahora vamos a crear el socket.
 	int socket_cliente = socket(server_info->ai_family,
-			     server_info->ai_socktype,
-			     server_info->ai_protocol);
+							 server_info->ai_socktype,
+							 server_info->ai_protocol);
 
 	// Ahora que tenemos el socket, vamos a conectarlo
 	if (connect(socket_cliente, server_info->ai_addr, server_info->ai_addrlen) == -1) {
@@ -44,9 +44,9 @@ void esperar_servidor(int conexion){
 	int *socket_servidor = malloc(sizeof(int));
 	*socket_servidor = conexion;
 	pthread_create(&thread,
-		NULL,
-		(void*) atender_servidor,
-		(void*) socket_servidor);
+				NULL,
+				(void*) atender_servidor,
+				(void*) socket_servidor);
 	pthread_detach(thread);
 }
 
@@ -309,9 +309,9 @@ void atender_servidor(int* socket_servidor){
 				((pcb*)queue_peek(qnew))->tabla_segmentos = list_duplicate(laCosaQueMando->tabla_segmentos); //Actualiza la tabla de segmentos
 				log_debug(logger, "Tamanio de segmento: %d", ((t_segmento*)list_get(((pcb*)queue_peek(qnew))->tabla_segmentos, 0))->tam_segmento);
 				pthread_create(&thread,
-		   NULL,
-		   (void*) new_a_ready,
-		   NULL); //Memoria dice que el proceso está listo
+				   NULL,
+				   (void*) new_a_ready,
+				   NULL); //Memoria dice que el proceso está listo
 				pthread_detach(thread);
 				free(laCosaQueMando->instruccion);
 				list_destroy(laCosaQueMando->tabla_segmentos);

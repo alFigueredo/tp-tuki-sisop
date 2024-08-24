@@ -14,8 +14,8 @@ int crear_conexion(char *ip, char* puerto)
 
 	// Ahora vamos a crear el socket.
 	int socket_cliente = socket(server_info->ai_family,
-			     server_info->ai_socktype,
-			     server_info->ai_protocol);
+							 server_info->ai_socktype,
+							 server_info->ai_protocol);
 
 	// Ahora que tenemos el socket, vamos a conectarlo
 	if (connect(socket_cliente, server_info->ai_addr, server_info->ai_addrlen) == -1) {
@@ -44,9 +44,9 @@ void esperar_servidor(int conexion){
 	int *socket_servidor = malloc(sizeof(int));
 	*socket_servidor = conexion;
 	pthread_create(&thread,
-		NULL,
-		(void*) atender_servidor,
-		socket_servidor);
+				NULL,
+				(void*) atender_servidor,
+				socket_servidor);
 	pthread_detach(thread);
 }
 
